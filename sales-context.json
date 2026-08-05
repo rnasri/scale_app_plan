@@ -1,0 +1,284 @@
+{
+  "module": "Sales (+ Marketing — same lead)",
+  "app": "scale_sales",
+  "lead": "Raghib",
+  "module_lead_scope": "Sales AND Marketing — Raghib is lead for both modules",
+  "team": ["Archit", "Muhammad"],
+  "ai_head": "Veeren",
+  "last_updated": "2026-07-28",
+  "bench": "scale-bench",
+  "site": "scale.localhost:8001",
+  "features": [
+    {
+      "id": "SALES-01", "name": "CRM — Customer Repository", "priority": "P1",
+      "platform": "Native ERPNext + Frappe CRM", "classification": "OOTB + Refine",
+      "effort": "Low", "start": "2026-07-24", "end": "2026-07-27", "status": "in_progress",
+      "custom_work": [
+        "Custom field: scale_sales_annual_turnover (Currency) on Customer",
+        "Custom field: scale_sales_competitor_products (Data) on Customer",
+        "Custom field: scale_sales_account_classification (Select: A Class/B Class/C Class/Key Account/Strategic Account) on Customer",
+        "Custom field: scale_sales_customer_status (Select: Active/Inactive/Prospect/At Risk/Churned) on Customer",
+        "Script Report: CLV & Account Health"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "SALES-02", "name": "Lead Management", "priority": "P1",
+      "platform": "Native Frappe CRM", "classification": "OOTB + Integration",
+      "effort": "Low", "start": "2026-07-28", "end": "2026-07-30", "status": "not_started",
+      "custom_work": [
+        "Custom field: scale_sales_budget (Currency) on Lead",
+        "Custom field: scale_sales_authority_level (Select) on Lead",
+        "Custom field: scale_sales_need_description (Small Text) on Lead",
+        "Custom field: scale_sales_expected_closure (Date) on Lead",
+        "Custom field: scale_sales_lead_priority (Select: Hot/Warm/Cold) on Lead",
+        "Custom field: scale_sales_utm_source / utm_medium / utm_campaign (Data) on Lead",
+        "Assignment Rule: territory + workload-based auto-assign",
+        "Server Script: duplicate detection on Lead before_insert"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "SALES-03", "name": "Sales Pipeline", "priority": "P2",
+      "platform": "Frappe CRM Kanban", "classification": "OOTB + Refine",
+      "effort": "Low", "start": "2026-08-28", "end": "2026-08-29", "status": "not_started",
+      "custom_work": [
+        "Configure 10 pipeline stages in CRM Settings",
+        "Child DocType: Opportunity Stakeholder (linked to Opportunity)",
+        "Child DocType: Opportunity Competitor (linked to Opportunity)",
+        "Client Script: dynamic probability % per stage",
+        "Script Report: Pipeline Health Summary"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "SALES-04", "name": "Sales Forecasting", "priority": "P2",
+      "platform": "ERPNext + Script Report", "classification": "Refine + Script Report",
+      "effort": "Medium", "start": "2026-09-03", "end": "2026-09-07", "status": "not_started",
+      "custom_work": [
+        "Script Report: Sales Forecast Report (weighted revenue by stage probability)",
+        "Forecast Workspace Chart in CRM"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "SALES-05", "name": "Sales Target Management", "priority": "P2",
+      "platform": "Native ERPNext Sales Person", "classification": "OOTB + Refine",
+      "effort": "Low", "start": "2026-08-31", "end": "2026-09-02", "status": "not_started",
+      "custom_work": [
+        "Extend Sales Person Target table: Meetings, Proposals, New Accounts columns",
+        "Scheduled Job: nightly aggregation of Events/Quotations/Invoices to target actuals",
+        "Script Report: Target vs Actual Variance"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "SALES-06", "name": "Dealer Management", "priority": "P2",
+      "platform": "ERPNext Customer (Group=Dealer) + Custom", "classification": "Refine + Extension",
+      "effort": "Low", "start": "2026-08-24", "end": "2026-08-27", "status": "not_started",
+      "custom_work": [
+        "Custom section on Customer form: Dealer Details (Territory, Product Portfolio, Credit Limit, Incentive Scheme)",
+        "Child DocType: Dealer Activity (Visit, Training, Promotion, Complaint)",
+        "Script Report: Dealer Scorecard & Performance"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "SALES-07", "name": "Distributor Management", "priority": "P1",
+      "platform": "ERPNext + Custom DocTypes", "classification": "Refine + Custom DocTypes",
+      "effort": "Medium", "start": "2026-08-13", "end": "2026-08-20", "status": "not_started",
+      "custom_work": [
+        "DocType: Secondary Sales Entry (Distributor, Period, Product, Qty, Value)",
+        "DocType: Distributor Stock Statement",
+        "DocType: Distributor Claim (with Frappe Workflow for approval)",
+        "Script Report: Distributor Health & Secondary Sales"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "SALES-08", "name": "Customer Visit Management", "priority": "P1",
+      "platform": "Custom DocType + HTML5 Geolocation", "classification": "Refine + Custom DocType",
+      "effort": "Medium", "start": "2026-08-06", "end": "2026-08-12", "status": "not_started",
+      "custom_work": [
+        "DocType: Field Visit (Customer, Date, Purpose, Check-in/out time, Lat/Lon, Notes, Photos, Follow-up date, Outcome)",
+        "Client Script: 25-line JS HTML5 Geolocation check-in/check-out button",
+        "Server Script: Geo-fencing validation (50m radius from customer address)",
+        "Script Report: Manager Field Visit Summary"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "SALES-09", "name": "Quotation Management", "priority": "P1",
+      "platform": "Native ERPNext Quotation", "classification": "OOTB + Refine",
+      "effort": "Low", "start": "2026-07-31", "end": "2026-08-01", "status": "not_started",
+      "custom_work": [
+        "Frappe Workflow: Quotation discount tiers (>10% → Manager, >20% → VP Sales)",
+        "Jinja Print Format: branded Quotation PDF",
+        "Email Notification: Quotation sent with PDF + trackable link"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "SALES-10", "name": "Order Management", "priority": "P2",
+      "platform": "Native ERPNext Sales Order", "classification": "Native OOTB",
+      "effort": "Low", "start": "2026-08-21", "end": "2026-08-22", "status": "not_started",
+      "custom_work": [
+        "Client Script: Order Status Progress Bar widget on Sales Order form",
+        "Script Report: Order Ageing & Bottleneck"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "SALES-11", "name": "Collection Management", "priority": "P1",
+      "platform": "Native ERPNext Dunning + AR Aging", "classification": "OOTB + Refine",
+      "effort": "Low", "start": "2026-08-03", "end": "2026-08-05", "status": "not_started",
+      "custom_work": [
+        "Custom field: scale_sales_promise_to_pay_date (Date) on Sales Invoice",
+        "Custom field: scale_sales_collection_status (Select: Pending/Promised/Collected/Written Off) on Sales Invoice",
+        "Configure Dunning types: T-7 Reminder, T-0 Due Alert, T+15 Dunning Notice",
+        "Notification Rules: SMS/Email payment reminders",
+        "Script Report: Salesperson Collection Recovery Dashboard"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "SALES-12", "name": "Sales Incentive Management", "priority": "P2",
+      "platform": "ERPNext + Custom Calculation Engine", "classification": "Refine + Server Script",
+      "effort": "Medium", "start": "2026-09-08", "end": "2026-09-15", "status": "not_started",
+      "custom_work": [
+        "DocType: Sales Incentive Scheme (Slab rules, target thresholds, payout %)",
+        "Python Server Script: monthly incentive calculation (target % + payment realization)",
+        "Script Report: Incentive Payout + Employee Statement"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "SALES-13", "name": "AI Features — Foundation", "priority": "P1",
+      "platform": "Custom Python + LLM API", "classification": "AI Suite",
+      "effort": "Medium", "start": "2026-07-24", "end": "2026-07-28", "status": "not_started",
+      "custom_work": [
+        "Python module: scale_sales/ai_utils.py (LLM API client helper)",
+        "Custom Workspace: AI Sales Command Center",
+        "Background scheduler: AI inference job"
+      ],
+      "notes": "Raghib leads this track. Developers assist with integration only when asked."
+    },
+    {
+      "id": "SALES-14", "name": "AI Sales Prediction", "priority": "P2",
+      "platform": "Custom Python Script", "classification": "AI Feature",
+      "effort": "Medium", "start": "2026-08-05", "end": "2026-08-08", "status": "not_started",
+      "custom_work": [
+        "Script: weighted run-rate + pipeline velocity formula",
+        "Dashboard: Prediction Gauge on Executive Dashboard"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "SALES-15", "name": "AI Lost Opportunity Analysis", "priority": "P1",
+      "platform": "Custom Python + LLM API", "classification": "AI Feature",
+      "effort": "Medium", "start": "2026-07-29", "end": "2026-07-31", "status": "not_started",
+      "custom_work": [
+        "Server Script: Opportunity on_update (Status=Lost) → LLM API call",
+        "Custom fields on Opportunity: scale_sales_loss_category, scale_sales_competitor_identified",
+        "Script Report: Competitor Win/Loss Intelligence"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "SALES-16", "name": "AI Lead Scoring", "priority": "P2",
+      "platform": "Custom Python Script", "classification": "AI Feature",
+      "effort": "Low-Medium", "start": "2026-08-10", "end": "2026-08-12", "status": "not_started",
+      "custom_work": [
+        "Custom fields on Lead: scale_sales_ai_lead_score (Int 0-100), scale_sales_lead_heat (Select: Hot/Warm/Cold)",
+        "Python Scoring Engine: Industry + Company Size + Budget + Title weights",
+        "Workspace View: Hot Leads Priority Queue"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "SALES-17", "name": "AI Next Best Action", "priority": "P1",
+      "platform": "Custom Python Script", "classification": "AI Feature",
+      "effort": "Medium", "start": "2026-08-01", "end": "2026-08-04", "status": "not_started",
+      "custom_work": [
+        "Custom field on Opportunity: scale_sales_next_action_recommendation (Small Text)",
+        "Python Recommendation Engine: deal age + stage SLA + activity gaps",
+        "UI: Action Chips on Opportunity form via Client Script"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "SALES-18", "name": "AI Win Probability", "priority": "P3",
+      "platform": "Custom Python Script", "classification": "AI Feature",
+      "effort": "Low-Medium", "start": "2026-08-13", "end": "2026-08-15", "status": "not_started",
+      "custom_work": [
+        "Server Script: Opportunity on_update → dynamic Win Probability formula",
+        "Formula: Stage Weight + Stakeholder Level + Budget Confirmed Flag",
+        "UI: Visual Probability Gauge on Opportunity form"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "SALES-19", "name": "AI Sales Coaching", "priority": "P3",
+      "platform": "Custom Python + LLM API", "classification": "AI Feature",
+      "effort": "Medium", "start": "2026-08-17", "end": "2026-08-20", "status": "not_started",
+      "custom_work": [
+        "DocType: Salesperson Coaching Report",
+        "Python: rep KPI aggregation vs team benchmarks",
+        "LLM API: natural-language personalized coaching advice via ai_utils.py",
+        "Script Report: Virtual Sales Coach"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "SALES-20", "name": "NL Query Assistant — Sales & Marketing", "priority": "P1",
+      "platform": "Custom Python + LLM API + Frappe Page", "classification": "AI Feature",
+      "effort": "High", "start": "2026-07-29", "end": "2026-08-29", "status": "not_started",
+      "owner": "Veeren (AI Head)",
+      "custom_work": [
+        "ai_query_schema.py — schema context document for all queryable DocTypes",
+        "api/ai_query.py — whitelisted Frappe endpoint with ALLOWED_DOCTYPES safety check",
+        "Two-step LLM: translate question → frappe.get_list call → execute → format answer",
+        "Frappe Page: Sales Intelligence — chat UI wired to the API endpoint",
+        "DocType: AI Query Log — logs all queries, answers, latency, user",
+        "Workspace shortcut on Sales and Marketing workspaces"
+      ],
+      "phases": {
+        "V05": "Schema mapping + 20 test question-answer pairs (Jul 29)",
+        "V06": "LLM integration + Frappe endpoint (Aug 11)",
+        "V07": "Frappe Page UI widget (Aug 18)",
+        "V08": "Logging, hardening, 18/20 test accuracy (Aug 25)"
+      },
+      "notes": "Start Day 1. Schema mapping (V05) is non-blocking — can be done before any code is ready. Target: 18/20 test questions answered correctly before marking complete."
+    }
+  ],
+  "developer_tasks": [
+    { "id": "T01", "date": "2026-07-29", "assigned": "Muhammad", "feature": "SALES-02", "status": "not_started", "title": "Configure Lead Source master values (10 sources)" },
+    { "id": "T02", "date": "2026-07-29", "assigned": "Archit",   "feature": "SALES-01", "status": "not_started", "title": "Create Customer Group hierarchy" },
+    { "id": "T03", "date": "2026-07-30", "assigned": "Archit",   "feature": "SALES-01", "status": "not_started", "title": "Add 4 custom fields to Customer DocType (scale_sales_ prefix)" },
+    { "id": "T04", "date": "2026-07-30", "assigned": "Muhammad", "feature": "SALES-02", "status": "not_started", "title": "Add BANT + UTM custom fields to Lead DocType (7 fields)" },
+    { "id": "T05", "date": "2026-07-31", "assigned": "Archit",   "feature": "SALES-01", "status": "not_started", "title": "Create Territory tree for India (4 zones + major states)" },
+    { "id": "T06", "date": "2026-07-31", "assigned": "Muhammad", "feature": "Foundation", "status": "not_started", "title": "Install scale_sales app in bench + configure Selling Settings" },
+    { "id": "R01", "date": "2026-07-30", "assigned": "Raghib",   "feature": "All custom fields", "status": "not_started", "title": "Export custom field fixtures to git — first code commit" },
+    { "id": "T07", "date": "2026-08-01", "assigned": "Both",     "feature": "SALES-01/SALES-05", "status": "not_started", "title": "Set up Sales Person hierarchy and Price Lists" },
+    { "id": "T08", "date": "2026-08-03", "assigned": "Archit",   "feature": "SALES-09", "status": "not_started", "title": "Configure Quotation discount approval Workflow" },
+    { "id": "T09", "date": "2026-08-03", "assigned": "Muhammad", "feature": "SALES-11", "status": "not_started", "title": "Configure Dunning types (3 types) + Notification Rule" },
+    { "id": "T10", "date": "2026-08-04", "assigned": "Both",     "feature": "SALES-11", "status": "not_started", "title": "Add Promise-to-Pay and Collection Status fields to Sales Invoice" },
+    { "id": "T11", "date": "2026-08-05", "assigned": "Muhammad", "feature": "SALES-11", "status": "not_started", "title": "Configure AR aging buckets + Payment Terms Templates" },
+    { "id": "T12", "date": "2026-08-06", "assigned": "Archit",   "feature": "SALES-08", "status": "not_started", "title": "Create Field Visit DocType (first custom DocType — all 16 fields)" },
+    { "id": "T13", "date": "2026-08-07", "assigned": "Muhammad", "feature": "SALES-08", "status": "not_started", "title": "Write GPS Check-In Client Script on Field Visit" },
+    { "id": "T14", "date": "2026-08-08", "assigned": "Both",     "feature": "SALES-08", "status": "not_started", "title": "Test Field Visit end-to-end on mobile browser" },
+    { "id": "T15", "date": "2026-08-10", "assigned": "Muhammad", "feature": "SALES-02", "status": "not_started", "title": "Write Lead duplicate detection Server Script (before_insert)" },
+    { "id": "T16", "date": "2026-08-10", "assigned": "Archit",   "feature": "SALES-03", "status": "not_started", "title": "Configure 10 pipeline stages in CRM Settings" },
+    { "id": "T17", "date": "2026-08-11", "assigned": "Both",     "feature": "SALES-03", "status": "not_started", "title": "Create Opportunity Stakeholder and Competitor child tables" }
+  ],
+  "ai_tasks_veeren": [
+    { "id": "V01", "date": "2026-07-29", "feature": "SALES-13", "status": "not_started", "title": "Review ai_utils.py + wire OpenAI API key + test call_llm()" },
+    { "id": "V02", "date": "2026-08-01", "feature": "SALES-16", "status": "not_started", "title": "Lead Scoring — calibrate BANT weights, test on 5 live leads" },
+    { "id": "V03", "date": "2026-08-05", "feature": "SALES-17/18", "status": "not_started", "title": "Win Probability + Next Best Action — integration test on live Opportunities" },
+    { "id": "V04", "date": "2026-08-07", "feature": "SALES-15", "status": "not_started", "title": "Lost Deal Analysis — LLM prompt engineering, test on 3 lost Opportunities" },
+    { "id": "V05", "date": "2026-07-29", "feature": "SALES-20", "status": "not_started", "title": "NL Query Phase A: schema document + 20 test question-answer pairs (start Day 1)" },
+    { "id": "V06", "date": "2026-08-11", "feature": "SALES-20", "status": "not_started", "title": "NL Query Phase B: ai_query.py endpoint — LLM translate + safe execute + format" },
+    { "id": "V07", "date": "2026-08-18", "feature": "SALES-20", "status": "not_started", "title": "NL Query Phase C: Frappe Page 'Sales Intelligence' — chat UI widget" },
+    { "id": "V08", "date": "2026-08-25", "feature": "SALES-20", "status": "not_started", "title": "NL Query Phase D: AI Query Log DocType, error handling, 18/20 accuracy target" }
+  ]
+}

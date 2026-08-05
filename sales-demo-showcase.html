@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The AIWS Sales Advantage | AIWS ERP</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+/* ── Deck shell ── */
+.deck { scroll-snap-type: y proximity; }
+.slide {
+  min-height: calc(100vh - 64px);
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 50px 64px; scroll-snap-align: start; position: relative;
+  border-bottom: 1px solid var(--border);
+}
+.slide-idx { position: absolute; top: 24px; right: 28px; font-size: 11px; font-weight: 700; color: var(--text-4); letter-spacing: .4px; }
+.slide-eyebrow { font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--purple); margin-bottom: 10px; }
+.slide h1 { font-size: 42px; line-height: 1.15; margin: 0 0 16px; max-width: 820px; }
+.slide h2 { font-size: 32px; line-height: 1.2; margin: 0 0 14px; }
+.slide .lede { font-size: 17px; color: var(--text-2); max-width: 700px; line-height: 1.5; margin-bottom: 20px; }
+.slide .cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+
+/* ── Hero slide ── */
+.hero-slide {
+  background: linear-gradient(135deg, #1e3a5f 0%, #4f46e5 55%, #7c3aed 100%);
+  color: #fff; border-radius: var(--r-lg); margin: 0 0 4px;
+}
+.hero-slide .slide-eyebrow { color: rgba(255,255,255,.75); }
+.hero-slide h1 { color: #fff; font-size: 48px; max-width: 780px; }
+.hero-slide .lede { color: #fff; opacity: .9; max-width: 640px; font-size: 18px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: 30px; font-size: 14px; font-weight: 700; text-decoration: none; transition: transform .15s; }
+.btn:hover { transform: translateY(-1px); }
+.btn-white { background: #fff; color: #4338ca; }
+.btn-ghost-dark { background: rgba(255,255,255,.14); color: #fff; border: 1px solid rgba(255,255,255,.4); }
+.btn-navy { background: var(--navy); color: #fff; }
+.btn-navy:hover { background: var(--navy-light); }
+
+/* ── Big numbers ── */
+.big-nums { display: flex; gap: 40px; flex-wrap: wrap; margin: 10px 0 24px; }
+.big-num .n { font-size: 64px; font-weight: 900; line-height: 1; }
+.big-num .l { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--text-3); margin-top: 6px; }
+.big-num.c-green .n { color: var(--green); }
+.big-num.c-amber .n { color: var(--amber); }
+.big-num.c-grey .n { color: #94a3b8; }
+.big-num.c-navy .n { color: var(--navy); }
+.legend-row { display: flex; gap: 22px; flex-wrap: wrap; font-size: 13.5px; margin-top: 4px; }
+.legend-row span { display: inline-flex; align-items: center; gap: 6px; }
+.dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+.dot-g { background: var(--green); } .dot-a { background: var(--amber); } .dot-p { background: #cbd5e1; }
+
+/* ── Task grid slide ── */
+.task-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; margin-top: 10px; }
+.task-chip { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; box-shadow: var(--sh); }
+.task-chip .tid { font-size: 12px; font-weight: 800; color: var(--navy); background: var(--surface-2); border-radius: 5px; padding: 2px 7px; flex-shrink: 0; }
+.task-chip .ttitle { font-size: 12.5px; color: var(--text-2); line-height: 1.35; flex: 1; }
+.task-chip .tmark { font-size: 15px; flex-shrink: 0; }
+.task-chip.added { border-left: 3px solid var(--green); }
+.task-chip.pending { border-left: 3px solid #cbd5e1; opacity: .75; }
+
+/* ── PDF section slide ── */
+.sec-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 6px; }
+.sec-num { font-size: 12px; font-weight: 800; color: var(--text-4); }
+.status-pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 13px; border-radius: 20px; font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .4px; }
+.status-pill.progressed { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-bdr); }
+.status-pill.initiated { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-bdr); }
+.status-pill.planned { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+.ask-line { font-size: 14.5px; color: var(--text-3); margin: 8px 0 18px; max-width: 700px; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; max-width: 900px; }
+.added-box, .pending-box { border-radius: 10px; padding: 16px 18px; }
+.added-box { background: var(--green-bg); border: 1px solid var(--green-bdr); }
+.pending-box { background: var(--surface-2); border: 1px solid var(--border); }
+.added-box .box-label, .pending-box .box-label { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+.added-box .box-label { color: var(--green); }
+.pending-box .box-label { color: var(--text-4); }
+.added-box ul, .pending-box ul { margin: 0; padding-left: 18px; }
+.added-box li, .pending-box li { font-size: 13.5px; line-height: 1.55; margin-bottom: 4px; }
+.added-box li { color: #065f46; }
+.pending-box li { color: var(--text-3); }
+.rule-box { background: var(--surface-2); border: 1px solid var(--border); border-left: 4px solid var(--navy); border-radius: 8px; padding: 12px 16px; margin: 12px 0; max-width: 760px; }
+.rule-box .box-label { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--navy); margin-bottom: 7px; }
+.rule-box ul { margin: 0; padding-left: 18px; }
+.rule-box li { font-size: 13px; line-height: 1.55; margin-bottom: 3px; color: var(--text-2); }
+.rule-box .rb-note { font-size: 12px; color: var(--text-3); margin-top: 6px; }
+.task-tag { display: inline-block; font-size: 11px; font-weight: 700; color: var(--navy); background: var(--surface-2); border: 1px solid var(--border); border-radius: 5px; padding: 3px 10px; margin-top: 16px; }
+.prd-tag { display: inline-block; font-size: 10.5px; font-weight: 600; background: #e0f2fe; color: #0369a1; border-radius: 4px; padding: 3px 10px; margin-top: 10px; }
+.slide-links { margin-top: 18px; }
+.field-chips { margin-top: 10px; }
+.field-chip { display: inline-block; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10.5px; background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; border-radius: 4px; padding: 2px 7px; margin: 2px 4px 2px 0; }
+.flow-path { margin-top: 12px; font-size: 12px; color: var(--text-3); display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.flow-path .fp-step { background: var(--surface-2); border: 1px solid var(--border); border-radius: 5px; padding: 3px 9px; font-weight: 600; color: var(--text-2); }
+.flow-path .fp-arrow { color: var(--text-4); }
+
+/* ── Use case scenario ── */
+.usecase { margin-top: 24px; padding: 16px 22px; background: var(--surface-2); border: 1px dashed var(--border-md); border-radius: 10px; max-width: 780px; }
+.usecase .uc-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--text-4); margin-bottom: 7px; }
+.usecase .uc-persona { font-size: 13px; font-weight: 700; color: var(--text-1); margin-bottom: 5px; }
+.usecase .uc-flow { font-size: 13.5px; color: var(--text-2); line-height: 1.6; }
+.usecase.future { border-style: solid; border-color: var(--amber-bdr); background: var(--amber-bg); }
+.usecase.future .uc-label, .usecase.future .uc-persona { color: #92400e; }
+.usecase.future .uc-flow { color: #78350f; }
+
+/* ── Naming slide ── */
+.naming-mini { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; max-width: 900px; margin-top: 10px; }
+.naming-mini h4 { font-size: 13.5px; margin: 0 0 10px; }
+.naming-mini table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.naming-mini th { text-align: left; font-size: 9.5px; font-weight: 800; text-transform: uppercase; color: var(--text-4); padding: 0 8px 6px; border-bottom: 1px solid var(--border); }
+.naming-mini td { padding: 5px 8px; border-bottom: 1px solid var(--surface-2); }
+.naming-mini td:last-child { color: #4338ca; font-weight: 600; }
+
+/* ── Compare slide ── */
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 850px; margin-top: 10px; }
+.compare-grid .bad, .compare-grid .good { padding: 12px 16px; border-radius: 8px; font-size: 14px; }
+.compare-grid .bad { background: var(--red-bg); color: #7f1d1d; border: 1px solid var(--red-bdr); }
+.compare-grid .good { background: var(--green-bg); color: #065f46; border: 1px solid var(--green-bdr); font-weight: 600; }
+
+/* ── Suggestion / assumption chips ── */
+.chip-list { display: grid; gap: 10px; max-width: 820px; margin-top: 10px; }
+.chip-list li { list-style: none; font-size: 14px; padding: 12px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; box-shadow: var(--sh); line-height: 1.5; }
+.chip-list li b { color: var(--text-1); }
+.sug-chip { border-left: 4px solid var(--amber); }
+.sug-tag { display: inline-block; font-size: 9.5px; font-weight: 800; text-transform: uppercase; background: var(--amber-bg); color: #92400e; border-radius: 4px; padding: 2px 7px; margin-right: 8px; }
+
+/* ── Closing slide ── */
+.closing-slide { background: var(--navy-dark); color: #fff; border-radius: var(--r-lg); }
+.closing-slide h2 { color: #fff; }
+.closing-slide .lede { color: rgba(255,255,255,.65); }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="s-title">AIWS ERP</div>
+    <div class="s-sub">Implementation Master Plan</div>
+    <span class="s-tag">Claude / implementation</span>
+  </div>
+  <nav>
+    <div class="nav-group">Start Here</div>
+    <a class="nav-link" href="index.html">Program Overview</a>
+
+    <div class="nav-group">Foundation</div>
+    <a class="nav-link" href="frappe-verdict.html">Frappe Capability</a>
+    <a class="nav-link" href="architecture.html">System Architecture</a>
+
+    <div class="nav-group">Development Framework</div>
+    <a class="nav-link" href="customization-guide.html">Customization Guide</a>
+    <a class="nav-link" href="developer-guide.html">Developer Workflow</a>
+
+    <div class="nav-group">Implementation</div>
+    <a class="nav-link" href="module-plan.html">All 13 Modules</a>
+    <a class="nav-link" href="sprint-plan.html">Parallel Sprint Plan</a>
+    <a class="nav-link" href="wave-1.html">Sales &amp; Marketing Detail</a>
+
+    <div class="nav-group">Module Plans</div>
+    <a class="nav-link" href="sales-module.html">Sales Module Plan</a>
+    <a class="nav-link" href="hr-module.html">HR Module Plan</a>
+    <a class="nav-link" href="accounts-module.html">Accounts Module Plan</a>
+    <a class="nav-link" href="finance-module.html">Finance Module Plan</a>
+    <a class="nav-link" href="pmo-module.html">PMO Module Plan</a>
+
+    <div class="nav-group">User Manual</div>
+    <a class="nav-link" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
+
+    <div class="nav-group">AI Strategy</div>
+    <a class="nav-link" href="ai-plan-strategy.html">AI Plan Strategy</a>
+
+    <div class="nav-group">Tracking</div>
+    <a class="nav-link" href="sales-tracker.html">Sales Tracker</a>
+    <a class="nav-link active" href="sales-demo-showcase.html">Sales Showcase ✨</a>
+  </nav>
+  <div class="sidebar-foot">
+    Pixaflip × SIL · AIWS ERP<br>
+    <a href="../../index.html">← AIWS Setup portal</a>
+  </div>
+</aside>
+
+<main style="padding:0;max-width:none;">
+<div class="deck">
+
+<!-- 01 — HERO -->
+<section class="slide hero-slide"><span class="slide-idx" style="color:rgba(255,255,255,.5);">01 / 26</span>
+  <div class="slide-eyebrow">Live Demo Deck</div>
+  <h1>The AIWS Sales Advantage</h1>
+  <p class="lede">Mapped to your PDF. Section by section. Nothing renamed to look better than it is.</p>
+  <div class="cta-row">
+    <a class="btn btn-white" href="http://scale.localhost:8000/app/sales-command-center" target="_blank">▶ Open Live Command Center</a>
+    <a class="btn btn-ghost-dark" href="#scorecard">See the Scorecard ↓</a>
+  </div>
+</section>
+
+<!-- 02 — SCORECARD -->
+<section class="slide" id="scorecard"><span class="slide-idx">02 / 26</span>
+  <div class="slide-eyebrow">PDF Alignment</div>
+  <h2>18 Sections. Here's Where We Stand.</h2>
+  <div class="big-nums">
+    <div class="big-num c-green"><div class="n">4</div><div class="l">Progressed</div></div>
+    <div class="big-num c-amber"><div class="n">7</div><div class="l">Initiated</div></div>
+    <div class="big-num c-grey"><div class="n">7</div><div class="l">Planned</div></div>
+    <div class="big-num c-navy"><div class="n">18</div><div class="l">Total PDF Sections</div></div>
+  </div>
+  <div class="legend-row">
+    <span><span class="dot dot-g"></span> <b>Progressed</b> — built</span>
+    <span><span class="dot dot-a"></span> <b>Initiated</b> — first version live</span>
+    <span><span class="dot dot-p"></span> <b>Planned</b> — not started</span>
+  </div>
+</section>
+
+<!-- 03 — TASK LIST HIGHLIGHT -->
+<section class="slide"><span class="slide-idx">03 / 26</span>
+  <div class="slide-eyebrow">From Your Task List</div>
+  <h2>16 of 17 Dev Tasks — Addressed</h2>
+  <p class="lede">Your team's own task list (T01–T17). Here's what this build covers.</p>
+  <div class="task-grid">
+    <div class="task-chip added"><span class="tid">T01</span><span class="ttitle">Lead Source values</span><span class="tmark">✅</span></div>
+    <div class="task-chip added"><span class="tid">T02</span><span class="ttitle">Customer Group hierarchy</span><span class="tmark">✅</span></div>
+    <div class="task-chip added"><span class="tid">T03</span><span class="ttitle">Customer custom fields</span><span class="tmark">✅</span></div>
+    <div class="task-chip added"><span class="tid">T04</span><span class="ttitle">BANT + UTM Lead fields</span><span class="tmark">✅</span></div>
+    <div class="task-chip added"><span class="tid">T05</span><span class="ttitle">Territory tree</span><span class="tmark">✅</span></div>
+    <div class="task-chip added"><span class="tid">T06</span><span class="ttitle">Install + Selling Settings</span><span class="tmark">✅</span></div>
+    <div class="task-chip added"><span class="tid">T07</span><span class="ttitle">Sales Person + Price Lists</span><span class="tmark">✅</span></div>
+    <div class="task-chip added"><span class="tid">T08</span><span class="ttitle">Discount approval Workflow</span><span class="tmark">✅</span></div>
+    <div class="task-chip added"><span class="tid">T09</span><span class="ttitle">Dunning types</span><span class="tmark">✅</span></div>
+    <div class="task-chip added"><span class="tid">T10</span><span class="ttitle">Promise-to-Pay + Collection Status</span><span class="tmark">✅</span></div>
+    <div class="task-chip added"><span class="tid">T11</span><span class="ttitle">AR ageing + Payment Terms</span><span class="tmark">✅</span></div>
+    <div class="task-chip added"><span class="tid">T12</span><span class="ttitle">Field Visit DocType</span><span class="tmark">✅</span></div>
+    <div class="task-chip added"><span class="tid">T13</span><span class="ttitle">GPS Check-In script</span><span class="tmark">✅</span></div>
+    <div class="task-chip pending"><span class="tid">T14</span><span class="ttitle">Mobile end-to-end test</span><span class="tmark">⏳</span></div>
+    <div class="task-chip added"><span class="tid">T15</span><span class="ttitle">Lead duplicate detection</span><span class="tmark">✅</span></div>
+    <div class="task-chip added"><span class="tid">T16</span><span class="ttitle">10 Pipeline stages</span><span class="tmark">✅</span></div>
+    <div class="task-chip added"><span class="tid">T17</span><span class="ttitle">Stakeholder + Competitor tables</span><span class="tmark">✅</span></div>
+    <div class="task-chip pending"><span class="tid">R01</span><span class="ttitle">Export fixtures — team commit</span><span class="tmark">⏳</span></div>
+  </div>
+</section>
+
+<!-- 04 — NAMING CHOICE -->
+<section class="slide" id="naming-alignment"><span class="slide-idx">04 / 26</span>
+  <div class="slide-eyebrow">Worth Deciding Live</div>
+  <h2>One Naming Choice</h2>
+  <p class="lede">Two spots use ERPNext's default wording, not your PDF's exact terms. No renaming done — your call today.</p>
+  <div class="naming-mini">
+    <div>
+      <h4>Sales Stage (Section 3) — easy relabel</h4>
+      <table>
+        <tr><th>ERPNext</th><th>Your PDF</th></tr>
+        <tr><td>Prospecting</td><td>Lead</td></tr>
+        <tr><td>Qualification</td><td>Qualified</td></tr>
+        <tr><td>Needs Analysis</td><td>Discovery</td></tr>
+        <tr><td>Value Proposition</td><td>Presentation</td></tr>
+        <tr><td>Proposal / Price Quote</td><td>Proposal</td></tr>
+        <tr><td>Negotiation / Review</td><td>Negotiation</td></tr>
+        <tr><td>Closed Won</td><td>Won</td></tr>
+      </table>
+    </div>
+    <div>
+      <h4>Lead Status (Section 2) — different data model</h4>
+      <table>
+        <tr><th>ERPNext</th><th>Your PDF</th></tr>
+        <tr><td>Lead</td><td>New</td></tr>
+        <tr><td>Open</td><td>Contacted</td></tr>
+        <tr><td>Replied</td><td>Qualified</td></tr>
+        <tr><td>Opportunity</td><td>Proposal Sent</td></tr>
+        <tr><td>Quotation</td><td>Negotiation</td></tr>
+        <tr><td>Converted</td><td>Won / Dormant</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CORE SECTIONS 1–12 ═══ -->
+
+<section class="slide"><span class="slide-idx">05 / 26</span>
+  <div class="sec-head"><span class="sec-num">SECTION 1</span><h2 style="margin:0;">CRM</h2><span class="status-pill initiated">🟡 Initiated</span></div>
+  <div class="ask-line">Centralized customer profiles. Full relationship history.</div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Turnover, competitor data</li><li>Account tier (A/B/C/Key/Strategic)</li><li>Live risk status</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Auto-logged interactions — no calls/emails are captured automatically yet, all logging is manual</li><li>Leadership view (CLV, top accounts) — no rollup report exists for account value today</li><li>Configurable Risk rule — "At Risk" is set manually; needs a real trigger rule plus a Sales Config screen to edit it without code</li></ul></div>
+  </div>
+  <div><span class="task-tag">Task List: T02, T03</span></div>
+  <div class="field-chips"><span class="field-chip">scale_sales_annual_turnover</span><span class="field-chip">scale_sales_competitor_products</span><span class="field-chip">scale_sales_account_classification</span><span class="field-chip">scale_sales_customer_status</span></div><div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Sales workspace</span><span class="fp-arrow">→</span><span class="fp-step">Customer</span><span class="fp-arrow">→</span><span class="fp-step">any record → More Information</span></div>
+  <div class="prd-tag">Sales Management Module.pdf — Section 1: CRM</div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/customer/new" target="_blank">See the fields live →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Naveen — Sales Rep</div><div class="uc-flow">Opens Nova Retail's record → sees "At Risk" status, ₹18L turnover → escalates to manager before the renewal call.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">06 / 26</span>
+  <div class="sec-head"><span class="sec-num">SECTION 2</span><h2 style="margin:0;">Lead Management</h2><span class="status-pill progressed">🟢 Progressed</span></div>
+  <div class="ask-line">Capture, qualify, auto-assign every lead.</div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Added</div><ul><li>10 lead sources</li><li>Full BANT scoring, auto Hot/Warm/Cold</li><li>Duplicate check</li><li>Territory auto-assign — live</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Lead Status wording — see Slide 04 — ERPNext's native labels don't match the PDF wording; awaiting your naming decision</li></ul></div>
+  </div>
+  <div><span class="task-tag">Task List: T01, T04, T05, T15</span></div>
+  <div class="field-chips"><span class="field-chip">scale_sales_budget</span><span class="field-chip">scale_sales_authority_level</span><span class="field-chip">scale_sales_need_description</span><span class="field-chip">scale_sales_expected_closure</span><span class="field-chip">scale_sales_lead_priority</span><span class="field-chip">scale_sales_utm_source</span><span class="field-chip">scale_sales_utm_campaign</span><span class="field-chip">scale_sales_ai_lead_score</span></div><div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Sales workspace</span><span class="fp-arrow">→</span><span class="fp-step">Lead</span><span class="fp-arrow">→</span><span class="fp-step">any lead</span></div>
+  <div class="prd-tag">Sales Management Module.pdf — Section 2: Lead Management</div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/lead/CRM-LEAD-2026-00016" target="_blank">Open a live lead →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Farhan — Field Sales Rep</div><div class="uc-flow">New lead from Website Form → auto-assigned by Territory (Karnataka) → BANT shows Hot → he calls within the hour.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">07 / 26</span>
+  <div class="sec-head"><span class="sec-num">SECTION 3</span><h2 style="margin:0;">Sales Pipeline</h2><span class="status-pill initiated">🟡 Initiated</span></div>
+  <div class="ask-line">9-stage pipeline. Full deal intelligence.</div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Stakeholder mapping per deal</li><li>Competitor tracking per deal</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Exact stage names — see Slide 04 — same naming-alignment decision, for the 10-stage Sales Stage master</li><li>Region/product breakdown — pipeline isn't sliced by region or product line yet, only by stage</li></ul></div>
+  </div>
+  <div><span class="task-tag">Task List: T16, T17</span></div>
+  <div class="field-chips"><span class="field-chip">scale_sales_stakeholders</span><span class="field-chip">scale_sales_competitors</span></div><div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Sales workspace</span><span class="fp-arrow">→</span><span class="fp-step">Opportunity</span><span class="fp-arrow">→</span><span class="fp-step">Nova Retail Pvt Ltd</span><span class="fp-arrow">→</span><span class="fp-step">Contacts tab</span></div>
+  <div class="prd-tag">Sales Management Module.pdf — Section 3: Sales Pipeline</div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/opportunity/CRM-OPP-2026-00001" target="_blank">Open the Nova Retail deal →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Naveen — Sales Rep</div><div class="uc-flow">Opens the ₹18L Nova Retail deal → checks Stakeholders → sees the CFO is the real decision-maker → pitches budget terms, not features.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">08 / 26</span>
+  <div class="sec-head"><span class="sec-num">SECTION 4</span><h2 style="margin:0;">Sales Forecasting</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">Weekly to annual forecasts. AI-driven scenarios.</div>
+  <div class="pending-box" style="max-width:460px;"><div class="box-label">Pending</div><ul><li>Not started — no forecasting logic (Best Case / Committed / Weighted) exists yet</li><li>Pipeline Value already live on Command Center — the one number forecasting would build on already works</li></ul></div>
+  <div><span class="task-tag">Not on current task list</span></div>
+  <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Sales workspace</span><span class="fp-arrow">→</span><span class="fp-step">Sales Command Center</span></div>
+  <div class="prd-tag">Sales Management Module.pdf — Section 4: Sales Forecasting</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Kabir — Sales Lead</div><div class="uc-flow">Opens Monday's forecast → compares Best Case vs Committed Revenue → adjusts the quarter target before the leadership call.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">09 / 26</span>
+  <div class="sec-head"><span class="sec-num">SECTION 5</span><h2 style="margin:0;">Sales Target Management</h2><span class="status-pill initiated">🟡 Initiated</span></div>
+  <div class="ask-line">Targets by team, product, region. Achievement tracking.</div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Sales Person hierarchy</li><li>Price Lists</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Target-setting + tracking — no way yet to assign a rep a number or measure Achievement % against it</li></ul></div>
+  </div>
+  <div><span class="task-tag">Task List: T07</span></div>
+  <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Sales workspace</span><span class="fp-arrow">→</span><span class="fp-step">Masters</span><span class="fp-arrow">→</span><span class="fp-step">Sales Person</span></div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/sales-person" target="_blank">See the Sales Person hierarchy →</a> <a class="btn btn-navy" href="http://scale.localhost:8000/app/price-list" target="_blank">See the new Price Lists →</a></div>
+  <div class="prd-tag">Sales Management Module.pdf — Section 5: Sales Target Management</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Meera — Sales Manager</div><div class="uc-flow">Sets Naveen's Q3 revenue target → tracks Achievement % weekly → flags the gap before quarter-end, not after.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">10 / 26</span>
+  <div class="sec-head"><span class="sec-num">SECTION 6</span><h2 style="margin:0;">Dealer Management</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">Dealer profiles. Scorecards. Activity log.</div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Added</div><ul><li>"Dealer" customer group tag</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Everything else — profiles, scorecards, and activity logs don't exist; only the Customer Group tag does</li></ul></div>
+  </div>
+  <div><span class="task-tag">Task List: T02 (partial)</span></div>
+  <div class="field-chips"><span class="field-chip">Customer Group = "Dealer"</span></div><div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Sales workspace</span><span class="fp-arrow">→</span><span class="fp-step">Masters</span><span class="fp-arrow">→</span><span class="fp-step">Customer Group</span></div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/customer-group" target="_blank">See the Dealer group →</a></div>
+  <div class="prd-tag">Sales Management Module.pdf — Section 6: Dealer Management</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Kabir — Channel Manager</div><div class="uc-flow">Opens the Dealer Scorecard → spots a dealer's stock turnover dropping → schedules a support visit that week.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">11 / 26</span>
+  <div class="sec-head"><span class="sec-num">SECTION 7</span><h2 style="margin:0;">Distributor Management</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">Distributor dashboard. Secondary sales tracking.</div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Added</div><ul><li>"Distributor" customer group tag</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Everything else — same gap as Dealer Management; only the Customer Group tag exists</li></ul></div>
+  </div>
+  <div><span class="task-tag">Task List: T02 (partial)</span></div>
+  <div class="field-chips"><span class="field-chip">Customer Group = "Distributor"</span></div><div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Sales workspace</span><span class="fp-arrow">→</span><span class="fp-step">Masters</span><span class="fp-arrow">→</span><span class="fp-step">Customer Group</span></div>
+  <div class="prd-tag">Sales Management Module.pdf — Section 7: Distributor Management</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Kabir — Channel Manager</div><div class="uc-flow">Checks the Distributor Dashboard → sees outstanding payments rising → flags it for the collections team.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">12 / 26</span>
+  <div class="sec-head"><span class="sec-num">SECTION 8</span><h2 style="margin:0;">Customer Visit Management</h2><span class="status-pill progressed">🟢 Progressed</span></div>
+  <div class="ask-line">Visit planning. GPS-verified check-ins. Best PDF match in this build.</div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Added</div><ul><li>One-tap GPS check-in / check-out</li><li>Notes, photo, outcome, follow-up</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Visit routes / calendar — no route planning or scheduling calendar yet</li><li>Manager analytics view — no rollup report of visit frequency, coverage, or outcomes across the team</li></ul></div>
+  </div>
+  <div><span class="task-tag">Task List: T12, T13</span></div>
+  <div class="field-chips"><span class="field-chip">check_in_time</span><span class="field-chip">check_in_latitude</span><span class="field-chip">check_in_longitude</span><span class="field-chip">check_out_time</span><span class="field-chip">outcome</span><span class="field-chip">follow_up_date</span><span class="field-chip">photo</span></div><div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Sales workspace</span><span class="fp-arrow">→</span><span class="fp-step">Field Visit</span><span class="fp-arrow">→</span><span class="fp-step">any record</span></div>
+  <div class="prd-tag">Sales Management Module.pdf — Section 8: Customer Visit Management</div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/field-visit/FV-2026-07-31-00001" target="_blank">Open a live field visit →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Farhan — Field Sales Rep</div><div class="uc-flow">Arrives at Nova Retail → taps Check In → GPS + timestamp logged → adds notes &amp; a photo → taps Check Out.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">13 / 26</span>
+  <div class="sec-head"><span class="sec-num">SECTION 9</span><h2 style="margin:0;">Quotation Management</h2><span class="status-pill progressed">🟢 Progressed</span></div>
+  <div class="ask-line">Templates. Discount approval. Full tracking.</div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Discount approval workflow</li><li>Manager → VP escalation</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Templates — no reusable Quotation templates for common deal types yet</li><li>Revision-history view — no side-by-side view of what changed across Quotation revisions</li></ul></div>
+  </div>
+  <div><span class="task-tag">Task List: T08</span></div>
+  <div class="field-chips"><span class="field-chip">workflow_state</span></div><div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Sales workspace</span><span class="fp-arrow">→</span><span class="fp-step">Quotation</span><span class="fp-arrow">→</span><span class="fp-step">any quote</span></div>
+  <div class="rule-box">
+    <div class="box-label">The Rule, As Built</div>
+    <ul>
+      <li>5 states: Draft → Pending Manager Approval → Pending VP Approval → Approved / Rejected</li>
+      <li>Discount ≤ 20% → Sales Manager can approve directly</li>
+      <li>Discount &gt; 20% → Manager cannot approve — must escalate to VP (Sales Master Manager)</li>
+      <li>Rejected → Sales User can Revise → back to Draft to try again</li>
+    </ul>
+    <div class="rb-note">Native Frappe Workflow — buttons appear automatically in the form toolbar per role, no custom code needed to render them.</div>
+  </div>
+  <div class="prd-tag">Sales Management Module.pdf — Section 9: Quotation Management</div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/quotation/SAL-QTN-2026-00002" target="_blank">Open a 12% quote — Manager approves →</a> <a class="btn btn-navy" href="http://scale.localhost:8000/app/quotation/SAL-QTN-2026-00003" target="_blank">Open a 25% quote — watch it escalate →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Naveen — Sales Rep</div><div class="uc-flow">Offers 25% off to close a deal → system routes it to the VP → can't be sent to the customer until approved.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">14 / 26</span>
+  <div class="sec-head"><span class="sec-num">SECTION 10</span><h2 style="margin:0;">Order Management</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">Quotation → Order → Dispatch → Invoice. Full tracking.</div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Workspace shortcut only</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Everything else — this is stock ERPNext behavior, zero custom fields/hooks/logic</li><li>Custom tracking dashboard — no AIWS-specific view beyond ERPNext's native order list/report</li></ul></div>
+  </div>
+  <div><span class="task-tag">Not on current task list</span></div>
+  <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Sales workspace</span><span class="fp-arrow">→</span><span class="fp-step">Transactions</span><span class="fp-arrow">→</span><span class="fp-step">Sales Order</span></div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/sales-order/SAL-ORD-2026-00001" target="_blank">See a native order (nothing customized) →</a></div>
+  <div class="prd-tag">Sales Management Module.pdf — Section 10: Order Management</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Meera — Sales Manager</div><div class="uc-flow">Checks the Order Ageing report → spots a delayed dispatch → calls production for an update same day.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">15 / 26</span>
+  <div class="sec-head"><span class="sec-num">SECTION 11</span><h2 style="margin:0;">Collection Management</h2><span class="status-pill progressed">🟢 Progressed</span></div>
+  <div class="ask-line">Track dues. Ageing. Automatic reminders.</div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Reminder templates (manual — not auto-escalating)</li><li>Promise-to-Pay tracking — live, wired</li><li>Ageing buckets (30/60/90/120)</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Actual auto-escalation job — nothing yet watches overdue invoices and auto-fires T-7→T-0→T+15 on its own</li><li>Customer/rep/region breakdown — collections aren't sliced by owner or region yet</li></ul></div>
+  </div>
+  <div><span class="task-tag">Task List: T09, T10, T11</span></div>
+  <div class="field-chips"><span class="field-chip">scale_sales_collection_status</span><span class="field-chip">scale_sales_promise_to_pay_date</span></div><div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Sales workspace</span><span class="fp-arrow">→</span><span class="fp-step">Sales Invoice</span><span class="fp-arrow">→</span><span class="fp-step">SINV-26-00001</span><span class="fp-arrow">→</span><span class="fp-step">More Info tab → Additional Info</span></div>
+  <div class="rule-box">
+    <div class="box-label">What's Actually Automated vs. Manual</div>
+    <ul>
+      <li><b>Promise-to-Pay + Collection Status</b> — real: auto-set to Pending on submit, auto-flips to Collected when fully paid</li>
+      <li><b>Dunning Types (reminder templates)</b> — data only, no automation: a rep manually creates each Dunning letter and picks a type</li>
+      <li><b>Ageing buckets</b> — real: Accounts Settings drives the 30/60/90/120 columns on the native Accounts Receivable report</li>
+    </ul>
+    <div class="rb-note">Both invoice fields sit on the <b>More Info</b> tab, inside the collapsed <b>Additional Info</b> section — not on Details. Frappe also auto-hides empty fields on a submitted document, so an unset Promise-to-Pay Date won't show at all until a value is entered.</div>
+  </div>
+  <div class="prd-tag">Sales Management Module.pdf — Section 11: Collection Management</div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/sales-invoice/SINV-26-00001" target="_blank">See the live invoice →</a> <a class="btn btn-navy" href="http://scale.localhost:8000/app/dunning-type" target="_blank">See reminder templates →</a> <a class="btn btn-navy" href="http://scale.localhost:8000/app/query-report/Accounts Receivable" target="_blank">See ageing buckets live →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Collections Team</div><div class="uc-flow">Invoice hits 15 days overdue → system auto-sends a dunning notice with interest → team steps in only if it's still ignored.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">16 / 26</span>
+  <div class="sec-head"><span class="sec-num">SECTION 12</span><h2 style="margin:0;">Sales Incentive Management</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">Auto-calculated incentives. Payout reports.</div>
+  <div class="pending-box" style="max-width:460px;"><div class="box-label">Pending</div><ul><li>Not started — no incentive calculation logic or payout report exists yet</li></ul></div>
+  <div><span class="task-tag">Not on current task list</span></div>
+  <div class="prd-tag">Sales Management Module.pdf — Section 12: Sales Incentive Management</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Meera — Sales Manager</div><div class="uc-flow">Month closes → system auto-calculates Naveen's collection bonus → payout report ready same day.</div></div>
+</section>
+
+<!-- ═══ AI SECTIONS 13–18 ═══ -->
+
+<section class="slide"><span class="slide-idx">17 / 26</span>
+  <div class="slide-eyebrow">AI Features</div>
+  <h2>Sections 13–18</h2>
+  <p class="lede">Six AI capabilities in your PDF. Foundation is scaffolded — four already run in rule-based form today.</p>
+</section>
+
+<section class="slide"><span class="slide-idx">18 / 26</span>
+  <div class="sec-head"><span class="sec-num">SECTION 13</span><h2 style="margin:0;">Sales Prediction</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">AI revenue, collection, and risk forecasts.</div>
+  <div class="pending-box" style="max-width:460px;"><div class="box-label">Pending</div><ul><li>Not started — no AI/statistical forecasting model wired yet</li></ul></div>
+  <div class="prd-tag">Sales Management Module.pdf — Section 13: Sales Prediction</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Kabir — Sales Lead</div><div class="uc-flow">AI flags Q3 revenue trending 12% below target → recommends where to focus this week.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">19 / 26</span>
+  <div class="sec-head"><span class="sec-num">SECTION 14</span><h2 style="margin:0;">Lost Opportunity Analysis</h2><span class="status-pill initiated">🟡 Initiated</span></div>
+  <div class="ask-line">AI explains why a deal was lost.</div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Trigger + LLM call wired</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Needs API key to run — the LLM call is wired but has no OpenAI/Claude key configured, so it can't execute yet</li></ul></div>
+  </div>
+  <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Sales workspace</span><span class="fp-arrow">→</span><span class="fp-step">Opportunity</span><span class="fp-arrow">→</span><span class="fp-step">any deal</span><span class="fp-arrow">→</span><span class="fp-step">set Status = Lost → Save</span></div>
+  <div class="prd-tag">Sales Management Module.pdf — Section 14: Lost Opportunity Analysis</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once API Key Is Live</div><div class="uc-persona">👤 Kabir — Sales Lead</div><div class="uc-flow">Deal marked Lost → analysis triggers automatically → surfaces the real reason: price, not product.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">20 / 26</span>
+  <div class="sec-head"><span class="sec-num">SECTION 15</span><h2 style="margin:0;">Lead Scoring</h2><span class="status-pill initiated">🟡 Initiated</span></div>
+  <div class="ask-line">AI scores every lead, 0–100.</div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Rule-based scoring — live today</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Engagement signals — score doesn't factor in email opens, website visits, or other behavioral data yet</li><li>True ML model — current scoring is rule-based (if/else on BANT fields), not a trained model</li></ul></div>
+  </div>
+  <div class="field-chips"><span class="field-chip">scale_sales_ai_lead_score</span><span class="field-chip">scale_sales_lead_priority</span></div><div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Sales workspace</span><span class="fp-arrow">→</span><span class="fp-step">Lead</span><span class="fp-arrow">→</span><span class="fp-step">any lead</span></div>
+  <div class="prd-tag">Sales Management Module.pdf — Section 15: Lead Scoring</div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/lead" target="_blank">See scored leads →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Farhan — Field Sales Rep</div><div class="uc-flow">Opens his lead list → sorts Hot first → skips the Cold ones entirely today.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">21 / 26</span>
+  <div class="sec-head"><span class="sec-num">SECTION 16</span><h2 style="margin:0;">Next Best Action</h2><span class="status-pill initiated">🟡 Initiated</span></div>
+  <div class="ask-line">System suggests the next move on every deal.</div>
+  <div class="added-box" style="max-width:500px;"><div class="box-label">Added — Verified Live</div><ul><li>"Continue nurturing — log a call..." — a real recommendation, on a real deal, right now</li></ul></div>
+  <div class="pending-box" style="max-width:500px;"><div class="box-label">Pending</div><ul><li>Configurable rule — thresholds and messages are hardcoded in <code>ai_utils.py</code>; needs a Sales Config screen to edit without a code change</li></ul></div>
+  <div class="field-chips"><span class="field-chip">scale_sales_next_action_recommendation</span></div><div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Sales workspace</span><span class="fp-arrow">→</span><span class="fp-step">Opportunity</span><span class="fp-arrow">→</span><span class="fp-step">Nova Retail Pvt Ltd</span><span class="fp-arrow">→</span><span class="fp-step">Contacts tab</span></div>
+  <div class="prd-tag">Sales Management Module.pdf — Section 16: Next Best Action</div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/opportunity/CRM-OPP-2026-00001" target="_blank">See the live recommendation →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Naveen — Sales Rep</div><div class="uc-flow">Opens the Nova Retail deal → sees "Continue nurturing — log a call" → acts on it immediately.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">22 / 26</span>
+  <div class="sec-head"><span class="sec-num">SECTION 17</span><h2 style="margin:0;">Win Probability</h2><span class="status-pill initiated">🟡 Initiated</span></div>
+  <div class="ask-line">Dynamic win % on every opportunity.</div>
+  <div class="added-box" style="max-width:500px;"><div class="box-label">Added</div><ul><li>Live rule-based engine, updates automatically</li></ul></div>
+  <div class="pending-box" style="max-width:500px;"><div class="box-label">Pending</div><ul><li>Configurable rule — stage weights and bonuses are hardcoded in <code>ai_utils.py</code>; needs a Sales Config screen to edit without a code change</li><li>Budget-confirmed bonus not wired — no field exists on Opportunity for this yet (Budget lives on Lead)</li></ul></div>
+  <div class="field-chips"><span class="field-chip">probability (native field)</span></div><div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Sales workspace</span><span class="fp-arrow">→</span><span class="fp-step">Opportunity</span><span class="fp-arrow">→</span><span class="fp-step">Nova Retail Pvt Ltd</span><span class="fp-arrow">→</span><span class="fp-step">Details tab</span></div>
+  <div class="prd-tag">Sales Management Module.pdf — Section 17: Win Probability</div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/opportunity/CRM-OPP-2026-00001" target="_blank">See it on a live deal →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Kabir — Sales Lead</div><div class="uc-flow">Scans the pipeline → sees a deal's win probability just dropped → checks in with the rep before it stalls.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">23 / 26</span>
+  <div class="sec-head"><span class="sec-num">SECTION 18</span><h2 style="margin:0;">AI Sales Coaching</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">Virtual coach. Personalized improvement plans.</div>
+  <div class="pending-box" style="max-width:460px;"><div class="box-label">Pending</div><ul><li>Not started — no coaching logic, personalized plans, or dashboard exist yet</li></ul></div>
+  <div class="prd-tag">Sales Management Module.pdf — Section 18: AI Sales Coaching</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Meera — Sales Manager</div><div class="uc-flow">Reviews Naveen's dashboard → sees high discount dependency → schedules a coaching session.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">24 / 26</span>
+  <div class="slide-eyebrow">Transparency Note</div>
+  <h2>One Thing NOT in Your PDF</h2>
+  <p class="lede" style="max-width:640px;">"NL Query Assistant" — ask a plain-English question, get an answer from live data. It's a Day-1 priority in our internal plan. It is <b>not one of your 18 PDF sections</b>. We're building it because we think it's genuinely useful — not because it was asked for.</p>
+</section>
+
+<!-- 25 — SUGGESTIONS -->
+<section class="slide"><span class="slide-idx">25 / 26</span>
+  <div class="slide-eyebrow">Ideas Worth Exploring</div>
+  <h2>Beyond the Requirement Doc</h2>
+  <ul class="chip-list">
+    <li class="sug-chip"><span class="sug-tag">Extends scope</span><b>WhatsApp Business Integration</b> — reminders &amp; lead capture where Indian B2B buyers actually respond.</li>
+    <li class="sug-chip"><span class="sug-tag">Extends scope</span><b>One-Page Pre-Visit Briefing</b> — last visit notes + open quotes + stakeholders, one screen, before check-in.</li>
+    <li class="sug-chip"><span class="sug-tag">New capability</span><b>Composite Customer Health Score</b> — spot churn risk before it's a lost-customer call.</li>
+    <li class="sug-chip"><span class="sug-tag">New capability</span><b>Competitor Intelligence Digest</b> — per-deal notes rolled into real market intelligence.</li>
+    <li class="sug-chip"><span class="sug-tag">Beyond scope</span><b>Smart Discount Guardrails</b> — data-driven discount ceilings, not fixed thresholds.</li>
+  </ul>
+</section>
+
+<!-- 26 — CLOSING -->
+<section class="slide closing-slide"><span class="slide-idx" style="color:rgba(255,255,255,.4);">26 / 26</span>
+  <div class="slide-eyebrow" style="color:#a5b4fc;">Go Deeper</div>
+  <h2>The Technical Detail</h2>
+  <div class="cta-row">
+    <a class="btn btn-white" href="sales-module.html">Full Requirement-Mapped Plan →</a>
+    <a class="btn btn-ghost-dark" href="sales-tracker.html">Team Implementation Tracker →</a>
+  </div>
+</section>
+
+</div>
+</main>
+</body>
+</html>

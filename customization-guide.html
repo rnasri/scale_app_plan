@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customization Guide — AIWS ERP</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="s-title">AIWS ERP</div>
+    <div class="s-sub">Implementation Master Plan</div>
+    <span class="s-tag">Claude / implementation</span>
+  </div>
+  <nav>
+    <div class="nav-group">Start Here</div>
+    <a class="nav-link" href="index.html">Program Overview</a>
+    <div class="nav-group">Foundation</div>
+    <a class="nav-link" href="frappe-verdict.html">Frappe Capability</a>
+    <a class="nav-link" href="architecture.html">System Architecture</a>
+    <div class="nav-group">Development Framework</div>
+    <a class="nav-link active" href="customization-guide.html">Customization Guide</a>
+    <a class="nav-link" href="developer-guide.html">Developer Workflow</a>
+    <div class="nav-group">Implementation</div>
+    <a class="nav-link" href="module-plan.html">All 13 Modules</a>
+    <a class="nav-link" href="sprint-plan.html">Parallel Sprint Plan</a>
+    <a class="nav-link" href="wave-1.html">Sales &amp; Marketing Detail</a>
+
+    <div class="nav-group">Module Plans</div>
+    <a class="nav-link" href="sales-module.html">Sales Module Plan</a>
+    <a class="nav-link" href="hr-module.html">HR Module Plan</a>
+    <a class="nav-link" href="accounts-module.html">Accounts Module Plan</a>
+    <a class="nav-link" href="finance-module.html">Finance Module Plan</a>
+    <a class="nav-link" href="pmo-module.html">PMO Module Plan</a>
+
+    <div class="nav-group">User Manual</div>
+    <a class="nav-link" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
+
+    <div class="nav-group">AI Strategy</div>
+    <a class="nav-link" href="ai-plan-strategy.html">AI Plan Strategy</a>
+
+    <div class="nav-group">Tracking</div>
+    <a class="nav-link" href="sales-tracker.html">Sales Tracker</a>
+    <a class="nav-link" href="sales-demo-showcase.html">Sales Showcase ✨</a>
+  </nav>
+  <div class="sidebar-foot">Pixaflip × SIL · AIWS ERP<br><a href="../../index.html">← AIWS Setup portal</a></div>
+</aside>
+
+<main>
+  <div class="breadcrumb">AIWS ERP <span>›</span> <a href="index.html">Plan</a> <span>›</span> Customization Guide</div>
+  <div class="page-header">
+    <h1>The Customization Decision Framework</h1>
+    <p class="subtitle">For every feature you need to implement, this guide tells you the right Frappe tool to use — and equally important, what not to do. This is the developer's daily reference.</p>
+  </div>
+
+  <div class="callout ci">
+    <p><strong>The golden rule:</strong> Exhaust each level before moving to the next. A feature achievable at Level 1 (fixtures) should never be implemented at Level 3 (Python controller). The lower the level, the cheaper it is to maintain and upgrade.</p>
+  </div>
+
+  <!-- ── HOW APPS COEXIST ── -->
+  <h2>How extension works — apps on the same bench</h2>
+
+  <p>Before the 5 levels, there is a foundation concept every AIWS developer must internalize: <strong>you never copy or modify ERPNext/CRM/HRMS code. You install your custom app alongside them on the same server.</strong> Both apps share the same database. Your app only contains the <em>differences</em>.</p>
+
+  <div class="callout cw">
+    <p><strong>The question every new developer asks:</strong> "If I create a new app for Sales or Finance, how does it get all the existing Frappe/ERPNext features?" — Answer: it doesn't need to, because both apps run on the same bench and share the same database. Frappe merges all DocTypes, hooks, and class overrides at boot time.</p>
+  </div>
+
+  <div class="grid g2" style="gap:16px;margin:20px 0;">
+    <div>
+      <h4>What you might think you need to do</h4>
+      <ul style="color:var(--red,#991b1b)">
+        <li>Copy ERPNext's <code>accounts/</code> folder into your app</li>
+        <li>Fork the erpnext repo and edit <code>payment_entry.py</code></li>
+        <li>Duplicate the Sales Invoice DocType</li>
+        <li>Maintain your own branch of ERPNext</li>
+      </ul>
+    </div>
+    <div>
+      <h4>What you actually do</h4>
+      <ul style="color:#166534">
+        <li>Install ERPNext and your app on the same bench</li>
+        <li>Add Custom Fields to ERPNext DocTypes via fixtures</li>
+        <li>Hook into ERPNext events via <code>hooks.py</code></li>
+        <li>Override classes by inheriting from ERPNext originals</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- bench diagram -->
+  <div style="margin:20px 0;text-align:center;">
+    <svg viewBox="0 0 680 300" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,sans-serif" style="max-width:100%;border-radius:8px;border:1px solid var(--border)">
+      <rect x="0" y="0" width="680" height="300" rx="10" fill="#f8fafc"/>
+      <text x="340" y="28" font-size="11" font-weight="700" fill="#64748b" text-anchor="middle">ONE BENCH · ONE SERVER</text>
+      <rect x="20" y="40" width="640" height="248" rx="8" fill="#fff" stroke="#e2e8f0" stroke-width="1.5"/>
+      <text x="340" y="62" font-size="10" font-weight="700" fill="#94a3b8" text-anchor="middle">SITE: client.aiws.com · shared MariaDB database</text>
+
+      <!-- Third-party apps row -->
+      <rect x="36"  y="72" width="108" height="58" rx="6" fill="#e0e7ff" stroke="#a5b4fc"/>
+      <text x="90"  y="97" font-size="11" font-weight="700" fill="#3730a3" text-anchor="middle">frappe</text>
+      <text x="90"  y="113" font-size="9" fill="#6366f1" text-anchor="middle">never touch</text>
+
+      <rect x="154" y="72" width="108" height="58" rx="6" fill="#dbeafe" stroke="#93c5fd"/>
+      <text x="208" y="97" font-size="11" font-weight="700" fill="#1e3a8a" text-anchor="middle">erpnext</text>
+      <text x="208" y="113" font-size="9" fill="#2563eb" text-anchor="middle">never touch</text>
+
+      <rect x="272" y="72" width="108" height="58" rx="6" fill="#dbeafe" stroke="#93c5fd"/>
+      <text x="326" y="97" font-size="11" font-weight="700" fill="#1e3a8a" text-anchor="middle">crm</text>
+      <text x="326" y="113" font-size="9" fill="#2563eb" text-anchor="middle">never touch</text>
+
+      <rect x="390" y="72" width="108" height="58" rx="6" fill="#dbeafe" stroke="#93c5fd"/>
+      <text x="444" y="97" font-size="11" font-weight="700" fill="#1e3a8a" text-anchor="middle">hrms</text>
+      <text x="444" y="113" font-size="9" fill="#2563eb" text-anchor="middle">never touch</text>
+
+      <!-- Your apps row -->
+      <rect x="36"  y="148" width="148" height="58" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
+      <text x="110" y="173" font-size="11" font-weight="700" fill="#166534" text-anchor="middle">scale_core</text>
+      <text x="110" y="189" font-size="9" fill="#15803d" text-anchor="middle">Theme · SSO · Audit</text>
+
+      <rect x="196" y="148" width="148" height="58" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
+      <text x="270" y="173" font-size="11" font-weight="700" fill="#166534" text-anchor="middle">scale_accounts</text>
+      <text x="270" y="189" font-size="9" fill="#15803d" text-anchor="middle">Extends Accounts</text>
+
+      <rect x="356" y="148" width="148" height="58" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
+      <text x="430" y="173" font-size="11" font-weight="700" fill="#166534" text-anchor="middle">scale_sales</text>
+      <text x="430" y="189" font-size="9" fill="#15803d" text-anchor="middle">Extends CRM</text>
+
+      <text x="510" y="180" font-size="10" font-weight="700" fill="#16a34a">← YOUR APPS</text>
+
+      <!-- Shared DB -->
+      <rect x="36" y="220" width="600" height="26" rx="5" fill="#f1f5f9" stroke="#cbd5e1"/>
+      <text x="336" y="237" font-size="10" fill="#64748b" text-anchor="middle">Shared MariaDB · all apps read &amp; write the same tables · no data copying needed</text>
+    </svg>
+  </div>
+
+  <h3>The 4 patterns for extending existing apps</h3>
+
+  <p>These 4 patterns cover every scenario where you need functionality from ERPNext/CRM/HRMS inside your custom app:</p>
+
+  <div class="grid g2" style="gap:16px;margin-bottom:24px;">
+
+    <div style="border:1px solid var(--border);border-radius:8px;padding:16px;">
+      <h4 style="margin-top:0">Pattern 1 — Custom Fields (Level 1)</h4>
+      <p style="font-size:13px;margin-bottom:8px;">Add fields to any existing DocType without touching its source. Stored as JSON fixtures in your app, imported automatically on install.</p>
+      <div class="code-block" style="font-size:11.5px"><pre style="margin:0">fixtures = [
+  {"dt": "Custom Field",
+   "filters": [["module","=","AIWS Finance"]]}
+]
+<span style="color:#64748b"># In hooks.py — fields auto-import on bench install-app</span></pre></div>
+    </div>
+
+    <div style="border:1px solid var(--border);border-radius:8px;padding:16px;">
+      <h4 style="margin-top:0">Pattern 2 — doc_events hooks (Level 2)</h4>
+      <p style="font-size:13px;margin-bottom:8px;">Intercept any lifecycle event (before_insert, validate, on_submit, on_cancel) on any existing DocType. Frappe calls your function automatically.</p>
+      <div class="code-block" style="font-size:11.5px"><pre style="margin:0">doc_events = {
+  "Sales Invoice": {
+    "on_submit": "scale_accounts.logic.compute_margin"
+  }
+}
+<span style="color:#64748b"># In hooks.py — no changes to Sales Invoice needed</span></pre></div>
+    </div>
+
+    <div style="border:1px solid var(--border);border-radius:8px;padding:16px;">
+      <h4 style="margin-top:0">Pattern 3 — Override class (Level 3)</h4>
+      <p style="font-size:13px;margin-bottom:8px;">Replace ERPNext's Python controller with your own subclass. Your class inherits all existing behaviour — you only override what needs to change.</p>
+      <div class="code-block" style="font-size:11.5px"><pre style="margin:0">override_doctype_class = {
+  "Payment Entry": "scale_accounts.overrides.payment_entry.ScalePaymentEntry"
+}
+<span style="color:#64748b"># Your class: class ScalePaymentEntry(PaymentEntry): ...</span></pre></div>
+    </div>
+
+    <div style="border:1px solid var(--border);border-radius:8px;padding:16px;">
+      <h4 style="margin-top:0">Pattern 4 — Link fields (Level 3)</h4>
+      <p style="font-size:13px;margin-bottom:8px;">New DocTypes in your app reference existing DocTypes via Link fields. The FK relationship gives you all ERPNext data without copying it.</p>
+      <div class="code-block" style="font-size:11.5px"><pre style="margin:0">{"fieldname": "supplier",
+ "fieldtype": "Link",
+ "options": "Supplier"}
+<span style="color:#64748b"># Pulls from ERPNext's Supplier DocType automatically</span></pre></div>
+    </div>
+
+  </div>
+
+  <div class="callout cg">
+    <p><strong>Think of it like browser extensions:</strong> Chrome already has all its built-in features. Your extension (custom app) doesn't copy Chrome's code — it hooks into Chrome's APIs and adds UI on top. When Chrome updates, your extension still works because it only uses the stable extension API, not Chrome's internals.</p>
+  </div>
+
+  <h2>The 5 levels of customization</h2>
+
+  <!-- Level 0 -->
+  <div class="level-block lv0">
+    <div class="level-head">
+      <div class="level-num">0</div>
+      <div>
+        <h3>Configuration — no code</h3>
+        <p style="margin:0;font-size:13px;color:var(--text-3)">Roles, workflows, print formats, workspace layouts, email templates</p>
+      </div>
+      <span class="when">Use when: standard ERPNext covers the business logic exactly</span>
+    </div>
+    <div class="level-body">
+      <div class="grid g2">
+        <div>
+          <h4>What you can configure without code</h4>
+          <ul>
+            <li><strong>Roles &amp; Permissions</strong> — who can read/write/submit/cancel which DocType</li>
+            <li><strong>Workflows</strong> — approval chains (Draft → Pending Approval → Approved → Submitted)</li>
+            <li><strong>Notification rules</strong> — email/WhatsApp alerts on doc status change</li>
+            <li><strong>Print formats</strong> — invoice/quotation layouts via the Print Format builder</li>
+            <li><strong>Workspaces</strong> — role-specific dashboards and quick-access links</li>
+            <li><strong>Email templates</strong> — transactional email body and subject</li>
+            <li><strong>Assignment rules</strong> — auto-assign leads/tickets by territory or round-robin</li>
+            <li><strong>Auto-naming</strong> — naming series (e.g. AIWS-SO-.YYYY.-.#####)</li>
+          </ul>
+        </div>
+        <div>
+          <h4>How to persist config as code (fixtures)</h4>
+          <p>Never rely on manual database configuration. All Level-0 config must be exported as <strong>fixtures</strong> inside your custom app so every new site gets it automatically on install.</p>
+          <div class="code-label">bench — export fixtures</div>
+          <pre><code><span class="cmt"># In your app's hooks.py, declare what to export:</span>
+fixtures = [
+  <span class="str">"Role"</span>,
+  <span class="str">"Workflow"</span>,
+  <span class="str">"Notification"</span>,
+  {<span class="str">"dt"</span>: <span class="str">"Print Format"</span>, <span class="str">"filters"</span>: [[<span class="str">"module"</span>, <span class="str">"="</span>, <span class="str">"AIWS Sales"</span>]]},
+]
+
+<span class="cmt"># Then export current site config:</span>
+bench --site mysite export-fixtures
+
+<span class="cmt"># Files land in: apps/scale_sales/scale_sales/fixtures/</span>
+<span class="cmt"># Commit them to Git. They auto-import on: bench install-app</span></code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Level 1 -->
+  <div class="level-block lv1">
+    <div class="level-head">
+      <div class="level-num">1</div>
+      <div>
+        <h3>Custom Fields &amp; Property Setters</h3>
+        <p style="margin:0;font-size:13px;color:var(--text-3)">Add fields to existing DocTypes; change field properties (label, mandatory, hidden, options)</p>
+      </div>
+      <span class="when">Use when: right DocType exists but needs extra fields</span>
+    </div>
+    <div class="level-body">
+      <div class="grid g2">
+        <div>
+          <h4>Custom Fields</h4>
+          <p>Add any field type (Data, Link, Currency, Table, etc.) to any existing ERPNext DocType without modifying core. The field is stored in the same MariaDB table as a new column.</p>
+          <div class="code-label">Python — create via migration patch</div>
+          <pre><code><span class="kw">import</span> frappe
+
+<span class="kw">def</span> <span class="fn">execute</span>():
+  <span class="cmt"># Create a custom field on Lead DocType</span>
+  frappe.get_doc({
+    <span class="str">"doctype"</span>: <span class="str">"Custom Field"</span>,
+    <span class="str">"dt"</span>: <span class="str">"Lead"</span>,
+    <span class="str">"fieldname"</span>: <span class="str">"bant_budget"</span>,
+    <span class="str">"fieldtype"</span>: <span class="str">"Currency"</span>,
+    <span class="str">"label"</span>: <span class="str">"BANT Budget"</span>,
+    <span class="str">"insert_after"</span>: <span class="str">"lead_name"</span>,
+    <span class="str">"module"</span>: <span class="str">"AIWS Sales"</span>
+  }).insert()
+  frappe.db.commit()</code></pre>
+          <p>Or define in JSON inside <code>scale_sales/custom_field/lead/bant_budget.json</code> and export as fixture.</p>
+        </div>
+        <div>
+          <h4>Property Setters</h4>
+          <p>Change any metadata property of an existing field: make it mandatory, hide it, change its label, add fetch-from, add options to a Select field.</p>
+          <div class="code-label">Python — property setter</div>
+          <pre><code>frappe.get_doc({
+  <span class="str">"doctype"</span>: <span class="str">"Property Setter"</span>,
+  <span class="str">"doc_type"</span>: <span class="str">"Customer"</span>,
+  <span class="str">"field_name"</span>: <span class="str">"customer_type"</span>,
+  <span class="str">"property"</span>: <span class="str">"options"</span>,
+  <span class="str">"value"</span>: <span class="str">"Company\nIndividual\nDealer\nDistributor"</span>,
+  <span class="str">"property_type"</span>: <span class="str">"Text"</span>
+}).insert()
+frappe.db.commit()
+
+<span class="cmt"># Always run as a patch, not interactively</span></code></pre>
+          <h4>Child Tables</h4>
+          <p>Add a repeating row section (child table) to any existing DocType. The child table is a separate Custom DocType with a Link back to the parent.</p>
+          <div class="code-label">Example: adding Competitors table to Opportunity</div>
+          <pre><code><span class="cmt"># 1. Create child DocType: "Opportunity Competitor"
+#    fields: competitor_name, product, strength, weakness
+# 2. Add Table field to Opportunity pointing to child
+#    fieldname: scale_competitors, options: Opportunity Competitor
+# Both done via fixtures — no manual steps on new sites</span></code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Level 2 -->
+  <div class="level-block lv2">
+    <div class="level-head">
+      <div class="level-num">2</div>
+      <div>
+        <h3>Server Scripts &amp; Client Scripts</h3>
+        <p style="margin:0;font-size:13px;color:var(--text-3)">Add business logic on DocType events — validated, calculated fields, UI behaviour, automations</p>
+      </div>
+      <span class="when">Use when: logic needed but no new data model required</span>
+    </div>
+    <div class="level-body">
+      <div class="grid g2">
+        <div>
+          <h4>Server Scripts (Python, runs server-side)</h4>
+          <p>Scripts attached to a DocType's lifecycle events: <code>before_insert</code>, <code>validate</code>, <code>on_submit</code>, <code>on_cancel</code>, <code>before_save</code>, etc. Or run on a schedule (<code>All</code>, <code>Daily</code>, <code>Weekly</code>).</p>
+          <div class="code-label">Server Script — duplicate Lead detection</div>
+          <pre><code><span class="cmt"># Event: "before_insert" on "Lead"</span>
+existing = frappe.db.get_all(<span class="str">"Lead"</span>,
+  filters={<span class="str">"mobile_no"</span>: doc.mobile_no, <span class="str">"status"</span>: [<span class="str">"!="</span>, <span class="str">"Lost"</span>]},
+  limit=1
+)
+<span class="kw">if</span> existing:
+  frappe.throw(
+    f<span class="str">"Active lead already exists for {doc.mobile_no}: {existing[0].name}"</span>
+  )</code></pre>
+          <p class="muted">Use Server Scripts for: validations, auto-calculations, sending notifications, creating linked documents, scheduling cron jobs.</p>
+        </div>
+        <div>
+          <h4>Client Scripts (JavaScript, runs in browser)</h4>
+          <p>Runs in the user's browser on DocType form load/change events. Used for: showing/hiding fields dynamically, auto-filling values, real-time validation messages, button actions.</p>
+          <div class="code-label">Client Script — dynamic field on Opportunity</div>
+          <pre><code><span class="cmt">// Event: refresh on Opportunity</span>
+frappe.ui.form.on(<span class="str">"Opportunity"</span>, {
+  refresh(frm) {
+    <span class="cmt">// Show probability next to stage</span>
+    frm.set_df_property(<span class="str">"probability"</span>, <span class="str">"description"</span>,
+      <span class="str">`Stage: ${frm.doc.sales_stage}`</span>);
+  },
+  sales_stage(frm) {
+    <span class="cmt">// Auto-set probability by stage</span>
+    <span class="kw">const</span> probs = {
+      <span class="str">"Discovery"</span>: 20, <span class="str">"Proposal"</span>: 40,
+      <span class="str">"Negotiation"</span>: 70, <span class="str">"Won"</span>: 100
+    };
+    frm.set_value(<span class="str">"probability"</span>, probs[frm.doc.sales_stage] || 10);
+  }
+});</code></pre>
+          <p class="muted"><strong>Important:</strong> Client Scripts are stored in the database (scriptable via bench) but should also be managed as fixtures for reproducibility.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Level 3 -->
+  <div class="level-block lv3">
+    <div class="level-head">
+      <div class="level-num">3</div>
+      <div>
+        <h3>Custom DocTypes with Python Controllers</h3>
+        <p style="margin:0;font-size:13px;color:var(--text-3)">New data entities with full business logic in a custom app</p>
+      </div>
+      <span class="when">Use when: the gap is too large for fields+scripts; a new first-class entity is needed</span>
+    </div>
+    <div class="level-body">
+      <div class="grid g2">
+        <div>
+          <h4>When to use a Custom DocType</h4>
+          <ul>
+            <li>The feature needs a new list view, form view, and reports</li>
+            <li>It has its own lifecycle (Draft → Active → Expired)</li>
+            <li>Multiple other DocTypes will link to it</li>
+            <li>It has child tables and complex validation logic</li>
+          </ul>
+          <p><strong>Examples in AIWS:</strong> Dealer Profile, AMC Contract, Field Service Ticket, Content Calendar, Fleet Vehicle, Logsheet.</p>
+          <h4>File structure</h4>
+          <div class="code-label">App structure for Custom DocType</div>
+          <pre><code>scale_sales/
+  scale_sales/
+    doctype/
+      dealer_profile/
+        dealer_profile.json     <span class="cmt"># DocType definition</span>
+        dealer_profile.py       <span class="cmt"># Controller</span>
+        dealer_profile.js       <span class="cmt"># Client script</span>
+        dealer_profile_list.js  <span class="cmt"># List view customization</span>
+        test_dealer_profile.py  <span class="cmt"># Unit tests</span></code></pre>
+        </div>
+        <div>
+          <h4>Python controller pattern</h4>
+          <div class="code-label">Python — Custom DocType controller</div>
+          <pre><code><span class="kw">import</span> frappe
+<span class="kw">from</span> frappe.model.document <span class="kw">import</span> Document
+
+<span class="kw">class</span> <span class="cls">DealerProfile</span>(Document):
+  <span class="kw">def</span> <span class="fn">validate</span>(self):
+    self._validate_credit_limit()
+    self._compute_scorecard()
+
+  <span class="kw">def</span> <span class="fn">on_submit</span>(self):
+    <span class="cmt"># Set as active dealer in Customer DocType</span>
+    frappe.db.set_value(
+      <span class="str">"Customer"</span>, self.customer,
+      <span class="str">"scale_dealer_profile"</span>, self.name
+    )
+
+  <span class="kw">def</span> <span class="fn">_validate_credit_limit</span>(self):
+    <span class="kw">if</span> self.credit_limit &lt; 0:
+      frappe.throw(<span class="str">"Credit limit cannot be negative"</span>)
+
+  <span class="kw">def</span> <span class="fn">_compute_scorecard</span>(self):
+    <span class="cmt"># pull last 3 months of orders + payments</span>
+    <span class="kw">pass</span></code></pre>
+          <h4>Controller lifecycle hooks</h4>
+          <p>Available hooks in order: <code>before_insert</code> → <code>validate</code> → <code>before_save</code> → <code>after_insert / on_update</code> → <code>on_submit</code> → <code>on_cancel</code> → <code>on_trash</code></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Level 4 -->
+  <div class="level-block lv4">
+    <div class="level-head">
+      <div class="level-num">4</div>
+      <div>
+        <h3>Custom Pages, APIs &amp; Background Jobs</h3>
+        <p style="margin:0;font-size:13px;color:var(--text-3)">Full-feature development: portals, mobile apps, integrations, scheduled batch jobs</p>
+      </div>
+      <span class="when">Use when: building something that cannot be a DocType form (external portals, integrations, heavy async)</span>
+    </div>
+    <div class="level-body">
+      <div class="grid g2">
+        <div>
+          <h4>Custom web pages (Frappe UI / Jinja)</h4>
+          <p>For client-facing portals or mobile-first interfaces, build with Frappe UI (Vue.js components) or Jinja templates.</p>
+          <div class="code-label">Frappe UI page (simplified)</div>
+          <pre><code><span class="cmt">&lt;!-- scale_sales/public/js/pages/DealerPortal.vue --&gt;</span>
+&lt;template&gt;
+  &lt;div class=<span class="str">"dealer-portal"</span>&gt;
+    &lt;OrderHistory :dealer=<span class="str">"dealerId"</span> /&gt;
+  &lt;/div&gt;
+&lt;/template&gt;</code></pre>
+          <h4>Scheduled background jobs</h4>
+          <div class="code-label">hooks.py — scheduler</div>
+          <pre><code>scheduler_events = {
+  <span class="str">"daily"</span>: [
+    <span class="str">"scale_sales.tasks.refresh_dealer_scorecards"</span>,
+    <span class="str">"scale_sales.tasks.flag_stale_leads"</span>,
+  ],
+  <span class="str">"weekly"</span>: [
+    <span class="str">"scale_sales.tasks.generate_target_variance_report"</span>
+  ]
+}</code></pre>
+        </div>
+        <div>
+          <h4>Third-party integrations</h4>
+          <p>For GentooLeads, EMS, Meeting Summarizer, or any external system, write an integration module in your custom app:</p>
+          <div class="code-label">Python — GentooLeads connector</div>
+          <pre><code><span class="kw">import</span> frappe, requests
+
+<span class="kw">def</span> <span class="fn">sync_gentooleads_campaigns</span>():
+  settings = frappe.get_doc(<span class="str">"AIWS Marketing Settings"</span>)
+  resp = requests.get(
+    f<span class="str">"{settings.gentooleads_url}/api/campaigns"</span>,
+    headers={<span class="str">"Authorization"</span>: f<span class="str">"Bearer {settings.get_password('api_key')}"</span>},
+    timeout=10
+  )
+  resp.raise_for_status()
+  <span class="kw">for</span> campaign <span class="kw">in</span> resp.json()[<span class="str">"campaigns"</span>]:
+    _upsert_campaign(campaign)
+
+<span class="kw">def</span> <span class="fn">_upsert_campaign</span>(data):
+  <span class="kw">if not</span> frappe.db.exists(<span class="str">"Campaign"</span>, data[<span class="str">"id"</span>]):
+    frappe.get_doc({<span class="str">"doctype"</span>: <span class="str">"Campaign"</span>, ...}).insert()
+  <span class="kw">else</span>:
+    frappe.db.set_value(<span class="str">"Campaign"</span>, data[<span class="str">"id"</span>], ...)</code></pre>
+          <p>Store API keys in <code>Password</code> type fields on a Settings DocType — never in code or env files.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section">
+
+  <h2>What NOT to do — anti-patterns</h2>
+  <div class="grid g2">
+    <div class="card">
+      <h3>Never do these</h3>
+      <ul class="anti">
+        <li>Modify any file inside <code>apps/frappe/</code>, <code>apps/erpnext/</code>, <code>apps/hrms/</code>, or <code>apps/crm/</code> directly</li>
+        <li>Write raw SQL directly against the ERP database outside of <code>frappe.db</code> methods</li>
+        <li>Hardcode tenant IDs, site names, or URLs in app code</li>
+        <li>Use <code>frappe.db.sql("UPDATE ...")</code> for business logic that should be a document operation</li>
+        <li>Skip tests because "it's just a script" — every Server Script must have a corresponding test</li>
+        <li>Use <code>frappe.flags.ignore_permissions = True</code> without a documented reason in a comment</li>
+        <li>Store secrets (API keys, passwords) in Python files or environment variables — use the Password fieldtype</li>
+        <li>Import from one AIWS app into another AIWS app — use the public API surface (REST or frappe.get_doc)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Upgrade safety contract</h3>
+      <p>These rules keep the system safely upgradeable to future ERPNext versions:</p>
+      <ul class="chk">
+        <li>All custom code lives in apps under <code>apps/scale_*/</code> only</li>
+        <li>Custom fields on standard DocTypes use a prefix: <code>scale_</code> (e.g. <code>scale_bant_budget</code>)</li>
+        <li>When an ERPNext upgrade changes a standard DocType, your custom field survives because it's separate</li>
+        <li>Server Scripts use only public Frappe APIs (<code>frappe.db.*</code>, <code>frappe.get_doc()</code>, <code>frappe.throw()</code>)</li>
+        <li>Before any ERPNext version upgrade, run the test suite on a clone of production</li>
+        <li>Lock the ERPNext version in <code>apps.json</code> / <code>pyproject.toml</code> — don't let it float</li>
+      </ul>
+      <div class="code-label">pyproject.toml — version pin</div>
+      <pre><code>[tool.bench]
+frappe  = <span class="str">"version-15"</span>
+erpnext = <span class="str">"version-15"</span>
+hrms    = <span class="str">"version-15"</span>
+crm     = <span class="str">"main"</span>          <span class="cmt"># CRM uses main branch</span></code></pre>
+    </div>
+  </div>
+
+  <hr class="section">
+
+  <h2>Decision flowchart — quick reference</h2>
+  <p>For any feature request, walk down this chain:</p>
+  <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-lg);padding:24px;margin-bottom:20px;">
+    <p style="font-weight:700;color:var(--navy);margin-bottom:16px;">Q: "Does ERPNext already do this?"</p>
+    <div class="grid g2" style="margin-bottom:16px;">
+      <div style="background:var(--surface);border:1px solid var(--green-bdr);border-radius:var(--r);padding:14px;">
+        <p style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-4);margin-bottom:4px;">YES — exactly as needed</p>
+        <p style="font-weight:700;color:var(--green);margin-bottom:4px;">→ Level 0: Configure it</p>
+        <p class="muted">Enable module, set permissions, create workflow, export as fixtures.</p>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;">
+        <p style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-4);margin-bottom:4px;">YES — but needs extra fields</p>
+        <p style="font-weight:700;color:#1d4ed8;margin-bottom:4px;">→ Level 1: Custom Fields</p>
+        <p class="muted">Add fields via Custom Field fixture. Use <code>scale_</code> prefix.</p>
+      </div>
+    </div>
+    <div class="grid g2" style="margin-bottom:16px;">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;">
+        <p style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-4);margin-bottom:4px;">YES — but needs logic changes</p>
+        <p style="font-weight:700;color:#1d4ed8;margin-bottom:4px;">→ Level 2: Server/Client Script</p>
+        <p class="muted">Hook into DocType lifecycle. Keep scripts in fixtures. Write tests.</p>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--amber-bdr);border-radius:var(--r);padding:14px;">
+        <p style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-4);margin-bottom:4px;">NO — entirely new entity needed</p>
+        <p style="font-weight:700;color:var(--amber);margin-bottom:4px;">→ Level 3: Custom DocType</p>
+        <p class="muted">New DocType + Python controller + client script in custom app. Tests required.</p>
+      </div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--purple-bdr);border-radius:var(--r);padding:14px;">
+      <p style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-4);margin-bottom:4px;">NO — needs a UI page, mobile app, or external integration</p>
+      <p style="font-weight:700;color:var(--purple);margin-bottom:4px;">→ Level 4: Custom Page / API / Integration</p>
+      <p class="muted">Frappe UI page, whitelisted API, background job, or third-party connector in custom app. Full test coverage.</p>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <a class="prev" href="architecture.html">← System Architecture</a>
+    <a class="next" href="developer-guide.html">Developer Workflow →</a>
+  </div>
+</main>
+</body>
+</html>

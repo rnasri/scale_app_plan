@@ -1,0 +1,1863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sales Module — Implementation Plan | AIWS ERP</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+/* ── Feature pill colours ── */
+.pill-ootb    { background:#d1fae5; color:#065f46; }
+.pill-refine  { background:#dbeafe; color:#1e40af; }
+.pill-custom  { background:#fef3c7; color:#92400e; }
+.pill-ai      { background:#ede9fe; color:#5b21b6; }
+.pill-int     { background:#fce7f3; color:#9d174d; }
+
+/* ── Priority badges ── */
+.bp1 { background:#fee2e2; color:#991b1b; }
+.bp2 { background:#fef3c7; color:#78350f; }
+.bp3 { background:#f0f9ff; color:#075985; }
+
+/* ── Status dots ── */
+.st-done { color:#10b981; font-weight:700; }
+.st-wip  { color:#f59e0b; font-weight:700; }
+.st-ns   { color:#9ca3af; }
+
+/* ── Feature accordion ── */
+details.feat { border:1px solid #e5e7eb; border-radius:8px; margin-bottom:8px; }
+details.feat summary { cursor:pointer; padding:12px 16px; font-weight:600; font-size:.93rem; list-style:none; display:flex; align-items:center; gap:8px; }
+details.feat summary::-webkit-details-marker { display:none; }
+details.feat summary .feat-arrow { margin-left:auto; font-size:.8rem; color:#6b7280; transition:transform .2s; }
+details.feat[open] summary .feat-arrow { transform:rotate(90deg); }
+details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
+
+/* ── Task list (printable) ── */
+.task-card { border:1px solid #e5e7eb; border-radius:10px; padding:16px 20px; margin-bottom:14px; page-break-inside:avoid; }
+.task-card h4 { margin:0 0 6px; font-size:.97rem; }
+.task-card .task-meta { font-size:.8rem; color:#6b7280; margin-bottom:10px; }
+.task-card .task-steps { padding-left:18px; margin:6px 0 0; }
+.task-card .task-steps li { margin-bottom:5px; font-size:.88rem; line-height:1.5; }
+.task-card .task-note  { font-size:.82rem; background:#f8fafc; border-left:3px solid #6366f1; padding:6px 10px; margin-top:10px; border-radius:0 4px 4px 0; }
+.task-context { background:#f0f9ff; border:1px solid #bae6fd; border-radius:8px; padding:12px 14px; margin:10px 0 12px; font-size:.86rem; line-height:1.6; }
+.task-context p { margin:0 0 5px; }
+.task-context p:last-child { margin:0; }
+.ctx-label { font-weight:700; color:#0369a1; }
+.ctx-ref { display:inline-block; font-size:.78rem; background:#e0f2fe; color:#0369a1; border-radius:4px; padding:2px 8px; margin-top:4px; font-weight:600; }
+.task-header { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.task-id { font-weight:700; font-size:.8rem; background:#1e3a5f; color:#fff; padding:2px 8px; border-radius:4px; }
+.task-date { font-size:.78rem; color:#6b7280; }
+.task-assign { font-size:.78rem; background:#ede9fe; color:#5b21b6; padding:2px 8px; border-radius:4px; }
+.print-btn { background:#1e3a5f; color:#fff; border:none; padding:8px 20px; border-radius:6px; cursor:pointer; font-size:.85rem; margin-bottom:20px; }
+.print-btn:hover { background:#2d5580; }
+
+/* ── Week headings ── */
+.week-label { background:#1e3a5f; color:#fff; padding:8px 16px; border-radius:6px; font-weight:700; font-size:.88rem; margin:24px 0 12px; }
+
+/* ── Progress tracker ── */
+.prog-bar-wrap { background:#f3f4f6; border-radius:6px; height:8px; margin-top:4px; }
+.prog-bar { background:#10b981; border-radius:6px; height:8px; }
+
+/* ── Print: only show the developer section ── */
+@media print {
+  .sidebar, .breadcrumb, .page-header, .no-print, .page-nav { display:none !important; }
+  main { margin:0 !important; padding:0 !important; max-width:none !important; }
+  .print-section { display:block !important; }
+  .print-section-header { border-bottom:2px solid #000; padding-bottom:12px; margin-bottom:20px; }
+  body { font-size:11pt; }
+  .task-card { border:1px solid #ccc; }
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="s-title">AIWS ERP</div>
+    <div class="s-sub">Implementation Master Plan</div>
+    <span class="s-tag">Claude / implementation</span>
+  </div>
+  <nav>
+    <div class="nav-group">Start Here</div>
+    <a class="nav-link" href="index.html">Program Overview</a>
+
+    <div class="nav-group">Foundation</div>
+    <a class="nav-link" href="frappe-verdict.html">Frappe Capability</a>
+    <a class="nav-link" href="architecture.html">System Architecture</a>
+
+    <div class="nav-group">Development Framework</div>
+    <a class="nav-link" href="customization-guide.html">Customization Guide</a>
+    <a class="nav-link" href="developer-guide.html">Developer Workflow</a>
+
+    <div class="nav-group">Implementation</div>
+    <a class="nav-link" href="module-plan.html">All 13 Modules</a>
+    <a class="nav-link" href="sprint-plan.html">Parallel Sprint Plan</a>
+    <a class="nav-link" href="wave-1.html">Sales &amp; Marketing Detail</a>
+
+    <div class="nav-group">Module Plans</div>
+    <a class="nav-link active" href="sales-module.html">Sales Module Plan</a>
+    <a class="nav-link" href="hr-module.html">HR Module Plan</a>
+    <a class="nav-link" href="accounts-module.html">Accounts Module Plan</a>
+    <a class="nav-link" href="finance-module.html">Finance Module Plan</a>
+    <a class="nav-link" href="pmo-module.html">PMO Module Plan</a>
+
+    <div class="nav-group">User Manual</div>
+    <a class="nav-link" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
+
+    <div class="nav-group">AI Strategy</div>
+    <a class="nav-link" href="ai-plan-strategy.html">AI Plan Strategy</a>
+
+    <div class="nav-group">Tracking</div>
+    <a class="nav-link" href="sales-tracker.html">Sales Tracker</a>
+    <a class="nav-link" href="sales-demo-showcase.html">Sales Showcase ✨</a>
+  </nav>
+  <div class="sidebar-foot">
+    Pixaflip × SIL · AIWS ERP<br>
+    <a href="../../index.html">← AIWS Setup portal</a>
+  </div>
+</aside>
+
+<main>
+<div class="breadcrumb">AIWS ERP <span>›</span> Sales Module Implementation Plan</div>
+
+<!-- ═══════════════════════════════════════════
+     1. PAGE HEADER
+═══════════════════════════════════════════ -->
+<div class="page-header no-print">
+  <h1>Sales Module — Implementation Plan</h1>
+  <p class="subtitle">20 features · <code>scale_sales</code> app · Module Lead: Raghib (Sales &amp; Marketing) · Dev: Archit + Muhammad · AI Head: Veeren · Jul 24 → Nov 13, 2026</p>
+</div>
+
+<div class="summary-strip no-print">
+  <div class="s-stat"><div class="sv">19</div><div class="sl">Sales Features</div></div>
+  <div class="s-stat"><div class="sv">7</div><div class="sl">OOTB / Native</div></div>
+  <div class="s-stat"><div class="sv">6</div><div class="sl">Config + Extend</div></div>
+  <div class="s-stat"><div class="sv">6</div><div class="sl">Custom Build</div></div>
+  <div class="s-stat"><div class="sv">8</div><div class="sl">AI Features</div></div>
+</div>
+
+<div class="callout ci no-print">
+  <p><strong>Context file:</strong> <code>Claude/implementation/sales-context.json</code> tracks the status of every feature and developer task. Update <code>"status"</code> to <code>"in_progress"</code> or <code>"completed"</code> as work progresses so future sessions resume correctly.</p>
+</div>
+
+<div style="background:#ecfdf5;border:2px solid #6ee7b7;border-radius:10px;padding:16px 20px;margin-bottom:18px;font-size:.9rem;line-height:1.7;" class="no-print">
+  <p style="margin:0 0 8px;font-weight:700;color:#065f46;">✅ Update — sales_demo branch merged to main</p>
+  <p style="margin:0 0 6px;color:#064e3b;">A solo POC build (branch <code>sales_demo</code>) covered most of T01–T17 ahead of schedule and has been reviewed, fixed up, and merged into <code>main</code>. <strong>Read this before starting any task below</strong> — several are already done, several were built <em>differently</em> than the steps describe (flagged inline), and a few things need a decision before continuing.</p>
+  <p style="margin:0 0 6px;color:#064e3b;"><strong>Every task card below now has a status line</strong> right under its header: <span class="st-done">✅ Done</span>, <span class="st-wip">🟡 Partially done</span>, or <span class="st-ns">◯ Not started</span> — with a note on what to check or what deviated from the original steps.</p>
+  <p style="margin:0;color:#064e3b;"><strong>Start here:</strong> <code>apps/scale_sales/README.md</code> (what's built, quick commands) and <code>apps/scale_sales/TESTING.md</code> (click-through checklist) — both new, both on <code>main</code>. Pull, run <code>bench migrate</code>, and go straight to the "Not started" / "Partially done" items — no need to redo anything marked ✅ Done.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     2. MODULE OBJECTIVE
+═══════════════════════════════════════════ -->
+<h2 class="no-print">Module Objective</h2>
+<p class="no-print">The Sales Management Module provides complete visibility into the sales lifecycle — from lead generation to revenue collection — while enabling sales teams to improve productivity and helping leadership make timely, data-driven decisions. It must ensure: every opportunity is tracked, no lead is lost, sales forecasting is reliable, activities are monitored, collections are visible, and AI continuously recommends actions to improve performance.</p>
+
+<!-- ═══════════════════════════════════════════
+     3. FEATURE MAP — 19 FEATURES
+═══════════════════════════════════════════ -->
+<h2 class="no-print">Feature Map — All 19 Sales Features</h2>
+<div class="callout ci no-print">
+  <p><strong>Platform decision:</strong> Frappe CRM owns acquisition &amp; relationship management (Leads, Opportunities, Pipeline). ERPNext owns commercial operations (Quotations, Sales Orders, Invoices, Collections). <code>scale_sales</code> custom app owns everything that doesn't exist natively (Field Sales, Dealer/Distributor management, Incentive engine, AI layer).</p>
+</div>
+
+<div class="tbl-wrap no-print">
+  <table>
+    <tr><th>#</th><th>Feature</th><th>Priority</th><th>Platform</th><th>Classification</th><th>Effort</th><th>Dates</th></tr>
+    <tr><td>01</td><td><strong>CRM — Customer Repository</strong></td><td><span class="pill bp1">P1</span></td><td>ERPNext + Frappe CRM</td><td><span class="pill pill-ootb">OOTB + Refine</span></td><td>Low</td><td>Jul 24–27</td></tr>
+    <tr><td>02</td><td><strong>Lead Management</strong></td><td><span class="pill bp1">P1</span></td><td>Frappe CRM</td><td><span class="pill pill-ootb">OOTB + Integration</span></td><td>Low</td><td>Jul 28–30</td></tr>
+    <tr><td>03</td><td>Sales Pipeline</td><td><span class="pill bp2">P2</span></td><td>Frappe CRM Kanban</td><td><span class="pill pill-ootb">OOTB + Refine</span></td><td>Low</td><td>Aug 28–29</td></tr>
+    <tr><td>04</td><td>Sales Forecasting</td><td><span class="pill bp2">P2</span></td><td>ERPNext Script Report</td><td><span class="pill pill-refine">Refine + Script</span></td><td>Medium</td><td>Sep 3–7</td></tr>
+    <tr><td>05</td><td>Sales Target Management</td><td><span class="pill bp2">P2</span></td><td>ERPNext Sales Person</td><td><span class="pill pill-ootb">OOTB + Refine</span></td><td>Low</td><td>Aug 31–Sep 2</td></tr>
+    <tr><td>06</td><td>Dealer Management</td><td><span class="pill bp2">P2</span></td><td>ERPNext + scale_sales</td><td><span class="pill pill-refine">Refine + Extension</span></td><td>Low</td><td>Aug 24–27</td></tr>
+    <tr><td>07</td><td><strong>Distributor Management</strong></td><td><span class="pill bp1">P1</span></td><td>scale_sales Custom</td><td><span class="pill pill-custom">Custom DocTypes</span></td><td>Medium</td><td>Aug 13–20</td></tr>
+    <tr><td>08</td><td><strong>Customer Visit Management</strong></td><td><span class="pill bp1">P1</span></td><td>scale_sales Custom</td><td><span class="pill pill-custom">Custom + JS GPS</span></td><td>Medium</td><td>Aug 6–12</td></tr>
+    <tr><td>09</td><td><strong>Quotation Management</strong></td><td><span class="pill bp1">P1</span></td><td>ERPNext Native</td><td><span class="pill pill-ootb">OOTB + Refine</span></td><td>Low</td><td>Jul 31–Aug 1</td></tr>
+    <tr><td>10</td><td>Order Management</td><td><span class="pill bp2">P2</span></td><td>ERPNext Native</td><td><span class="pill pill-ootb">Native OOTB</span></td><td>Low</td><td>Aug 21–22</td></tr>
+    <tr><td>11</td><td><strong>Collection Management</strong></td><td><span class="pill bp1">P1</span></td><td>ERPNext Dunning + AR</td><td><span class="pill pill-ootb">OOTB + Refine</span></td><td>Low</td><td>Aug 3–5</td></tr>
+    <tr><td>12</td><td>Sales Incentive Management</td><td><span class="pill bp2">P2</span></td><td>scale_sales Calc Engine</td><td><span class="pill pill-custom">Refine + Script</span></td><td>Medium</td><td>Sep 8–15</td></tr>
+    <tr><td>13</td><td><strong>AI Features Foundation</strong></td><td><span class="pill bp1">P1</span></td><td>Python + LLM API</td><td><span class="pill pill-ai">AI Suite</span></td><td>Medium</td><td>Jul 24–28</td></tr>
+    <tr><td>14</td><td>AI Sales Prediction</td><td><span class="pill bp2">P2</span></td><td>Python Script</td><td><span class="pill pill-ai">AI Feature</span></td><td>Medium</td><td>Aug 5–8</td></tr>
+    <tr><td>15</td><td><strong>AI Lost Opportunity Analysis</strong></td><td><span class="pill bp1">P1</span></td><td>Python + LLM API</td><td><span class="pill pill-ai">AI Feature</span></td><td>Medium</td><td>Jul 29–31</td></tr>
+    <tr><td>16</td><td>AI Lead Scoring</td><td><span class="pill bp2">P2</span></td><td>Python Script</td><td><span class="pill pill-ai">AI Feature</span></td><td>Low-Med</td><td>Aug 10–12</td></tr>
+    <tr><td>17</td><td><strong>AI Next Best Action</strong></td><td><span class="pill bp1">P1</span></td><td>Python Script</td><td><span class="pill pill-ai">AI Feature</span></td><td>Medium</td><td>Aug 1–4</td></tr>
+    <tr><td>18</td><td>AI Win Probability</td><td><span class="pill bp3">P3</span></td><td>Python Script</td><td><span class="pill pill-ai">AI Feature</span></td><td>Low-Med</td><td>Aug 13–15</td></tr>
+    <tr><td>19</td><td>AI Sales Coaching</td><td><span class="pill bp3">P3</span></td><td>Python + LLM API</td><td><span class="pill pill-ai">AI Feature</span></td><td>Medium</td><td>Aug 17–20</td></tr>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     4. PHASE PLAN
+═══════════════════════════════════════════ -->
+<hr class="section no-print">
+<h2 class="no-print">Phase-by-Phase Implementation</h2>
+
+<div class="callout cg no-print">
+  <p><strong>Four phases run sequentially per feature group.</strong> Phase 1 (native config) must complete before Phase 2 (custom DocTypes) starts. Phase 4 (AI) can run in parallel with Phase 2 since it adds fields and scripts on top of existing records, not new DocTypes.</p>
+</div>
+
+<div class="no-print">
+
+<h3>Phase 1 — Foundation &amp; Native Configuration (Jul 24 – Aug 5)</h3>
+<p>Set up everything that ERPNext/Frappe CRM gives you for free. No custom code yet — only configuration in the admin UI.</p>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> SALES-01 · CRM Customer Repository <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Customer master, Contact, Address, Communication timeline (calls/emails/meetings auto-logged), Lead-to-Customer conversion, standard reports.</p>
+    <p><strong>What to add in <code>scale_sales</code>:</strong></p>
+    <ul>
+      <li>Custom field <code>scale_sales_annual_turnover</code> (Currency) on Customer — captures company size for scoring</li>
+      <li>Custom field <code>scale_sales_competitor_products</code> (Data) on Customer</li>
+      <li>Custom field <code>scale_sales_account_classification</code> (Select: A Class / B Class / C Class / Key Account / Strategic Account)</li>
+      <li>Custom field <code>scale_sales_customer_status</code> (Select: Active / Inactive / Prospect / At Risk / Churned)</li>
+      <li>Script Report: <em>CLV &amp; Account Health</em> — queries SI history to calculate lifetime value, last order date, and risk score</li>
+    </ul>
+    <p><strong>Frappe OOTB coverage:</strong> 85% — only the 4 custom fields and CLV report need work.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> SALES-02 · Lead Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Lead DocType with source tracking, assignment rules (round-robin / load-based), Lead status workflow, Web Form capture, Lead Source master.</p>
+    <p><strong>What to add:</strong></p>
+    <ul>
+      <li>BANT fields on Lead: <code>scale_sales_budget</code>, <code>scale_sales_authority_level</code>, <code>scale_sales_need_description</code>, <code>scale_sales_expected_closure</code></li>
+      <li>UTM fields: <code>scale_sales_utm_source</code>, <code>scale_sales_utm_medium</code>, <code>scale_sales_utm_campaign</code></li>
+      <li>Assignment Rule: auto-assign by Territory + workload</li>
+      <li>Server Script (15 lines): duplicate detection on <code>before_insert</code> — checks email + mobile against existing Leads</li>
+    </ul>
+    <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;padding:12px 14px;margin:12px 0 0;font-size:.86rem;line-height:1.6;">
+      <p style="margin:0 0 6px;font-weight:700;color:#92400e;">⚠ Decision Pending — Paid Ad Lead Capture (Meta / Google Ads)</p>
+      <p style="margin:0 0 6px;">The scope document (Column L, Row 20) specifies using Frappe's native REST webhook to receive Meta Lead Ads and Google Ads payloads directly into the Lead DocType. The UTM fields above (<code>utm_source</code>, <code>utm_medium</code>, <code>utm_campaign</code>) are ready to store the data once it arrives — but the webhook endpoint setup itself is <strong>not yet a task in this plan.</strong></p>
+      <p style="margin:0 0 6px;"><strong>What's needed:</strong> A Frappe API whitelist endpoint (<code>@frappe.whitelist(allow_guest=True)</code>) that receives the ad platform's JSON payload, maps fields, and creates/updates a Lead. This is approximately 30 lines of Python + configuration of the webhook URL in Meta Business Manager and/or Google Ads.</p>
+      <p style="margin:0 0 4px;"><strong>Decide before configuring Lead Sources:</strong></p>
+      <ul style="margin:4px 0 0 16px;padding:0;">
+        <li>Are we running paid ad campaigns from Day 1, or is this a Phase 2 integration?</li>
+        <li>If yes — a new task should be added (assign to Muhammad, ~1 day, depends on T04).</li>
+        <li>If no — the UTM fields still capture source attribution manually; no extra task needed now.</li>
+      </ul>
+    </div>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> SALES-09 · Quotation Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Quotation DocType is 100% native — pricing rules, tax templates, versioning/amendments, print formats, conversion to Sales Order.</p>
+    <p><strong>What to add:</strong></p>
+    <ul>
+      <li>Frappe Workflow on Quotation: Draft → Pending Approval → Approved → Sent. Rule: discount &gt;10% routes to Sales Manager; &gt;20% to VP Sales.</li>
+      <li>Jinja HTML Print Format: branded company Quotation PDF with logo, clean line items, validity date, terms section</li>
+      <li>Notification Rule: auto-email PDF on approval with WhatsApp share option</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> SALES-11 · Collection Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Sales Invoice, Payment Entry, Accounts Receivable Aging report, Dunning module (reminders + notices), Credit Limit enforcement on Sales Order.</p>
+    <p><strong>What to add:</strong></p>
+    <ul>
+      <li>Custom fields on Sales Invoice: <code>scale_sales_promise_to_pay_date</code> (Date), <code>scale_sales_collection_status</code> (Select: Pending / Promised / Collected / Written Off)</li>
+      <li>Configure Dunning types: <em>T−7 Reminder</em>, <em>Due Date Alert</em>, <em>T+15 Dunning Notice</em></li>
+      <li>Notification Rules: automated SMS/Email payment reminders using standard Frappe Notification engine</li>
+      <li>Script Report: <em>Collection Recovery Dashboard</em> — customer-wise, salesperson-wise, region-wise aging</li>
+    </ul>
+  </div>
+</details>
+
+<h3>Phase 2 — Custom DocTypes &amp; Business Logic (Aug 6 – Sep 15)</h3>
+<p>Build the features that don't exist natively. All code lives inside <code>apps/scale_sales/</code>.</p>
+
+<details class="feat">
+  <summary><span class="pill pill-custom">Custom</span> SALES-08 · Customer Visit Management (Field Sales GPS) <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Approach — Lean PWA:</strong> One custom DocType <code>Field Visit</code> in Frappe with a 25-line JS Client Script using HTML5 <code>navigator.geolocation.getCurrentPosition()</code>. Works on any mobile browser with no native app install.</p>
+    <div class="code-label">DocType: Field Visit — Fields</div>
+    <pre><code>customer          Link → Customer         [mandatory]
+visit_date        Date                   [mandatory, default today]
+purpose           Select: Introduction / Follow-up / Demo / Collection / Support
+sales_rep         Link → User
+check_in_time     Time
+check_out_time    Time
+latitude          Float                  [read-only, auto-filled by GPS script]
+longitude         Float                  [read-only, auto-filled by GPS script]
+notes             Long Text
+photos            Attach Multiple
+customer_feedback Small Text
+follow_up_date    Date
+visit_outcome     Select: Positive / Neutral / Negative / Order Placed / Payment Collected</code></pre>
+    <div class="code-label">Client Script — GPS Check-In button (25 lines)</div>
+    <pre><code>frappe.ui.form.on('Field Visit', {
+  refresh(frm) {
+    if (!frm.doc.check_in_time) {
+      frm.add_custom_button('Check In', () => {
+        if (!navigator.geolocation) {
+          frappe.throw('Geolocation not supported on this device.');
+          return;
+        }
+        navigator.geolocation.getCurrentPosition(pos => {
+          frm.set_value('latitude', pos.coords.latitude);
+          frm.set_value('longitude', pos.coords.longitude);
+          frm.set_value('check_in_time', frappe.datetime.now_time());
+          frm.save();
+          frappe.show_alert({ message: 'Checked in!', indicator: 'green' });
+        }, () => {
+          frappe.throw('Could not get location. Allow location access in your browser.');
+        });
+      }).addClass('btn-success');
+    } else if (!frm.doc.check_out_time) {
+      frm.add_custom_button('Check Out', () => {
+        frm.set_value('check_out_time', frappe.datetime.now_time());
+        frm.save();
+      }).addClass('btn-warning');
+    }
+  }
+});</code></pre>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-custom">Custom</span> SALES-07 · Distributor Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Approach:</strong> Two new DocTypes inside <code>scale_sales</code>, plus a Frappe Workflow for claim approval.</p>
+    <ul>
+      <li><strong>DocType: Secondary Sales Entry</strong> — links to Customer (Group=Distributor), stores period, product list, secondary off-take quantity and value. Used for monthly distributor sales uploads.</li>
+      <li><strong>DocType: Distributor Claim</strong> — scheme name, claim amount, supporting docs, workflow states: Draft → Submitted → Under Review → Approved / Rejected. Approval triggers Journal Entry.</li>
+      <li><strong>Script Report: Distributor Health Dashboard</strong> — primary sales (from Sales Invoice), secondary sales (from Secondary Sales Entry), outstanding, last visit date, claim status.</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-refine">Refine</span> SALES-06 · Dealer Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Approach:</strong> Use Customer DocType with <code>customer_group = Dealer</code>. Extend the Customer form with a custom section and a child DocType.</p>
+    <ul>
+      <li>Custom section on Customer: <em>Dealer Details</em> — Territory, Product Portfolio (Multiselect), Credit Limit Override, Incentive Scheme Link, Dealer Scorecard Rating</li>
+      <li>Child DocType: <strong>Dealer Activity</strong> — Activity Type (Visit / Training / Promotion / Complaint / Support), Date, Notes, Handled By</li>
+      <li>Python Script: monthly Dealer Scorecard calculator — revenue growth %, collection rate %, stock turnover, market coverage score</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-custom">Custom</span> SALES-12 · Sales Incentive Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Approach:</strong> One DocType for scheme rules, one Python script for calculation, one report for output. All inside <code>scale_sales</code>.</p>
+    <ul>
+      <li><strong>DocType: Sales Incentive Scheme</strong> — Incentive Type (Monthly/Quarterly/Annual), Target Metric (Revenue/Collections/Volume), Slab Table (from % → to % → payout %), effective from/to dates, applicable Sales Person.</li>
+      <li><strong>Server Script (scheduled, monthly):</strong> Queries paid Sales Invoices per rep → evaluates target achievement % → evaluates collection realization % → applies slab → generates draft Expense Claim or Journal Entry.</li>
+      <li><strong>Script Report: Incentive Payout Summary</strong> — rep-wise payout amounts, achievement %, approval status, link to payroll push.</li>
+    </ul>
+  </div>
+</details>
+
+<h3>Phase 3 — Pipeline &amp; Forecasting (Aug 21 – Sep 15)</h3>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> SALES-03 · Sales Pipeline (10-stage Kanban) <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>10 Pipeline stages to configure in CRM Settings:</strong> Lead → Qualified → Discovery → Presentation → Proposal → Negotiation → Commercial Discussion → Purchase Decision → Won → Lost</p>
+    <p>Each stage has a default Probability %. Stage probability drives weighted revenue in forecasting.</p>
+    <ul>
+      <li>Child table on Opportunity: <code>Opportunity Stakeholder</code> — Name, Title, Influence (Decision Maker / Influencer / User), Email</li>
+      <li>Child table on Opportunity: <code>Opportunity Competitor</code> — Competitor Name, Our Advantage, Their Advantage, Price Difference %</li>
+      <li>Client Script: auto-set Probability % when stage changes</li>
+      <li>Stale Deal alert: Server Script flags Opportunities with no activity in 7 days</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-refine">Script</span> SALES-04 · Sales Forecasting <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Approach:</strong> Native Frappe Script Report — no separate forecasting app. Python queries active Opportunities and computes <em>Weighted Revenue = Σ(Opportunity Amount × Stage Probability %)</em>.</p>
+    <p>Report buckets: Committed (stage ≥ 70%), Best Case (40–69%), Pipeline (rest). Compares against Sales Target for the period. Highlights revenue gap.</p>
+  </div>
+</details>
+
+<h3>Phase 4 — AI Layer (Jul 24 – Aug 20, runs in parallel) · <span style="color:#d97706;">Owner: Veeren (AI Head)</span></h3>
+<p>All AI features share a single Python helper <code>scale_sales/ai_utils.py</code>. <strong>Veeren (AI Head) owns this entire track</strong> and can deliver through his internal team. Archit and Muhammad are not assigned to AI tasks. The <code>ai_utils.py</code> foundation is already in git — Veeren can pull and start immediately. A new feature, the <strong>Sales &amp; Marketing NL Query Assistant</strong> (SALES-20), is included in this track and should start in parallel from Day 1.</p>
+
+<details class="feat">
+  <summary><span class="pill pill-ai">AI</span> SALES-13 · AI Foundation — ai_utils.py + Command Center <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <div class="code-label">apps/scale_sales/scale_sales/ai_utils.py — skeleton</div>
+    <pre><code>import frappe, requests
+
+def call_llm(prompt: str, system: str = "") -> str:
+    """Single entry point for all LLM calls in scale_sales."""
+    api_key = frappe.conf.get("openai_api_key") or frappe.conf.get("claude_api_key")
+    # ... REST call to OpenAI or Claude API
+    # Returns the model's text response
+
+def score_lead(lead: dict) -> int:
+    """Returns 0-100 lead score based on BANT fields."""
+    ...
+
+def analyze_lost_deal(opportunity: dict) -> dict:
+    """Returns structured loss reason + competitor insight."""
+    ...
+
+def next_best_action(opportunity: dict) -> str:
+    """Returns recommended action text for the salesperson."""
+    ...
+
+def win_probability(opportunity: dict) -> int:
+    """Returns dynamic win probability 0-100."""
+    ...</code></pre>
+    <p>API key stored in <code>sites/scale.localhost/site_config.json</code> under key <code>openai_api_key</code> — never hardcoded.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-ai">AI</span> SALES-15 · Lost Opportunity Analysis <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p>Server Script on Opportunity <code>on_update</code>: when <code>status == "Lost"</code>, format a JSON payload from the opportunity notes and call <code>ai_utils.analyze_lost_deal()</code>. Store structured output in custom fields:</p>
+    <ul>
+      <li><code>scale_sales_loss_category</code> (Select: Price / Competitor / Timing / Product Fit / Relationship / Internal)</li>
+      <li><code>scale_sales_competitor_identified</code> (Data)</li>
+      <li><code>scale_sales_ai_loss_summary</code> (Small Text) — 1-sentence AI summary</li>
+    </ul>
+  </div>
+</details>
+
+</div><!-- /no-print -->
+
+<!-- ═══════════════════════════════════════════
+     5. scale_sales APP SCAFFOLD
+═══════════════════════════════════════════ -->
+<hr class="section no-print">
+<h2 class="no-print">The <code>scale_sales</code> App — Structure &amp; Conventions</h2>
+
+<div class="callout cw no-print">
+  <p><strong>Rule (from team gap analysis PDF):</strong> Never modify ERPNext source code. Build all custom business functionality inside the custom application <code>scale_sales</code>. Reuse native ERPNext features wherever possible.</p>
+</div>
+
+<div class="no-print">
+<div class="code-label">bash — scaffold scale_sales (run from bench root)</div>
+<pre><code>cd ~/Documents/Projects/AIWS_Setup/Claude/code/scale-bench
+
+bench new-app scale_sales
+# App Title: Scale Sales
+# App Description: Sales Management Module — custom features for Scale ERP
+# Publisher: Pixaflip Technologies
+# Email: dev@pixaflip.com
+
+bench --site scale.localhost install-app scale_sales
+bench --site scale.localhost migrate</code></pre>
+
+<div class="code-label">Directory layout (current + planned)</div>
+<pre><code>apps/scale_sales/
+├── setup.py
+├── requirements.txt
+└── scale_sales/              ← Python package root
+    ├── __init__.py
+    ├── hooks.py              ← doc_events · fixtures · scheduler_events
+    ├── modules.txt           ← "Scale Sales"
+    ├── patches.txt
+    ├── ai_utils.py           ← call_llm · score_lead · win_probability… (Veeren)
+    ├── lead_hooks.py         ← check_duplicate · auto_score_lead (Muhammad)
+    ├── opportunity_hooks.py  ← on_update · _run_lost_analysis
+    ├── collection_hooks.py   ← on_invoice_submit · on_payment_received
+    ├── tasks.py              ← daily/monthly scheduled jobs (Phase 3+)
+    └── scale_sales/          ← Frappe module folder
+        ├── __init__.py
+        ├── workspace/
+        │   └── scale_sales/
+        │       └── scale_sales.json  ← sidebar entry (live — loads on bench migrate)
+        ├── doctype/
+        │   ├── field_visit/          ← SALES-08 · T12 (Week 2)
+        │   ├── dealer_activity/      ← SALES-06 (Phase 2)
+        │   ├── distributor_claim/    ← SALES-07 (Phase 2)
+        │   └── sales_incentive_scheme/ ← SALES-12 (Phase 2)
+        ├── report/
+        │   ├── sales_forecast_report/  ← SALES-04 (Phase 3)
+        │   ├── collection_recovery/    ← SALES-11 (Phase 3)
+        │   └── incentive_payout/       ← SALES-12 (Phase 3)
+        └── api/
+            └── ai_query.py           ← NL Query endpoint · SALES-20 (Veeren V03)</code></pre>
+
+<div class="code-label">apps/scale_sales/scale_sales/hooks.py — starting point</div>
+<pre><code>app_name = "scale_sales"
+app_title = "Scale Sales"
+app_publisher = "Pixaflip Technologies"
+app_description = "Sales Management Module for Scale ERP"
+app_version = "0.0.1"
+
+required_apps = ["frappe", "erpnext", "scale"]
+
+# Fixtures — export custom fields and workflows with bench export-fixtures
+fixtures = [
+    {"dt": "Custom Field", "filters": [["module", "=", "Scale Sales"]]},
+    {"dt": "Property Setter", "filters": [["module", "=", "Scale Sales"]]},
+    {"dt": "Workflow", "filters": [["document_type", "in",
+        ["Quotation", "Distributor Claim"]]]},
+    {"dt": "Notification", "filters": [["module", "=", "Scale Sales"]]},
+]
+
+# Doc events
+doc_events = {
+    "Lead": {
+        "before_insert": "scale_sales.scale_sales.lead_hooks.check_duplicate",
+        "after_insert":  "scale_sales.scale_sales.lead_hooks.auto_score_lead",
+    },
+    "Opportunity": {
+        "on_update": "scale_sales.scale_sales.opportunity_hooks.on_opportunity_update",
+    },
+    "Sales Invoice": {
+        "on_submit": "scale_sales.scale_sales.collection_hooks.check_collection_status",
+    },
+}
+
+# Scheduled jobs
+scheduler_events = {
+    "daily": [
+        "scale_sales.scale_sales.tasks.daily_stale_deal_check",
+    ],
+    "monthly": [
+        "scale_sales.scale_sales.tasks.monthly_incentive_calculation",
+        "scale_sales.scale_sales.tasks.monthly_dealer_scorecard",
+    ],
+}</code></pre>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     6. DEVELOPER TASK LIST — PRINTABLE SECTION
+═══════════════════════════════════════════ -->
+<hr class="section">
+<div class="print-section-header">
+  <h2>Developer Implementation Handover</h2>
+  <p style="font-size:.9rem;color:#6b7280;">Sales Module · <code>scale_sales</code> app · AIWS ERP Suite · Pixaflip Technologies × SIL</p>
+</div>
+
+<div class="callout ci no-print">
+  <p><strong>This section is designed to be printed as a PDF and handed to developers.</strong> Click "Print Developer Handover" to open the browser print dialog — only this section prints. It covers project context, app structure, what's already in git, the 4-phase plan, developer division, and week-by-week tasks starting from Jul 29.</p>
+</div>
+<button class="print-btn no-print" onclick="window.print()">Print Developer Handover (PDF)</button>
+
+<!-- ─── A. PROJECT CONTEXT ─── -->
+<div class="callout ci" style="margin-bottom:20px;">
+  <p style="margin:0 0 8px;"><strong style="font-size:1.05rem;">A. Project Context — What Are We Building?</strong></p>
+  <p style="margin:0 0 6px;"><strong>AIWS ERP Suite</strong> is a fully customised ERP system being built on top of Frappe v15 + ERPNext v15. It is <em>not</em> a generic ERPNext install — it is Pixaflip Technologies' product for the industrial sector (heavy equipment, manufacturing, distribution).</p>
+  <p style="margin:0 0 6px;"><strong>Why not just use ERPNext as-is?</strong> ERPNext covers 60–70% of the requirements out of the box. The remaining 30–40% is highly specific to the B2B/dealer/distributor sales model, field-force workflows, AI-driven recommendations, and collection management. That gap is what we are building in custom Frappe apps.</p>
+  <p style="margin:0 0 6px;"><strong>Your role:</strong> You are implementing the Sales module. Gap analysis has been completed (you've read the PDFs). Your job is to configure ERPNext where it fits, and build custom DocTypes + scripts where it doesn't. Every piece of custom code goes inside <code>apps/scale_sales/</code>.</p>
+  <p style="margin:0;"><strong>How to navigate:</strong> Open <code>http://scale.localhost:8001</code> → click the <strong>Scale</strong> app icon → the left sidebar shows <strong>Scale Sales</strong>. That workspace links to Lead, Opportunity, Quotation, Customer, and all Masters. This is your home base in the system.</p>
+</div>
+
+<table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-size:.9rem;">
+  <tr style="background:#f0f9ff;"><th style="text-align:left;padding:6px 10px;border:1px solid #ddd;">Who</th><th style="text-align:left;padding:6px 10px;border:1px solid #ddd;">Role</th><th style="text-align:left;padding:6px 10px;border:1px solid #ddd;">Track</th></tr>
+  <tr style="background:#faf5ff;"><td style="padding:6px 10px;border:1px solid #ddd;"><strong style="color:#7c3aed;">Raghib</strong></td><td style="padding:6px 10px;border:1px solid #ddd;">Sales &amp; Marketing Module Lead</td><td style="padding:6px 10px;border:1px solid #ddd;">Sales + Marketing lead (both modules) · Picks up coding tasks wherever Archit/Muhammad are burdened or blocked · Fixture export + Python hooks · Final code review &amp; merge</td></tr>
+  <tr><td style="padding:6px 10px;border:1px solid #ddd;"><strong style="color:#1d4ed8;">Archit</strong></td><td style="padding:6px 10px;border:1px solid #ddd;">Developer</td><td style="padding:6px 10px;border:1px solid #ddd;">ERPNext config (Customer Groups, Territory, Quotation Workflow) · Custom DocTypes · Pipeline config</td></tr>
+  <tr><td style="padding:6px 10px;border:1px solid #ddd;"><strong style="color:#15803d;">Muhammad</strong></td><td style="padding:6px 10px;border:1px solid #ddd;">Developer</td><td style="padding:6px 10px;border:1px solid #ddd;">Lead Management · BANT fields · Server Scripts · CRM Pipeline · Collection setup</td></tr>
+  <tr style="background:#fffbeb;"><td style="padding:6px 10px;border:1px solid #ddd;"><strong style="color:#d97706;">Veeren</strong></td><td style="padding:6px 10px;border:1px solid #ddd;">AI Head (internal team)</td><td style="padding:6px 10px;border:1px solid #ddd;">All AI features (SALES-13–19) · NL Query Assistant (SALES-20) · Parallel track from Day 1</td></tr>
+</table>
+
+<!-- ─── B. TECH STACK ─── -->
+<div class="callout cg" style="margin-bottom:20px;">
+  <p style="margin:0 0 8px;"><strong style="font-size:1.05rem;">B. Technology Stack</strong></p>
+  <table style="width:100%;border-collapse:collapse;font-size:.85rem;">
+    <tr style="background:#f0fdf4;"><th style="text-align:left;padding:5px 8px;border:1px solid #ddd;">Layer</th><th style="text-align:left;padding:5px 8px;border:1px solid #ddd;">Version</th><th style="text-align:left;padding:5px 8px;border:1px solid #ddd;">Notes</th></tr>
+    <tr><td style="padding:5px 8px;border:1px solid #ddd;">Frappe Framework</td><td style="padding:5px 8px;border:1px solid #ddd;">v15 (version-15 branch)</td><td style="padding:5px 8px;border:1px solid #ddd;">Backend + ORM + DocType system</td></tr>
+    <tr><td style="padding:5px 8px;border:1px solid #ddd;">ERPNext</td><td style="padding:5px 8px;border:1px solid #ddd;">v15 (version-15 branch)</td><td style="padding:5px 8px;border:1px solid #ddd;">Sales, Accounts, HR, Buying modules</td></tr>
+    <tr><td style="padding:5px 8px;border:1px solid #ddd;">Frappe CRM</td><td style="padding:5px 8px;border:1px solid #ddd;">main branch (pinned commit)</td><td style="padding:5px 8px;border:1px solid #ddd;">Modern Kanban CRM UI — replaces old CRM module</td></tr>
+    <tr><td style="padding:5px 8px;border:1px solid #ddd;">HRMS</td><td style="padding:5px 8px;border:1px solid #ddd;">v15</td><td style="padding:5px 8px;border:1px solid #ddd;">Payroll, leave management</td></tr>
+    <tr><td style="padding:5px 8px;border:1px solid #ddd;">India Compliance</td><td style="padding:5px 8px;border:1px solid #ddd;">v15</td><td style="padding:5px 8px;border:1px solid #ddd;">GST, e-Invoice, TDS</td></tr>
+    <tr><td style="padding:5px 8px;border:1px solid #ddd;">scale (F0 app)</td><td style="padding:5px 8px;border:1px solid #ddd;">0.0.1</td><td style="padding:5px 8px;border:1px solid #ddd;">Foundation custom app — shared utilities, brand settings</td></tr>
+    <tr><td style="padding:5px 8px;border:1px solid #ddd;"><strong>scale_sales</strong></td><td style="padding:5px 8px;border:1px solid #ddd;"><strong>0.0.1 (you own this)</strong></td><td style="padding:5px 8px;border:1px solid #ddd;"><strong>Sales module — your working app</strong></td></tr>
+    <tr><td style="padding:5px 8px;border:1px solid #ddd;">Python</td><td style="padding:5px 8px;border:1px solid #ddd;">3.11</td><td style="padding:5px 8px;border:1px solid #ddd;">Frappe runs on Python 3.11</td></tr>
+    <tr><td style="padding:5px 8px;border:1px solid #ddd;">Node.js</td><td style="padding:5px 8px;border:1px solid #ddd;">20 LTS (via nvm)</td><td style="padding:5px 8px;border:1px solid #ddd;">Needed for bench asset build</td></tr>
+    <tr><td style="padding:5px 8px;border:1px solid #ddd;">MariaDB</td><td style="padding:5px 8px;border:1px solid #ddd;">10.6</td><td style="padding:5px 8px;border:1px solid #ddd;">Database; socket at <code>/tmp/mysql.sock</code></td></tr>
+    <tr><td style="padding:5px 8px;border:1px solid #ddd;">Site</td><td style="padding:5px 8px;border:1px solid #ddd;">scale.localhost</td><td style="padding:5px 8px;border:1px solid #ddd;">Port 8001 · Admin: <code>Administrator / scale@demo</code></td></tr>
+  </table>
+  <p style="margin:8px 0 0;font-size:.85rem;"><strong>Golden rule:</strong> Never modify <code>apps/frappe/</code>, <code>apps/erpnext/</code>, or any other upstream app's source. All customisation goes inside <code>apps/scale_sales/</code>.</p>
+</div>
+
+<!-- ─── C. GIT REPO + WHAT'S ALREADY BUILT ─── -->
+<div style="margin-bottom:20px;">
+  <p style="margin:0 0 8px;"><strong style="font-size:1.05rem;">C. What's Already in Git — scale_sales Scaffold</strong></p>
+  <p style="margin:0 0 10px;font-size:.9rem;">The <code>apps/scale_sales/</code> app has been scaffolded and staged in git. When you pull the latest from the <code>ehiddenbrain/scale</code> repo you will see this directory. Install it with:</p>
+  <pre style="background:#1e293b;color:#e2e8f0;padding:14px;border-radius:8px;font-size:.8rem;margin-bottom:12px;white-space:pre-wrap;">pip install -e apps/scale_sales
+bench --site scale.localhost install-app scale_sales
+bench --site scale.localhost migrate</pre>
+
+  <p style="margin:0 0 6px;font-size:.88rem;font-weight:600;">Project directory layout</p>
+  <pre style="background:#1e293b;color:#e2e8f0;padding:14px;border-radius:8px;font-size:.76rem;margin-bottom:14px;line-height:1.65;">scale-bench/                          <span style="color:#94a3b8;">← git repo root (ehiddenbrain/scale)</span>
+├── apps/
+│   ├── scale/                        <span style="color:#94a3b8;">← F0 foundation app (committed — do not edit)</span>
+│   └── scale_sales/                  <span style="color:#4ade80;">← Sales module custom app (your working area)</span>
+│       ├── setup.py                  <span style="color:#94a3b8;">← pip package config (leave as-is)</span>
+│       ├── requirements.txt          <span style="color:#94a3b8;">← add Python libs here if needed</span>
+│       └── scale_sales/              <span style="color:#94a3b8;">← Python module (same name as app)</span>
+│           ├── hooks.py              <span style="color:#fbbf24;">← doc_events · fixtures · scheduler_events</span>
+│           ├── ai_utils.py           <span style="color:#fbbf24;">← call_llm · score_lead · win_probability… (Veeren)</span>
+│           ├── lead_hooks.py         <span style="color:#86efac;">← check_duplicate · auto_score_lead (Muhammad)</span>
+│           ├── opportunity_hooks.py  <span style="color:#86efac;">← on_update · _run_lost_analysis</span>
+│           ├── collection_hooks.py   <span style="color:#86efac;">← on_invoice_submit · on_payment_received</span>
+│           ├── tasks.py              <span style="color:#94a3b8;">← daily/monthly scheduled jobs (Phase 3+)</span>
+│           ├── fixtures/
+│           │   ├── Custom Field.json <span style="color:#fbbf24;">← generated by: bench export-fixtures --app scale_sales</span>
+│           │   └── Workflow.json     <span style="color:#94a3b8;">← Quotation discount approval (after T08)</span>
+│           ├── scale_sales/          <span style="color:#94a3b8;">← Frappe module folder</span>
+│           │   ├── workspace/
+│           │   │   └── scale_sales/
+│           │   │       └── scale_sales.json  <span style="color:#4ade80;">← sidebar entry: CRM · Transactions · Collections · Masters</span>
+│           │   ├── doctype/
+│           │   │   └── field_visit/  <span style="color:#86efac;">← T12: Field Visit custom DocType (JSON + Python)</span>
+│           │   ├── report/           <span style="color:#94a3b8;">← Script Reports (Sales Forecasting — Phase 3)</span>
+│           │   └── page/             <span style="color:#fbbf24;">← Frappe Pages (NL Query chat UI — Veeren V04)</span>
+│           └── api/
+│               └── ai_query.py       <span style="color:#fbbf24;">← @whitelist NL Query endpoint (Veeren V03)</span>
+├── sites/
+│   └── scale.localhost/              <span style="color:#f87171;">← NOT committed (site_config.json holds API keys)</span>
+└── Procfile                          <span style="color:#f87171;">← NOT committed (machine-specific paths)</span>
+
+<span style="color:#94a3b8;">Upstream apps (frappe / erpnext / hrms / crm / india_compliance) are gitignored —
+install via `bench get-app`. Never edit files inside apps/frappe/ or apps/erpnext/.</span></pre>
+
+  <table style="width:100%;border-collapse:collapse;font-size:.82rem;">
+    <tr style="background:#f8fafc;"><th style="text-align:left;padding:6px 10px;border:1px solid #ddd;">File</th><th style="text-align:left;padding:6px 10px;border:1px solid #ddd;">What it does</th><th style="text-align:left;padding:6px 10px;border:1px solid #ddd;">You touch it?</th></tr>
+    <tr><td style="padding:5px 10px;border:1px solid #ddd;"><code>setup.py</code></td><td style="padding:5px 10px;border:1px solid #ddd;">Python package entry-point — app name, version, author. Pip reads this to install the app.</td><td style="padding:5px 10px;border:1px solid #ddd;">No (leave as-is)</td></tr>
+    <tr><td style="padding:5px 10px;border:1px solid #ddd;"><code>requirements.txt</code></td><td style="padding:5px 10px;border:1px solid #ddd;">Python dependencies beyond Frappe. Currently: <code>frappe</code>, <code>requests</code>.</td><td style="padding:5px 10px;border:1px solid #ddd;">Add packages here if a new library is needed</td></tr>
+    <tr><td style="padding:5px 10px;border:1px solid #ddd;"><code>scale_sales/hooks.py</code></td><td style="padding:5px 10px;border:1px solid #ddd;">The app's control panel. Declares: app metadata, <code>fixtures</code> to export, <code>doc_events</code> (which Python function fires when a DocType is saved/submitted), and <code>scheduler_events</code> (daily/monthly cron jobs).</td><td style="padding:5px 10px;border:1px solid #ddd;"><strong>Yes</strong> — add new doc_events here</td></tr>
+    <tr><td style="padding:5px 10px;border:1px solid #ddd;"><code>scale_sales/ai_utils.py</code></td><td style="padding:5px 10px;border:1px solid #ddd;">Shared AI helper. Contains: <code>call_llm()</code> (makes OpenAI REST call using key from site_config), <code>score_lead()</code> (BANT scoring 0–100), <code>heat_category()</code> (Hot/Warm/Cold), <code>analyze_lost_deal()</code>, <code>next_best_action()</code>, <code>win_probability()</code>.</td><td style="padding:5px 10px;border:1px solid #ddd;"><strong style="color:#d97706;">Veeren</strong> — AI Head owns all AI files</td></tr>
+    <tr><td style="padding:5px 10px;border:1px solid #ddd;"><code>scale_sales/lead_hooks.py</code></td><td style="padding:5px 10px;border:1px solid #ddd;">Python functions that run when a Lead is created or updated. <code>check_duplicate()</code> — fires on before_insert, blocks if a Lead with same email+phone exists. <code>auto_score_lead()</code> — fires on after_insert, calls AI scoring.</td><td style="padding:5px 10px;border:1px solid #ddd;"><strong>Muhammad</strong> — add duplicate logic here</td></tr>
+    <tr><td style="padding:5px 10px;border:1px solid #ddd;"><code>scale_sales/opportunity_hooks.py</code></td><td style="padding:5px 10px;border:1px solid #ddd;">Fires on Opportunity save. Calls win probability + next best action from ai_utils. Triggers lost deal analysis when status = Lost.</td><td style="padding:5px 10px;border:1px solid #ddd;"><strong style="color:#d97706;">Veeren</strong> owns AI call parts; <strong style="color:#1d4ed8;">Archit</strong> may add pipeline stage logic</td></tr>
+    <tr><td style="padding:5px 10px;border:1px solid #ddd;"><code>scale_sales/collection_hooks.py</code></td><td style="padding:5px 10px;border:1px solid #ddd;">Fires on Sales Invoice submit and Payment Entry submit. Updates the invoice's custom Promise-to-Pay and Collection Status fields.</td><td style="padding:5px 10px;border:1px solid #ddd;"><strong>Muhammad</strong> — wire collection fields here</td></tr>
+    <tr><td style="padding:5px 10px;border:1px solid #ddd;"><code>scale_sales/tasks.py</code></td><td style="padding:5px 10px;border:1px solid #ddd;">Scheduled background jobs. <code>daily_stale_deal_check()</code> — flags Opportunities not updated in 14 days. <code>monthly_incentive_calculation()</code> — computes sales incentive slabs. <code>monthly_dealer_scorecard()</code>.</td><td style="padding:5px 10px;border:1px solid #ddd;">Later (Phase 3+)</td></tr>
+    <tr style="background:#f0fdf4;"><td style="padding:5px 10px;border:1px solid #ddd;"><code>scale_sales/scale_sales/workspace/scale_sales/scale_sales.json</code></td><td style="padding:5px 10px;border:1px solid #ddd;">Defines the <strong>Scale Sales</strong> entry in the left sidebar. Lists four shortcut tiles (Lead, Opportunity, Quotation, Customer) and four card groups (CRM, Transactions, Collections, Masters). Loaded into the DB on <code>bench migrate</code>. This is what makes Scale Sales visible when Scale is opened.</td><td style="padding:5px 10px;border:1px solid #ddd;"><strong>Yes</strong> — add Field Visit link here after T12</td></tr>
+    <tr><td style="padding:5px 10px;border:1px solid #ddd;"><code>scale_sales/scale_sales/doctype/</code></td><td style="padding:5px 10px;border:1px solid #ddd;">Custom DocType definitions (JSON + Python controller). Field Visit goes here after T12 — created in UI then exported with <code>bench export-fixtures</code>.</td><td style="padding:5px 10px;border:1px solid #ddd;"><strong>Yes</strong> — Field Visit DocType goes here (Week 2)</td></tr>
+    <tr><td style="padding:5px 10px;border:1px solid #ddd;"><code>scale_sales/scale_sales/report/</code></td><td style="padding:5px 10px;border:1px solid #ddd;">Empty placeholder for Script Reports (Python + JS query reports). Sales Forecasting report goes here in Phase 3.</td><td style="padding:5px 10px;border:1px solid #ddd;">Later (Phase 3)</td></tr>
+  </table>
+
+  <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:14px 16px;margin:14px 0;">
+    <p style="margin:0 0 8px;font-weight:700;color:#15803d;">After git pull — what every developer needs to run once</p>
+    <p style="margin:0 0 8px;font-size:.83rem;color:#166534;"><em>Assuming your dev environment is set up and prerequisites are met (bench running, site created, ERPNext + scale apps installed, Node 20 active). If not, refer to the Developer Workflow guide before proceeding.</em></p>
+    <pre style="background:#1e293b;color:#e2e8f0;padding:10px;border-radius:6px;font-size:.78rem;margin:0 0 10px;">pip install -e apps/scale_sales
+bench --site &lt;your-site&gt; install-app scale_sales
+bench --site &lt;your-site&gt; migrate</pre>
+    <p style="margin:0 0 6px;font-size:.85rem;font-weight:600;color:#15803d;">What you get immediately after:</p>
+    <ul style="margin:0;padding-left:18px;font-size:.84rem;line-height:1.8;color:#166534;">
+      <li><strong>Scale Sales</strong> appears in the left sidebar when you open the Scale app — links to Lead, Opportunity, Quotation, Customer, and all Masters</li>
+      <li><strong>Duplicate lead check live</strong> — trying to save a Lead with an existing phone or email is blocked with a link to the existing record</li>
+      <li><strong>Collection status auto-set</strong> — submitting a Sales Invoice sets Collection Status = Pending; a full payment flips it to Collected</li>
+      <li><strong>All AI hooks wired</strong> — Lead scoring, opportunity analysis, and next best action fire on save (silent no-op until OpenAI key is configured)</li>
+    </ul>
+    <p style="margin:8px 0 0;font-size:.82rem;color:#166534;"><strong>Set your OpenAI key (Veeren's team):</strong> <code>bench --site &lt;your-site&gt; set-config openai_api_key "sk-..."</code> — never commit this to git.</p>
+  </div>
+
+  <p style="margin:12px 0 4px;font-size:.85rem;"><strong>Custom field naming convention:</strong> Every custom field you add must be prefixed <code>scale_sales_</code> — e.g. <code>scale_sales_annual_turnover</code>, <code>scale_sales_budget_confirmed</code>. This prevents conflicts with ERPNext upgrades. Never use short/generic names.</p>
+  <p style="margin:4px 0 0;font-size:.85rem;"><strong>Commit format:</strong> <code>feat(sales): add BANT fields to Lead</code> · <code>config(sales): customer group hierarchy</code> · <code>fix(sales): duplicate lead check on mobile</code></p>
+</div>
+
+<!-- ─── D. FOUR-PHASE PLAN ─── -->
+<div style="margin-bottom:20px;page-break-before:always;">
+  <p style="margin:0 0 10px;"><strong style="font-size:1.05rem;">D. Four-Phase Implementation Plan</strong></p>
+  <table style="width:100%;border-collapse:collapse;font-size:.85rem;">
+    <tr style="background:#f0f9ff;"><th style="padding:6px 10px;border:1px solid #ddd;text-align:left;">Phase</th><th style="padding:6px 10px;border:1px solid #ddd;text-align:left;">Dates</th><th style="padding:6px 10px;border:1px solid #ddd;text-align:left;">What</th><th style="padding:6px 10px;border:1px solid #ddd;text-align:left;">Who</th></tr>
+    <tr>
+      <td style="padding:6px 10px;border:1px solid #ddd;font-weight:600;">Phase 1<br>Config + Code</td>
+      <td style="padding:6px 10px;border:1px solid #ddd;">Jul 29 – Aug 8</td>
+      <td style="padding:6px 10px;border:1px solid #ddd;">Configure ERPNext for AIWS sales requirements and write supporting code from Day 1. Customer Groups, Lead Sources, Territory tree, Sales Persons, Price Lists, BANT custom fields, Quotation Discount Workflow, Dunning types, Payment Terms. Custom field fixtures committed to git. First Server Scripts and Notification Rules.</td>
+      <td style="padding:6px 10px;border:1px solid #ddd;"><strong>Archit + Muhammad</strong> (parallel) · <strong style="color:#7c3aed;">Raghib</strong> picks up any coding where bandwidth is tight</td>
+    </tr>
+    <tr style="background:#fafafa;">
+      <td style="padding:6px 10px;border:1px solid #ddd;font-weight:600;">Phase 2<br>Custom DocTypes</td>
+      <td style="padding:6px 10px;border:1px solid #ddd;">Aug 6 – Sep 2</td>
+      <td style="padding:6px 10px;border:1px solid #ddd;">Build DocTypes that ERPNext doesn't have: Field Visit (with GPS), Distributor Onboarding, Dealer Scorecard, Opportunity Stakeholder &amp; Competitor (child tables). Export as fixtures so they're version-controlled.</td>
+      <td style="padding:6px 10px;border:1px solid #ddd;"><strong>Archit</strong> (DocType creation) · <strong>Muhammad</strong> (Client Scripts, Server Scripts)</td>
+    </tr>
+    <tr>
+      <td style="padding:6px 10px;border:1px solid #ddd;font-weight:600;">Phase 3<br>Pipeline &amp; Forecasting</td>
+      <td style="padding:6px 10px;border:1px solid #ddd;">Aug 28 – Sep 15</td>
+      <td style="padding:6px 10px;border:1px solid #ddd;">CRM Pipeline stages, Sales Target configuration, Forecasting Script Report (Python), Sales Incentive slab configuration. This is the most complex phase — Muhammad leads scripting, Archit leads configuration.</td>
+      <td style="padding:6px 10px;border:1px solid #ddd;"><strong>Muhammad</strong> (scripts) · <strong>Archit</strong> (config)</td>
+    </tr>
+    <tr style="background:#fffbeb;">
+      <td style="padding:6px 10px;border:1px solid #ddd;font-weight:600;">Phase 4<br>AI Layer</td>
+      <td style="padding:6px 10px;border:1px solid #ddd;">Runs in parallel from Jul 29</td>
+      <td style="padding:6px 10px;border:1px solid #ddd;">ai_utils.py foundation (in git), Lead Scoring, Lost Deal Analysis, Next Best Action, Win Probability, Sales Coaching. <strong>+ SALES-20: NL Query Assistant</strong> — natural language DB query interface for Sales &amp; Marketing. All 8 AI features wire into Phases 1–3 as those DocTypes become available.</td>
+      <td style="padding:6px 10px;border:1px solid #ddd;"><strong style="color:#d97706;">Veeren (AI Head)</strong> — internal team delivers; coordinate with Veeren for integration handoffs</td>
+    </tr>
+  </table>
+  <p style="margin:8px 0 0;font-size:.83rem;color:#64748b;">Code is expected from Day 1 — fixtures, hooks, scripts, and custom DocTypes all follow the same principles. See the Phase-by-Phase breakdown below for exactly what code is written in each phase.</p>
+</div>
+
+<!-- ─── D2. PHASE-BY-PHASE DETAIL ─── -->
+<div style="margin-bottom:20px;">
+  <p style="margin:0 0 10px;"><strong style="font-size:1.05rem;">D2. Phase-by-Phase: What Gets Built, What Code Is Written</strong></p>
+
+  <div style="border-left:4px solid #1d4ed8;padding:10px 16px;background:#eff6ff;border-radius:0 8px 8px 0;margin-bottom:14px;">
+    <p style="margin:0 0 4px;font-weight:700;color:#1d4ed8;">Phase 1 · Jul 29 – Aug 8 · Config + Code Baseline</p>
+    <p style="margin:0 0 6px;font-size:.85rem;"><strong>Goal:</strong> ERPNext fully configured for the AIWS sales process — custom fields, workflows, territory, and pricing — with the scale_sales app installed and all configuration version-controlled in git.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:.82rem;">
+      <div>
+        <p style="margin:0 0 4px;font-weight:600;">Features delivered:</p>
+        <ul style="margin:0;padding-left:16px;line-height:1.7;">
+          <li>SALES-01: Customer Groups + 4 custom fields</li>
+          <li>SALES-02: Lead Sources + BANT/UTM fields (7 fields)</li>
+          <li>SALES-01: Territory tree (India → zones → states)</li>
+          <li>SALES-05: Sales Person hierarchy + Price Lists</li>
+          <li>SALES-09: Quotation Discount Approval Workflow</li>
+          <li>SALES-11: Dunning types + Promise-to-Pay fields</li>
+          <li>SALES-11: AR Aging Buckets + Payment Terms</li>
+          <li>scale_sales app installed and running</li>
+        </ul>
+      </div>
+      <div>
+        <p style="margin:0 0 4px;font-weight:600;">Code written in Phase 1:</p>
+        <ul style="margin:0;padding-left:16px;line-height:1.7;">
+          <li><code>fixtures/Custom Field.json</code> — all custom fields version-controlled (R01, Raghib)</li>
+          <li><code>hooks.py</code> fixtures list updated to include Custom Fields</li>
+          <li>Frappe Notification Rule for payment reminder (Muhammad)</li>
+          <li>Frappe Workflow for Quotation discount (config-as-code exported)</li>
+          <li>First <code>git commit</code> — custom fields version-controlled, ready for any bench</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div style="border-left:4px solid #15803d;padding:10px 16px;background:#f0fdf4;border-radius:0 8px 8px 0;margin-bottom:14px;">
+    <p style="margin:0 0 4px;font-weight:700;color:#15803d;">Phase 2 · Aug 6 – Sep 2 · Custom DocTypes + Server Scripts</p>
+    <p style="margin:0 0 6px;font-size:.85rem;"><strong>Goal:</strong> Build what ERPNext doesn't have natively. First real Python + JavaScript code in the codebase.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:.82rem;">
+      <div>
+        <p style="margin:0 0 4px;font-weight:600;">Features delivered:</p>
+        <ul style="margin:0;padding-left:16px;line-height:1.7;">
+          <li>SALES-08: Field Visit DocType (16 fields + GPS)</li>
+          <li>SALES-07: Distributor Onboarding DocType</li>
+          <li>SALES-06: Dealer Scorecard DocType</li>
+          <li>SALES-02: Lead Duplicate Detection</li>
+          <li>SALES-03: Opportunity child tables (Stakeholder + Competitor)</li>
+          <li>SALES-09: Quotation Print Format (Jinja)</li>
+        </ul>
+      </div>
+      <div>
+        <p style="margin:0 0 4px;font-weight:600;">Code written in Phase 2:</p>
+        <ul style="margin:0;padding-left:16px;line-height:1.7;">
+          <li>Client Script (JS): GPS check-in on Field Visit — <code>navigator.geolocation</code></li>
+          <li>Server Script (Python): Lead duplicate detection on <code>before_insert</code></li>
+          <li>DocType JSON fixtures: Field Visit, Distributor Onboarding, Dealer Scorecard, Opportunity Stakeholder, Opportunity Competitor</li>
+          <li>Jinja template: Quotation print format (<code>.html</code> in scale_sales)</li>
+          <li><code>lead_hooks.py</code>: check_duplicate() + auto_score_lead() wired</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div style="border-left:4px solid #9333ea;padding:10px 16px;background:#faf5ff;border-radius:0 8px 8px 0;margin-bottom:14px;">
+    <p style="margin:0 0 4px;font-weight:700;color:#9333ea;">Phase 3 · Aug 28 – Sep 15 · Pipeline, Forecasting &amp; Incentives</p>
+    <p style="margin:0 0 6px;font-size:.85rem;"><strong>Goal:</strong> Reporting and complex workflows. Script Reports query the database and display interactive dashboards inside ERPNext.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:.82rem;">
+      <div>
+        <p style="margin:0 0 4px;font-weight:600;">Features delivered:</p>
+        <ul style="margin:0;padding-left:16px;line-height:1.7;">
+          <li>SALES-03: Full pipeline stage config + probability weights</li>
+          <li>SALES-04: Sales Forecasting Script Report</li>
+          <li>SALES-05: Sales Target vs Actual report</li>
+          <li>SALES-12: Sales Incentive slab configuration</li>
+        </ul>
+      </div>
+      <div>
+        <p style="margin:0 0 4px;font-weight:600;">Code written in Phase 3:</p>
+        <ul style="margin:0;padding-left:16px;line-height:1.7;">
+          <li>Script Report (Python + JS): <code>sales_forecasting.py</code> — weighted pipeline revenue</li>
+          <li>Script Report: <code>sales_target_vs_actual.py</code></li>
+          <li><code>tasks.py</code>: <code>monthly_incentive_calculation()</code> — slab engine</li>
+          <li><code>tasks.py</code>: <code>daily_stale_deal_check()</code> — flags deals not updated in 14 days</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div style="border-left:4px solid #d97706;padding:10px 16px;background:#fffbeb;border-radius:0 8px 8px 0;">
+    <p style="margin:0 0 4px;font-weight:700;color:#d97706;">Phase 4 · Jul 29 – Aug 29 · AI Layer (Veeren's track, parallel)</p>
+    <p style="margin:0 0 6px;font-size:.85rem;"><strong>Goal:</strong> 8 AI features including the NL Query Assistant (SALES-20). Runs fully independently — see Veeren's task section for the detailed plan.</p>
+    <p style="margin:0;font-size:.82rem;"><strong>Priority order:</strong> NL Query Assistant (SALES-20) → Lead Scoring (SALES-16) → Win Probability (SALES-18) → Next Best Action (SALES-17) → Lost Deal Analysis (SALES-15) → Sales Prediction (SALES-14) → Sales Coaching (SALES-19).</p>
+  </div>
+</div>
+
+<!-- ─── E. DEVELOPER ASSIGNMENTS ─── -->
+<div style="margin-bottom:20px;">
+  <p style="margin:0 0 10px;"><strong style="font-size:1.05rem;">E. Feature Assignments by Person</strong></p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+    <div style="border:2px solid #7c3aed;border-radius:8px;padding:12px;background:#faf5ff;">
+      <p style="margin:0 0 8px;font-weight:700;color:#7c3aed;">Raghib — Sales &amp; Marketing Module Lead</p>
+      <p style="margin:0 0 6px;font-size:.8rem;color:#6b7280;">Leads both Sales and Marketing modules. Jumps into coding wherever Archit or Muhammad are overloaded, blocked, or when a task is complex enough to need senior input. Not a fixed task list — Raghib picks up what's burdened.</p>
+      <ul style="margin:0;padding-left:16px;font-size:.85rem;line-height:1.7;">
+        <li><strong>Overflow coding</strong> — if Archit or Muhammad are blocked or behind, Raghib takes the task</li>
+        <li>Export custom field fixtures → first git commit (R01)</li>
+        <li>Review and merge all PRs — final code sign-off</li>
+        <li>Complex hooks / Python logic when needed (lead_hooks, tasks.py)</li>
+        <li>Marketing module lead — planning starts in parallel once Sales Phase 1 is stable</li>
+      </ul>
+    </div>
+    <div style="border:1px solid #bfdbfe;border-radius:8px;padding:12px;background:#eff6ff;">
+      <p style="margin:0 0 8px;font-weight:700;color:#1d4ed8;">Archit — ERPNext Config &amp; DocType Track</p>
+      <ul style="margin:0;padding-left:16px;font-size:.85rem;line-height:1.7;">
+        <li>SALES-01: Customer Groups + Customer custom fields</li>
+        <li>SALES-01: Territory tree (India → zones → states)</li>
+        <li>SALES-05: Sales Person hierarchy</li>
+        <li>SALES-09: Quotation Discount Approval Workflow</li>
+        <li>SALES-09: Quotation Print Format (Jinja template)</li>
+        <li>SALES-06: Dealer DocType + Scorecard</li>
+        <li>SALES-08: Field Visit DocType (first custom DocType)</li>
+        <li>SALES-03: CRM Pipeline stage configuration</li>
+        <li>SALES-10: Order Management config</li>
+      </ul>
+    </div>
+    <div style="border:1px solid #bbf7d0;border-radius:8px;padding:12px;background:#f0fdf4;">
+      <p style="margin:0 0 8px;font-weight:700;color:#15803d;">Muhammad — CRM, Scripting &amp; Collections Track</p>
+      <ul style="margin:0;padding-left:16px;font-size:.85rem;line-height:1.7;">
+        <li>SALES-02: Lead Source master values</li>
+        <li>SALES-02: BANT + UTM custom fields on Lead</li>
+        <li>SALES-02: Lead Duplicate Detection Server Script</li>
+        <li>SALES-02: Lead Assignment Rule</li>
+        <li>SALES-11: Dunning type config (3 types) + Notification</li>
+        <li>SALES-11: Promise-to-Pay + Collection Status fields</li>
+        <li>SALES-11: AR Aging Bucket + Payment Terms</li>
+        <li>SALES-08: GPS Check-In Client Script on Field Visit</li>
+        <li>SALES-07: Distributor Onboarding DocType</li>
+        <li>SALES-03: Opportunity Stakeholder + Competitor child tables</li>
+      </ul>
+    </div>
+    <div style="border:2px solid #d97706;border-radius:8px;padding:12px;background:#fffbeb;">
+      <p style="margin:0 0 8px;font-weight:700;color:#d97706;">Veeren — AI Head (Internal Team)</p>
+      <p style="margin:0 0 6px;font-size:.8rem;color:#6b7280;">Veeren can deliver through his team. All 8 AI tasks are his scope. Start Day 1 — runs independent of Phases 1–3.</p>
+      <ul style="margin:0;padding-left:16px;font-size:.85rem;line-height:1.7;">
+        <li>SALES-13: ai_utils.py — review scaffold, wire API key, test</li>
+        <li>SALES-16: Lead Scoring (BANT 0–100) — calibrate</li>
+        <li>SALES-18: Win Probability — stage weights model</li>
+        <li>SALES-17: Next Best Action — rule engine</li>
+        <li>SALES-15: Lost Deal Analysis — LLM prompt engineering</li>
+        <li>SALES-14: Sales Prediction — forecasting model</li>
+        <li>SALES-19: Sales Coaching — LLM-powered suggestions</li>
+        <li><strong>SALES-20: NL Query Assistant</strong> — natural language DB queries for Sales &amp; Marketing (new — start from Day 1)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ─── F. GROUND RULES ─── -->
+<div class="callout ci" style="margin-bottom:20px;">
+  <p style="margin:0 0 6px;"><strong>Ground rules — read before starting:</strong></p>
+  <ul style="margin:0;padding-left:18px;font-size:.9rem;line-height:1.8;">
+    <li>All custom field names must use the prefix <code>scale_sales_</code>. Never use short/generic names.</li>
+    <li>Never modify an upstream DocType's standard fields — only <strong>add</strong> custom fields via Customization → Custom Field.</li>
+    <li>After every task, create one test record to verify. Don't mark done until tested end-to-end.</li>
+    <li>If something doesn't match these instructions, ask Raghib before guessing. Share a screenshot.</li>
+    <li>Run <code>bench --site scale.localhost migrate</code> after every <code>pip install</code> or DocType creation.</li>
+    <li>Commit format: <code>feat(sales): [short description]</code> — no emojis, no "Claude" in commit messages.</li>
+  </ul>
+</div>
+
+<!-- ─── G. WEEK-BY-WEEK TASKS ─── -->
+<div style="margin-bottom:12px;page-break-before:always;">
+  <p style="margin:0 0 6px;"><strong style="font-size:1.05rem;">F. Week-by-Week Task List (Phase 1 → Phase 2)</strong></p>
+  <p style="margin:0 0 14px;font-size:.85rem;color:#374151;">Gap analysis is complete. Development starts from Day 1. Tasks below are split by track: <strong style="color:#7c3aed;">Raghib (purple)</strong> · <strong style="color:#1d4ed8;">Archit (blue)</strong> · <strong style="color:#15803d;">Muhammad (green)</strong> · <strong>Both</strong> · <strong style="color:#d97706;">Veeren AI track (see separate section below)</strong>.</p>
+</div>
+
+<div class="week-label">Week 1 · Jul 29–Aug 8 · Configuration &amp; Foundation Setup (Phase 1)</div>
+
+<div class="task-card" id="T01">
+  <div class="task-header">
+    <span class="task-id">T01</span>
+    <strong>Configure Lead Source Master Values</strong>
+    <span class="task-assign" style="background:#dcfce7;color:#15803d;">Muhammad</span>
+    <span class="task-date">Tue 29 Jul · Est. 30 min</span>
+  </div>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#ecfdf5;border-left:3px solid #10b981;"><span class="st-done">✅ Done</span> — all 10 sources match exactly. Verify: <code>Home → Scale Sales workspace → Lead → any lead → Source dropdown</code>.</div>
+  <div class="task-meta">Feature: SALES-02 Lead Management | Deliverable: Lead Source list populated</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> Every lead that enters the system came from somewhere — a website form, a LinkedIn ad, a referral, a trade show. Capturing this "source" on every lead is how we answer the question: "Which channel brings us the best leads?" and "Which campaigns should we invest more in?" Without this data, marketing spend decisions are pure guesswork.</p>
+    <p><span class="ctx-label">In practice:</span> A salesperson meets someone at a trade show → they select "Trade Show" as Lead Source. A web form submission arrives → it auto-tags as "Website Form." At month-end, the report shows Referrals convert to deals at 40% while Google Ads convert at 5% — so the next quarter's budget shifts toward referral programs. The source field makes this analysis possible.</p>
+    <span class="ctx-ref">Requirement: SALES-02 Lead Management · Sales Management Module.pdf §3.2 Lead Tracking</span>
+  </div>
+  <ol class="task-steps">
+    <li>In ERPNext, go to top search bar → type <strong>Lead Source</strong> → click the result.</li>
+    <li>You'll see a list. Click <strong>+ New</strong> for each source below. Field to fill: only "Lead Source Name".</li>
+    <li>Add these sources (one by one): <code>Website Form</code>, <code>Facebook Lead Ad</code>, <code>LinkedIn Lead Ad</code>, <code>Google Ads</code>, <code>Referral</code>, <code>Trade Show</code>, <code>Cold Call</code>, <code>WhatsApp Inbound</code>, <code>Excel Import</code>, <code>Direct Enquiry</code>.</li>
+    <li>After saving each, go back to the Lead Source list to confirm it appears.</li>
+    <li><strong>Verify:</strong> Open any existing Lead → the "Source" dropdown should now show all your new sources.</li>
+  </ol>
+  <div class="task-note">Lead Source is how we track where every lead came from. This is the foundation for Marketing ROI reports later.</div>
+</div>
+
+<div class="task-card" id="T02">
+  <div class="task-header">
+    <span class="task-id">T02</span>
+    <strong>Create Customer Group Hierarchy</strong>
+    <span class="task-assign" style="background:#dbeafe;color:#1d4ed8;">Archit</span>
+    <span class="task-date">Tue 29 Jul · Est. 30 min</span>
+  </div>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#ecfdf5;border-left:3px solid #10b981;"><span class="st-done">✅ Done</span> — all 5 groups exist with correct parent/hierarchy. Verify: <code>Masters → Customer Group</code> tree view.</div>
+  <div class="task-meta">Feature: SALES-01 CRM | Deliverable: Customer Groups set up correctly</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> AIWS sells to very different types of buyers — end customers who buy for their own use, dealers who sell into a region, and distributors who buy in bulk. These groups need different pricing, different credit terms, and separate performance reports. The Customer Group field is what tells the system which bucket a customer belongs to.</p>
+    <p><span class="ctx-label">In practice:</span> "West India Electricals Pvt Ltd" is an authorized dealer. Once classified as "Dealer," the system automatically applies dealer pricing when a Quotation is created for them, includes them in the Dealer Performance report, and can enforce a separate credit limit. If they were just "Customer," none of those rules would fire. The group classification is the trigger for all channel-specific business logic.</p>
+    <span class="ctx-ref">Requirement: SALES-01 CRM · SALES-06 Dealer Management · SALES-07 Distributor Management</span>
+  </div>
+  <ol class="task-steps">
+    <li>In ERPNext, search for <strong>Customer Group</strong> → open the list view.</li>
+    <li>You will see a tree with "All Customer Groups" at the root. Click <strong>+ New</strong>.</li>
+    <li>Create each group below. For each: set <em>Parent Customer Group</em> = <strong>All Customer Groups</strong>.
+      <ul>
+        <li><code>Direct Customer</code> — regular B2B buyer</li>
+        <li><code>Dealer</code> — authorized dealer in a region</li>
+        <li><code>Distributor</code> — buys in bulk and sells forward</li>
+        <li><code>Consultant / Partner</code> — referral or advisory partner</li>
+        <li><code>Prospect</code> — not yet a customer</li>
+      </ul>
+    </li>
+    <li><strong>Verify:</strong> Open any Customer → the "Customer Group" field should show your new groups in the dropdown.</li>
+  </ol>
+  <div class="task-note">Customer Group drives pricing rules, credit limits, and reports. Dealers and Distributors will get special treatment in later tasks.</div>
+</div>
+
+<div class="task-card" id="T03">
+  <div class="task-header">
+    <span class="task-id">T03</span>
+    <strong>Add 4 Custom Fields to the Customer DocType</strong>
+    <span class="task-assign" style="background:#dbeafe;color:#1d4ed8;">Archit</span>
+    <span class="task-date">Wed 30 Jul · Est. 1.5 hrs</span>
+  </div>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#fffbeb;border-left:3px solid #f59e0b;"><span class="st-wip">🟡 Done, one gap</span> — all 4 fields live with correct names/options (Details tab → collapsed "More Information" section). <strong>Gap:</strong> Customer Status ("At Risk" etc.) has no auto-trigger — it's set manually today. Defining + wiring a real rule is a new open task below.</div>
+  <div class="task-meta">Feature: SALES-01 CRM | Deliverable: 4 new fields visible on the Customer form</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> Standard ERPNext Customer records only hold basic contact and billing information. For a B2B sales team, you also need account intelligence — how big is this company (turnover), which competitor system are they currently using, how strategically important are they to us, and are they healthy or at risk? These four fields give reps everything they need to prepare before a customer meeting.</p>
+    <p><span class="ctx-label">In practice:</span> Before Muhammad visits "Nova Retail," he opens their Customer record: Annual Turnover ₹50 crore → big enough for an enterprise deal. Competitor Products: SAP B1 → he prepares a cost comparison. Account Classification: Key Account → this is a critical relationship to protect. Account Status: At Risk → this isn't a routine visit, it's urgent. Without these fields, every customer visit is a blind call.</p>
+    <span class="ctx-ref">Requirement: SALES-01 CRM — Customer Repository · Sales Management Module.pdf §2 Account Intelligence</span>
+  </div>
+  <ol class="task-steps">
+    <li>In ERPNext, search for <strong>Custom Field</strong> → open the list → click <strong>+ New</strong>.</li>
+    <li>Add the first field:
+      <ul>
+        <li>DocType: <strong>Customer</strong></li>
+        <li>Label: <strong>Annual Turnover (₹ Cr)</strong></li>
+        <li>Field Name: <code>scale_sales_annual_turnover</code> (auto-fills if you type the label, but manually verify this exact name)</li>
+        <li>Field Type: <strong>Currency</strong></li>
+        <li>Insert After: <strong>website</strong></li>
+        <li>Click Save.</li>
+      </ul>
+    </li>
+    <li>Add the second field:
+      <ul>
+        <li>DocType: <strong>Customer</strong>, Label: <strong>Competitor Products Used</strong></li>
+        <li>Field Name: <code>scale_sales_competitor_products</code>, Type: <strong>Data</strong></li>
+        <li>Insert After: <code>scale_sales_annual_turnover</code></li>
+      </ul>
+    </li>
+    <li>Add the third field:
+      <ul>
+        <li>DocType: <strong>Customer</strong>, Label: <strong>Account Classification</strong></li>
+        <li>Field Name: <code>scale_sales_account_classification</code>, Type: <strong>Select</strong></li>
+        <li>Options (one per line): <code>A Class</code>, <code>B Class</code>, <code>C Class</code>, <code>Key Account</code>, <code>Strategic Account</code></li>
+        <li>Insert After: <code>scale_sales_competitor_products</code></li>
+      </ul>
+    </li>
+    <li>Add the fourth field:
+      <ul>
+        <li>DocType: <strong>Customer</strong>, Label: <strong>Customer Status</strong></li>
+        <li>Field Name: <code>scale_sales_customer_status</code>, Type: <strong>Select</strong></li>
+        <li>Options: <code>Active</code>, <code>Inactive</code>, <code>Prospect</code>, <code>At Risk</code>, <code>Churned</code></li>
+        <li>Insert After: <code>scale_sales_account_classification</code></li>
+      </ul>
+    </li>
+    <li><strong>Verify:</strong> Open any Customer record → scroll down → you should see all 4 new fields. Fill them in for the test customer (Nova Retail). Save.</li>
+  </ol>
+  <div class="task-note">Always use the <code>scale_sales_</code> prefix. This prevents name clashes with ERPNext standard fields and other custom apps. If the field name already exists ERPNext will show an error — check you haven't made a typo.</div>
+</div>
+
+<div class="task-card" id="T04">
+  <div class="task-header">
+    <span class="task-id">T04</span>
+    <strong>Add BANT + UTM Custom Fields to the Lead DocType</strong>
+    <span class="task-assign" style="background:#dcfce7;color:#15803d;">Muhammad</span>
+    <span class="task-date">Wed 30 Jul · Est. 1.5 hrs</span>
+  </div>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#ecfdf5;border-left:3px solid #10b981;"><span class="st-done">✅ Done</span> — all 7 fields live with correct names/options, plus a bonus 8th field (<code>scale_sales_ai_lead_score</code>, not in this task's spec) that drives Lead Priority automatically.</div>
+  <div class="task-meta">Feature: SALES-02 Lead Management | Deliverable: 7 new fields on Lead form</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> BANT is the industry-standard B2B lead qualification framework: <strong>B</strong>udget (can they afford it?), <strong>A</strong>uthority (are they the decision-maker?), <strong>N</strong>eed (do they have the problem we solve?), <strong>T</strong>imeline (are they buying soon?). Without these four data points, a salesperson has no structured way to decide whether a lead is worth pursuing or when to follow up. The UTM fields track which digital campaign (Google Ad, LinkedIn) generated the lead, so marketing knows which ads are producing qualified prospects.</p>
+    <p><span class="ctx-label">In practice:</span> A lead comes in from a LinkedIn ad. Muhammad fills BANT: Budget ₹15L (qualified), Authority = "Manager" (note: needs VP involvement for sign-off), Need = "replace legacy inventory system" (clear problem), Expected Closure = Sep 2026 (warm — 2 months out). Lead Priority auto-sets to Warm. The UTM Campaign field captures "ERP for Manufacturing Q3" — marketing knows that campaign is generating quality leads. Without these fields, the team would need to rely on WhatsApp messages and memory to track this information.</p>
+    <span class="ctx-ref">Requirement: SALES-02 Lead Management · Sales Management Module.pdf §3.3 Lead Qualification</span>
+  </div>
+  <ol class="task-steps">
+    <li>Go to <strong>Custom Field</strong> → <strong>+ New</strong> for each field below. DocType is <strong>Lead</strong> for all.</li>
+    <li><strong>Budget field:</strong> Label: <em>Budget (₹)</em>, Field Name: <code>scale_sales_budget</code>, Type: <strong>Currency</strong>, Insert After: <code>lead_name</code></li>
+    <li><strong>Authority / Decision-Maker Level:</strong> Label: <em>Decision-Maker Level</em>, Field Name: <code>scale_sales_authority_level</code>, Type: <strong>Select</strong>
+      <br>Options: <code>C-Level (CEO/MD/CFO)</code>, <code>VP / Director</code>, <code>Manager</code>, <code>Influencer</code>, <code>End User</code>
+      <br>Insert After: <code>scale_sales_budget</code></li>
+    <li><strong>Need:</strong> Label: <em>Business Need / Requirement</em>, Field Name: <code>scale_sales_need_description</code>, Type: <strong>Small Text</strong>, Insert After: <code>scale_sales_authority_level</code></li>
+    <li><strong>Timeline / Expected Closure:</strong> Label: <em>Expected Closure Date</em>, Field Name: <code>scale_sales_expected_closure</code>, Type: <strong>Date</strong>, Insert After: <code>scale_sales_need_description</code></li>
+    <li><strong>Lead Priority:</strong> Label: <em>Lead Priority</em>, Field Name: <code>scale_sales_lead_priority</code>, Type: <strong>Select</strong>, Options: <code>Hot</code>, <code>Warm</code>, <code>Cold</code>, Insert After: <code>scale_sales_expected_closure</code></li>
+    <li><strong>UTM Source:</strong> Label: <em>UTM Source</em>, Field Name: <code>scale_sales_utm_source</code>, Type: <strong>Data</strong>, Insert After: <code>source</code></li>
+    <li><strong>UTM Campaign:</strong> Label: <em>UTM Campaign</em>, Field Name: <code>scale_sales_utm_campaign</code>, Type: <strong>Data</strong>, Insert After: <code>scale_sales_utm_source</code></li>
+    <li><strong>Verify:</strong> Open any Lead → confirm all 7 new fields appear. Create a new test lead and fill every field.</li>
+  </ol>
+  <div class="task-note">BANT = Budget, Authority, Need, Timeline. These 4 factors determine if a lead is worth pursuing. The UTM fields let us track which Google Ad or Facebook campaign brought the lead.</div>
+</div>
+
+<div class="task-card" id="R01" style="border-color:#7c3aed;background:#faf5ff;">
+  <div class="task-header">
+    <span class="task-id" style="background:#7c3aed;">R01</span>
+    <strong>Export Custom Field Fixtures to Git — First Code Commit</strong>
+    <span class="task-assign" style="background:#ede9fe;color:#7c3aed;">Raghib</span>
+    <span class="task-date">Wed 30 Jul · Est. 30 min</span>
+  </div>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#fffbeb;border-left:3px solid #f59e0b;"><span class="st-wip">🟡 Goal achieved, different mechanism</span> — custom fields ARE version-controlled and auto-apply via <code>bench migrate</code> on any bench, matching this task's actual goal. But it's done through a scripted Python setup module (<code>demo_setup.py</code>, wired to <code>after_migrate</code>) rather than literal <code>export-fixtures</code>. Checked this against <code>scale_account</code>/<code>scale_finance</code> (already merged, team-proven) — same pattern, not a shortcut. No fixture files exist for scale_sales.</div>
+  <div class="task-meta">Feature: All custom fields (T03 + T04) | Deliverable: Custom fields version-controlled as fixtures in apps/scale_sales/</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> When Archit and Muhammad create custom fields through the ERPNext interface, those definitions are stored only in the current database. If a new developer joins and sets up their own bench, or if we deploy to staging or production, those fields would be missing — needing to be recreated by hand every time. Exporting fixtures solves this: the field definitions are saved as JSON files inside the git repo, so any bench that runs <code>bench migrate</code> automatically gets all custom fields applied.</p>
+    <p><span class="ctx-label">In practice:</span> After T03 and T04, there are 11 custom fields across Customer and Lead. Raghib runs the fixture export → a <code>Custom Field.json</code> file appears in <code>apps/scale_sales/scale_sales/fixtures/</code>. From now on, a new developer who clones the repo and runs <code>bench migrate</code> gets all 11 fields automatically — no manual UI steps. This is standard Frappe team workflow. The commit message is the first code artifact for the Sales module in the project history.</p>
+    <span class="ctx-ref">Requirement: Development best practice · No client requirement, but essential for team-scale development</span>
+  </div>
+  <ol class="task-steps">
+    <li>Once Archit (T03) and Muhammad (T04) have saved their custom fields, run the fixture export from your bench terminal:
+      <pre style="background:#1e293b;color:#e2e8f0;padding:10px;border-radius:6px;font-size:.78rem;margin:6px 0;">bench --site scale.localhost export-fixtures --app scale_sales</pre>
+    </li>
+    <li>Check what was exported: <code>ls apps/scale_sales/scale_sales/fixtures/</code> — you should see a <code>Custom Field.json</code> file.</li>
+    <li>Open it and verify the <code>scale_sales_</code> prefixed fields for Customer and Lead are in there.</li>
+    <li>Stage and commit:
+      <pre style="background:#1e293b;color:#e2e8f0;padding:10px;border-radius:6px;font-size:.78rem;margin:6px 0;">git add apps/scale_sales/scale_sales/fixtures/
+git commit -m "feat(sales): export custom field fixtures for Customer and Lead DocTypes"</pre>
+    </li>
+    <li>This is the first development commit for the Sales module — all custom fields are now version-controlled and will apply to any new bench via <code>bench migrate</code>.</li>
+  </ol>
+  <div class="task-note">Why this matters: without fixtures, custom fields live only in the database. If someone sets up a new bench, they'd have to add all fields manually. With fixtures exported and committed, running <code>bench --site [name] migrate</code> applies all custom fields automatically.</div>
+</div>
+
+<div class="task-card" id="T05">
+  <div class="task-header">
+    <span class="task-id">T05</span>
+    <strong>Create Territory Tree (India — 4 zones + states)</strong>
+    <span class="task-assign" style="background:#dbeafe;color:#1d4ed8;">Archit</span>
+    <span class="task-date">Thu 31 Jul · Est. 1 hr</span>
+  </div>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#ecfdf5;border-left:3px solid #10b981;"><span class="st-done">✅ Done</span> — tree built as specced. <strong>Bonus, not in original plan:</strong> territory-based Lead auto-assignment also built (4 Assignment Rules by zone) — new leads route to the right rep automatically the moment Territory is set.</div>
+  <div class="task-meta">Feature: SALES-01 / SALES-05 | Deliverable: Territory tree with 4 zones and key states</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> A pan-India sales team needs geographic accountability. Territories define which salesperson owns which region — North India, South India, etc. This drives three things: (1) automatic lead assignment based on where the prospect is located, (2) preventing overlap where two reps unknowingly work the same region, and (3) enabling regional pipeline and performance reports so management can see where the pipeline is strong or thin.</p>
+    <p><span class="ctx-label">In practice:</span> A web lead comes in from a company based in Gujarat. The system checks the territory tree — Gujarat falls under West India → it's automatically assigned to the West India salesperson, who gets an email notification. At month-end, Raghib runs "Pipeline by Territory" and sees South India has ₹45L in opportunities but North India only ₹12L — he needs to investigate whether it's a coverage gap or simply a slower market, and decide whether to reassign or add headcount.</p>
+    <span class="ctx-ref">Requirement: SALES-01 CRM · SALES-05 Sales Target Management</span>
+  </div>
+  <ol class="task-steps">
+    <li>Search for <strong>Territory</strong> → open the tree view.</li>
+    <li>You'll see "All Territories" at the root. Under it, create <strong>India</strong> (Parent: All Territories).</li>
+    <li>Under <strong>India</strong>, create four zones:
+      <ul>
+        <li><code>North India</code>, <code>South India</code>, <code>West India</code>, <code>East India</code></li>
+      </ul>
+    </li>
+    <li>Under <strong>North India</strong>, create states: <code>Delhi NCR</code>, <code>Punjab</code>, <code>Haryana</code>, <code>UP North</code>, <code>Rajasthan</code></li>
+    <li>Under <strong>South India</strong>, create: <code>Karnataka</code>, <code>Tamil Nadu</code>, <code>Kerala</code>, <code>Andhra Pradesh</code>, <code>Telangana</code></li>
+    <li>Under <strong>West India</strong>, create: <code>Maharashtra</code>, <code>Gujarat</code>, <code>Goa</code></li>
+    <li>Under <strong>East India</strong>, create: <code>West Bengal</code>, <code>Odisha</code>, <code>Bihar</code></li>
+    <li><strong>Verify:</strong> Open any Lead → "Territory" field should show the full tree. Assign your test lead to <code>Karnataka</code>.</li>
+  </ol>
+</div>
+
+<div class="task-card" id="T06">
+  <div class="task-header">
+    <span class="task-id">T06</span>
+    <strong>Install scale_sales App in Bench + Configure Selling Settings</strong>
+    <span class="task-assign" style="background:#dcfce7;color:#15803d;">Muhammad</span>
+    <span class="task-date">Thu 31 Jul · Est. 45 min</span>
+  </div>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#ecfdf5;border-left:3px solid #10b981;"><span class="st-done">✅ Done</span> — app is installed and has been running throughout the sales_demo build. After you pull <code>main</code>, just <code>bench migrate</code> — see <code>apps/scale_sales/README.md</code> for the exact commands (now includes <code>bench build --app scale_sales</code> too, for a new bundled JS file).</div>
+  <div class="task-meta">Feature: Foundation | Deliverable: scale_sales installed in bench; Selling Settings configured</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> There are two things happening here. First, installing <code>scale_sales</code> — this is the custom app that holds all AIWS-specific business logic (duplicate checks, AI scoring, collection tracking). Until it's installed in the bench, none of those custom hooks or scheduled jobs have any effect on the system. Second, Selling Settings — these are the global defaults that pre-fill every new sales transaction. Without setting them, every Quotation or Sales Order requires the rep to manually choose the customer group, territory, and price list every single time.</p>
+    <p><span class="ctx-label">In practice:</span> After installing scale_sales, any new Lead created in the system will automatically trigger the duplicate-check logic (once wired in T15). After Selling Settings are configured, a new Quotation for a direct customer pre-fills Territory = India, Customer Group = Direct Customer, Price List = Standard Selling — the rep just picks the customer and adds line items. For a dealer, they switch the price list to "Dealer Price List" and everything adjusts. These defaults save 3–5 clicks per transaction across hundreds of transactions per month.</p>
+    <span class="ctx-ref">Requirement: Foundation setup — prerequisite for all subsequent module development</span>
+  </div>
+  <ol class="task-steps">
+    <li>Open your terminal inside the <code>scale-bench/</code> directory. Pull the latest from the repo first: <code>git pull origin main</code>. You should see the <code>apps/scale_sales/</code> directory appear.</li>
+    <li>Install the app into your Python environment: <code>pip install -e apps/scale_sales</code></li>
+    <li>Install the app on the site: <code>bench --site scale.localhost install-app scale_sales</code></li>
+    <li>Run migrations: <code>bench --site scale.localhost migrate</code></li>
+    <li>Verify the app is installed: <code>bench --site scale.localhost list-apps</code> — you should see <code>scale_sales</code> in the list.</li>
+    <li><strong>Verify the workspace:</strong> Open <code>http://scale.localhost:8001</code> → click the <strong>Scale</strong> app icon → in the left sidebar you should see <strong>Scale Sales</strong> below Example Module. Click it — the workspace opens with shortcut tiles for Lead, Opportunity, Quotation, Customer.</li>
+    <li>Now configure Selling Settings (these are global defaults): In ERPNext search for <strong>Selling Settings</strong>. Set:
+      <ul>
+        <li>Customer Group = <strong>Direct Customer</strong> (your group from T02)</li>
+        <li>Territory = <strong>India</strong></li>
+        <li>Default Price List = <strong>Standard Selling</strong> (from T07/T08 — if not done yet, set this after T07)</li>
+        <li>Sales Order Required = No (allow Invoices without SO for now)</li>
+        <li>Delivery Note Required = No</li>
+      </ul>
+    </li>
+    <li>Save Selling Settings. <strong>Verify:</strong> Create a new Quotation — Customer Group and Territory should default to what you configured.</li>
+  </ol>
+  <div class="task-note">The <code>pip install -e</code> installs in "editable" mode — any Python file changes in <code>apps/scale_sales/</code> take effect immediately without reinstalling. Always run <code>bench migrate</code> after installing a new app or creating DocTypes.</div>
+</div>
+
+<div class="task-card" id="T07">
+  <div class="task-header">
+    <span class="task-id">T07</span>
+    <strong>Set up Sales Person Hierarchy and Price Lists</strong>
+    <span class="task-assign">Both — Archit &amp; Muhammad</span>
+    <span class="task-date">Fri 1 Aug · Est. 1 hr</span>
+  </div>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#fffbeb;border-left:3px solid #f59e0b;"><span class="st-wip">🟡 Done, but built differently</span> — 4 Sales Person records exist (Rajesh Kumar - North / Priya Singh - South / Amit Verma - West / Sanjay Rao - East), flat under stock "Sales Team", <strong>not</strong> the Raghib → Archit/Muhammad hierarchy this task specifies, and not linked to any User/Employee. Price Lists: "Dealer Price List" + "Distributor Price List" (not "Standard Selling" — that already exists as an ERPNext default, so wasn't recreated). <strong>Needs a decision:</strong> keep the placeholder reps or repoint the hierarchy to the real team.</div>
+  <div class="task-meta">Feature: SALES-01 / SALES-05 | Deliverable: Sales Person tree + 2 Price Lists</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> "Sales Person" in ERPNext is a trackable entity separate from a system user — it can be linked to every Quotation, Opportunity, and Sales Order to measure individual performance. The hierarchy (Raghib → Archit, Muhammad) means management can view aggregate team performance in one report, or drill into individual numbers. Price Lists are the rate cards applied to every Quotation: Standard Selling for direct customers, a Dealer Price List with discounted rates for authorized dealers. Without both, there's no structured way to track who sold what, or to apply the right pricing to the right channel.</p>
+    <p><span class="ctx-label">In practice:</span> When Archit creates a Quotation for a direct customer, Standard Selling rates apply automatically. When Muhammad creates one for a dealer, he switches to Dealer Price List and the rates adjust. At quarter-end, Raghib runs "Sales Person Wise Transaction Summary" — he can see Archit closed ₹18L and Muhammad ₹22L in Q3, which items were sold, and from which price list. This is the data foundation for commission calculations in Phase 2.</p>
+    <span class="ctx-ref">Requirement: SALES-05 Sales Target Management · SALES-01 CRM</span>
+  </div>
+  <ol class="task-steps">
+    <li><strong>Sales Person tree:</strong> Search for <strong>Sales Person</strong>. Create: <code>Raghib Nasri</code> (Parent: All Sales Persons, Is Group: Yes). Under Raghib: <code>Archit</code> and <code>Muhammad</code> (Parent: Raghib Nasri).</li>
+    <li>Link each Sales Person to their User account: edit each record → set Employee field or User field to the matching login.</li>
+    <li><strong>Price Lists:</strong> Search for <strong>Price List</strong> → create <code>Standard Selling</code> (Currency: INR, Is Buying: No, Is Selling: Yes, Enabled: Yes).</li>
+    <li>Create a second Price List: <code>Dealer Price List</code> (same settings). We'll add item rates to these in a later task.</li>
+    <li><strong>Verify:</strong> Open any Quotation → the "Price List" field should show both your new lists.</li>
+  </ol>
+</div>
+
+<!-- WEEK 2 -->
+<div class="week-label">Week 2 · Aug 3–8 · Quotation Workflow, Collections &amp; First Custom DocType</div>
+
+<div class="task-card" id="T08">
+  <div class="task-header">
+    <span class="task-id">T08</span>
+    <strong>Configure Quotation Discount Approval Workflow</strong>
+    <span class="task-assign" style="background:#dbeafe;color:#1d4ed8;">Archit</span>
+    <span class="task-date">Mon 3 Aug · Est. 2 hrs</span>
+  </div>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#fffbeb;border-left:3px solid #f59e0b;"><span class="st-wip">🟡 Done, but rule deviated significantly</span> — built as a 5-state workflow (Draft → Pending Manager Approval → Pending VP Approval → Approved/Rejected) with a <strong>20% threshold</strong> and a Manager→VP escalation tier, plus a Reject→Revise loop. This task's literal steps specify a single <strong>10%</strong> threshold, Manager-only approval, no VP tier, no reject path, and different state names (Pending Approval/Sent to Customer). Both versions work — <strong>needs a decision on which is canonical</strong> before anyone builds further on top of it. Known limitation either way: no custom "✨ New" badge renders on Quotation (india_compliance framework conflict, documented, not fixed).</div>
+  <div class="task-meta">Feature: SALES-09 Quotation Management | Deliverable: Quotations above 10% discount route for approval</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> Uncontrolled discounting erodes profit margins — but blocking discounts entirely loses competitive deals. A discount approval workflow balances both: reps can offer small discounts autonomously, but above 10% a Sales Manager must approve, and above 20% a VP must sign off. This protects margins while keeping deals moving, and creates a complete audit trail of every discount that was ever offered and who authorised it.</p>
+    <p><span class="ctx-label">In practice:</span> Archit is closing a competitive deal and wants to offer 15% off to win it. He creates the Quotation, sets the discount to 15%, and clicks "Request Approval." The Quotation moves to "Pending Approval" status — it cannot be sent to the customer yet. Raghib gets a notification, reviews the deal context, and clicks "Approve." Archit is notified and can now send the Quotation. If Archit had entered 25%, Raghib's approval would escalate further to the VP level. No discount leaves the building without a recorded sign-off.</p>
+    <span class="ctx-ref">Requirement: SALES-09 Quotation Management · Sales Management Module.pdf §5 Approval Controls</span>
+  </div>
+  <ol class="task-steps">
+    <li>Search for <strong>Workflow</strong> → click <strong>+ New</strong>.</li>
+    <li>Fill in: Document Type = <strong>Quotation</strong>, Workflow Name = <em>Quotation Discount Approval</em>, Is Active = Yes.</li>
+    <li>Create these <strong>Workflow States</strong> (States tab): <code>Draft</code> (doc status 0), <code>Pending Approval</code> (doc status 0), <code>Approved</code> (doc status 0), <code>Sent to Customer</code> (doc status 1).</li>
+    <li>Create these <strong>Workflow Transitions</strong> (Transitions tab):
+      <ul>
+        <li>Draft → Pending Approval, Action: <em>Request Approval</em>, Allowed: Sales User, Condition: <code>doc.additional_discount_percentage &gt; 10</code></li>
+        <li>Draft → Approved, Action: <em>Approve</em>, Allowed: Sales Manager, Condition: <code>doc.additional_discount_percentage &lt;= 10</code></li>
+        <li>Pending Approval → Approved, Action: <em>Approve</em>, Allowed: Sales Manager</li>
+        <li>Approved → Sent to Customer, Action: <em>Send to Customer</em>, Allowed: Sales User</li>
+      </ul>
+    </li>
+    <li>Save the Workflow. Open a test Quotation, add a 15% discount, and verify the <em>Request Approval</em> button appears instead of <em>Submit</em>.</li>
+  </ol>
+  <div class="task-note">The Condition field is Python: <code>doc</code> is the Quotation object. <code>doc.additional_discount_percentage</code> is the ERPNext standard field for the overall discount %. If unsure of a field name, inspect the form in Developer mode (F12 in browser).</div>
+</div>
+
+<div class="task-card" id="T09">
+  <div class="task-header">
+    <span class="task-id">T09</span>
+    <strong>Configure Dunning Types for Collection Reminders</strong>
+    <span class="task-assign" style="background:#dcfce7;color:#15803d;">Muhammad</span>
+    <span class="task-date">Mon 3 Aug · Est. 1 hr</span>
+  </div>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#fffbeb;border-left:3px solid #f59e0b;"><span class="st-wip">🟡 Data only, not automated</span> — 3 Dunning Type records exist (named "T-7 Reminder" / "T-0 Due Alert" / "T+15 Dunning Notice", not this task's names). <strong>Step 4 (the Notification Rule that actually sends anything) was never built.</strong> These are just templates a rep manually picks when creating a Dunning letter by hand — nothing watches overdue invoices or auto-escalates today, despite the name. Building the real automation is a new open task below.</div>
+  <div class="task-meta">Feature: SALES-11 Collection Management | Deliverable: 3 Dunning types configured</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> Late payments are one of the biggest cash flow problems in B2B sales. A "Dunning" system sends automatic, escalating payment reminders — a friendly nudge before the due date, a notice on due date, and a formal overdue letter with late interest after 15 days. Without this, someone has to manually track every outstanding invoice and send individual emails. With it, the system runs the entire reminder sequence automatically. The collections team only needs to step in when reminders have been ignored.</p>
+    <p><span class="ctx-label">In practice:</span> Nova Retail has Invoice INV-2026-0042 due Aug 15. On Aug 8, the system auto-sends a polite reminder email: "Your invoice is due in 7 days." On Aug 15, a "due today" notice goes out. On Sep 1 (16 days overdue), the system creates a Dunning document with 1.5% monthly interest calculated, and sends a formal notice. The collections team doesn't need to track any of this — the system handles escalation. They only get involved if the customer still hasn't paid after the final notice.</p>
+    <span class="ctx-ref">Requirement: SALES-11 Collection Management · Sales Management Module.pdf §7 Collections Process</span>
+  </div>
+  <ol class="task-steps">
+    <li>Search for <strong>Dunning Type</strong> → click <strong>+ New</strong> three times to create the following:</li>
+    <li><strong>Dunning Type 1:</strong> Name: <em>Payment Reminder — 7 Days Before</em>, Dunning Letter: write a short reminder message. Grace period: 0 days. Interest Rate: 0%. This is a friendly reminder sent T−7 days.</li>
+    <li><strong>Dunning Type 2:</strong> Name: <em>Payment Due Today</em>, message about invoice due today, Grace Period: 0, Interest: 0%.</li>
+    <li><strong>Dunning Type 3:</strong> Name: <em>Overdue Notice — 15 Days</em>, Grace Period: 15 days, Interest Rate: 1.5% per month (this is the formal dunning notice with late interest).</li>
+    <li><strong>Notification Rule:</strong> Search for <strong>Notification</strong> → New. Set: Document Type = Sales Invoice, Event = Days After, Days = -7, Condition = <code>doc.outstanding_amount &gt; 0</code>. Add recipients from <code>doc.contact_email</code>. Subject: "Payment Reminder — Invoice {doc.name} due in 7 days". Save.</li>
+    <li><strong>Verify:</strong> With a submitted Sales Invoice, manually click <strong>Create Dunning</strong> on the invoice. Select <em>Overdue Notice — 15 Days</em>. Confirm it generates a Dunning document.</li>
+  </ol>
+</div>
+
+<div class="task-card" id="T10">
+  <div class="task-header">
+    <span class="task-id">T10</span>
+    <strong>Add Promise-to-Pay &amp; Collection Status Fields to Sales Invoice</strong>
+    <span class="task-assign">Both — Archit &amp; Muhammad</span>
+    <span class="task-date">Tue 4 Aug · Est. 45 min</span>
+  </div>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#fffbeb;border-left:3px solid #f59e0b;"><span class="st-wip">🟡 2 of 3 fields, but genuinely automated</span> — Promise-to-Pay Date and Collection Status are live (More Info tab → "Additional Info" section) and wired with real automation beyond what this task asked for: auto-set to Pending on invoice submit, auto-flips to Collected when a payment fully settles it. <strong>Collection Notes (the 3rd field) was not built.</strong> Note: Frappe hides these fields entirely on a submitted invoice until they have a value — not a bug if a field looks missing on an old record.</div>
+  <div class="task-meta">Feature: SALES-11 Collection Management | Deliverable: 3 new fields on Sales Invoice</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> When a customer can't pay on the due date, the collections team negotiates a commitment — "we'll pay by the 22nd." Without a field to record this, that promise lives only in someone's WhatsApp message or call notes, invisible to the rest of the team. With a "Promise-to-Pay Date" on the invoice, the entire team can see the commitment, and the system can automatically flag broken promises the next day. "Collection Status" gives a real-time view of where every invoice stands — not just "paid or unpaid," but Promised, Partial, or Written Off.</p>
+    <p><span class="ctx-label">In practice:</span> Muhammad calls Nova Retail about their ₹3.2L overdue invoice. They say: "We'll pay ₹2L by Aug 22, remaining by Sep 5." He updates the Sales Invoice: Promise-to-Pay Date = Aug 22, Collection Status = Promised, Collection Notes = "Two-tranche payment promised on call — Aug 22 and Sep 5." On Aug 23 if nothing has been paid, the system flags the invoice as a broken promise. Raghib sees this in the collection dashboard and can decide to escalate or send a senior rep.</p>
+    <span class="ctx-ref">Requirement: SALES-11 Collection Management · Sales Management Module.pdf §7.2 Promise Tracking</span>
+  </div>
+  <ol class="task-steps">
+    <li>Go to <strong>Custom Field</strong> → <strong>+ New</strong>. DocType = <strong>Sales Invoice</strong> for all three.</li>
+    <li><strong>Field 1:</strong> Label: <em>Promise-to-Pay Date</em>, Field Name: <code>scale_sales_promise_to_pay_date</code>, Type: <strong>Date</strong>, Insert After: <code>due_date</code></li>
+    <li><strong>Field 2:</strong> Label: <em>Collection Status</em>, Field Name: <code>scale_sales_collection_status</code>, Type: <strong>Select</strong>, Options: <code>Pending</code>, <code>Promised</code>, <code>Collected</code>, <code>Partial</code>, <code>Written Off</code>. Insert After: <code>scale_sales_promise_to_pay_date</code>. Default: <code>Pending</code></li>
+    <li><strong>Field 3:</strong> Label: <em>Collection Notes</em>, Field Name: <code>scale_sales_collection_notes</code>, Type: <strong>Small Text</strong>, Insert After: <code>scale_sales_collection_status</code></li>
+    <li><strong>Verify:</strong> Open an existing submitted Sales Invoice → you should see all 3 fields. Set Promise-to-Pay Date to next week, Status to <em>Promised</em>, add a note. Save.</li>
+  </ol>
+</div>
+
+<div class="task-card" id="T11">
+  <div class="task-header">
+    <span class="task-id">T11</span>
+    <strong>Configure AR Aging Buckets &amp; Payment Terms</strong>
+    <span class="task-assign" style="background:#dcfce7;color:#15803d;">Muhammad</span>
+    <span class="task-date">Wed 5 Aug · Est. 30 min</span>
+  </div>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#fffbeb;border-left:3px solid #f59e0b;"><span class="st-wip">🟡 Payment Terms done (different names); ageing bucket claim corrected</span> — Payment Terms Templates built: "Net 30 Days" / "50% Advance" / "Net 45 Days" (not this task's "Net 30"/"Net 60"). <strong>Important:</strong> we initially claimed the 30/60/90/120 ageing range as something we configured — on closer check, that's ERPNext's own out-of-box default value, and our setup code only asserts it defensively. It's real and it works, but it's not something built for AIWS specifically — worth deciding if a different range is actually wanted.</div>
+  <div class="task-meta">Feature: SALES-11 Collection Management | Deliverable: Aging report shows proper buckets</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> AR Aging shows how old each outstanding invoice is, grouped into time buckets (0–30 days, 30–60, 60–90, 90+). This is how the finance team and sales leadership prioritise collection effort — invoices in the 0–30 bucket are recent and usually fine, 60–90 days need active follow-up calls, and 90+ days may need write-off decisions or escalation to senior management. Payment Terms Templates define the agreed payment timeline on every Quotation — "Net 30" means the customer sees "due in 30 days" on the document they receive, and the system calculates the due date automatically.</p>
+    <p><span class="ctx-label">In practice:</span> Every Monday, Raghib checks the AR Aging report: ₹12L in 0–30 days (normal flow), ₹3.2L in 30–60 days (email follow-up needed), ₹1.8L in 60–90 days (Muhammad needs to call these customers this week), ₹90K in 90+ days (escalate or write-off discussion needed with finance). Payment Terms ensure every Quotation and Sales Order includes the agreed timeline — "Net 30" or "Net 60" — visible to both the customer and the collections team.</p>
+    <span class="ctx-ref">Requirement: SALES-11 Collection Management · Sales Management Module.pdf §7 Collections Dashboard</span>
+  </div>
+  <ol class="task-steps">
+    <li>Search for <strong>Accounts Receivable</strong> report (type in the search bar).</li>
+    <li>Run the report with: Company = AIWS Technologies, Date = today.</li>
+    <li>Look at the aging buckets on the right side (0-30, 30-60, 60-90, 90+). Note the existing invoice (if any) from the seed data.</li>
+    <li>Search for <strong>Payment Terms Template</strong> → New. Create: Name = <em>Net 30</em>, add one row: Due Date Based On = Day(s) after invoice date, Credit Days = 30, Due Date Fraction = 1.0.</li>
+    <li>Create another: Name = <em>Net 60</em>, Credit Days = 60.</li>
+    <li>Open your test Customer (Nova Retail) → set Payment Terms = <em>Net 30</em>. Save.</li>
+  </ol>
+</div>
+
+<div class="task-card" id="T12">
+  <div class="task-header">
+    <span class="task-id">T12</span>
+    <strong>Create the Field Visit DocType — First Custom DocType!</strong>
+    <span class="task-assign" style="background:#dbeafe;color:#1d4ed8;">Archit</span>
+    <span class="task-date">Thu 6 Aug · Est. 3 hrs</span>
+  </div>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#fffbeb;border-left:3px solid #f59e0b;"><span class="st-wip">🟡 Done, one field differs</span> — full DocType built (16 fields: GPS lat/long, photo, outcome, follow-up, etc.), workspace shortcut added. <strong>Field name differs:</strong> we built <code>sales_person</code> (Link → Sales Person) instead of this task's <code>sales_rep</code> (Link → User) — same purpose, different target doctype.</div>
+  <div class="task-meta">Feature: SALES-08 Customer Visit Management | Deliverable: Field Visit form usable on mobile browser</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> AIWS's field sales team visits customers on-site. Without a formal record, there's no way to know when a customer was last visited, how often they're being covered, what was discussed, or what the agreed next step is. A Field Visit DocType solves all of this in one place: the visit date, who went, what the purpose was, the discussion notes, customer feedback, photos, GPS coordinates (proving physical presence), and the next follow-up action. This is both an accountability tool for management and a productivity tool for the reps — they can review previous visit notes before every customer call.</p>
+    <p><span class="ctx-label">In practice:</span> Muhammad visits Mehta Industries in Pune. On his mobile browser, he opens Field Visit, selects Customer = Mehta Industries, Purpose = Follow-up, taps Check-In to capture GPS. After the 45-minute meeting he fills: Discussion Notes = "CTO is the real decision-maker — GM cannot approve budget. Competing with Oracle NetSuite. Need to schedule a technical deep-dive with CTO." Outcome = Demo Scheduled, Follow-up Date = Aug 12. He taps Check-Out. Raghib can instantly see this record — which customers were visited, how often, and what was discussed — without any WhatsApp or email chase.</p>
+    <span class="ctx-ref">Requirement: SALES-08 Customer Visit Management · Sales Management Module.pdf §4 Field Activity Tracking</span>
+  </div>
+  <ol class="task-steps">
+    <li>Go to top search bar → type <strong>DocType</strong> → open the DocType list. Click <strong>+ New</strong>.</li>
+    <li>Set: Name = <strong>Field Visit</strong>, Module = <strong>Scale Sales</strong> (you may need to create this module first — see note below), Is Submittable = No.</li>
+    <li>Add the following fields one by one in the <strong>Fields</strong> tab:
+      <ul>
+        <li><strong>customer</strong> — Type: Link, Options: Customer, Label: Customer, In List View: Yes, Mandatory: Yes</li>
+        <li><strong>visit_date</strong> — Type: Date, Label: Visit Date, Mandatory: Yes, Default: Today</li>
+        <li><strong>purpose</strong> — Type: Select, Label: Purpose, Options: Introduction&#10;Follow-up&#10;Demo / Presentation&#10;Collection&#10;Complaint Resolution&#10;Promotional Activity</li>
+        <li><strong>sales_rep</strong> — Type: Link, Options: User, Label: Sales Rep, Default: {current_user}</li>
+        <li><strong>Section Break</strong> — Label: Check-In / Check-Out</li>
+        <li><strong>check_in_time</strong> — Type: Time, Label: Check-In Time, Read Only: Yes</li>
+        <li><strong>check_out_time</strong> — Type: Time, Label: Check-Out Time, Read Only: Yes</li>
+        <li><strong>Column Break</strong></li>
+        <li><strong>latitude</strong> — Type: Float, Label: Latitude (GPS), Read Only: Yes</li>
+        <li><strong>longitude</strong> — Type: Float, Label: Longitude (GPS), Read Only: Yes</li>
+        <li><strong>Section Break</strong> — Label: Visit Notes</li>
+        <li><strong>notes</strong> — Type: Long Text, Label: Discussion Notes</li>
+        <li><strong>customer_feedback</strong> — Type: Small Text, Label: Customer Feedback</li>
+        <li><strong>photos</strong> — Type: Attach Multiple, Label: Photos</li>
+        <li><strong>Section Break</strong> — Label: Outcome</li>
+        <li><strong>follow_up_date</strong> — Type: Date, Label: Follow-up Date</li>
+        <li><strong>visit_outcome</strong> — Type: Select, Label: Outcome, Options: Positive&#10;Neutral&#10;Negative&#10;Order Placed&#10;Payment Collected&#10;Demo Scheduled</li>
+      </ul>
+    </li>
+    <li>In the <strong>Permissions</strong> tab: add Role = <em>Sales User</em> with Read + Write + Create permissions.</li>
+    <li>Save the DocType. Frappe will create the database table automatically.</li>
+    <li><strong>Verify:</strong> Search for <strong>Field Visit</strong> → click <strong>+ New</strong>. The form should open with all your fields. Fill one in with test data. Save.</li>
+    <li><strong>Add Field Visit to the workspace:</strong> Open <code>apps/scale_sales/scale_sales/scale_sales/workspace/scale_sales/scale_sales.json</code> in your editor. In the <code>"links"</code> array, add a new entry under the CRM Card Break:
+      <pre style="background:#1e293b;color:#e2e8f0;padding:8px;border-radius:6px;font-size:.76rem;margin:4px 0;">{ "hidden": 0, "is_query_report": 0, "label": "Field Visit",
+  "link_to": "Field Visit", "link_type": "DocType", "onboard": 1, "type": "Link" }</pre>
+      Then run <code>bench --site scale.localhost migrate</code> — Field Visit will appear in the Scale Sales sidebar card.
+    </li>
+  </ol>
+  <div class="task-note">The Scale Sales workspace (<code>scale_sales.json</code>) is the single place that controls what appears in the left sidebar. Every new custom DocType you ship should be added there so users can navigate to it from the Scale Sales home screen.</div>
+</div>
+
+<div class="task-card" id="T13">
+  <div class="task-header">
+    <span class="task-id">T13</span>
+    <strong>Write the GPS Check-In Client Script on Field Visit</strong>
+    <span class="task-assign" style="background:#dcfce7;color:#15803d;">Muhammad</span>
+    <span class="task-date">Thu 7 Aug · Est. 2 hrs</span>
+  </div>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#ecfdf5;border-left:3px solid #10b981;"><span class="st-done">✅ Done</span> — same <code>navigator.geolocation</code> approach as specced, built as <code>field_visit.js</code>. Check In / Check Out buttons confirmed working.</div>
+  <div class="task-meta">Feature: SALES-08 Customer Visit Management | Deliverable: Check-In button captures GPS on mobile</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> The GPS check-in makes field visits verifiable. Without it, a visit record is just text that anyone could type from their desk — there's no proof the rep actually went to the customer's location. By capturing the phone's GPS coordinates at the moment "Check In" is pressed, management can cross-reference the coordinates against the customer's registered address. This accountability mechanism ensures that field visit data in the system is reliable, not fabricated. No separate mobile app is required — it uses the browser's built-in location API.</p>
+    <p><span class="ctx-label">In practice:</span> Muhammad presses "Check In" while at Mehta Industries' office. His phone asks for location permission (one-time prompt). The browser captures latitude and longitude and writes them to the Field Visit record alongside the timestamp. If Muhammad had accidentally pressed Check In from the parking lot or while still in his car, the coordinates would differ from the office address and the system would flag the discrepancy. Field managers can audit GPS data against customer addresses monthly to ensure coverage accuracy.</p>
+    <span class="ctx-ref">Requirement: SALES-08 Customer Visit Management · Sales Management Module.pdf §4.1 Field Force Accountability</span>
+  </div>
+  <ol class="task-steps">
+    <li>Open the <strong>Field Visit</strong> DocType → click the <strong>Client Scripts</strong> tab at the top.</li>
+    <li>Click <strong>+ New Client Script</strong>.</li>
+    <li>Set: DocType = Field Visit, Script Type = Form.</li>
+    <li>Paste exactly this JavaScript code into the Script field:</li>
+  </ol>
+  <div class="code-label">Client Script — Field Visit GPS Check-In</div>
+  <pre style="font-size:.78rem;"><code>frappe.ui.form.on('Field Visit', {
+  refresh(frm) {
+    // Show Check-In button only if not yet checked in
+    if (!frm.doc.check_in_time) {
+      frm.add_custom_button(__('Check In (GPS)'), () => {
+        if (!navigator.geolocation) {
+          frappe.throw('Geolocation is not supported on this device or browser.');
+          return;
+        }
+        frappe.show_alert({ message: 'Getting your location...', indicator: 'blue' });
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            frm.set_value('latitude', position.coords.latitude);
+            frm.set_value('longitude', position.coords.longitude);
+            frm.set_value('check_in_time', frappe.datetime.now_time());
+            frm.save().then(() => {
+              frappe.show_alert({ message: 'Checked in successfully!', indicator: 'green' });
+            });
+          },
+          (error) => {
+            frappe.throw('Could not get location. Please allow location access in your browser and try again.');
+          },
+          { enableHighAccuracy: true, timeout: 10000 }
+        );
+      }).addClass('btn-success');
+    }
+
+    // Show Check-Out button only if checked in but not yet checked out
+    if (frm.doc.check_in_time && !frm.doc.check_out_time) {
+      frm.add_custom_button(__('Check Out'), () => {
+        frm.set_value('check_out_time', frappe.datetime.now_time());
+        frm.save().then(() => {
+          frappe.show_alert({ message: 'Checked out. Visit recorded.', indicator: 'orange' });
+        });
+      }).addClass('btn-warning');
+    }
+  }
+});</code></pre>
+  <ol class="task-steps" start="5">
+    <li>Save the Client Script.</li>
+    <li><strong>Verify on desktop:</strong> Open any Field Visit → the green "Check In (GPS)" button should appear. Click it — your browser may ask for location permission. Allow it. The Latitude and Longitude fields should fill in.</li>
+    <li><strong>Verify on mobile:</strong> Open <code>http://scale.localhost:8001</code> on your phone (connected to same Wi-Fi). Open a Field Visit. Tap Check In. Confirm GPS coordinates populate.</li>
+  </ol>
+  <div class="task-note">This is your first piece of real code! The <code>navigator.geolocation</code> API is built into every modern mobile browser. No app install needed. The <code>frm.set_value()</code> function is how Frappe scripts update form fields from JavaScript.</div>
+</div>
+
+<div class="task-card" id="T14">
+  <div class="task-header">
+    <span class="task-id">T14</span>
+    <strong>End-to-End Field Visit Test + Handover</strong>
+    <span class="task-assign">Both — Archit &amp; Muhammad</span>
+    <span class="task-date">Fri 8 Aug · Est. 1 hr</span>
+  </div>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#f8fafc;border-left:3px solid #9ca3af;"><span class="st-ns">◯ Not done as a team</span> — the feature itself works (verified solo during the demo build), but the joint Archit + Muhammad mobile test this task describes hasn't happened yet. Worth doing for real before calling SALES-08 closed.</div>
+  <div class="task-meta">Feature: SALES-08 | Deliverable: Full visit workflow verified; list any bugs found</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> Mobile browser behaviour differs significantly from desktop — GPS permission dialogs, touch-target sizes, file upload from camera, and network reliability on 4G connections all behave differently. A feature that works perfectly on a laptop in the office may break on a field rep's phone with a slow connection in an industrial area. Testing end-to-end on an actual mobile device — not a browser emulator — is the only way to catch these issues before the workflow is rolled out to the field team and training begins.</p>
+    <p><span class="ctx-label">In practice:</span> Archit plays the Field Manager on desktop, Muhammad plays the Sales Rep on his mobile. Muhammad creates a new Field Visit from his phone, taps Check In (GPS must fire), fills discussion notes, attaches a photo from camera, taps Check Out. Archit simultaneously sees the new record appear on desktop with all data, including coordinates. Any issue found — GPS not triggering on Android, photo upload failing, buttons too small to tap — is documented and fixed before anyone in the field is trained on this workflow.</p>
+    <span class="ctx-ref">Requirement: SALES-08 Customer Visit Management · Phase 1 sign-off criterion</span>
+  </div>
+  <ol class="task-steps">
+    <li>Archit acts as Field Manager, Muhammad acts as Sales Rep (or vice versa).</li>
+    <li>Sales Rep opens the bench on their mobile browser → goes to Field Visit → creates a new visit for <em>Nova Retail</em>, selects Purpose = <em>Follow-up</em>.</li>
+    <li>Clicks <strong>Check In (GPS)</strong> — GPS coordinates should populate.</li>
+    <li>Fills in: Discussion Notes, Customer Feedback, attaches a photo from the phone camera.</li>
+    <li>Clicks <strong>Check Out</strong> — checkout time should populate.</li>
+    <li>Sets Follow-up Date and Outcome. Saves.</li>
+    <li>Field Manager opens the bench on desktop → searches for Field Visit → finds the record just created. Confirms all data including GPS coordinates is there.</li>
+    <li><strong>Write a one-paragraph bug report</strong> if anything didn't work as expected. Include: what you expected, what happened, and on which device/browser.</li>
+  </ol>
+</div>
+
+<!-- WEEK 3 -->
+<div class="week-label">Week 3 · Aug 10–15 · Lead Automation, Pipeline &amp; Opportunity Extensions</div>
+
+<div class="task-card" id="T15">
+  <div class="task-header">
+    <span class="task-id">T15</span>
+    <strong>Write Lead Duplicate Detection — First Server Script</strong>
+    <span class="task-assign" style="background:#dcfce7;color:#15803d;">Muhammad</span>
+    <span class="task-date">Mon 10 Aug · Est. 2 hrs</span>
+  </div>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#ecfdf5;border-left:3px solid #10b981;"><span class="st-done">✅ Done</span> — built as a <code>before_insert</code> doc_event hook in <code>lead_hooks.py</code> rather than a Server Script UI record, functionally the same check (mobile/email match). Confirmed working.</div>
+  <div class="task-meta">Feature: SALES-02 Lead Management | Deliverable: System blocks duplicate leads on save</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> In a growing sales team, the same prospect often enters the system as a Lead multiple times — a web form submission from someone already in the system, two reps independently cold-calling the same company, or a simple re-entry mistake. Duplicate leads create real problems: two salespeople unknowingly work the same deal with conflicting pitches, the pipeline double-counts the revenue opportunity, and when the deal closes only one rep gets credit. The server script prevents this by checking for matching mobile number or email before any new Lead is saved, and blocking it with a link to the existing record.</p>
+    <p><span class="ctx-label">In practice:</span> Archit enters a Lead for "TechCorp Industries — Priya Sharma, +91-98201-xxxxx" on July 15. On August 3, Muhammad makes a cold call to TechCorp and tries to create a new Lead with the same mobile. The moment he clicks Save, the system shows: "Duplicate Lead detected: Archit's Lead (Status: Qualified) — click here to open it." Muhammad adds a note to Archit's Lead about his call, and the two coordinate a single, unified sales approach. The deal is not counted twice in the pipeline.</p>
+    <span class="ctx-ref">Requirement: SALES-02 Lead Management · Sales Management Module.pdf §3.1 Lead Deduplication</span>
+  </div>
+  <ol class="task-steps">
+    <li>Search for <strong>Server Script</strong> → click <strong>+ New</strong>.</li>
+    <li>Set: DocType = <strong>Lead</strong>, DocType Event = <strong>Before Insert</strong>, Script Type = DocType Event.</li>
+    <li>Paste this Python code into the Script field:</li>
+  </ol>
+  <div class="code-label">Server Script — Lead Duplicate Detection</div>
+  <pre style="font-size:.78rem;"><code>import frappe
+
+def execute():
+    if not (doc.mobile_no or doc.email_id):
+        return  # can't deduplicate without contact info
+
+    filters = []
+    if doc.mobile_no:
+        filters.append(['mobile_no', '=', doc.mobile_no])
+    if doc.email_id:
+        filters.append(['email_id', '=', doc.email_id])
+
+    for f in filters:
+        existing = frappe.db.get_all('Lead',
+            filters=[f, ['name', '!=', doc.name or '']],
+            fields=['name', 'lead_name', 'status'],
+            limit=1
+        )
+        if existing:
+            lead = existing[0]
+            frappe.throw(
+                f"A Lead already exists with this contact: "
+                f"&lt;a href='/app/lead/{lead.name}'&gt;{lead.lead_name}&lt;/a&gt; "
+                f"(Status: {lead.status}). "
+                f"Please open and update that record instead.",
+                title="Duplicate Lead Detected"
+            )</code></pre>
+  <ol class="task-steps" start="4">
+    <li>Save the Server Script.</li>
+    <li><strong>Verify:</strong> Try to create a new Lead with the same mobile number or email as an existing lead. The system should throw an error with a link to the existing lead. If it doesn't, ask Raghib to review your script.</li>
+  </ol>
+  <div class="task-note">In a Frappe Server Script on Before Insert, the variable <code>doc</code> is automatically available and refers to the Lead being saved. You don't need to import or pass it — Frappe injects it. <code>frappe.throw()</code> stops the save and shows the message to the user.</div>
+</div>
+
+<div class="task-card" id="T16">
+  <div class="task-header">
+    <span class="task-id">T16</span>
+    <strong>Configure 10 Pipeline Stages in CRM Settings</strong>
+    <span class="task-assign" style="background:#dbeafe;color:#1d4ed8;">Archit</span>
+    <span class="task-date">Mon 10 Aug · Est. 1 hr</span>
+  </div>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#fffbeb;border-left:3px solid #f59e0b;"><span class="st-wip">🟡 Done, but on the wrong system</span> — 10 stages exist, but on <strong>ERPNext's Opportunity "Sales Stage" master</strong> (8 stages already existed natively; we added 2 — Contract Sent, Closed Won), not <strong>Frappe CRM's separate Deal Stage</strong> settings this task describes. Stage names also differ (Prospecting/Qualification/... vs. this task's Lead/Qualified/Discovery/...). Same naming-alignment question already flagged for Lead Status — needs one decision that covers both.</div>
+  <div class="task-meta">Feature: SALES-03 Sales Pipeline | Deliverable: Kanban board shows 10 custom stages</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> A pipeline stage tells you exactly where in the buying journey each deal is — from first contact (Lead) through Qualified, Proposal, Negotiation, all the way to Won or Lost. Each stage carries a probability percentage that reflects the statistical likelihood of closing. These probabilities drive the Revenue Forecasting report: a ₹10L deal at "Proposal" (50%) contributes ₹5L to the forecast; the same deal at "Negotiation" (75%) contributes ₹7.5L. Without defined stages and probabilities, the pipeline is just a list of deals — management cannot forecast revenue or see where deals are stalling.</p>
+    <p><span class="ctx-label">In practice:</span> On Monday, Raghib opens the CRM Kanban board before the team call: 8 deals in Qualified (₹35L), 5 in Discovery (₹22L), 3 in Proposal (₹18L), 2 in Negotiation (₹8L). Applying stage probabilities, about ₹6L is likely to close this month. He tells the team: "We need at least 2 more deals to reach Negotiation stage by end of week." The stages make the pipeline visible, quantifiable, and actionable — not a black box.</p>
+    <span class="ctx-ref">Requirement: SALES-03 Sales Pipeline · Sales Management Module.pdf §5 Pipeline Management</span>
+  </div>
+  <ol class="task-steps">
+    <li>Open <strong>Frappe CRM</strong> (the separate CRM app at the CRM URL, not ERPNext).</li>
+    <li>Go to CRM Settings (gear icon in CRM). Look for <strong>Deal Stages</strong> or <strong>Pipeline Stages</strong>.</li>
+    <li>Add these 10 stages in order (each with a probability %):
+      <ul>
+        <li>Lead — 5%</li>
+        <li>Qualified — 15%</li>
+        <li>Discovery — 25%</li>
+        <li>Presentation — 35%</li>
+        <li>Proposal — 50%</li>
+        <li>Negotiation — 65%</li>
+        <li>Commercial Discussion — 75%</li>
+        <li>Purchase Decision — 85%</li>
+        <li>Won — 100%</li>
+        <li>Lost — 0%</li>
+      </ul>
+    </li>
+    <li>Save. Open the CRM Deals/Opportunities Kanban view. Verify all 10 columns appear.</li>
+    <li>Move your test deal through 3 stages by dragging it. Confirm the stage and probability update.</li>
+  </ol>
+</div>
+
+<div class="task-card" id="T17">
+  <div class="task-header">
+    <span class="task-id">T17</span>
+    <strong>Create Opportunity Stakeholder &amp; Competitor Child Tables</strong>
+    <span class="task-assign">Both — Archit &amp; Muhammad</span>
+    <span class="task-date">Tue 11 Aug · Est. 2 hrs</span>
+  </div>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#fffbeb;border-left:3px solid #f59e0b;"><span class="st-wip">🟡 Done, one field renamed</span> — both child tables built and wired to Opportunity (Contacts tab). Stakeholder's influence field is named <code>role_in_decision</code> (options: Decision Maker/Influencer/etc.), <strong>not</strong> <code>influence_level</code> as this task specifies — same data, different field name. This field also directly feeds the AI Win Probability rule (SALES-18), so keep the name in sync if you touch it.</div>
+  <div class="task-meta">Feature: SALES-03 Sales Pipeline | Deliverable: Opportunity form has Stakeholders and Competitors tabs</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> In complex B2B deals, no buying decision is made by a single person. A CEO approves the budget, a CTO evaluates the technology, a procurement manager controls the process, and a skeptical end-user can block adoption internally. Missing any of these stakeholders means unexpected objections at signing — "the Board didn't approve it." Similarly, knowing which competitor is also being evaluated — and what their strengths and weaknesses are — lets the sales team prepare targeted counter-arguments rather than reacting in surprise during the final negotiation. Both tables live on the Opportunity record so every team member has the same intelligence before any customer interaction.</p>
+    <p><span class="ctx-label">In practice:</span> Archit is managing a ₹35L deal with Coastal Engineering Ltd. He opens the Opportunity and adds to the Stakeholders table: "Ravi Shah (CFO) — Decision Maker — budget approved verbally," "Priya Iyer (VP IT) — Influencer — wants cloud deployment, not on-prem," "Sandeep Rao (IT Manager) — End User — concerned about training time for his team." Competitors table: "Oracle NetSuite — strong brand recognition — our advantage: India GST built-in and 40% lower 3-year TCO — Risk: High." When Raghib or Veeren jumps into this deal, they have the full picture without any briefing call.</p>
+    <span class="ctx-ref">Requirement: SALES-03 Sales Pipeline · Sales Management Module.pdf §5.2 Stakeholder Mapping</span>
+  </div>
+  <ol class="task-steps">
+    <li><strong>First child DocType — Opportunity Stakeholder:</strong>
+      <ul>
+        <li>DocType → New → Name: <strong>Opportunity Stakeholder</strong>, Module: Scale Sales, Is Child Table: Yes</li>
+        <li>Fields: <code>stakeholder_name</code> (Data, mandatory), <code>designation</code> (Data), <code>influence_level</code> (Select: Decision Maker / Influencer / End User / Blocker), <code>email</code> (Data), <code>mobile</code> (Data), <code>notes</code> (Small Text)</li>
+        <li>Save.</li>
+      </ul>
+    </li>
+    <li><strong>Second child DocType — Opportunity Competitor:</strong>
+      <ul>
+        <li>Name: <strong>Opportunity Competitor</strong>, Module: Scale Sales, Is Child Table: Yes</li>
+        <li>Fields: <code>competitor_name</code> (Data, mandatory), <code>their_strengths</code> (Small Text), <code>our_advantage</code> (Small Text), <code>price_difference_pct</code> (Float, Label: "Price Diff vs Us %"), <code>risk_level</code> (Select: High / Medium / Low)</li>
+        <li>Save.</li>
+      </ul>
+    </li>
+    <li><strong>Add both child tables to the Opportunity DocType:</strong>
+      <ul>
+        <li>Custom Field → New. DocType: Opportunity, Type: Table, Label: Key Stakeholders, Field Name: <code>scale_sales_stakeholders</code>, Options: Opportunity Stakeholder</li>
+        <li>Custom Field → New. DocType: Opportunity, Type: Table, Label: Competitors, Field Name: <code>scale_sales_competitors</code>, Options: Opportunity Competitor</li>
+      </ul>
+    </li>
+    <li><strong>Verify:</strong> Open your test Opportunity → two new child tables should appear. Add one stakeholder and one competitor to your test deal.</li>
+  </ol>
+</div>
+
+<!-- NEW TASKS — identified during sales_demo build, not in the original plan -->
+<div class="week-label">New — Follow-Up Work Identified During the sales_demo Build</div>
+
+<div class="task-card" id="T18" style="border-color:#0891b2;">
+  <div class="task-header">
+    <span class="task-id" style="background:#0891b2;">T18</span>
+    <strong>Wire a Real Customer Risk Rule + Build the Sales Config Screen</strong>
+    <span class="task-assign" style="background:#dbeafe;color:#1d4ed8;">Archit</span>
+  </div>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#f8fafc;border-left:3px solid #9ca3af;"><span class="st-ns">◯ Not started — new task</span></div>
+  <div class="task-meta">Feature: SALES-01 CRM + SALES-17/18 AI | Deliverable: Customer Status auto-computes; rules are editable without a code change</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> Two related gaps found while reviewing the demo build. First, Customer Status ("At Risk" etc., from T03) is purely manual today — a rep has to notice a problem and set it themselves, same as it always was in a spreadsheet. Second, the AI Win Probability and Next Best Action rules (SALES-17/18) genuinely work, but their thresholds and weights are hardcoded in <code>ai_utils.py</code> — changing "20% discount escalates to VP" to "15%" today means editing Python and redeploying, not something a sales manager can do themselves.</p>
+    <p><span class="ctx-label">In practice:</span> Define what actually should flag an account "At Risk" — candidates already have real data behind them: overdue invoices (<code>scale_sales_collection_status</code> on Sales Invoice), a competitor mentioned in a recent deal (<code>scale_sales_competitor_products</code>/<code>scale_sales_competitors</code>), no activity in N days. Wire that into a scheduled job, same pattern as the existing <code>daily_stale_deal_check</code>. Then build one small "Sales Config" desk page (mirrors the existing Sales Command Center page) where a manager edits these thresholds directly — no developer needed for a business rule tweak.</p>
+  </div>
+  <div class="task-note">Both gaps are already flagged live in-app — open the (i) icon on Customer Status, Win Probability, or Next Best Action badges to see the exact "TODO — make this configurable" note left in each popup.</div>
+</div>
+
+<div class="task-card" id="T19" style="border-color:#0891b2;">
+  <div class="task-header">
+    <span class="task-id" style="background:#0891b2;">T19</span>
+    <strong>Build the Real Dunning Auto-Escalation Job</strong>
+    <span class="task-assign" style="background:#dcfce7;color:#15803d;">Muhammad</span>
+  </div>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#f8fafc;border-left:3px solid #9ca3af;"><span class="st-ns">◯ Not started — new task</span></div>
+  <div class="task-meta">Feature: SALES-11 Collection Management | Deliverable: Overdue invoices auto-send reminders on schedule, no manual step</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> T09's original step 4 (a Notification Rule that actually sends anything) never got built — the 3 Dunning Type records that exist today are just picklist templates a rep manually selects. This finishes what T09 originally asked for: a scheduled job that finds overdue Sales Invoices and automatically creates/sends the right Dunning notice (T-7 reminder, T-0 due alert, T+15 formal notice with interest) without anyone having to remember to do it.</p>
+    <p><span class="ctx-label">In practice:</span> Same pattern already proven in <code>tasks.py</code>'s <code>daily_stale_deal_check</code> — a daily scheduled job queries Sales Invoices by days-overdue, picks the matching Dunning Type, and creates the Dunning document (or sends the email directly). Once this exists, the Section 11 "Escalating auto reminders" claim in the client deck becomes literally true instead of aspirational.</p>
+  </div>
+</div>
+
+<div class="task-card" id="T20" style="border-color:#0891b2;">
+  <div class="task-header">
+    <span class="task-id" style="background:#0891b2;">T20</span>
+    <strong>Decide: Naming Alignment for Lead Status &amp; Sales Stage</strong>
+    <span class="task-assign" style="background:#ede9fe;color:#7c3aed;">Raghib (decision) + Archit (implementation)</span>
+  </div>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#f8fafc;border-left:3px solid #9ca3af;"><span class="st-ns">◯ Decision pending — flagged, not yet decided</span></div>
+  <div class="task-meta">Feature: SALES-02 Lead Management + SALES-03 Sales Pipeline | Deliverable: One decision, then a same-day field-value rename</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> Two places where the PDF's wording and what actually got built don't match: Lead Status (T04 area) uses ERPNext's native labels, not the PDF's; Sales Stage (T16) was built on ERPNext's Opportunity stage master with different names and a different underlying system than the Frappe CRM Deal Stage this task originally specified. Neither is a bug — both work correctly end-to-end — but a client or new team member comparing screens to the PDF will notice the mismatch.</p>
+    <p><span class="ctx-label">In practice:</span> This was intentionally left unrenamed rather than silently changed, specifically so it could be decided live rather than assumed — see the naming-alignment comparison already built into the client-facing showcase deck (Slide 04). Once a decision is made, the actual rename is a same-day Property Setter change, not a re-architecture.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     VEEREN — AI TRACK (RUNS IN PARALLEL)
+═══════════════════════════════════════════ -->
+<div class="week-label" style="background:#d97706;page-break-before:always;">AI Track · Veeren (AI Head) · Parallel from Jul 29 · 8 Features · Priority: NL Query Chatbot</div>
+
+<div style="background:#fff1f2;border:2px solid #fca5a5;border-radius:10px;padding:16px 20px;margin-bottom:18px;font-size:.9rem;line-height:1.7;">
+  <p style="margin:0 0 8px;font-weight:700;color:#b91c1c;">⚠ Note to AI Team</p>
+  <p style="margin:0 0 6px;color:#7f1d1d;">Excited to have your team on this. The foundation code is already in the repo (<code>ai_utils.py</code>, <code>lead_hooks.py</code>, <code>opportunity_hooks.py</code>), so you're not starting from scratch. The structure is there — you just need to pull it, wire your API key, and start exploring.</p>
+  <p style="margin:0 0 6px;color:#7f1d1d;"><strong>Update since this was written:</strong> Lead Scoring (SALES-16), Next Best Action (SALES-17), and Win Probability (SALES-18) are now genuinely live and running today — rule-based (plain if/else on real fields), not scaffolded stubs. Lost Opportunity Analysis (SALES-15) is wired to call an LLM but needs an API key to actually run. Please extend what's there rather than rewriting from scratch — and see new task <strong>T18</strong> above (making these rules editable via a config screen instead of hardcoded) before you go deep on tuning thresholds, since that screen would be where your work lives long-term.</p>
+  <p style="margin:0 0 6px;color:#7f1d1d;">The one thing we'd love to see early — even just as a rough proof — is the <strong>natural language query chatbot</strong> (SALES-20). Being able to ask "how many hot leads do we have?" and get a real answer from the live database would be genuinely useful for the team. Even a console-only version is great for an early proof. Take it at your pace, but if you can start the schema document and a quick console prototype on Day 1, that'd be fantastic.</p>
+  <p style="margin:0;color:#7f1d1d;"><strong>Access:</strong> Bench → <code>http://scale.localhost:8001</code> · Login: <code>Administrator / scale@demo</code> · Repo: <code>ehiddenbrain/scale</code> · Set your OpenAI key via <code>bench --site scale.localhost set-config openai_api_key "sk-..."</code> (never commit this to git).</p>
+</div>
+
+<div style="background:#fef3c7;border-left:4px solid #d97706;padding:12px 16px;border-radius:0 8px 8px 0;margin-bottom:20px;font-size:.87rem;">
+  <p style="margin:0 0 6px;font-weight:700;color:#92400e;">Suggested starting point — Day 1 (in any order that feels right):</p>
+  <ol style="margin:0;padding-left:18px;line-height:1.9;color:#451a03;">
+    <li>Pull the repo + install scale_sales + wire OpenAI key + verify <code>call_llm()</code> responds (V01 — 30 min)</li>
+    <li>Start writing <code>ai_query_schema.py</code> — just a Python string listing every field your team can query. No code at all, pure documentation. (V02 — couple of hours)</li>
+    <li>When you're comfortable, paste the V01 console snippet and see if it answers a question from the live database — that's the concept proven.</li>
+  </ol>
+  <p style="margin:6px 0 0;color:#451a03;"><strong>Suggested priority:</strong> NL Query chatbot (V01→V05) first, then Lead Scoring, Win Prob, Lost Deal Analysis. The chatbot is independent of the ERPNext configuration work — your team can move on it without waiting for anything else.</p>
+</div>
+
+<div class="task-card" id="V01" style="border-color:#d97706;background:#fffbeb;">
+  <div class="task-header">
+    <span class="task-id" style="background:#d97706;">V01</span>
+    <strong>Setup + NL Query Proof of Concept in Console — Start Here</strong>
+    <span class="task-assign" style="background:#fef3c7;color:#d97706;">Veeren</span>
+    <span class="task-date">Tue 29 Jul · Est. 1.5 hrs · ⭐ DAY 1 PRIORITY</span>
+  </div>
+  <div class="task-meta">Feature: SALES-13 + SALES-20 Foundation | Deliverable: LLM working + NL Query answering first question from bench console</div>
+  <ol class="task-steps">
+    <li>Pull the latest repo and install scale_sales:
+      <pre style="background:#1e293b;color:#e2e8f0;padding:10px;border-radius:6px;font-size:.78rem;margin:6px 0;">git pull origin main
+pip install -e apps/scale_sales
+bench --site scale.localhost install-app scale_sales
+bench --site scale.localhost migrate</pre>
+    </li>
+    <li>Wire your OpenAI API key:
+      <pre style="background:#1e293b;color:#e2e8f0;padding:10px;border-radius:6px;font-size:.78rem;margin:6px 0;">bench --site scale.localhost set-config openai_api_key "sk-your-key-here"</pre>
+    </li>
+    <li>Test the foundation works:
+      <pre style="background:#1e293b;color:#e2e8f0;padding:10px;border-radius:6px;font-size:.78rem;margin:6px 0;">bench --site scale.localhost console
+from scale_sales.scale_sales.ai_utils import call_llm
+print(call_llm("Say hello in one word."))</pre>
+    </li>
+    <li>Now prove the NL Query concept — paste this into bench console:
+      <pre style="background:#1e293b;color:#e2e8f0;padding:10px;border-radius:6px;font-size:.78rem;margin:6px 0;">import frappe
+from scale_sales.scale_sales.ai_utils import call_llm
+
+# Build a live data snapshot
+lead_counts = frappe.db.get_all("Lead", fields=["status"], as_list=False)
+hot = sum(1 for l in lead_counts if frappe.db.get_value("Lead", l.name, "scale_sales_lead_priority") == "Hot")
+total = len(lead_counts)
+
+context = f"Current sales data: {total} total leads, approx {hot} marked Hot."
+question = "How many leads do we have and what's the rough breakdown?"
+
+answer = call_llm(f"You are a sales assistant. Context: {context}\nQuestion: {question}\nAnswer in 2 sentences.")
+print(answer)</pre>
+    </li>
+    <li>If you get a natural language answer, the concept is proven. Screenshot it — share it with the team as Day 1 proof.</li>
+  </ol>
+  <div class="task-note">This is a quick POC, not production code. The goal is to prove the concept in one sitting. The real endpoint (V03) will be structured properly. Don't spend time cleaning up this console script — move to V02 (schema document) immediately after.</div>
+</div>
+
+<div class="task-card" id="V02" style="border-color:#d97706;background:#fffbeb;">
+  <div class="task-header">
+    <span class="task-id" style="background:#d97706;">V02</span>
+    <strong>SALES-20 · NL Query — Schema Document + 20 Test Q&amp;A Pairs</strong>
+    <span class="task-assign" style="background:#fef3c7;color:#d97706;">Veeren</span>
+    <span class="task-date">Tue 29 Jul · Est. 2 hrs · ⭐ DAY 1 PRIORITY</span>
+  </div>
+  <div class="task-meta">Feature: SALES-20 NL Query Assistant | Deliverable: Schema context document + 20 test question-answer pairs</div>
+  <div style="background:#1e3a5f;color:#e2e8f0;padding:12px;border-radius:8px;margin:10px 0;font-size:.82rem;">
+    <strong>What is SALES-20?</strong> A natural language interface that lets sales managers and leadership ask questions about the sales pipeline, leads, and collections in plain English — and get accurate, real-time answers. Example: "How many hot leads do we have from North India?" or "Which invoices are overdue by more than 30 days?" No SQL knowledge required. The AI queries the Frappe database safely and returns a human-readable answer.
+  </div>
+  <p style="margin:8px 0;font-size:.9rem;"><strong>Architecture:</strong></p>
+  <ol style="font-size:.85rem;padding-left:20px;line-height:1.8;" class="task-steps">
+    <li>A Frappe whitelisted API endpoint: <code>scale_sales.api.ai_query.answer(question)</code></li>
+    <li>The endpoint sends the question + a pre-built schema description to the LLM</li>
+    <li>LLM returns a <code>frappe.get_list()</code> call (as a Python dict, not raw SQL)</li>
+    <li>The endpoint executes this call safely (whitelist: only allowed DocTypes + SELECT)</li>
+    <li>The raw result is sent back to the LLM to format as a plain English answer</li>
+    <li>The formatted answer is returned to the UI</li>
+  </ol>
+  <p style="margin:8px 0;font-size:.9rem;"><strong>Schema document:</strong> Create <code>apps/scale_sales/scale_sales/ai_query_schema.py</code> with a constant <code>SALES_SCHEMA</code> string that describes every queryable field. Include:</p>
+  <ul style="font-size:.85rem;padding-left:20px;line-height:1.8;">
+    <li><strong>Lead:</strong> lead_name, status (Open/Replied/Opportunity/Converted/Do Not Contact), source, territory, scale_sales_budget, scale_sales_authority_level, scale_sales_lead_priority (Hot/Warm/Cold), scale_sales_expected_closure</li>
+    <li><strong>Opportunity:</strong> opportunity_from, customer, status, sales_stage, expected_revenue, probability, expected_closing, sales_person</li>
+    <li><strong>Sales Invoice:</strong> customer, posting_date, due_date, grand_total, outstanding_amount, scale_sales_collection_status (Pending/Promised/Collected/Partial/Written Off), scale_sales_promise_to_pay_date</li>
+    <li><strong>Customer:</strong> customer_name, customer_group (Dealer/Distributor/Direct Customer), territory, scale_sales_annual_turnover, scale_sales_account_classification, scale_sales_customer_status</li>
+    <li><strong>Field Visit:</strong> customer, visit_date, purpose, visit_outcome, sales_rep, latitude, longitude</li>
+  </ul>
+  <p style="margin:8px 0 4px;font-size:.9rem;"><strong>Also create 20 test question-answer pairs</strong> (expected input → expected frappe.get_list call → expected answer format). These become acceptance criteria for V03.</p>
+  <div class="task-note">Schema mapping is pure documentation — no code dependencies at all. You can do V02 and V01 on the same day. The 20 test Q&amp;A pairs become your acceptance criteria for V03.</div>
+</div>
+
+<div class="task-card" id="V03" style="border-color:#d97706;background:#fffbeb;">
+  <div class="task-header">
+    <span class="task-id" style="background:#d97706;">V03</span>
+    <strong>SALES-20 · NL Query — Production Endpoint (ai_query.py)</strong>
+    <span class="task-assign" style="background:#fef3c7;color:#d97706;">Veeren</span>
+    <span class="task-date">Wed 30 Jul · Est. 1 day · ⭐ PRIORITY</span>
+  </div>
+  <div class="task-meta">Feature: SALES-20 | Deliverable: Working API endpoint answering 15/20 test questions correctly</div>
+  <ol class="task-steps">
+    <li>Create <code>apps/scale_sales/scale_sales/api/ai_query.py</code> with a whitelisted function:
+      <pre style="background:#1e293b;color:#e2e8f0;padding:10px;border-radius:6px;font-size:.78rem;margin:6px 0;">import frappe
+from scale_sales.scale_sales.ai_utils import call_llm
+from scale_sales.scale_sales.ai_query_schema import SALES_SCHEMA
+
+ALLOWED_DOCTYPES = {"Lead", "Opportunity", "Customer", "Sales Invoice", "Field Visit", "Sales Order"}
+
+@frappe.whitelist()
+def answer(question: str) -> str:
+    """Natural language query answerer for Sales & Marketing data."""
+    # Step 1: Ask LLM to translate question to frappe.get_list call
+    translate_prompt = f"""You are a Frappe ERPNext query assistant. Given a question,
+return ONLY a Python dict representing arguments to frappe.get_list().
+Schema: {SALES_SCHEMA}
+Question: {question}
+Return format: {{"doctype": "...", "filters": [...], "fields": [...], "limit": N}}
+Return ONLY the dict, no explanation."""
+
+    raw_query = call_llm(translate_prompt)
+
+    # Step 2: Parse and validate the query
+    import json, ast
+    try:
+        query_args = ast.literal_eval(raw_query)
+        assert query_args.get("doctype") in ALLOWED_DOCTYPES
+    except Exception:
+        return "I could not understand that question. Try rephrasing it."
+
+    # Step 3: Execute safely
+    results = frappe.get_list(**query_args)
+
+    # Step 4: Ask LLM to format results as plain English
+    format_prompt = f"""The user asked: "{question}"
+The database returned: {results}
+Write a clear, concise answer in 1-3 sentences. Use numbers. Be specific."""
+
+    return call_llm(format_prompt)</pre>
+    </li>
+    <li>Register the API endpoint in <code>hooks.py</code> (it's already whitelisted via <code>@frappe.whitelist()</code> decorator, no extra config needed).</li>
+    <li>Test from bench console using your 20 test cases from V02:
+      <pre style="background:#1e293b;color:#e2e8f0;padding:10px;border-radius:6px;font-size:.78rem;margin:6px 0;">import frappe.client
+result = frappe.call("scale_sales.api.ai_query.answer",
+    question="How many hot leads do we have?")
+print(result)</pre>
+    </li>
+    <li>Track: how many of 20 test questions get correct answers? Target ≥ 15/20 before V04 (UI).</li>
+    <li>Iterate on the system prompt and SALES_SCHEMA until accuracy target is met.</li>
+  </ol>
+  <div class="task-note">Safety note: <code>ALLOWED_DOCTYPES</code> whitelist prevents the LLM from querying sensitive data (User passwords, salary info, etc.). Never remove this check. If the LLM tries to query a DocType not in the whitelist, the request is rejected with a friendly message.</div>
+</div>
+
+<div class="task-card" id="V04" style="border-color:#d97706;background:#fffbeb;">
+  <div class="task-header">
+    <span class="task-id" style="background:#d97706;">V04</span>
+    <strong>SALES-20 · NL Query — Sales Intelligence Page UI (Chat Widget)</strong>
+    <span class="task-assign" style="background:#fef3c7;color:#d97706;">Veeren</span>
+    <span class="task-date">Mon 4 Aug · Est. 1 day · ⭐ PRIORITY</span>
+  </div>
+  <div class="task-meta">Feature: SALES-20 | Deliverable: Chat widget on Sales Workspace — type a question, see the answer</div>
+  <ol class="task-steps">
+    <li>Create a Frappe Page (DocType = Page) named "Sales Intelligence". This is a custom page that will host the chat UI.</li>
+    <li>In the Page's HTML tab, add a simple chat interface:
+      <pre style="background:#1e293b;color:#e2e8f0;padding:10px;border-radius:6px;font-size:.78rem;margin:6px 0;">&lt;div id="ai-query-box"&gt;
+  &lt;h3&gt;Sales Intelligence Assistant&lt;/h3&gt;
+  &lt;p&gt;Ask anything about your leads, pipeline, or collections in plain English.&lt;/p&gt;
+  &lt;div id="ai-history" style="min-height:200px;border:1px solid #ddd;padding:12px;border-radius:6px;margin-bottom:12px;"&gt;&lt;/div&gt;
+  &lt;div style="display:flex;gap:8px;"&gt;
+    &lt;input id="ai-input" type="text" class="form-control" placeholder="e.g. How many hot leads do we have?" /&gt;
+    &lt;button class="btn btn-primary" onclick="askAI()"&gt;Ask&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+    </li>
+    <li>In the Page's JS tab, wire the button to the API endpoint:
+      <pre style="background:#1e293b;color:#e2e8f0;padding:10px;border-radius:6px;font-size:.78rem;margin:6px 0;">function askAI() {
+  const q = document.getElementById('ai-input').value;
+  if (!q) return;
+  frappe.call({
+    method: 'scale_sales.api.ai_query.answer',
+    args: { question: q },
+    callback: (r) => {
+      const history = document.getElementById('ai-history');
+      history.innerHTML += `&lt;p&gt;&lt;strong&gt;Q:&lt;/strong&gt; ${q}&lt;/p&gt;&lt;p&gt;&lt;strong&gt;A:&lt;/strong&gt; ${r.message}&lt;/p&gt;&lt;hr&gt;`;
+      document.getElementById('ai-input').value = '';
+    }
+  });
+}</pre>
+    </li>
+    <li>Add this Page as a shortcut on the Sales Workspace in ERPNext (Workspace → Sales → Edit → Add Shortcut → Link to Page "Sales Intelligence").</li>
+    <li>Test end-to-end: open the Sales Workspace → click "Sales Intelligence" → type "What is our total pipeline value?" → verify a real answer appears.</li>
+    <li>Also add it to the Marketing Workspace once that workspace is created.</li>
+  </ol>
+  <div class="task-note">The Frappe Page is the simplest UI option — no React/Vue needed. It lives inside the ERPNext UI and benefits from Frappe's authentication, so only logged-in users can access it. Future enhancement: stream responses token-by-token for a real chat feel.</div>
+</div>
+
+<div class="task-card" id="V05" style="border-color:#d97706;background:#fffbeb;">
+  <div class="task-header">
+    <span class="task-id" style="background:#d97706;">V05</span>
+    <strong>SALES-20 · NL Query — Logging, Hardening &amp; Edge Cases</strong>
+    <span class="task-assign" style="background:#fef3c7;color:#d97706;">Veeren</span>
+    <span class="task-date">Mon 11 Aug · Est. 1 day</span>
+  </div>
+  <div class="task-meta">Feature: SALES-20 | Deliverable: Query log DocType, graceful error handling, 18/20 test cases passing</div>
+  <ol class="task-steps">
+    <li>Create a <strong>AI Query Log</strong> DocType (Module: Scale Sales, Is Submittable: No) with fields: <code>question</code> (Small Text), <code>answer</code> (Long Text), <code>user</code> (Link → User), <code>timestamp</code> (Datetime), <code>status</code> (Select: Answered / Failed / Ambiguous), <code>latency_ms</code> (Int).</li>
+    <li>Update <code>ai_query.py</code> to log every query: start time, question, answer, user, latency.</li>
+    <li>Add graceful handling for: LLM timeout (10s max), disallowed DocType attempt, malformed LLM response, ambiguous question (return a clarifying question instead of an error).</li>
+    <li>Re-run all 20 test cases. Target: 18/20 correct. Document which 2 fail and why (prompt engineering limits vs data gaps).</li>
+    <li>Commit everything: <code>apps/scale_sales/scale_sales/api/ai_query.py</code>, <code>ai_query_schema.py</code>, the Page definition (export via fixtures), and the AI Query Log DocType.</li>
+  </ol>
+</div>
+
+<div class="task-card" id="V06" style="border-color:#d97706;background:#fffbeb;">
+  <div class="task-header">
+    <span class="task-id" style="background:#d97706;">V06</span>
+    <strong>Lead Scoring — Calibrate BANT Weights + Test on Live Leads</strong>
+    <span class="task-assign" style="background:#fef3c7;color:#d97706;">Veeren</span>
+    <span class="task-date">Fri 1 Aug · Est. 2 hrs</span>
+  </div>
+  <div class="task-meta">Feature: SALES-16 AI Lead Scoring | Deliverable: score_lead() calibrated, tested on 5 live leads</div>
+  <ol class="task-steps">
+    <li>Open <code>ai_utils.py</code> → find <code>score_lead()</code>. It scores 4 BANT factors (0–25 pts each, max 100).</li>
+    <li>Create 5 test leads in the bench with varying BANT data. Test from console:
+      <pre style="background:#1e293b;color:#e2e8f0;padding:10px;border-radius:6px;font-size:.78rem;margin:6px 0;">import frappe
+from scale_sales.scale_sales.ai_utils import score_lead
+lead = frappe.get_doc("Lead", "LEAD-0001")
+print(score_lead(lead.as_dict()))</pre>
+    </li>
+    <li>Tune weights in <code>score_lead()</code> until a C-Level + confirmed budget scores 70+, and an incomplete lead scores below 30.</li>
+    <li>Verify: create a new Lead via the UI → the after_insert hook should auto-score it. Check the lead's custom fields to confirm the score was written.</li>
+  </ol>
+  <div class="task-note">This can run in parallel with the NL Query work — it's an independent function in ai_utils.py. If the BANT custom fields haven't been added to the bench yet (depends on T04 being done), use a mock dict to test the function logic first.</div>
+</div>
+
+<div class="task-card" id="V07" style="border-color:#d97706;background:#fffbeb;">
+  <div class="task-header">
+    <span class="task-id" style="background:#d97706;">V07</span>
+    <strong>Win Probability + Next Best Action — Integration Test</strong>
+    <span class="task-assign" style="background:#fef3c7;color:#d97706;">Veeren</span>
+    <span class="task-date">Tue 12 Aug · Est. 2 hrs</span>
+  </div>
+  <div class="task-meta">Feature: SALES-17 + SALES-18 | Deliverable: Both functions tested on live Opportunity records</div>
+  <ol class="task-steps">
+    <li>From bench console:
+      <pre style="background:#1e293b;color:#e2e8f0;padding:10px;border-radius:6px;font-size:.78rem;margin:6px 0;">from scale_sales.scale_sales.ai_utils import win_probability, next_best_action
+opp = frappe.get_doc("Opportunity", "OPP-0001")
+print(win_probability(opp.as_dict()))
+print(next_best_action(opp.as_dict()))</pre>
+    </li>
+    <li>Verify output makes sense. Tune stage probability weights in <code>win_probability()</code> to match your intuition.</li>
+    <li>Update an Opportunity via the UI — confirm the on_update hook fires and writes results back to the Opportunity's custom fields.</li>
+  </ol>
+</div>
+
+<div class="task-card" id="V08" style="border-color:#d97706;background:#fffbeb;">
+  <div class="task-header">
+    <span class="task-id" style="background:#d97706;">V08</span>
+    <strong>Lost Deal Analysis — LLM Prompt Engineering</strong>
+    <span class="task-assign" style="background:#fef3c7;color:#d97706;">Veeren</span>
+    <span class="task-date">Thu 14 Aug · Est. 3 hrs</span>
+  </div>
+  <div class="task-meta">Feature: SALES-15 AI Lost Opportunity Analysis | Deliverable: LLM categorises 5 test lost deals accurately</div>
+  <ol class="task-steps">
+    <li>Open <code>ai_utils.py</code> → find <code>analyze_lost_deal()</code>. It sends Opportunity data to LLM and expects: <code>{loss_category, competitor_identified, ai_summary}</code>.</li>
+    <li>Create 3 test Opportunities with status "Lost" and different reasons. Test:
+      <pre style="background:#1e293b;color:#e2e8f0;padding:10px;border-radius:6px;font-size:.78rem;margin:6px 0;">from scale_sales.scale_sales.ai_utils import analyze_lost_deal
+opp = frappe.get_doc("Opportunity", "OPP-LOST-01")
+print(analyze_lost_deal(opp.as_dict()))</pre>
+    </li>
+    <li>Evaluate quality: is the loss category correct? Is the competitor identified? Is the summary useful for the sales team?</li>
+    <li>Iterate on the prompt in <code>analyze_lost_deal()</code> until quality is acceptable. Once Opportunity child tables (SALES-03, T17) are live, enrich the prompt with stakeholder and competitor context from those tables.</li>
+  </ol>
+</div>
+
+<!-- PROGRESS TRACKER -->
+<hr class="section no-print">
+<h2 class="no-print">Progress Tracker</h2>
+<div class="tbl-wrap no-print">
+  <table>
+    <tr><th>ID</th><th>Feature</th><th>Priority</th><th>Status</th><th>Notes</th></tr>
+    <tr><td>SALES-01</td><td>CRM — Customer Repository</td><td><span class="pill bp1">P1</span></td><td><span class="st-wip">🟡 Partially Done</span></td><td>T02, T03 done (4 fields live). Customer Status ("At Risk") is manual only — no auto-trigger yet. CLV report not built.</td></tr>
+    <tr><td>SALES-02</td><td>Lead Management</td><td><span class="pill bp1">P1</span></td><td><span class="st-done">✅ Done</span></td><td>T01, T04, T05, T15 done. Bonus: territory-based auto-assignment (not in original plan). Lead Status wording still native — renaming decision pending.</td></tr>
+    <tr><td>SALES-03</td><td>Sales Pipeline</td><td><span class="pill bp2">P2</span></td><td><span class="st-wip">🟡 Partially Done</span></td><td>T17 done (field name is <code>role_in_decision</code>, not <code>influence_level</code> as specced). T16 done differently — see T16 note.</td></tr>
+    <tr><td>SALES-04</td><td>Sales Forecasting</td><td><span class="pill bp2">P2</span></td><td><span class="st-ns">◯ Not Started</span></td><td>Script Report — open</td></tr>
+    <tr><td>SALES-05</td><td>Sales Target Management</td><td><span class="pill bp2">P2</span></td><td><span class="st-wip">🟡 Partially Done</span></td><td>T07 done but deviated — see T07 note. Target-setting + Achievement % tracking not built.</td></tr>
+    <tr><td>SALES-06</td><td>Dealer Management</td><td><span class="pill bp2">P2</span></td><td><span class="st-ns">◯ Not Started</span></td><td>Only the "Dealer" Customer Group tag exists (from T02) — profiles/scorecards/activity log all open</td></tr>
+    <tr><td>SALES-07</td><td>Distributor Management</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>Only the "Distributor" Customer Group tag exists (from T02) — everything else open</td></tr>
+    <tr><td>SALES-08</td><td>Customer Visit Management</td><td><span class="pill bp1">P1</span></td><td><span class="st-wip">🟡 Partially Done</span></td><td>T12, T13 done (field name is <code>sales_person</code>→Sales Person, not <code>sales_rep</code>→User as specced). T14 (joint mobile test) not yet done as a team.</td></tr>
+    <tr><td>SALES-09</td><td>Quotation Management</td><td><span class="pill bp1">P1</span></td><td><span class="st-wip">🟡 Partially Done</span></td><td>T08 done but rule deviated significantly — see T08 note. Known limitation: no custom JS badge on Quotation (india_compliance conflict). Print Format still open.</td></tr>
+    <tr><td>SALES-10</td><td>Order Management</td><td><span class="pill bp2">P2</span></td><td><span class="st-ns">◯ Not Started</span></td><td>Confirmed 100% stock ERPNext — only a workspace shortcut was added, zero custom fields/logic</td></tr>
+    <tr><td>SALES-11</td><td>Collection Management</td><td><span class="pill bp1">P1</span></td><td><span class="st-wip">🟡 Partially Done</span></td><td>T10 done (2 of 3 fields — Collection Notes not built). T09 done as data only, no automation — see T09 note. T11's ageing buckets turned out to already be ERPNext's own default, not something we configured — see T11 note.</td></tr>
+    <tr><td>SALES-12</td><td>Sales Incentive Management</td><td><span class="pill bp2">P2</span></td><td><span class="st-ns">◯ Not Started</span></td><td>Open</td></tr>
+    <tr><td>SALES-13</td><td>AI Foundation (ai_utils.py)</td><td><span class="pill bp1">P1</span></td><td><span class="st-done">✅ Done</span></td><td><strong style="color:#d97706;">Veeren</strong> — foundation now genuinely live, not just scaffolded. See SALES-16/17/18.</td></tr>
+    <tr><td>SALES-14</td><td>AI Sales Prediction</td><td><span class="pill bp2">P2</span></td><td><span class="st-ns">◯ Not Started</span></td><td><strong style="color:#d97706;">Veeren</strong></td></tr>
+    <tr><td>SALES-15</td><td>AI Lost Opportunity Analysis</td><td><span class="pill bp1">P1</span></td><td><span class="st-wip">🟡 Wired, needs API key</span></td><td><strong style="color:#d97706;">Veeren</strong> — trigger + LLM call wired, needs an OpenAI/Claude key to actually run</td></tr>
+    <tr><td>SALES-16</td><td>AI Lead Scoring</td><td><span class="pill bp2">P2</span></td><td><span class="st-wip">🟡 Rule-based, live</span></td><td><strong style="color:#d97706;">Veeren</strong> — rule-based (BANT if/else) version live and running today. Not a trained ML model — extend, don't restart from scratch.</td></tr>
+    <tr><td>SALES-17</td><td>AI Next Best Action</td><td><span class="pill bp1">P1</span></td><td><span class="st-wip">🟡 Rule-based, live</span></td><td><strong style="color:#d97706;">Veeren</strong> — rule-based, auto-recalculates on every Opportunity save. Thresholds hardcoded — a Sales Config screen is planned, not built.</td></tr>
+    <tr><td>SALES-18</td><td>AI Win Probability</td><td><span class="pill bp3">P3</span></td><td><span class="st-wip">🟡 Rule-based, live</span></td><td><strong style="color:#d97706;">Veeren</strong> — same as SALES-17. "Budget confirmed" bonus is not wired (no such field on Opportunity yet).</td></tr>
+    <tr><td>SALES-19</td><td>AI Sales Coaching</td><td><span class="pill bp3">P3</span></td><td><span class="st-ns">◯ Not Started</span></td><td><strong style="color:#d97706;">Veeren</strong></td></tr>
+    <tr style="background:#fffbeb;"><td>SALES-20</td><td>NL Query Assistant (Sales &amp; Mktg)</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td><strong style="color:#d97706;">Veeren</strong> — V01→V05, untouched by the demo branch</td></tr>
+  </table>
+</div>
+
+<div class="page-nav no-print">
+  <a class="prev" href="wave-1.html">← Sales &amp; Marketing Detail</a>
+  <a class="next" href="sprint-plan.html">Sprint Plan →</a>
+</div>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Developer Workflow — AIWS ERP</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="s-title">AIWS ERP</div>
+    <div class="s-sub">Implementation Master Plan</div>
+    <span class="s-tag">Claude / implementation</span>
+  </div>
+  <nav>
+    <div class="nav-group">Start Here</div>
+    <a class="nav-link" href="index.html">Program Overview</a>
+    <div class="nav-group">Foundation</div>
+    <a class="nav-link" href="frappe-verdict.html">Frappe Capability</a>
+    <a class="nav-link" href="architecture.html">System Architecture</a>
+    <div class="nav-group">Development Framework</div>
+    <a class="nav-link" href="customization-guide.html">Customization Guide</a>
+    <a class="nav-link active" href="developer-guide.html">Developer Workflow</a>
+    <div class="nav-group">Implementation</div>
+    <a class="nav-link" href="module-plan.html">All 13 Modules</a>
+    <a class="nav-link" href="sprint-plan.html">Parallel Sprint Plan</a>
+    <a class="nav-link" href="wave-1.html">Sales &amp; Marketing Detail</a>
+
+    <div class="nav-group">Module Plans</div>
+    <a class="nav-link" href="sales-module.html">Sales Module Plan</a>
+    <a class="nav-link" href="hr-module.html">HR Module Plan</a>
+    <a class="nav-link" href="accounts-module.html">Accounts Module Plan</a>
+    <a class="nav-link" href="finance-module.html">Finance Module Plan</a>
+    <a class="nav-link" href="pmo-module.html">PMO Module Plan</a>
+
+    <div class="nav-group">User Manual</div>
+    <a class="nav-link" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
+
+    <div class="nav-group">AI Strategy</div>
+    <a class="nav-link" href="ai-plan-strategy.html">AI Plan Strategy</a>
+
+    <div class="nav-group">Tracking</div>
+    <a class="nav-link" href="sales-tracker.html">Sales Tracker</a>
+    <a class="nav-link" href="sales-demo-showcase.html">Sales Showcase ✨</a>
+  </nav>
+  <div class="sidebar-foot">Pixaflip × SIL · AIWS ERP<br><a href="../../index.html">← AIWS Setup portal</a></div>
+</aside>
+
+<main>
+  <div class="breadcrumb">AIWS ERP <span>›</span> <a href="index.html">Plan</a> <span>›</span> Developer Workflow</div>
+  <div class="page-header">
+    <h1>Developer Workflow</h1>
+    <p class="subtitle">Local environment setup, Git conventions, PR process, testing, and how multiple developers collaborate without conflict. Read this before writing any code.</p>
+  </div>
+
+  <div class="callout ci">
+    <p><strong>Stack alignment (July 2026):</strong> This guide is aligned with the team's <code>ehiddenbrain/scale</code> repository. Stack: <strong>Frappe 15 · ERPNext 15 · HRMS 15 · CRM 1.x · India Compliance 15</strong>. All custom apps use the <code>scale_*</code> prefix. Site: <code>scale.localhost</code>.</p>
+  </div>
+
+  <h2>Prerequisites</h2>
+  <div class="grid g3">
+    <div class="card">
+      <h3>System requirements</h3>
+      <ul>
+        <li>Python 3.10–3.14 (via Homebrew — <strong>not</strong> system Python)</li>
+        <li>Node.js <strong>20 LTS</strong> via nvm — CRM asset builds require Node ≥20</li>
+        <li>MariaDB <strong>10.6</strong> via Homebrew (<code>brew install mariadb@10.6</code>) — Homebrew now defaults to MariaDB 12+ which is incompatible with Frappe v15</li>
+        <li>Redis 7+ via Homebrew</li>
+        <li>yarn (via npm)</li>
+        <li>wkhtmltopdf (for PDF print formats)</li>
+        <li>Git 2.30+</li>
+        <li>Homebrew (package manager)</li>
+        <li>pipx (to install frappe-bench)</li>
+      </ul>
+      <p class="muted">Setup below targets macOS (Apple Silicon / Intel). Ubuntu 22.04 is also supported — steps differ only in package manager (apt vs brew).</p>
+    </div>
+    <div class="card">
+      <h3>Git access needed</h3>
+      <ul>
+        <li><code>ehiddenbrain/scale</code> — team collaboration repo (bench root + <code>scale</code> F0 app inside <code>apps/scale/</code>)</li>
+        <li><code>ehiddenbrain/scale_accounts</code></li>
+        <li><code>ehiddenbrain/scale_sales</code></li>
+        <li><code>ehiddenbrain/scale_supply</code></li>
+        <li><code>ehiddenbrain/scale_hr</code></li>
+      </ul>
+      <p class="muted">Request access from the Platform lead (Ud) before starting. Custom app repos are created per module as development begins.</p>
+    </div>
+    <div class="card">
+      <h3>Knowledge required</h3>
+      <ul>
+        <li>Python 3 basics (classes, decorators, list comprehensions)</li>
+        <li>MariaDB/SQL basics</li>
+        <li>JavaScript/ES6 basics (for Client Scripts)</li>
+        <li>Git (branches, PRs, rebasing)</li>
+        <li>Read <a href="frappe-verdict.html">Frappe Capability</a> and <a href="customization-guide.html">Customization Guide</a> first</li>
+      </ul>
+      <p class="muted">ERPNext experience is a plus but not required — the Customization Guide covers everything you need.</p>
+    </div>
+  </div>
+
+  <hr class="section">
+
+  <h2>Local development setup — macOS native bench</h2>
+  <p>Native bench (no Docker) gives faster hot-reload and simpler debugging. Follow these 8 phases in order. Each phase is a self-contained block — paste and run, then verify before moving on.</p>
+
+  <div class="callout cw">
+    <p><strong>Node version matters.</strong> Frappe v15 + CRM requires Node 20 LTS. If you have a different Node version installed, use nvm to pin Node 20 for this project. Node 18 will cause CRM asset build failures.</p>
+  </div>
+
+  <!-- Phase 1 -->
+  <h3>Phase 1 — Install system dependencies</h3>
+  <div class="grid g2">
+    <div>
+      <div class="code-label">1a — Node 20 via nvm</div>
+      <pre><code>curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+source ~/.zshrc
+nvm install 20
+nvm alias default 20
+node --version   <span class="cmt"># must show v20.x.x</span></code></pre>
+
+      <div class="code-label">1b — yarn</div>
+      <pre><code>npm install -g yarn
+yarn --version</code></pre>
+
+      <div class="code-label">1c — MariaDB 10.6 (must specify version)</div>
+      <pre><code>brew install mariadb@10.6
+brew services start mariadb@10.6
+brew link mariadb@10.6 --force --overwrite</code></pre>
+    </div>
+    <div>
+      <div class="code-label">1d — Redis</div>
+      <pre><code>brew install redis
+brew services start redis
+redis-cli ping   <span class="cmt"># must return PONG</span></code></pre>
+
+      <div class="code-label">1e — wkhtmltopdf + pipx + frappe-bench</div>
+      <pre><code>brew install wkhtmltopdf pipx
+pipx ensurepath
+source ~/.zshrc
+pipx install frappe-bench
+bench --version  <span class="cmt"># confirms bench is on PATH</span></code></pre>
+    </div>
+  </div>
+
+  <!-- Phase 2 -->
+  <h3>Phase 2 — Configure MariaDB for Frappe (utf8mb4)</h3>
+  <p>Frappe requires <code>utf8mb4</code> charset. Edit the config file once, then restart.</p>
+  <div class="grid g2">
+    <div>
+      <div class="code-label">/opt/homebrew/etc/my.cnf</div>
+      <pre><code>[mysqld]
+character-set-client-handshake = FALSE
+character-set-server = utf8mb4
+collation-server = utf8mb4_unicode_ci
+innodb_file_per_table = 1
+
+[mysql]
+default-character-set = utf8mb4</code></pre>
+    </div>
+    <div>
+      <div class="code-label">Restart and verify</div>
+      <pre><code>brew services restart mariadb@10.6
+mariadb -u root -e \
+  "SHOW VARIABLES LIKE 'character_set_server';"
+<span class="cmt"># must show: utf8mb4</span></code></pre>
+    </div>
+  </div>
+
+  <!-- Phase 3 -->
+  <h3>Phase 3 — Set MariaDB root password</h3>
+  <p class="muted">Fresh Homebrew MariaDB 10.6 uses socket auth — <code>sudo mariadb -u root</code> won't work. Connect as your system user instead:</p>
+  <div class="code-label">bash — set root password to "admin" (dev only)</div>
+  <pre><code><span class="cmt"># Connect as your macOS system user (no password needed on fresh install)</span>
+mariadb -u $(whoami) -e \
+  "ALTER USER 'root'@'localhost' IDENTIFIED BY 'admin'; FLUSH PRIVILEGES;"
+
+<span class="cmt"># Verify root login with password:</span>
+mariadb -u root -padmin -e "SELECT 1;"</code></pre>
+
+  <!-- Phase 3b — MariaDB GUI -->
+  <h3>Phase 3b — MariaDB GUI (optional but recommended)</h3>
+  <p>A GUI client makes it easy to browse Frappe's tables, inspect DocType data, and debug queries during development. Two free options:</p>
+  <div class="grid g2">
+    <div class="card">
+      <h3>Sequel Ace <span style="font-size:11px;font-weight:400;color:var(--text-3)">— recommended</span></h3>
+      <p>Free, macOS-native, lightweight. Best for everyday table browsing and quick queries. Active fork of Sequel Pro.</p>
+      <p><strong>Install:</strong> Search <strong>Sequel Ace</strong> on the Mac App Store (free).</p>
+      <p style="margin-top:10px;font-size:13px;"><strong>Connection settings:</strong></p>
+      <div class="code-label">Sequel Ace — connection</div>
+      <pre><code>Host:     127.0.0.1
+Port:     3306
+Username: root
+Password: admin
+Database: scale_localhost</code></pre>
+      <p class="muted">Use <strong>Standard</strong> connection type. Leave SSL unchecked for local dev.</p>
+    </div>
+    <div class="card">
+      <h3>DBeaver Community</h3>
+      <p>Completely free, open source. Heavier (Java-based) but more powerful: ER diagrams, schema comparison, data export, full query editor with autocomplete.</p>
+      <p><strong>Install:</strong></p>
+      <div class="code-label">bash</div>
+      <pre><code>brew install --cask dbeaver-community</code></pre>
+      <p style="margin-top:10px;font-size:13px;"><strong>Connection settings:</strong></p>
+      <div class="code-label">DBeaver — new connection</div>
+      <pre><code>Driver:   MariaDB
+Host:     localhost
+Port:     3306
+User:     root
+Password: admin
+Database: scale_localhost</code></pre>
+      <p class="muted">Choose <strong>MariaDB</strong> driver (not MySQL) when prompted. DBeaver will offer to download the driver automatically.</p>
+    </div>
+  </div>
+  <div class="callout ci" style="margin-top:0">
+    <p><strong>Useful Frappe tables to know:</strong> <code>tabDocType</code> (all DocTypes), <code>tabCustom Field</code> (your custom fields), <code>tabSingles</code> (single-record configs), <code>tabGL Entry</code> (accounting ledger). Every Frappe DocType becomes a <code>tab&lt;DocType Name&gt;</code> table.</p>
+  </div>
+
+  <!-- Phase 4 -->
+  <h3>Phase 4 — Initialize the bench</h3>
+  <p>This clones Frappe v15 and installs all Python dependencies. Takes 3–5 minutes.</p>
+  <div class="code-label">bash — bench init</div>
+  <pre><code><span class="kw">cd</span> ~
+bench init scale-bench --frappe-branch version-15
+<span class="kw">cd</span> scale-bench
+export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" && nvm use 20</code></pre>
+
+  <!-- Phase 5 -->
+  <h3>Phase 5 — Get all Frappe apps</h3>
+  <p>Use the pinned versions that the team has tested and committed to <code>sites/apps.json</code>.</p>
+  <div class="code-label">bash — install ERPNext, HRMS, CRM, India Compliance</div>
+  <pre><code>bench get-app erpnext --branch version-15
+<span class="cmt"># Pinned: ERPNext 15.118.1 (commit b9c9b76)</span>
+
+bench get-app hrms --branch version-15
+<span class="cmt"># Pinned: HRMS 15.63.1 (commit c0ab60b)</span>
+
+bench get-app crm
+<span class="cmt"># CRM uses main branch — v1.79.1 (commit 0e6e651)</span>
+
+bench get-app https://github.com/resilient-tech/india-compliance --branch version-15
+<span class="cmt"># Pinned: India Compliance 15.30.4 (commit 3fea732) — must use full URL, not on frappe org</span></code></pre>
+  <div class="callout cw">
+    <p><strong>Pinned versions matter.</strong> The team has validated this exact combination. If you pull later commits from upstream and something breaks, check <code>sites/apps.json</code> in the <code>ehiddenbrain/scale</code> repo for the team's tested pinned hashes.</p>
+  </div>
+
+  <!-- Phase 6 -->
+  <h3>Phase 6 — Create site and install apps</h3>
+  <p class="muted">Homebrew MariaDB 10.6 uses a Unix socket at <code>/tmp/mysql.sock</code> — pass the socket flag explicitly.</p>
+  <div class="code-label">bash — new site</div>
+  <pre><code>bench new-site scale.localhost \
+  --mariadb-root-password admin \
+  --admin-password scale@demo \
+  --mariadb-db-socket /tmp/mysql.sock
+
+bench --site scale.localhost install-app erpnext
+bench --site scale.localhost install-app hrms
+bench --site scale.localhost install-app crm
+bench --site scale.localhost install-app india_compliance
+bench --site scale.localhost install-app scale</code></pre>
+  <div class="callout ci">
+    <p><strong>Hostname routing:</strong> Frappe matches requests by hostname. Add <code>scale.localhost</code> to <code>/etc/hosts</code> so the browser can reach it:</p>
+    <pre><code>echo "127.0.0.1 scale.localhost" | sudo tee -a /etc/hosts</code></pre>
+  </div>
+
+  <!-- Phase 7 -->
+  <h3>Phase 7 — Enable developer mode and start</h3>
+  <div class="code-label">bash — developer mode + start bench</div>
+  <pre><code>bench --site scale.localhost set-config developer_mode 1
+bench set-config -g developer_mode 1
+bench use scale.localhost
+bench start</code></pre>
+  <p>Open <strong>http://scale.localhost:8001</strong> — login: <code>Administrator</code> / <code>scale@demo</code></p>
+
+  <!-- Phase 8 -->
+  <h3>Phase 8 — Install the <code>scale</code> app</h3>
+  <p>The <code>scale</code> app (F0 foundation) is already in the repo at <code>apps/scale/</code>. You do <strong>not</strong> need to run <code>bench new-app</code> — just install it and run migrations:</p>
+  <div class="code-label">bash — install scale app from repo</div>
+  <pre><code><span class="cmt"># The repo was cloned into the bench root, so apps/scale/ is already present.</span>
+<span class="cmt"># Install it into pip and register it with the site:</span>
+bench --site scale.localhost install-app scale
+bench --site scale.localhost migrate</code></pre>
+
+  <div class="callout ci">
+    <p><strong>Why migrate?</strong> The <code>scale</code> app adds custom fields to the Customer DocType via <code>install.py</code>. Running migrate ensures those fields are applied and any fixture data is loaded.</p>
+  </div>
+
+  <div class="callout cg">
+    <p><strong>F0 gate — bench is ready when:</strong> <code>http://scale.localhost:8001</code> loads, ERPNext Selling module is enabled, you can create a Lead and a Sales Invoice end-to-end, the Customer form shows <code>Scale Priority</code> and <code>Scale Account Notes</code> fields, and a second developer can spin up the same bench from scratch using only these instructions.</p>
+  </div>
+
+  <hr class="section">
+
+  <h2>Creating a new custom app (for each module team)</h2>
+  <p>Each team (Accounts, Sales, HR, Supply) owns one custom app. All customizations — DocTypes, hooks, fixtures, API functions — live inside that app. Never modify <code>apps/erpnext</code>, <code>apps/frappe</code>, or any other upstream app.</p>
+  <div class="code-label">bash — scaffold a new Scale app</div>
+  <pre><code><span class="cmt"># From inside the bench directory:</span>
+bench new-app scale_sales
+<span class="cmt"># Prompts: App Title = "Scale Sales", Publisher = "Pixaflip Technologies"</span>
+<span class="cmt"># Creates: apps/scale_sales/ with the standard Frappe app structure</span>
+
+<span class="cmt"># App structure created:</span>
+scale_sales/
+  scale_sales/
+    __init__.py
+    hooks.py           <span class="cmt"># ← register all hooks here</span>
+    modules.txt        <span class="cmt"># ← list module names</span>
+    patches.txt        <span class="cmt"># ← list patch scripts in order</span>
+    config/
+      desktop.py       <span class="cmt"># ← workspace shortcuts</span>
+    public/            <span class="cmt"># ← static assets (JS, CSS, images)</span>
+    templates/         <span class="cmt"># ← Jinja templates for web pages</span>
+    scale_sales/       <span class="cmt"># ← module folder (matches module name)</span>
+      doctype/         <span class="cmt"># ← Custom DocTypes go here</span>
+      report/          <span class="cmt"># ← Script Reports go here</span>
+      page/            <span class="cmt"># ← Custom pages go here</span>
+      fixtures/        <span class="cmt"># ← Exported fixtures (JSON) go here</span>
+      tasks.py         <span class="cmt"># ← Scheduled job functions</span>
+      api.py           <span class="cmt"># ← Whitelisted API functions</span>
+  setup.py
+  requirements.txt     <span class="cmt"># ← third-party pip dependencies</span>
+  pyproject.toml       <span class="cmt"># ← version and bench version pins</span></code></pre>
+
+  <div class="callout ci">
+    <p><strong>Custom field naming convention:</strong> always prefix fields with <code>scale_&lt;team&gt;_&lt;name&gt;</code> (e.g. <code>scale_acc_credit_limit</code>, <code>scale_sales_bant_score</code>). This avoids clashes across apps and makes fixture filters precise.</p>
+  </div>
+
+  <hr class="section">
+
+  <h2>Git workflow — branches and PRs</h2>
+  <div class="tbl-wrap">
+    <table>
+      <tr><th>Branch</th><th>Purpose</th><th>Who pushes</th><th>Protection</th></tr>
+      <tr>
+        <td><code>main</code></td>
+        <td>Production-ready code. Deployed to staging on every merge.</td>
+        <td>No direct push — PRs only</td>
+        <td>Require PR review + CI green</td>
+      </tr>
+      <tr>
+        <td><code>develop</code></td>
+        <td>Integration branch. All feature branches merge here first.</td>
+        <td>PRs from feature branches</td>
+        <td>CI must pass</td>
+      </tr>
+      <tr>
+        <td><code>feature/accounts-credit-limit</code></td>
+        <td>One feature or bug fix. Named with team and topic.</td>
+        <td>Assigned developer</td>
+        <td>None</td>
+      </tr>
+      <tr>
+        <td><code>fix/hr-leave-approval-npe</code></td>
+        <td>Urgent production fix. Merges to both <code>main</code> and <code>develop</code>.</td>
+        <td>Assigned developer</td>
+        <td>Extra reviewer required</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h3>Day-to-day feature workflow</h3>
+      <ol class="steps">
+        <li class="step"><div class="step-n">1</div><div class="step-c"><h4>Pull latest develop</h4><p><code>git checkout develop &amp;&amp; git pull</code></p></div></li>
+        <li class="step"><div class="step-n">2</div><div class="step-c"><h4>Create feature branch</h4><p><code>git checkout -b feature/sales-dealer-scorecard</code></p></div></li>
+        <li class="step"><div class="step-n">3</div><div class="step-c"><h4>Develop and commit incrementally</h4><p>Small, focused commits. Commit message: <code>feat(sales): add dealer scorecard aggregation</code></p></div></li>
+        <li class="step"><div class="step-n">4</div><div class="step-c"><h4>Export fixtures before PR</h4><p><code>bench --site scale.localhost export-fixtures --app scale_sales</code></p></div></li>
+        <li class="step"><div class="step-n">5</div><div class="step-c"><h4>Run tests locally</h4><p><code>bench --site scale.localhost run-tests --app scale_sales</code></p></div></li>
+        <li class="step"><div class="step-n">6</div><div class="step-c"><h4>Open PR against develop</h4><p>Link the ticket. Tag the module owner as reviewer.</p></div></li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>Commit message convention</h3>
+      <p>Use the Conventional Commits format:</p>
+      <div class="code-label">Format</div>
+      <pre><code>&lt;type&gt;(&lt;scope&gt;): &lt;description&gt;
+
+Types:
+  feat     - new feature
+  fix      - bug fix
+  refactor - code change, no feature/fix
+  test     - adding tests
+  docs     - documentation
+  chore    - build/config changes
+  fixture  - fixture export update
+
+Scopes: sales, accounts, supply, hr, core, pmo
+
+Examples:
+feat(sales): add BANT scoring fields to Lead DocType
+fix(accounts): correct GST credit check validation
+fixture(sales): export updated Dealer Profile DocType
+chore/accounts-fixtures-gst-fields</code></pre>
+      <h3>PR checklist (required before review)</h3>
+      <ul class="chk">
+        <li>Changes only in the correct custom app (no edits to upstream apps)</li>
+        <li>Fixtures exported and committed</li>
+        <li>Tests written and passing locally</li>
+        <li><code>bench --site scale.localhost migrate</code> runs clean</li>
+        <li>No <code>frappe.flags.ignore_permissions</code> without comment</li>
+        <li>No hardcoded site names, URLs, or credentials in code</li>
+        <li>Patch added if a DB schema change is included</li>
+        <li>Module owner tagged as reviewer</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr class="section">
+
+  <h2>Handling fixture conflicts — the #1 multi-developer pain point</h2>
+  <div class="callout cw">
+    <p><strong>Fixtures are JSON files. Two developers modifying the same DocType's custom fields will create Git conflicts in the fixture JSON.</strong> This is the most common source of friction in Frappe multi-developer projects. The rules below prevent it.</p>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <h3>Rules to avoid fixture conflicts</h3>
+      <ul>
+        <li>Each module app owns its own fixtures. Never put <code>scale_sales</code> fixtures inside <code>scale</code>.</li>
+        <li>One developer per DocType at a time. Co-ordinate via the ticket board — assign ownership clearly.</li>
+        <li>If two developers must work on the same DocType simultaneously, work on different fields, then one person does a final fixture export after both are done.</li>
+        <li>Always pull <code>develop</code> and run <code>bench --site scale.localhost migrate</code> before starting work on fixtures.</li>
+        <li>Never manually edit fixture JSON — always go through the Frappe UI and then export.</li>
+        <li>Shared DocTypes (Customer, Item, Company): prefix all custom fields with <code>scale_&lt;team&gt;_</code> and coordinate in PR description.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>When a fixture conflict happens</h3>
+      <ol>
+        <li>Do NOT auto-resolve the Git conflict with &lt;&lt;&lt; markers — the JSON will be invalid.</li>
+        <li>Accept one version completely (<code>git checkout --theirs</code> or <code>--ours</code>).</li>
+        <li>On your local site, manually re-apply the changes from the discarded version via the Frappe UI.</li>
+        <li>Re-export fixtures: <code>bench --site scale.localhost export-fixtures --app scale_sales</code></li>
+        <li>Commit the merged fixture JSON.</li>
+      </ol>
+      <p class="muted">This is why step 4 of the feature workflow (export fixtures) must be the last step before opening a PR — minimizes the window for conflicts.</p>
+    </div>
+  </div>
+
+  <hr class="section">
+
+  <h2>Testing</h2>
+  <div class="grid g2">
+    <div>
+      <h4>Running tests</h4>
+      <div class="code-label">bash — run tests</div>
+      <pre><code><span class="cmt"># Run all tests for an app</span>
+bench --site scale.localhost run-tests --app scale_sales
+
+<span class="cmt"># Run tests for a specific module</span>
+bench --site scale.localhost run-tests \
+  --module scale_sales.scale_sales.doctype.dealer_profile.test_dealer_profile
+
+<span class="cmt"># Run with verbose output</span>
+bench --site scale.localhost run-tests --app scale_sales -v</code></pre>
+      <h4>Writing a test</h4>
+      <div class="code-label">Python — test template</div>
+      <pre><code><span class="kw">import</span> frappe
+<span class="kw">import</span> unittest
+
+<span class="kw">class</span> <span class="cls">TestDealerProfile</span>(unittest.TestCase):
+  <span class="kw">def</span> <span class="fn">setUp</span>(self):
+    <span class="cmt"># Create test data</span>
+    self.customer = frappe.get_doc({
+      <span class="str">"doctype"</span>: <span class="str">"Customer"</span>,
+      <span class="str">"customer_name"</span>: <span class="str">"Test Dealer Ltd"</span>
+    }).insert()
+
+  <span class="kw">def</span> <span class="fn">test_negative_credit_limit_rejected</span>(self):
+    <span class="kw">with</span> self.assertRaises(frappe.ValidationError):
+      frappe.get_doc({
+        <span class="str">"doctype"</span>: <span class="str">"Dealer Profile"</span>,
+        <span class="str">"customer"</span>: self.customer.name,
+        <span class="str">"credit_limit"</span>: -1000
+      }).insert()
+
+  <span class="kw">def</span> <span class="fn">tearDown</span>(self):
+    frappe.db.rollback()</code></pre>
+    </div>
+    <div>
+      <h4>Testing philosophy</h4>
+      <ul>
+        <li><strong>All new DocType controllers</strong> require unit tests covering: validation errors, happy path, edge cases.</li>
+        <li><strong>Server Scripts</strong> require at least one test covering the event they hook.</li>
+        <li><strong>API functions</strong> require permission tests (unauthenticated call should fail).</li>
+        <li><strong>Integration connectors</strong> (GentooLeads, EMS) require mocked HTTP tests.</li>
+        <li>Coverage target: 70% for new DocTypes, 80% for API functions.</li>
+      </ul>
+      <h4>CI pipeline (GitHub Actions)</h4>
+      <div class="code-label">.github/workflows/test.yml (skeleton)</div>
+      <pre><code><span class="kw">on</span>: [push, pull_request]
+<span class="kw">jobs</span>:
+  test:
+    <span class="kw">runs-on</span>: ubuntu-22.04
+    <span class="kw">services</span>:
+      mariadb: { image: mariadb:10.6, ... }
+      redis:   { image: redis:7-alpine }
+    <span class="kw">steps</span>:
+      - uses: actions/checkout@v4
+      - <span class="kw">name</span>: Set up Frappe bench
+        <span class="kw">uses</span>: frappe/frappe-bench-action@main
+        <span class="kw">with</span>:
+          frappe-branch: version-15
+          apps-json: apps.json
+      - <span class="kw">name</span>: Run tests
+        <span class="kw">run</span>: bench --site test.localhost run-tests --app scale_sales</code></pre>
+    </div>
+  </div>
+
+  <hr class="section">
+
+  <h2>Module ownership map</h2>
+  <div class="tbl-wrap">
+    <table>
+      <tr><th>App</th><th>Module(s)</th><th>Wave</th><th>Lead</th><th>Reviewers</th></tr>
+      <tr><td><code>scale</code></td><td>Shared platform — roles, workflows, integrations, Scale Settings, audit log</td><td>F0</td><td>All leads</td><td>Raghib</td></tr>
+      <tr><td><code>scale_sales</code></td><td>Sales (19 features) + CRM bridge + Marketing (33 features)</td><td>Wave 1</td><td><strong>Raghib</strong></td><td>scale owner</td></tr>
+      <tr><td><code>scale_accounts</code></td><td>Finance + Accounts (15+15 features) — one app, two sub-tracks. Includes India Compliance / GST hooks.</td><td>Wave 1</td><td><strong>Uday</strong></td><td>scale owner</td></tr>
+      <tr><td><code>scale_hr</code></td><td>Human Resources (23 features) + PMO (14 features)</td><td>Wave 1</td><td><strong>Vandana</strong></td><td>scale owner</td></tr>
+      <tr><td><code>scale_supply</code></td><td>Buying, Inventory, Production, Purchase, Stores</td><td>Wave 2</td><td>TBD (Uday + Vandana free from Sep)</td><td>scale owner</td></tr>
+      <tr><td><em>BI / Dashboards</em></td><td>Dashboards, Survey — app name TBD</td><td>Wave 4</td><td>TBD</td><td>all owners</td></tr>
+    </table>
+  </div>
+
+  <div class="callout ci">
+    <p><strong>Rule:</strong> Cross-app data access goes through the <strong>Frappe document API</strong> only — <code>frappe.get_doc()</code>, <code>frappe.db.get_value()</code>, or a whitelisted API function in <code>scale</code>. Never <code>import</code> a class from another Scale app directly. This keeps modules decoupled and allows teams to work independently.</p>
+  </div>
+
+  <div class="page-nav">
+    <a class="prev" href="customization-guide.html">← Customization Guide</a>
+    <a class="next" href="module-plan.html">All 13 Modules →</a>
+  </div>
+</main>
+</body>
+</html>

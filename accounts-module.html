@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accounts Module — Implementation Plan | AIWS ERP</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.pill-ootb    { background:#d1fae5; color:#065f46; }
+.pill-refine  { background:#dbeafe; color:#1e40af; }
+.pill-custom  { background:#fef3c7; color:#92400e; }
+.pill-ai      { background:#ede9fe; color:#5b21b6; }
+.pill-partial { background:#fce7f3; color:#9d174d; }
+.bp1 { background:#fee2e2; color:#991b1b; }
+.bp2 { background:#fef3c7; color:#78350f; }
+.bp3 { background:#f0f9ff; color:#075985; }
+.bpd { background:#f3f4f6; color:#6b7280; }
+.st-done { color:#10b981; font-weight:700; }
+.st-wip  { color:#f59e0b; font-weight:700; }
+.st-ns   { color:#9ca3af; }
+details.feat { border:1px solid #e5e7eb; border-radius:8px; margin-bottom:8px; }
+details.feat summary { cursor:pointer; padding:12px 16px; font-weight:600; font-size:.93rem; list-style:none; display:flex; align-items:center; gap:8px; }
+details.feat summary::-webkit-details-marker { display:none; }
+details.feat summary .feat-arrow { margin-left:auto; font-size:.8rem; color:#6b7280; transition:transform .2s; }
+details.feat[open] summary .feat-arrow { transform:rotate(90deg); }
+details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
+.task-card { border:1px solid #e5e7eb; border-radius:10px; padding:16px 20px; margin-bottom:14px; page-break-inside:avoid; }
+.task-card h4 { margin:0 0 6px; font-size:.97rem; }
+.task-card .task-meta { font-size:.8rem; color:#6b7280; margin-bottom:10px; }
+.task-card .task-steps { padding-left:18px; margin:6px 0 0; }
+.task-card .task-steps li { margin-bottom:5px; font-size:.88rem; line-height:1.5; }
+.task-card .task-note  { font-size:.82rem; background:#f8fafc; border-left:3px solid #6366f1; padding:6px 10px; margin-top:10px; border-radius:0 4px 4px 0; }
+.task-context { background:#f0f9ff; border:1px solid #bae6fd; border-radius:8px; padding:12px 14px; margin:10px 0 12px; font-size:.86rem; line-height:1.6; }
+.task-context p { margin:0 0 5px; }
+.task-context p:last-child { margin:0; }
+.ctx-label { font-weight:700; color:#0369a1; }
+.ctx-ref { display:inline-block; font-size:.78rem; background:#e0f2fe; color:#0369a1; border-radius:4px; padding:2px 8px; margin-top:4px; font-weight:600; }
+.dup-flag { background:#f0f9ff; border:1px solid #bae6fd; border-radius:6px; padding:10px 12px; margin-bottom:10px; font-size:.84rem; }
+.dup-flag strong.hd { color:#0369a1; }
+.task-header { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.task-id { font-weight:700; font-size:.8rem; background:#1e3a5f; color:#fff; padding:2px 8px; border-radius:4px; }
+.task-date { font-size:.78rem; color:#6b7280; }
+.task-assign { font-size:.78rem; background:#ede9fe; color:#5b21b6; padding:2px 8px; border-radius:4px; }
+.task-assign-u { font-size:.78rem; background:#1e3a5f; color:#fff; padding:2px 8px; border-radius:4px; }
+.task-assign-d { font-size:.78rem; background:#d1fae5; color:#065f46; padding:2px 8px; border-radius:4px; }
+.print-btn { background:#1e3a5f; color:#fff; border:none; padding:8px 20px; border-radius:6px; cursor:pointer; font-size:.85rem; margin-bottom:20px; }
+.print-btn:hover { background:#2d5580; }
+.week-label { background:#1e3a5f; color:#fff; padding:8px 16px; border-radius:6px; font-weight:700; font-size:.88rem; margin:24px 0 12px; }
+.app-phase-label { background:#065f46; color:#fff; padding:8px 16px; border-radius:6px; font-weight:700; font-size:.88rem; margin:24px 0 12px; }
+@media print {
+  .sidebar, .breadcrumb, .page-header, .no-print, .page-nav, .print-btn { display:none !important; }
+  main { margin:0 !important; padding:16px 24px !important; max-width:none !important; }
+  .print-section { display:block !important; }
+  body { font-size:10.5pt; background:#fff !important; }
+  .task-card { border:1px solid #ccc; }
+  pre { background:#f4f4f4 !important; color:#111 !important; font-size:9pt; }
+  h1,h2,h3 { page-break-after:avoid; }
+  .task-card, details { page-break-inside:avoid; }
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="s-title">AIWS ERP</div>
+    <div class="s-sub">Implementation Master Plan</div>
+    <span class="s-tag">Claude / implementation</span>
+  </div>
+  <nav>
+    <div class="nav-group">Start Here</div>
+    <a class="nav-link" href="index.html">Program Overview</a>
+    <div class="nav-group">Foundation</div>
+    <a class="nav-link" href="frappe-verdict.html">Frappe Capability</a>
+    <a class="nav-link" href="architecture.html">System Architecture</a>
+    <div class="nav-group">Development Framework</div>
+    <a class="nav-link" href="customization-guide.html">Customization Guide</a>
+    <a class="nav-link" href="developer-guide.html">Developer Workflow</a>
+    <div class="nav-group">Implementation</div>
+    <a class="nav-link" href="module-plan.html">All 13 Modules</a>
+    <a class="nav-link" href="sprint-plan.html">Parallel Sprint Plan</a>
+    <a class="nav-link" href="wave-1.html">Sales &amp; Marketing Detail</a>
+    <div class="nav-group">Module Plans</div>
+    <a class="nav-link" href="sales-module.html">Sales Module Plan</a>
+    <a class="nav-link" href="hr-module.html">HR Module Plan</a>
+    <a class="nav-link active" href="accounts-module.html">Accounts Module Plan</a>
+    <a class="nav-link" href="finance-module.html">Finance Module Plan</a>
+    <a class="nav-link" href="pmo-module.html">PMO Module Plan</a>
+
+    <div class="nav-group">User Manual</div>
+    <a class="nav-link" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
+
+    <div class="nav-group">AI Strategy</div>
+    <a class="nav-link" href="ai-plan-strategy.html">AI Plan Strategy</a>
+
+    <div class="nav-group">Tracking</div>
+    <a class="nav-link" href="sales-tracker.html">Sales Tracker</a>
+    <a class="nav-link" href="sales-demo-showcase.html">Sales Showcase ✨</a>
+  </nav>
+  <div class="sidebar-foot">Pixaflip × SIL · AIWS ERP<br><a href="../../index.html">← AIWS Setup portal</a></div>
+</aside>
+
+<main>
+<div class="breadcrumb">AIWS ERP <span>›</span> Accounts Module Implementation Plan</div>
+
+<!-- PAGE HEADER -->
+<div class="page-header no-print">
+  <h1>Accounts Module — Implementation Plan</h1>
+  <p class="subtitle">16 features (15 Accounts Foundation + 1 Client PRD) · <code>scale_accounts</code> app · Module Lead: Uday · AI Head: Veeren · Aug 1 → Sep 5, 2026</p>
+</div>
+
+<button class="print-btn no-print" onclick="window.print()">Print / Save as PDF</button>
+
+<div class="summary-strip no-print">
+  <div class="s-stat"><div class="sv">16</div><div class="sl">Total Features</div></div>
+  <div class="s-stat"><div class="sv">10</div><div class="sl">Native OOTB</div></div>
+  <div class="s-stat"><div class="sv">4</div><div class="sl">App Install + Config</div></div>
+  <div class="s-stat"><div class="sv">2</div><div class="sl">Custom Build</div></div>
+  <div class="s-stat"><div class="sv">Sep 5</div><div class="sl">Wave 1 Target</div></div>
+</div>
+
+<!-- ═══════════════════════════════════
+     PRINTABLE SECTION
+═══════════════════════════════════ -->
+<div class="print-section">
+
+<!-- SECTION A: OVERVIEW -->
+<div style="border-bottom:3px solid #1e3a5f;padding-bottom:16px;margin-bottom:24px;">
+  <div style="font-size:10pt;color:#666;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">AIWS ERP · Pixaflip × SIL</div>
+  <div style="font-size:20pt;font-weight:900;color:#1e3a5f;letter-spacing:-.5px;">Accounts Module — Developer Handover Pack</div>
+  <div style="font-size:10pt;color:#444;margin-top:6px;">Module Lead: <strong>Uday</strong> · AI Head: <strong>Veeren</strong> · Printed: July 2026</div>
+</div>
+
+<h2 style="margin-top:0;">Section A — Overview &amp; Scope</h2>
+
+<p>This document is the single authoritative reference for the AIWS <strong>Accounts Foundation</strong> build — the organisation's centralised financial transaction engine: Chart of Accounts, General Ledger, AR/AP, Bank Reconciliation, GST, Audit Trail, Journal Entries, TDS/TCS, Multi-currency, Fixed Assets, Depreciation, Petty Cash, Cost Centre Accounting, E-Invoicing, and MIS Reports (prefix AC). It covers the <strong>15 features</strong> from the Excel Accounts tab plus <strong>1 feature identified in the client's Accounts Management Module PRD</strong> (AC-16). Together these 16 features define the scope of the <code>scale_accounts</code> custom app for Wave 1 (Aug 1 – Sep 5, 2026) — the first app built, since every other Finance-side feature depends on it.</p>
+
+<div style="background:#eff6ff;border:1px solid #93c5fd;border-radius:8px;padding:12px 14px;margin:14px 0;font-size:.86rem;">
+  <strong style="color:#1e3a5f;">Companion document — Finance Analytics</strong>
+  <p style="margin:6px 0 0;color:#1e3a5f;">Budgeting, forecasting, cash flow, working capital, profitability, and strategic finance (14 more features, prefix FI) are scoped separately in <a href="finance-module.html"><strong>finance-module.html</strong></a>, under a dedicated <code>scale_finance</code> app that depends on this one. Both apps are led by Uday. <strong>Two features exist in both documents</strong> because the client's source material (Excel tabs and PDFs) independently lists them in both scopes — see the flagged callouts on AC-13 and AC-16 below for exactly how to handle each.</p>
+</div>
+
+<p><strong>How to navigate to the Accounts module:</strong> Launch the bench → open your Scale site → click the Scale app launcher → find <em>Scale Accounts</em> in the left sidebar. This entry appears after T00 (app creation) and <code>bench migrate</code>.</p>
+
+<p><strong>App:</strong> <code>scale_accounts</code> (Python package name, git folder name, and ERPNext app name — all the same). &nbsp;<strong>Platform:</strong> Frappe v15 + ERPNext v15 + India Compliance app (mandatory for GST / TDS / E-Invoicing).</p>
+
+<p><strong>Module Vision (from the client PRD):</strong> "The Accounts Management Module is designed to serve as the organization's centralized financial transaction engine. It provides complete control over accounting operations while ensuring compliance with statutory regulations, maintaining financial accuracy, and delivering real-time financial visibility... integrates with Sales, Purchase, Inventory, Manufacturing, HR, Banking, and Finance to provide a single source of truth for all financial transactions."</p>
+
+<p><strong>Primary Users (per PRD):</strong> Accountant · Senior Accountant · Accounts Manager · Finance Controller · CFO · Auditor · Tax Consultant · CEO · Business Owner.</p>
+
+<div style="background:#fffbeb;border:2px solid #fcd34d;border-radius:8px;padding:14px 16px;margin:16px 0;font-size:.86rem;">
+  <strong style="color:#92400e;">Client PRD Analysis — 1 additional feature identified (Accounts Management Module PRD, Jul 2026)</strong>
+  <p style="margin:8px 0 4px;color:#78350f;">The client Accounts Management Module PRD contains 15 numbered feature sections that map 1:1 to the Excel Accounts tab (same names, same order — verified). The PRD closes with an Executive Dashboard specification that is <strong>not in the original Excel scope.</strong></p>
+  <ul style="margin:6px 0 0 16px;padding:0;line-height:1.9;color:#78350f;">
+    <li><strong>AC-16 — Executive Dashboard (CFO &amp; CXO View)</strong> — a consolidated real-time view of 15 KPIs: Cash &amp; Bank Balance, Accounts Receivable, Accounts Payable, Daily Collections, Daily Payments, Revenue &amp; Expenses, P&amp;L Snapshot, GST Liability, TDS/TCS Status, Fixed Asset Value, Budget vs Actual, Cost Centre Performance, Pending Journal Approvals, Audit Exceptions, AI Financial Health Score, Top AI Recommendations.</li>
+  </ul>
+  <p style="margin:10px 0 0;color:#92400e;font-size:.82rem;"><strong>All 15 Excel Accounts features (AC-01 to AC-15) are in Wave 1 scope.</strong> AC-16 is partially Wave 1 (T12 — the 13 KPIs sourced from this module) and partially Wave 2 (V06 — AI Financial Health Score, Top AI Recommendations). See the AC-16 accordion below for the overlap with Finance module's own FI-16.</p>
+</div>
+
+<div style="background:#fff1f2;border:1px solid #fca5a5;border-radius:8px;padding:12px 14px;margin:16px 0;font-size:.86rem;">
+  <strong style="color:#991b1b;">⚠ Note to AI Team — on the PRD's AI Feature lists</strong>
+  <p style="margin:6px 0 0;color:#7f1d1d;">The client PRD lists 4–8 "AI Features" under every one of the 15 sections (over 60 AI bullet points total — e.g. "recommend account mappings," "detect duplicate accounts," "predict payment delays," "forecast exchange rate exposure"). Building every single one as a Wave 1 task is out of scope and would stall the core bookkeeping build. This document triages them into four grouped Wave 2 AI tasks (V03–V06) that cover the same ground thematically — see the AI Track section. Do not modify any upstream Frappe/ERPNext/India Compliance source files; all custom logic lives exclusively inside <code>apps/scale_accounts/</code>. Hook paths must use the outer Python package name only — e.g. <code>scale_accounts.msme_hooks.fn</code>, never <code>scale_accounts.scale_accounts.msme_hooks.fn</code>.</p>
+</div>
+
+<table style="width:100%;border-collapse:collapse;font-size:.85rem;margin:16px 0;">
+  <tr style="background:#1e3a5f;color:#fff;">
+    <th style="padding:8px 12px;text-align:left;">Role</th>
+    <th style="padding:8px 12px;text-align:left;">Name</th>
+    <th style="padding:8px 12px;text-align:left;">Responsibilities</th>
+  </tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;"><strong>Finance &amp; Accounts Module Lead</strong></td><td style="padding:7px 12px;border:1px solid #ddd;"><strong style="color:#1e3a5f;">Uday</strong></td><td style="padding:7px 12px;border:1px solid #ddd;">App scaffold · Chart of Accounts setup · GST/India Compliance config · Cost Centre tree · Journal Entry controls · MIS Reports · fixture exports · git commits · team coordination</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Developer2</td><td style="padding:7px 12px;border:1px solid #ddd;">Dev2 (TBD)</td><td style="padding:7px 12px;border:1px solid #ddd;">AR/AP setup, Bank Reconciliation, TDS/TCS config, Fixed Assets, Depreciation, Audit Trail, Multi-currency, Petty Cash, E-Invoicing</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">AI Head</td><td style="padding:7px 12px;border:1px solid #ddd;">Veeren</td><td style="padding:7px 12px;border:1px solid #ddd;">ai_utils.py, Accounts NL Query assistant, Duplicate/Anomaly Detection suite (Wave 2), Predictive Compliance &amp; Risk suite (Wave 2), Forecasting &amp; Optimisation suite (Wave 2), Executive Dashboard AI tiles (Wave 2)</td></tr>
+</table>
+
+<!-- SECTION B: APP SCAFFOLD -->
+<h2>Section B — Creating the scale_accounts App</h2>
+<p>One-time setup. Uday runs these commands on Day 1 to create the <code>scale_accounts</code> app, wire it up, and push the scaffold to git so Dev2 and Veeren can clone and start work. This is the <strong>first</strong> app built in Uday's Wave 1 track — Finance Analytics (<code>scale_finance</code>) depends on it.</p>
+
+<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 16px;margin:12px 0;font-size:.86rem;line-height:1.8;">
+  <strong style="color:#166534; display:block; margin-bottom:8px;">Step 1 — Create the app</strong>
+  <pre style="background:#0d1f35;color:#c8d8ea;padding:14px 18px;border-radius:6px;font-size:.82rem;margin:0;">bench new-app scale_accounts</pre>
+  <p style="margin:8px 0 0;">When prompted, fill in:<br>
+  App Title: <strong>Scale Accounts</strong> &nbsp;·&nbsp; Publisher: <strong>Pixaflip Technologies</strong> &nbsp;·&nbsp; Description: <strong>Accounts Foundation Module for Scale ERP</strong> &nbsp;·&nbsp; Email: <strong>dev@pixaflip.com</strong> &nbsp;·&nbsp; License: <strong>MIT</strong><br>
+  Leave other prompts as default.</p>
+</div>
+
+<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 16px;margin:12px 0;font-size:.86rem;line-height:1.8;">
+  <strong style="color:#166534; display:block; margin-bottom:8px;">Step 2 — Add to apps.txt and install</strong>
+  <pre style="background:#0d1f35;color:#c8d8ea;padding:14px 18px;border-radius:6px;font-size:.82rem;margin:0;">echo "scale_accounts" >> sites/apps.txt
+bench --site scale.localhost install-app scale_accounts
+bench --site scale.localhost migrate</pre>
+</div>
+
+<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 16px;margin:12px 0;font-size:.86rem;line-height:1.8;">
+  <strong style="color:#166534; display:block; margin-bottom:8px;">Step 3 — Edit hooks.py</strong>
+  <pre style="background:#0d1f35;color:#c8d8ea;padding:14px 18px;border-radius:6px;font-size:.82rem;margin:0;">app_name        = "scale_accounts"
+app_title       = "Scale Accounts"
+app_publisher   = "Pixaflip Technologies"
+app_description = "Accounts Foundation Module for Scale ERP"
+app_email       = "dev@pixaflip.com"
+app_license     = "MIT"
+app_version     = "0.0.1"
+
+required_apps = ["frappe", "erpnext", "india_compliance"]
+
+fixtures = [
+    {"dt": "Custom Field",    "filters": [["module", "=", "Scale Accounts"]]},
+    {"dt": "Property Setter", "filters": [["module", "=", "Scale Accounts"]]},
+    {"dt": "Workflow",        "filters": [["document_type", "=", "Journal Entry"]]},
+    {"dt": "Notification",   "filters": [["module", "=", "Scale Accounts"]]},
+]
+
+doc_events = {
+    "Bank Transaction": {
+        "on_submit": "scale_accounts.bank_hooks.flag_duplicate_payment",
+    },
+    "Journal Entry": {
+        "before_submit": "scale_accounts.journal_hooks.check_period_lock",
+    },
+}
+
+scheduler_events = {
+    "daily": [
+        "scale_accounts.tasks.daily_depreciation_check",
+        "scale_accounts.tasks.daily_gst_filing_reminder",
+    ],
+    "monthly": [
+        "scale_accounts.tasks.monthly_mis_pack_email",
+    ],
+}</pre>
+</div>
+
+<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 16px;margin:12px 0;font-size:.86rem;line-height:1.8;">
+  <strong style="color:#166534; display:block; margin-bottom:8px;">Step 4 — Create stub Python files</strong>
+  <pre style="background:#0d1f35;color:#c8d8ea;padding:14px 18px;border-radius:6px;font-size:.82rem;margin:0;"># From apps/scale_accounts/scale_accounts/
+touch bank_hooks.py journal_hooks.py tasks.py ai_utils.py</pre>
+  <p style="margin:8px 0 0;">Each stub needs at minimum: <code>def flag_duplicate_payment(doc, method=None): pass</code> and similar pass-through functions matching the hooks.py declarations.</p>
+</div>
+
+<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 16px;margin:12px 0;font-size:.86rem;line-height:1.8;">
+  <strong style="color:#166534; display:block; margin-bottom:8px;">Step 5 — Create the Workspace (sidebar entry)</strong>
+  <pre style="background:#0d1f35;color:#c8d8ea;padding:14px 18px;border-radius:6px;font-size:.82rem;margin:0;">mkdir -p apps/scale_accounts/scale_accounts/scale_accounts/workspace/scale_accounts</pre>
+  <p style="margin:8px 0 6px;">Create <code>scale_accounts.json</code> in that folder. Set <code>"module": "Scale Accounts"</code>, <code>"public": 1</code>, <code>"sequence_id": 3.0</code> (places it below Scale HR in the sidebar, above Scale Finance). Add shortcuts to: Chart of Accounts, Journal Entry, Sales Invoice, Purchase Invoice, Bank Reconciliation. Add card groups: Accounting · Receivables · Payables · Compliance · Reports. Run <code>bench --site &lt;site&gt; migrate</code>.</p>
+</div>
+
+<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 16px;margin:12px 0;font-size:.86rem;line-height:1.8;">
+  <strong style="color:#166534; display:block; margin-bottom:8px;">Step 6 — Push to git</strong>
+  <pre style="background:#0d1f35;color:#c8d8ea;padding:14px 18px;border-radius:6px;font-size:.82rem;margin:0;">git add apps/scale_accounts/ sites/apps.txt
+git commit -m "feat(accounts): scale_accounts app scaffold — hooks, stubs, workspace sidebar"
+git push origin main</pre>
+  <p style="margin:8px 0 0;"><strong>What the team gets after git pull:</strong> Run <code>env/bin/pip install -e apps/scale_accounts</code> → <code>bench --site &lt;site&gt; install-app scale_accounts</code> → <code>bench --site &lt;site&gt; migrate</code> → Scale Accounts appears in sidebar.</p>
+</div>
+
+<!-- SECTION C: DEVELOPER ACTIVITY GUIDE -->
+<h2>Section C — Developer Activity Guide</h2>
+
+<h3>C.1 — The Golden Rule: Which File Do You Touch?</h3>
+<table style="width:100%;border-collapse:collapse;font-size:.84rem;margin:12px 0 20px;">
+  <tr style="background:#1e3a5f;color:#fff;">
+    <th style="padding:8px 12px;text-align:left;">What you want to do</th>
+    <th style="padding:8px 12px;text-align:left;">Where to make the change</th>
+    <th style="padding:8px 12px;text-align:left;">bench migrate needed?</th>
+  </tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Create Chart of Accounts, Bank Accounts, Asset Categories</td><td style="padding:7px 12px;border:1px solid #ddd;">ERPNext UI only — no code</td><td style="padding:7px 12px;border:1px solid #ddd;">No</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Add a custom field (e.g. Bank Transaction flag)</td><td style="padding:7px 12px;border:1px solid #ddd;">ERPNext UI (Customize Form) → export fixture</td><td style="padding:7px 12px;border:1px solid #ddd;">Yes (after import)</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Write logic on document events (period lock, duplicate flag)</td><td style="padding:7px 12px;border:1px solid #ddd;">Python file in <code>apps/scale_accounts/scale_accounts/</code> + declare in hooks.py doc_events</td><td style="padding:7px 12px;border:1px solid #ddd;">No (bench restart only)</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Write a scheduled job (daily GST reminder, monthly MIS email)</td><td style="padding:7px 12px;border:1px solid #ddd;"><code>tasks.py</code> + declare in hooks.py scheduler_events</td><td style="padding:7px 12px;border:1px solid #ddd;">No (bench restart only)</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Build a Script Report (MIS Pack, Executive Dashboard)</td><td style="padding:7px 12px;border:1px solid #ddd;">ERPNext UI → Script Report → export fixture OR Python report file in app</td><td style="padding:7px 12px;border:1px solid #ddd;">No</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Set up a Workflow (Journal Entry approval)</td><td style="padding:7px 12px;border:1px solid #ddd;">ERPNext UI → Workflow → add to fixtures list in hooks.py → export</td><td style="padding:7px 12px;border:1px solid #ddd;">No</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Add AI / LLM call (duplicate detection, risk scoring)</td><td style="padding:7px 12px;border:1px solid #ddd;">Python hook file calls <code>ai_utils.call_llm()</code></td><td style="padding:7px 12px;border:1px solid #ddd;">No (bench restart only)</td></tr>
+</table>
+
+<h3>C.2 — The Change-Test-Commit Cycle</h3>
+<ol style="margin:8px 0 16px 20px;font-size:.87rem;line-height:1.9;">
+  <li><strong>Make the change</strong> — in ERPNext UI or in a Python file.</li>
+  <li><strong>Test on your bench</strong> — submit a test transaction, verify the behaviour.</li>
+  <li><strong>Export fixtures</strong> (UI-made changes only): <code>bench --site &lt;site&gt; export-fixtures --app scale_accounts</code></li>
+  <li><strong>Commit</strong>: <code>git add apps/scale_accounts/</code> → <code>git commit -m "feat(accounts): &lt;description&gt;"</code></li>
+  <li><strong>Push</strong>: <code>git push origin main</code></li>
+  <li><strong>Notify team</strong>: after pull, run <code>bench --site &lt;site&gt; migrate</code> to load DocType changes.</li>
+</ol>
+
+<h3>C.3 — How to Add a Custom Field (example: Bank Transaction duplicate flag)</h3>
+<ol style="margin:8px 0 16px 20px;font-size:.87rem;line-height:1.9;">
+  <li>Go to: <strong>ERPNext → Customize Form → DocType = Bank Transaction</strong></li>
+  <li>Click Add Row. Field Label: <code>Possible Duplicate</code> · Field Name: <code>scale_accounts_dup_flag</code> · Type: Check · Module: <strong>Scale Accounts</strong></li>
+  <li>Save. Run: <code>bench --site &lt;site&gt; export-fixtures --app scale_accounts</code></li>
+  <li>Commit the <code>fixtures/custom_field.json</code> file.</li>
+</ol>
+
+<h3>C.4 — How to Write a Python Hook (Journal Entry period lock)</h3>
+<pre style="font-size:.82rem;">
+# apps/scale_accounts/scale_accounts/journal_hooks.py
+
+import frappe
+from frappe.utils import getdate
+
+def check_period_lock(doc, method=None):
+    """Block Journal Entry submission if posting_date falls in a frozen accounting period."""
+    frozen_until = frappe.db.get_single_value("Accounts Settings", "acc_frozen_upto")
+    if frozen_until and getdate(doc.posting_date) &lt;= getdate(frozen_until):
+        frappe.throw(
+            f"Journal Entry posting date {doc.posting_date} falls within a frozen "
+            f"accounting period (frozen up to {frozen_until}). Contact Finance Controller."
+        )
+</pre>
+<p style="font-size:.87rem;">Declare in hooks.py: <code>"Journal Entry": {"before_submit": "scale_accounts.journal_hooks.check_period_lock"}</code>. After saving hooks.py, run <code>bench restart</code> — no migrate needed.</p>
+
+<h3>C.5 — Git Project Structure</h3>
+<pre style="font-size:.8rem;background:#1e3a5f;color:#c8d8ea;padding:14px 18px;border-radius:6px;">
+apps/scale_accounts/
+├── scale_accounts/                        <span style="color:#86efac;">← Python package (hooks + logic files here)</span>
+│   ├── hooks.py                           <span style="color:#86efac;">← Central wiring: doc_events, scheduler, fixtures</span>
+│   ├── bank_hooks.py                      <span style="color:#86efac;">← Duplicate payment flagging on Bank Transaction</span>
+│   ├── journal_hooks.py                   <span style="color:#86efac;">← Period lock enforcement on Journal Entry</span>
+│   ├── tasks.py                           <span style="color:#86efac;">← Scheduled jobs (daily/monthly)</span>
+│   ├── ai_utils.py                        <span style="color:#86efac;">← LLM helper — call_llm(), anomaly_scan()</span>
+│   ├── fixtures/                          <span style="color:#fbbf24;">← Auto-generated by export-fixtures</span>
+│   │   ├── custom_field.json
+│   │   ├── workflow.json
+│   │   └── notification.json
+│   └── scale_accounts/                    <span style="color:#fca5a5;">← Frappe module folder (DocTypes + Workspace)</span>
+│       ├── report/
+│       │   ├── monthly_mis_pack/          <span style="color:#fca5a5;">← Script Report for AC-15</span>
+│       │   └── executive_dashboard/       <span style="color:#fca5a5;">← Script Report for AC-16</span>
+│       └── workspace/
+│           └── scale_accounts/
+│               └── scale_accounts.json    <span style="color:#fca5a5;">← Sidebar workspace definition</span>
+├── setup.py
+└── MANIFEST.in
+</pre>
+
+<!-- SECTION D: FEATURE COVERAGE MATRIX -->
+<h2>Section D — Feature Coverage Matrix</h2>
+
+<p style="font-size:.85rem;color:#444;margin-bottom:8px;"><strong>AC = Accounts Foundation</strong> (core bookkeeping + statutory compliance). See <a href="finance-module.html">finance-module.html</a> for the FI-prefixed Finance Analytics matrix (budgeting, FP&amp;A, strategic finance).</p>
+
+<table style="width:100%;border-collapse:collapse;font-size:.82rem;margin:12px 0;">
+  <tr style="background:#1e3a5f;color:#fff;">
+    <th style="padding:8px 10px;text-align:left;">#</th>
+    <th style="padding:8px 10px;text-align:left;">Feature</th>
+    <th style="padding:8px 10px;text-align:left;">Priority</th>
+    <th style="padding:8px 10px;text-align:left;">Platform</th>
+    <th style="padding:8px 10px;text-align:left;">Classification</th>
+    <th style="padding:8px 10px;text-align:left;">Window</th>
+  </tr>
+  <tr style="background:#e0f2fe;"><td colspan="6" style="padding:7px 10px;font-size:.78rem;font-weight:700;color:#0369a1;border:1px solid #bae6fd;">ACCOUNTS FOUNDATION — AC-01 to AC-15 · Core Bookkeeping &amp; Statutory Compliance</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">AC-01</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Chart of Accounts</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native ERPNext</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Aug 1–2</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">AC-02</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>General Ledger Management</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp2">P2</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native ERPNext</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB (auto)</td><td style="padding:7px 10px;border:1px solid #ddd;">Aug 1–2 (with AC-01)</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">AC-03</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>AR / AP</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native ERPNext</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Aug 3–5</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">AC-04</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Bank Reconciliation</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native ERPNext</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Aug 5–7</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">AC-05</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Tax Compliance (GST)</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp2">P2</span></td><td style="padding:7px 10px;border:1px solid #ddd;">India Compliance app</td><td style="padding:7px 10px;border:1px solid #ddd;">App Install + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Aug 10–12</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">AC-06</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Audit Trail</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp3">P3</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native ERPNext</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Aug 19–22</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">AC-07</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Journal Entries</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native ERPNext</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Aug 17–19</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">AC-08</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>TDS / TCS Management</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp3">P3</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native ERPNext</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Aug 10–14</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">AC-09</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Multi-Currency Accounting</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native ERPNext</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Aug 19–22</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">AC-10</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Fixed Assets</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp3">P3</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native ERPNext</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Aug 24–26</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">AC-11</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Depreciation Management</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp3">P3</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native ERPNext</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Aug 27–29</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">AC-12</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Petty Cash Management</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">ERPNext (via Employee Advance)</td><td style="padding:7px 10px;border:1px solid #ddd;">Config (no custom DocType)</td><td style="padding:7px 10px;border:1px solid #ddd;">Aug 19–22</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">AC-13</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Cost Centre Accounting</strong> <span style="font-size:.68rem;color:#6b7280;">(also FI-05)</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp2">P2</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native ERPNext</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Aug 27–29</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">AC-14</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>E-Invoicing &amp; GST Filing</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">India Compliance app</td><td style="padding:7px 10px;border:1px solid #ddd;">App Install + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Aug 13–16</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">AC-15</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>MIS Reports</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp3">P3</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Custom Script Reports</td><td style="padding:7px 10px;border:1px solid #ddd;">Custom Build</td><td style="padding:7px 10px;border:1px solid #ddd;">Sep 1–3</td></tr>
+  <!-- PRD DELTA -->
+  <tr style="background:#fffbeb;"><td colspan="6" style="padding:8px 10px;font-size:.78rem;font-weight:700;color:#92400e;border:1px solid #fcd34d;">CLIENT PRD ADDITION — AC-16 · Identified from Accounts Management Module PRD (Jul 2026)</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">AC-16</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Executive Dashboard (CFO &amp; CXO View)</strong> <span style="background:#fef3c7;color:#92400e;font-size:.7rem;font-weight:700;padding:1px 5px;border-radius:3px;">New · Client PRD · also FI-16</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Custom Workspace Dashboard</td><td style="padding:7px 10px;border:1px solid #ddd;">Custom Build (Phased: Wave 1 partial + Wave 2)</td><td style="padding:7px 10px;border:1px solid #ddd;">Sep 3–5 (partial) · Wave 2 (complete)</td></tr>
+</table>
+
+<!-- SECTION E: TEAM -->
+<h2>Section E — Team Assignments</h2>
+<table style="width:100%;border-collapse:collapse;font-size:.84rem;margin:12px 0;">
+  <tr style="background:#1e3a5f;color:#fff;">
+    <th style="padding:8px 12px;text-align:left;">Name</th><th style="padding:8px 12px;text-align:left;">Role</th><th style="padding:8px 12px;text-align:left;">Owns</th>
+  </tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;"><strong style="color:#1e3a5f;">Uday</strong></td><td style="padding:7px 12px;border:1px solid #ddd;">Finance &amp; Accounts Module Lead</td><td style="padding:7px 12px;border:1px solid #ddd;">App scaffold · Chart of Accounts · GST/India Compliance config · Journal Entry controls · Cost Centre tree · MIS Reports · fixture exports · git commits</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Dev2 (TBD)</td><td style="padding:7px 12px;border:1px solid #ddd;">Developer2</td><td style="padding:7px 12px;border:1px solid #ddd;">AR/AP · Bank Reconciliation · TDS/TCS · Fixed Assets · Depreciation · Audit Trail · Multi-currency · Petty Cash · E-Invoicing</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Veeren</td><td style="padding:7px 12px;border:1px solid #ddd;">AI Head</td><td style="padding:7px 12px;border:1px solid #ddd;">ai_utils.py wiring · Accounts NL Query assistant · Duplicate/Anomaly Detection suite (Wave 2) · Predictive Compliance &amp; Risk suite (Wave 2) · Forecasting &amp; Optimisation suite (Wave 2) · Executive Dashboard AI tiles (Wave 2)</td></tr>
+</table>
+
+</div><!-- /print-section -->
+
+<!-- ═══════════════════════════════════
+     WEB-ONLY: FEATURE ACCORDIONS
+═══════════════════════════════════ -->
+<h2 class="no-print">Accounts Foundation — Feature Breakdown</h2>
+<p class="no-print">Expand each feature to see what exists natively in ERPNext, what needs to be configured, and the lean implementation approach.</p>
+
+<h3 class="no-print">Group 1 — Core Bookkeeping (AC-01 to AC-04)</h3>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-ootb">OOTB</span> AC-01 · Chart of Accounts <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> ERPNext auto-generates a Chart of Accounts tree the moment a Company is created — root groups Assets, Liabilities, Equity, Revenue, Direct Expenses, Indirect Expenses, Cost of Goods Sold, and Other Income are created automatically with the India standard template. Each account carries Account Code, Account Name, Parent Account, Account Type, Currency, and Status natively.</p>
+    <p><strong>Client PRD requirement:</strong> Support Company-wise CoA, Branch-wise CoA, Import/Export CoA, Account Merge, Account Freeze, Cost Centre Mapping per account, and Tax Mapping per account.</p>
+    <p><strong>What to configure:</strong></p>
+    <ul>
+      <li>Select the India CoA template during Company creation — never start from a blank CoA</li>
+      <li>Add/rename child accounts under each root group to match the client's actual ledger structure (specific bank accounts, product revenue heads, department expense heads)</li>
+      <li>Create GST liability accounts: CGST Payable, SGST Payable, IGST Payable — under Indirect Taxes sub-group</li>
+      <li>Create TDS Payable accounts per Section (194C, 194J, 192B etc.) under Current Liabilities</li>
+      <li>Map all legacy account codes from the client's previous accounting software — critical before any transaction posting</li>
+      <li>Account Merge: use ERPNext's native "Merge Account" action (right-click account in tree) if legacy CoA has duplicate/near-duplicate accounts</li>
+      <li>Account Freeze: set "Freeze Account" = Yes on any account that should stop accepting new entries (e.g. a closed bank account)</li>
+      <li><strong>Pre-work:</strong> Get the client's existing trial balance from their current software before starting — this blocks the whole task.</li>
+    </ul>
+    <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:10px 12px;margin-top:10px;font-size:.84rem;">
+      <strong>Delay Risk — High:</strong> mapping legacy CoA to the standard tree and configuring tax accounts is the single biggest source of go-live delay. Do not let this task slip past Aug 2.
+    </div>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-ootb">OOTB</span> AC-02 · General Ledger Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Fully automatic — every transaction submitted in ERPNext (Sales, Purchase, Inventory, Payroll, Banking, Manufacturing, Assets, Expense Claims) posts a General Ledger entry the moment it's submitted, drillable back to its source document. Manual Ledger Posting via Journal Entry covers Journal Adjustments, Opening Entries, Closing Entries, and Reversals. No separate configuration is needed once the Chart of Accounts (AC-01) is mapped correctly — this feature is a consequence of AC-01, not an independent build.</p>
+    <p><strong>Client PRD requirement:</strong> Auto-generate ledger entries from Sales, Purchase, Inventory, Payroll, Banking, Manufacturing, Assets, Expense Claims. Support Manual Ledger Posting, Journal Adjustments, Opening Entries, Closing Entries, Reversals. Each ledger entry should include: Voucher Number, Date, Account, Debit, Credit, Cost Centre, Project, Branch, Narration, User, Reference Document.</p>
+    <p><strong>What to verify (no build needed):</strong></p>
+    <ul>
+      <li>Confirm every native GL Entry row already carries all 11 PRD-required fields — Frappe's GL Entry DocType has Voucher No, Posting Date, Account, Debit, Credit, Cost Center, Project, and a reference back to the source Voucher Type/Voucher No natively; Branch and Narration are also native fields on the source documents. Nothing to add.</li>
+      <li>Go to top search bar → type <strong>General Ledger</strong> → run it after T01's test transactions → confirm every column the PRD asks for is visible and filterable.</li>
+      <li>Reversals: use ERPNext's native "Cancel" + auto-generated reversing Journal Entry, or a manual reversal Journal Entry template (see AC-07)</li>
+    </ul>
+    <p style="font-size:.85rem;color:#666;">AI Features requested in the PRD for this section (detect duplicate ledger postings, identify abnormal transactions, recommend correcting entries, highlight posting inconsistencies, predict month-end closing issues) and its Reports (General Ledger, Ledger Summary, Ledger Audit, Transaction Register) are covered by the native General Ledger report plus the Duplicate &amp; Anomaly Detection Suite (Wave 2, V03) below — see that accordion for the AI build.</p>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-ootb">OOTB</span> AC-03 · Accounts Receivable &amp; Accounts Payable <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Fully native. Every Sales Invoice creates an AR entry; every Purchase Invoice creates an AP entry. Payment Entry reconciles against invoices automatically. Aging buckets (0–30, 31–60, 61–90, 90+ days) are built in. Customer &amp; Vendor statements are native, drillable to source.</p>
+    <p><strong>Client PRD requirement:</strong> AR tracks Customer Invoices, Credit Notes, Receipts, Outstanding Amount, Ageing, Payment History, Credit Limit. AP tracks Vendor Bills, Debit Notes, Payments, Outstanding, Due Dates, Credit Terms. Both need Ageing Analysis, Payment Schedule, Collection Calendar, and Customer &amp; Vendor Statements.</p>
+    <p><strong>What to configure:</strong></p>
+    <ul>
+      <li>Define Payment Terms: Net 30, Net 45, Net 60, 50% Advance + 50% on Delivery — create templates in ERPNext UI</li>
+      <li>Set Credit Limits per Customer (Customer master → Credit Limit field)</li>
+      <li>Enable automatic credit hold: "Credit Controller" role + "Block Invoice on Credit Limit" in Company settings</li>
+      <li>Configure dunning: Notification Rules on Sales Invoice for 7-day and 30-day overdue alerts</li>
+      <li>Enable Collection Letters via ERPNext's native Dunning DocType — this becomes the client's "Collection Calendar"</li>
+      <li>Set default Payment Terms on each Customer and Supplier master to avoid manual selection on every invoice</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-ootb">OOTB</span> AC-04 · Bank Reconciliation <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Native Bank Reconciliation Tool accepts bank statement CSV upload and auto-matches transactions by amount and date. Unmatched entries are flagged for manual review only — humans see exceptions, not every line.</p>
+    <p><strong>Client PRD requirement:</strong> Support multiple Bank Accounts, Bank Statement Import, Automatic Matching, Manual Matching, Unmatched Transaction Review, Bank Charges, Interest Entries. Track Deposits, Withdrawals, Transfers, Returned Cheques, Bank Charges.</p>
+    <p><strong>What to configure:</strong></p>
+    <ul>
+      <li>Create one Bank Account DocType per actual bank account (SBI Current, HDFC CC, etc.) — link each to its GL account in CoA</li>
+      <li>Test CSV column mapping against your bank's actual statement format — each bank exports different column names</li>
+      <li>Set up daily bank balance tracking: enable "Balance as per Bank Statement" field on Bank Account</li>
+      <li>Configure Bank Transaction auto-match rules in Payment Reconciliation settings</li>
+      <li>Map Bank Charges and Interest Entries to their own GL accounts so they post automatically during reconciliation</li>
+      <li><strong>Known issue:</strong> HDFC and Axis bank statement CSVs use non-standard date formats — you may need a one-time pre-processing script to normalise dates before upload. Test with the first actual statement.</li>
+    </ul>
+  </div>
+</details>
+
+<h3 class="no-print">Group 2 — Tax Compliance (AC-05, AC-08, AC-14)</h3>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-refine">App Install</span> AC-05 · Tax Compliance (GST) <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What exists natively (without India Compliance):</strong> Generic tax percentage on Sales Taxes and Charges Template. No GSTIN validation, no HSN codes, no GSTR reports. India Compliance app is mandatory — verified Frappe-approved app.</p>
+    <p><strong>Client PRD requirement:</strong> Manage GST Registration, GST Rates, HSN/SAC Codes, Input Tax Credit (ITC), Output GST, Reverse Charge, Place of Supply. Support GSTR-1, GSTR-3B, GSTR-9, GST Reconciliation, E-Way Bill Integration.</p>
+    <p><strong>What to install and configure:</strong></p>
+    <ul>
+      <li>Install India Compliance app: <code>bench get-app india_compliance</code> → <code>bench --site &lt;site&gt; install-app india_compliance</code></li>
+      <li>Register GST credentials in India Compliance Settings (GSTIN, API username, state code)</li>
+      <li>Create Item Tax Templates per GST rate: 0%, 5%, 12%, 18%, 28% — map CGST + SGST + IGST split correctly</li>
+      <li>Add HSN/SAC codes to every Item master — mandatory for GSTR-1 filing</li>
+      <li>Validate GSTIN on each Customer and Supplier master via the built-in GSTIN lookup</li>
+      <li>Test GSTR-1 export: create 3 sample invoices → run GSTR-1 report → verify B2B, B2C, HSN summary sections</li>
+      <li>Configure GSTR-3B monthly and GSTR-9 annual payment schedule via Notification</li>
+      <li>Enable GST Reconciliation: India Compliance auto-fetches GSTR-2B and compares against Purchase Invoices</li>
+    </ul>
+    <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:10px 12px;margin-top:10px;font-size:.84rem;">
+      <strong>Delay Risk — High:</strong> HSN code mapping requires the complete Item master list from the client. Missing or wrong HSN codes cause GSTR-1 rejection.
+    </div>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-ootb">OOTB</span> AC-08 · TDS / TCS Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Tax Withholding Category DocType supports TDS deduction by rate and annual threshold. System auto-appends TDS row on Purchase Invoice submission. TDS Certificate generation (Form 16A) native. TCS on Sales Invoice also supported.</p>
+    <p><strong>Client PRD requirement:</strong> Manage TDS Categories, Deductor Details, Deductee Details, PAN Validation, Challans, Certificates (Form 16A/27D), Quarterly Returns. Support Auto Deduction, Threshold Validation, Vendor TDS, Customer TCS, Interest &amp; Penalty Calculation.</p>
+    <p><strong>What to configure:</strong></p>
+    <ul>
+      <li>Create Tax Withholding Categories for current FY: 194C (contractors, 1%/2%), 194J (professional fees, 10%), 192B (salary TDS — handled via payroll), 194H (commission, 5%), 194I (rent, 10%/2%), 194Q (purchase of goods, 0.1%)</li>
+      <li>Set annual thresholds per category (e.g. 194C threshold = ₹30,000 per transaction or ₹1,00,000 per year)</li>
+      <li>Link Tax Withholding Category to each Supplier master — system auto-applies on invoice creation</li>
+      <li>Validate PAN on Supplier master before linking — TDS rate doubles under Section 206AA if PAN is invalid/missing</li>
+      <li>Test: submit a test Purchase Invoice above the threshold → verify TDS deduction row appears automatically</li>
+      <li>Schedule quarterly TDS Return reminders via Notification (26Q deadline: 31st Jul / 31st Oct / 31st Jan / 31st May)</li>
+    </ul>
+    <p style="font-size:.85rem;color:#666;"><strong>Reports (per PRD):</strong> TDS Register and TCS Register are native (Tax Withholding Details report, filtered by category). Challan Summary and Return Status are not native — add as a small Script Report on the Scale Accounts workspace that lists each quarter's challan payments and 26Q filing status, sourced from the Tax Withholding Category records already configured above.</p>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-refine">App Install</span> AC-14 · E-Invoicing &amp; GST Filing <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What exists natively:</strong> Standard PDF invoice only. No IRN, no QR code, no E-Way Bill API integration. Requires India Compliance app (same app as AC-05 — install once, covers both).</p>
+    <p><strong>Client PRD requirement:</strong> Support IRN Generation, QR Code Generation, E-Invoice Cancellation, E-Way Bill, GST Portal Integration, Return Preparation, Filing Status Tracking.</p>
+    <p><strong>What to configure:</strong></p>
+    <ul>
+      <li>Enable E-Invoicing in India Compliance Settings → provide GSP API credentials (NIC portal username/password)</li>
+      <li>On Sales Invoice submit → IRN auto-generated + QR code embedded → E-Invoice PDF format auto-applied</li>
+      <li>Configure E-Way Bill: set transporter details template, vehicle type defaults, bulk generation for multi-item dispatches</li>
+      <li>Build E-Invoice Register and Filing Status Tracking dashboard as Script Reports/Number Cards on the Scale Accounts workspace</li>
+      <li>Test IRN generation on staging/sandbox NIC endpoint before going live — NIC provides a sandbox environment</li>
+      <li><strong>Applicability check:</strong> E-Invoicing mandatory if turnover &gt; ₹5 Cr. Confirm applicability threshold with Uday before implementing.</li>
+    </ul>
+    <p style="font-size:.85rem;color:#666;"><strong>Reports (per PRD):</strong> E-Invoice Register and Filing Status Tracking are built above. IRN Summary (count of generated/cancelled IRNs per period) and the Filing Dashboard (consolidated GSTR + E-Invoice filing status) are small additions to the same Script Report — group them together rather than building four separate reports.</p>
+  </div>
+</details>
+
+<h3 class="no-print">Group 3 — Journals, Controls, Multi-currency, Petty Cash (AC-06, AC-07, AC-09, AC-12)</h3>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-ootb">OOTB</span> AC-07 · Journal Entries <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Journal Entry DocType enforces balanced debit/credit only — cannot submit an unbalanced entry. Supports multi-currency, Cost Centre tagging, Project tagging. Templates for recurring entries. Approval via standard Workflow DocType.</p>
+    <p><strong>Client PRD requirement:</strong> Support Standard, Recurring, Reversal, Opening, Closing, and Intercompany Journal Entry types. Approval Workflow: Accountant → Accounts Manager → Finance Controller.</p>
+    <p><strong>What to configure:</strong></p>
+    <ul>
+      <li>Create Journal Entry Templates for routine entries: Monthly Depreciation, Prepaid Expense amortisation, Accrual entries, Provision entries, Opening/Closing entries</li>
+      <li>Set up approval Workflow on Journal Entry: Draft → Accountant Review → Accounts Manager → Finance Controller Approve → Submitted</li>
+      <li>Restrict Journal Entry creation to Finance Controller and above for amounts &gt; ₹1 lakh (via User Permissions)</li>
+      <li>Enable period locking: set "Accounts Frozen Up To" date monthly after period close — the <code>journal_hooks.check_period_lock</code> hook (Section C.4) enforces this in code, not just UI</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-ootb">OOTB</span> AC-06 · Audit Trail &amp; AC-09 · Multi-Currency Accounting <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Audit Trail — what already works:</strong> Enable "Track Changes" in System Settings → applies globally to all DocTypes. Cannot be disabled once enabled (compliance-grade, by design). Creates a "Version" record for every field change with before/after values, user name, and timestamp — visible in the document's own timeline.</p>
+    <p><strong>Client PRD requirement:</strong> Track Record Creation, Modification, Deletion, User Activity, Login History, Approval History, Document Versioning. Store User, Timestamp, IP Address, Previous Value, New Value.</p>
+    <p><strong>What to configure:</strong></p>
+    <ul>
+      <li>Enable "Track Changes" in System Settings — this is a one-time, irreversible toggle; confirm with Uday before enabling</li>
+      <li>Login History is native — visible per User under Security → User Activity Log</li>
+      <li>IP Address capture: enabled by default in Frappe's Activity Log — no config needed</li>
+    </ul>
+    <p><strong>Multi-Currency — what already works:</strong> Native Exchange Revaluation posts both flavours of forex gain/loss the PRD asks for automatically: <strong>Realized Gain/Loss</strong> is posted the moment a foreign-currency invoice is paid at a different rate than it was booked at (via the Payment Entry itself); <strong>Unrealized Gain/Loss</strong> is posted at period-end by the Exchange Rate Revaluation tool, which marks-to-market any still-open foreign-currency AR/AP balances. Supports party-wise currencies — Customer Currency and Vendor Currency are both fields on the Customer/Supplier master, independent of the Company's own base currency, and multiple base currencies are supported for multi-company setups.</p>
+    <p><strong>Client PRD requirement:</strong> Support Multiple Base Currencies, Customer Currency, Vendor Currency, Exchange Rate Tables, Realized Gain/Loss, Unrealized Gain/Loss, Currency Revaluation.</p>
+    <p><strong>What to configure:</strong></p>
+    <ul>
+      <li>Create foreign currency accounts: USD Bank Account → linked to GL account "HDFC USD Account" under Bank sub-group</li>
+      <li>Set <em>Default Currency</em> on any Customer/Supplier master that transacts in a non-base currency — this is the "Customer Currency" / "Vendor Currency" requirement, native fields, no custom work needed</li>
+      <li>Enable Currency Exchange rate auto-fetching: System Settings → Currency Exchange → set RBI/Frankfurter API — this populates the native "Currency Exchange" list, which is the PRD's "Exchange Rate Tables" requirement</li>
+      <li>Configure Exchange Rate Revaluation: run at period-end to post <strong>Unrealized</strong> forex gain/loss Journal Entry automatically for open foreign-currency balances</li>
+      <li>Test: create a USD Sales Invoice → post payment in USD at a different rate → verify the <strong>Realized</strong> gain/loss posts automatically on the Payment Entry itself → run Exchange Rate Revaluation on any remaining open USD balance → verify the <strong>Unrealized</strong> gain/loss Journal Entry is created separately</li>
+    </ul>
+    <p style="font-size:.85rem;color:#666;"><strong>Reports (per PRD):</strong> Forex Gain/Loss is native (filter GL by the revaluation Journal Entries). Currency Exposure Report and Currency Dashboard are not native — add as a small Script Report/Number Card group showing open foreign-currency AR/AP balances by currency, alongside the current exchange rate, so Uday can see exposure at a glance rather than opening the GL and filtering manually.</p>
+    <p><strong>Petty Cash (AC-12) — flow:</strong> No native Petty Cash DocType — ERPNext handles it via Employee Advance (disbursement) + Expense Claim (settlement), which the client PRD's "Cash Advances, Expense Claims, Reimbursements, Cash Replenishment, Receipt Upload" requirements map to directly. Create a dedicated petty cash GL account per custodian. Configure Expense Approver per department. Map expense type GL accounts (stationery → office expense, fuel → travel expense). Receipt Upload uses the native file-attach field on Expense Claim.</p>
+  </div>
+</details>
+
+<h3 class="no-print">Group 4 — Fixed Assets, Depreciation &amp; Cost Centres (AC-10, AC-11, AC-13)</h3>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-ootb">OOTB</span> AC-10 · Fixed Assets &amp; AC-11 · Depreciation Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Full Asset Register (Asset DocType) — purchase, location/custodian tracking, warranty, insurance, maintenance history, disposal workflow. Depreciation: SLM, WDV, Units of Production schedules auto-created on Asset save. Background job runs daily — when date matches, auto-creates and submits depreciation Journal Entry. Indian income-tax WDV method verified.</p>
+    <p><strong>Client PRD requirement:</strong> Track Asset Category, Asset Code, Purchase Date, Cost, Location, Custodian, Warranty, Insurance, Maintenance History, Disposal. Support SLM, WDV, Units of Production, and Custom Depreciation Methods, with auto-posted depreciation journals and schedules.</p>
+    <p><strong>What to configure:</strong></p>
+    <ul>
+      <li>Create Asset Categories: Computers (SLM, 3 years), Vehicles (WDV, 40%), Furniture (WDV, 10%), Plant &amp; Machinery (WDV, 15%), Software Licenses (SLM, 3 years)</li>
+      <li>Map each Asset Category to its depreciation GL account (accumulated depreciation) and depreciation expense GL account</li>
+      <li>Import legacy asset register: for each existing asset, create Asset DocType and enter purchase date + original cost — system calculates accumulated depreciation to date</li>
+      <li>Assign custodians: link each asset to the responsible Employee — this also enables the HR exit hook (fetch_allocated_assets in scale_hr)</li>
+      <li>Record Warranty and Insurance details in the Asset's custom fields; attach policy documents</li>
+      <li>Enable background jobs: verify scheduler is running on the bench (<code>bench --site &lt;site&gt; doctor</code>)</li>
+      <li><strong>Critical:</strong> verify one sample asset's WDV depreciation schedule matches the client's income-tax depreciation register before bulk import</li>
+    </ul>
+    <p style="font-size:.85rem;color:#666;"><strong>Reports (per PRD):</strong> Asset Register, Depreciation Schedule, Asset Value Report, and Monthly Depreciation are all native (Fixed Asset reports in ERPNext Accounting). Asset Movement (location/custodian change history) and Asset Utilization (idle vs in-use time) are not native — Asset Movement can be reconstructed from the Audit Trail (AC-06) Version history on the Asset DocType; Asset Utilization needs a small custom Script Report cross-referencing Asset status changes over time.</p>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-ootb">OOTB</span> AC-13 · Cost Centre Accounting <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <div class="dup-flag">
+      <strong class="hd">⚠ Also scoped in Finance module:</strong> AC-13 is the same underlying feature as <strong>FI-05 Cost Centre Management</strong> in <a href="finance-module.html">finance-module.html</a> (Section D). The Excel workbook lists Cost Centres in both the Accounts and Finance tabs, since it's foundational to both bookkeeping and analytics. <strong>Build it once</strong> — Cost Centre is a core ERPNext master, not app-specific data, so whichever app builds the tree first, the other consumes it automatically with zero code. This document builds it here (T10) since it fits naturally at the end of the Accounts Wave 1 window, right before Finance Analytics needs it on Day 1 of its own track. If for scheduling reasons Finance's team ends up building it first instead, skip T10 below entirely.
+    </div>
+    <p><strong>What already works:</strong> Native Cost Centre tree with parent-child hierarchy. Every transaction line item can be tagged to a Cost Centre. Financial Analytics report shows profitability per Cost Centre. Mandatory tagging enforceable via Property Setter.</p>
+    <p><strong>Client PRD requirement:</strong> Allocate Revenue, Expenses, Payroll, Assets, and Shared Costs across Cost Centres. Support Multiple Cost Centres, Cost Allocation Rules, Department Profitability reporting.</p>
+    <p><strong>What to configure (T10):</strong></p>
+    <ul>
+      <li>Build Cost Centre tree: Company Root → Sales / Marketing / HR / Finance / Operations / Manufacturing / Projects / each Branch — match the org chart exactly</li>
+      <li>Make Cost Centre mandatory on expense transactions: Customize Form on Journal Entry and Purchase Invoice → set "Cost Centre" field as Reqd via Property Setter → export fixture</li>
+      <li>Assign default Cost Centre per Department in Department master — auto-fills on transactions</li>
+      <li>Configure Cost Allocation Rules for Shared Costs (e.g. rent, utilities) — ERPNext's native "Cost Center Allocation" DocType splits a source Cost Centre's postings into target Cost Centres by percentage</li>
+      <li>Test Financial Analytics report — verify Revenue vs Expense shows correctly per Cost Centre, and Department Cost Analysis report reflects allocations</li>
+    </ul>
+    <p style="font-size:.85rem;color:#666;"><strong>Reports (per PRD):</strong> Cost Centre P&amp;L and Department Cost Analysis are both native (Financial Analytics/Accounts report filtered by Cost Centre). Allocation Summary (a log of what got allocated where, by rule) is not native — a byproduct of the Cost Center Allocation DocType's own submitted records, so no separate report build is needed, just a saved list view filter.</p>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-custom">Custom</span> AC-15 · MIS Reports <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What exists natively:</strong> Standard P&amp;L, Balance Sheet, Cash Flow Statement, Trial Balance, General Ledger, Bank Book, Outstanding Reports, GST Reports are all native and filterable by Company, Branch, Department, Cost Centre, Project, Product, Customer, Vendor, and Date Range. What's missing is the <em>assembled</em> Daily/Monthly MIS pack and Financial KPI/Cash Flow/Profitability/Compliance/Working Capital dashboards the client PRD asks for by name.</p>
+    <p><strong>Client PRD requirement:</strong> Generate Daily Financial Summary, Cash Position Report, Revenue Analysis, Expense Analysis, Profitability Report, Outstanding Receivables, Outstanding Payables, Bank Position, and Trial Balance — plus Daily MIS Report, Monthly MIS Report, Financial KPI Dashboard, Cash Flow Dashboard, Profitability Dashboard, Compliance Dashboard, Working Capital Dashboard — export to PDF/Excel with scheduled email delivery.</p>
+    <p><strong>What to build (T11):</strong></p>
+    <ul>
+      <li>Custom Script Report: <strong>Monthly MIS Pack</strong> — combines Revenue vs Budget, Gross Margin %, Cash Position, Top 10 Expenses, Branch-wise P&amp;L, DSO trend</li>
+      <li>Custom Script Report: <strong>Daily Financial Summary</strong> — Cash Position, Bank Position (sum of all Bank Account GL balances), day's collections, day's payments, Outstanding Receivables/Payables snapshot — the PRD's individually-named "Revenue Analysis" and "Expense Analysis" line items are covered by adding Revenue and Expense trend columns to this same report rather than building two separate ones</li>
+      <li>Scheduled delivery: <code>monthly_mis_pack_email()</code> in <code>tasks.py</code> — runs on the 3rd of each month, generates the report for the prior month, emails as PDF attachment to CFO + MD</li>
+      <li>Compliance Dashboard: Number Card widgets for GST filing status, TDS/TCS filing status, pending statutory deadlines — pulls from AC-05/AC-08/AC-14</li>
+      <li>Trial Balance, Profitability Report: both native — pin to the Scale Accounts workspace as Quick Links rather than rebuilding</li>
+      <li><strong>Pre-work:</strong> Get the exact layout/KPIs required from Uday — the MIS format must match what management is used to seeing. Do not build before getting the template.</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span style="background:#fef3c7;color:#92400e;font-size:.75rem;font-weight:700;padding:2px 6px;border-radius:4px;">Phased · Client PRD</span> AC-16 · Executive Dashboard (CFO &amp; CXO View) <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <div class="dup-flag">
+      <strong class="hd">⚠ Also scoped in Finance module:</strong> The Finance Management Module PDR independently specifies its own <strong>FI-16 Executive Dashboard</strong> with an overlapping but not identical KPI list (16 finance-centric KPIs vs this feature's 15 accounting-centric KPIs — see <a href="finance-module.html">finance-module.html</a> Section D and its FI-16 accordion). <strong>Do not build two separate dashboards.</strong> Uday's team should pick one home before starting T12 — the Finance module's accordion recommends building the merged KPI set in <code>scale_finance</code> (since it already depends on both apps' data) with this app's workspace linking out to it. If that call hasn't been made yet when T12 comes up, default to that recommendation rather than blocking.
+    </div>
+    <p><strong>Client PRD objective:</strong> "The Accounts Executive Dashboard should provide a consolidated real-time view" for CFO/CXO leadership. The PRD lists 15 specific KPIs: Cash &amp; Bank Balance, Accounts Receivable, Accounts Payable, Daily Collections, Daily Payments, Revenue &amp; Expenses, P&amp;L Snapshot, GST Liability, TDS/TCS Status, Fixed Asset Value, Budget vs Actual, Cost Centre Performance, Pending Journal Approvals, Audit Exceptions, AI Financial Health Score, Top AI Recommendations.</p>
+    <p><strong>Phase 1 — Wave 1 (T12):</strong> 13 of the 15 KPIs are sourced from features already built in this Wave 1 window — build these as Number Card widgets on the Scale Accounts workspace:</p>
+    <ul>
+      <li>Cash &amp; Bank Balance — from AC-04 Bank Reconciliation</li>
+      <li>Accounts Receivable, Accounts Payable, Daily Collections, Daily Payments — from AC-03</li>
+      <li>Revenue &amp; Expenses, P&amp;L Snapshot — from AC-02/AC-15</li>
+      <li>GST Liability — from AC-05</li>
+      <li>TDS/TCS Status — from AC-08</li>
+      <li>Fixed Asset Value — from AC-10/AC-11</li>
+      <li>Budget vs Actual — from Finance module's FI-01 (once that app is live; leave as "Pending Finance module" placeholder until then)</li>
+      <li>Cost Centre Performance — from AC-13</li>
+      <li>Pending Journal Approvals — from AC-07 Workflow queue</li>
+    </ul>
+    <p><strong>Phase 2 — Wave 2 (V06):</strong> the remaining KPIs depend on AI synthesis and cannot be faked with static data:</p>
+    <ul>
+      <li>Audit Exceptions — AI-flagged anomalies from the Predictive Compliance &amp; Risk suite (V04)</li>
+      <li>AI Financial Health Score — combines compliance risk, cash position trend, and AR/AP ageing into a single 0–100 score</li>
+      <li>Top AI Recommendations — LLM-ranked single highest-priority action across all active AI signals</li>
+    </ul>
+  </div>
+</details>
+
+<!-- AI OVER-SCOPE NOTE -->
+<h2 class="no-print" style="margin-top:32px;border-top:2px solid #fcd34d;padding-top:16px;color:#92400e;">Wave 2 — AI Feature Triage (from the PRD's 60+ AI bullets)</h2>
+<p class="no-print" style="font-size:.88rem;color:#78350f;background:#fffbeb;padding:10px 14px;border-radius:6px;border:1px solid #fcd34d;">The client PRD lists AI Features under every one of the 15 sections individually. Rather than 15+ separate AI builds, Veeren's Wave 2 track groups them into four thematic suites that cover the same functional ground with far less duplicated engineering. Each suite lists which PRD AI bullets it satisfies.</p>
+
+<details class="feat no-print">
+  <summary><span style="background:#fef3c7;color:#92400e;font-size:.75rem;font-weight:700;padding:2px 6px;border-radius:4px;">Wave 2</span> Duplicate &amp; Anomaly Detection Suite <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Covers PRD AI bullets:</strong> "Detect duplicate accounts" (AC-01), "Detect duplicate ledger postings" / "Identify abnormal transactions" (AC-02), "Identify duplicate payments" (AC-04), "Detect duplicate claims" (AC-12), "Detect suspicious accounting activity" (AC-06).</p>
+    <p><strong>Wave 2 approach (Veeren, V03):</strong></p>
+    <ul>
+      <li>One shared <code>ai_utils.detect_duplicates(doctype, fields)</code> function — fuzzy-matches new records against existing ones on configurable fields (account name similarity, invoice amount + vendor + date proximity for payments, expense claim amount + date + employee for petty cash)</li>
+      <li>Daily scheduled job scans Bank Transaction, Expense Claim, and Journal Entry for near-duplicates → flags via the <code>scale_accounts_dup_flag</code> custom field (Section C.3) → in-app notification to the submitter</li>
+      <li>Weekly digest email to Uday: all flagged duplicates from the past week, with a Confirm/Dismiss action</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span style="background:#fef3c7;color:#92400e;font-size:.75rem;font-weight:700;padding:2px 6px;border-radius:4px;">Wave 2</span> Predictive Compliance &amp; Risk Suite <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Covers PRD AI bullets:</strong> "Detect GST mismatches" / "Predict compliance risks" (AC-05), "Detect incorrect TDS rates" (AC-08), "Identify unauthorized changes" / "Highlight unusual approval patterns" / "Predict fraud risks" (AC-06), "Validate invoice before submission" / "Predict filing delays" (AC-14).</p>
+    <p><strong>Wave 2 approach (Veeren, V04):</strong></p>
+    <ul>
+      <li>Weekly GST reconciliation scan: compare GSTR-2B (auto-fetched by India Compliance) against Purchase Invoices → LLM explains each mismatch in plain language</li>
+      <li>TDS rate validator: on Purchase Invoice submit, cross-check applied TDS rate against the Supplier's Tax Withholding Category and current-FY rate table → flag discrepancies</li>
+      <li>Audit anomaly scan: nightly review of Version/Activity Log for unusual patterns (same user approving own Journal Entries, backdated entries after period lock, approval spikes outside business hours)</li>
+      <li>E-Invoice pre-submit validator: checks GSTIN format, HSN presence, and amount thresholds before the IRN call — reduces NIC portal rejections</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span style="background:#fef3c7;color:#92400e;font-size:.75rem;font-weight:700;padding:2px 6px;border-radius:4px;">Wave 2</span> Forecasting &amp; Optimisation Suite <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Covers PRD AI bullets:</strong> "Predict payment delays" / "Predict bad debts" (AC-03), "Forecast exchange rate exposure" (AC-09), "Predict maintenance needs" / "Recommend replacement" (AC-10), "Recommend depreciation methods" / "Predict asset residual value" (AC-11), "Recommend allocation rules" / "Benchmark cost centre performance" (AC-13).</p>
+    <p><strong>Wave 2 approach (Veeren, V05):</strong></p>
+    <ul>
+      <li>Customer payment-delay model: uses each customer's historical on-time vs late payment pattern to score new invoices' collection risk</li>
+      <li>Forex exposure forecast: projects open foreign-currency AR/AP against forward exchange rate trend, flags exposure above a configurable threshold</li>
+      <li>Asset maintenance predictor: flags assets nearing end of warranty or with maintenance history gaps, for Uday's review</li>
+      <li>Cost Centre benchmarking: monthly comparison of Cost Centre spend efficiency (spend per output metric where available) against their own trailing average</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span style="background:#fef3c7;color:#92400e;font-size:.75rem;font-weight:700;padding:2px 6px;border-radius:4px;">Wave 2 · Client PRD</span> Executive Dashboard AI Tiles (AC-16 Phase 2) <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Covers PRD AI bullets:</strong> "Generate CFO-ready insights without manual analysis," "Alert management to compliance risks and accounting exceptions" (AC-15), and AC-16's own AI Financial Health Score / Top AI Recommendations tiles.</p>
+    <p><strong>Wave 2 approach (Veeren, V06):</strong></p>
+    <ul>
+      <li>Audit Exceptions tile: surfaces the Predictive Compliance &amp; Risk suite's (V04) flagged items in one place</li>
+      <li>AI Financial Health Score: weighted combination of compliance risk (V04), AR/AP ageing trend (V05), and cash position trend (from Finance module's FI-04) into a single 0–100 score with LLM-written rationale</li>
+      <li>Top AI Recommendations tile: LLM ranks the single highest-priority action from every active AI signal (duplicate flags, compliance risks, payment delay predictions) into one list</li>
+    </ul>
+  </div>
+</details>
+
+<!-- ═══════════════════════════════════
+     TASK CARDS
+═══════════════════════════════════ -->
+<h2>Week-by-Week Task Breakdown</h2>
+
+<div class="app-phase-label">T00 — App Creation Phase (Day 1, Aug 1)</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T00</span>
+    <span class="task-assign-u">Uday</span>
+    <span class="task-date">Aug 1, 2026 · Day 1</span>
+  </div>
+  <h4>Create scale_accounts app scaffold and push to git</h4>
+  <div class="task-meta">Feature: Foundation · Deliverable: scale_accounts app installed + workspace sidebar visible + team can pull</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> Every custom rule in the Accounts module — duplicate flagging, period locks, MIS scheduling — needs a safe, version-controlled home. Without this app, config done in the ERPNext UI has nowhere to record custom logic, and every new team member would need to manually redo setup.</p>
+    <p><span class="ctx-label">In practice:</span> After T00, Dev2 and Veeren clone the repo and run three commands to get a working bench with the Accounts app active and the Scale Accounts sidebar visible. No manual setup steps for the team. This is also the app that Finance Analytics (<code>scale_finance</code>) will declare as a dependency, so getting the name and structure right here matters beyond just this module.</p>
+    <span class="ctx-ref">Requirement: Foundation · Section B of this document</span>
+  </div>
+  <ol class="task-steps">
+    <li>Run <code>bench new-app scale_accounts</code> — fill in details as per Section B Step 1</li>
+    <li>Add <code>scale_accounts</code> to <code>sites/apps.txt</code></li>
+    <li>Run <code>bench --site scale.localhost install-app scale_accounts</code></li>
+    <li>Edit <code>hooks.py</code> with the full content from Section B Step 3</li>
+    <li>Create stub files: <code>bank_hooks.py</code>, <code>journal_hooks.py</code>, <code>tasks.py</code>, <code>ai_utils.py</code> — each with a single pass-through function</li>
+    <li>Create the Workspace JSON at <code>scale_accounts/scale_accounts/workspace/scale_accounts/scale_accounts.json</code></li>
+    <li>Run <code>bench --site scale.localhost migrate</code></li>
+    <li>Commit: <code>git commit -m "feat(accounts): scale_accounts app scaffold — hooks, stubs, workspace sidebar"</code></li>
+    <li>Push: <code>git push origin main</code></li>
+  </ol>
+  <div class="task-note">Verify: Open <code>scale.localhost:8001</code> → Scale app → Scale Accounts should appear in left sidebar, with shortcut tiles (Chart of Accounts, Journal Entry, Sales Invoice, Purchase Invoice, Bank Reconciliation).</div>
+</div>
+
+<div class="week-label">Week 1 · Aug 1–8 · Core Bookkeeping Foundation</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T01</span>
+    <span class="task-assign-u">Uday</span>
+    <span class="task-date">Aug 1–2</span>
+  </div>
+  <h4>Set up Chart of Accounts and confirm Ledger posting</h4>
+  <div class="task-meta">Feature: AC-01 Chart of Accounts, AC-02 General Ledger Management · Deliverable: CoA mapped to client trial balance; GL posting verified</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> Every other Accounts and Finance feature — GST accounts, TDS accounts, Budgets, Cost Centres, P&amp;L views — depends on a correctly structured Chart of Accounts. Get this wrong and every transaction posted afterward needs re-mapping; get it right once and everything downstream just works.</p>
+    <p><span class="ctx-label">In practice:</span> The client's bookkeeper currently tracks accounts in a spreadsheet with codes like "1001 - SBI Current A/c." Uday maps each of these to the correct ERPNext account under the India template's tree, so the opening trial balance uploaded later reconciles exactly with what the client's auditor already has on file.</p>
+    <span class="ctx-ref">Requirement: AC-01 Chart of Accounts · AC-02 General Ledger Management · Accounts Management Module.pdf §1</span>
+  </div>
+  <ol class="task-steps">
+    <li>Get the client's existing trial balance from their previous accounting software before starting — this blocks the whole task.</li>
+    <li>In ERPNext, go to <strong>Company</strong> → open the AIWS company record → confirm <strong>Chart of Accounts Template</strong> was set to a country-specific template (India) at creation. If a Company doesn't exist yet, create one and select the India template — never leave this as "Standard" (blank).</li>
+    <li>Go to top search bar → type <strong>Chart of Accounts</strong> → click the result. You'll see the auto-generated tree: Application of Funds (Assets), Source of Funds (Liabilities), Equity, Income, Expenses.</li>
+    <li>To add a child account: click the parent group in the tree (e.g. "Bank Accounts" under Current Assets) → click <strong>+ New</strong> → fill <em>Account Name</em> (e.g. "SBI Current A/c"), <em>Account Type</em> = Bank, leave <em>Is Group</em> unchecked → Save.</li>
+    <li>Repeat for every bank account, revenue head, and expense head in the client's trial balance — this is manual, one account at a time; there is no bulk-import UI for a brand-new tree, but existing account codes can be bulk-mapped via <strong>Data Import</strong> tool if the client's legacy list is large (50+ accounts).</li>
+    <li>Create GST liability accounts under Duties and Taxes: CGST Payable, SGST Payable, IGST Payable — Account Type = Tax.</li>
+    <li>Create TDS Payable accounts per Section (194C, 194J, 192B, etc.) under Duties and Taxes.</li>
+    <li>Map all legacy account codes: for each account, set the <em>Account Number</em> field to match the client's old code so their auditor can cross-reference during transition.</li>
+    <li><strong>Verify:</strong> Submit one test Sales Invoice and one test Payment Entry → go to <strong>General Ledger</strong> report → confirm both transactions appear with the correct account, debit/credit split, and are drillable back to the source document (confirms AC-02).</li>
+  </ol>
+  <div class="task-note">Delay Risk — High: this is the single biggest source of go-live delay if the legacy trial balance isn't ready. Do not let this slip past Aug 2.</div>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T02</span>
+    <span class="task-assign-d">Dev2</span>
+    <span class="task-date">Aug 3–5</span>
+  </div>
+  <h4>Configure AR/AP — Payment Terms, Credit Limits, Dunning</h4>
+  <div class="task-meta">Feature: AC-03 AR/AP · Deliverable: Aging reports live; credit hold and dunning notifications working</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> Without configured payment terms and credit limits, every invoice requires a rep to manually decide payment conditions, and there's no automatic warning when a customer is over-extended or overdue. This task turns AR/AP from "raw transaction data" into an actively managed collections process.</p>
+    <p><span class="ctx-label">In practice:</span> A dealer customer has a ₹10 lakh credit limit. Once their outstanding crosses that, the system blocks new invoices automatically rather than relying on the accountant to remember to check. A 30-day overdue invoice triggers an automated reminder email — no manual follow-up needed for routine cases.</p>
+    <span class="ctx-ref">Requirement: AC-03 Accounts Receivable &amp; Accounts Payable · Accounts Management Module.pdf §3</span>
+  </div>
+  <ol class="task-steps">
+    <li>In ERPNext, go to top search bar → type <strong>Payment Terms Template</strong> → click <strong>+ New</strong>. Create: Net 30, Net 45, Net 60, and "50% Advance + 50% on Delivery" (two payment term rows: 50% due on invoice date, 50% due on a linked milestone).</li>
+    <li>Go to any <strong>Customer</strong> record → set <em>Credit Limit</em> field (e.g. ₹10,00,000) under the Credit Limit section.</li>
+    <li>Go to <strong>Company</strong> → open AIWS company → under Credit Limit section, enable <strong>"Block Invoice on Credit Limit"</strong>. Assign the <strong>Credit Controller</strong> role (Setup → Role) to Uday/Finance Controller so they can override blocks when justified.</li>
+    <li>Go to top search bar → type <strong>Notification</strong> → click <strong>+ New</strong>. Create one for Sales Invoice: condition = 7 days past due date, recipient = customer's email, subject "Payment Reminder — Invoice {{ doc.name }}". Duplicate for 30-day overdue with sterner wording.</li>
+    <li>Go to top search bar → type <strong>Dunning</strong> → this is ERPNext's native Collection Letter DocType. Configure Dunning Types (e.g. First Reminder at 15% no fee, Second Reminder at 30 days with 1% late fee) under Dunning Type master.</li>
+    <li>Set default Payment Terms on each Customer and Supplier master (Customer → Payment Terms Template field) to avoid manual selection on every invoice.</li>
+    <li><strong>Verify:</strong> Create a test Sales Invoice for a customer already over their credit limit → confirm system blocks submission with a clear error message. Create a second test invoice, backdate it past 30 days overdue, run the Dunning tool → confirm it's picked up.</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T03</span>
+    <span class="task-assign-d">Dev2</span>
+    <span class="task-date">Aug 5–7</span>
+  </div>
+  <h4>Configure Bank Reconciliation — accounts, CSV mapping</h4>
+  <div class="task-meta">Feature: AC-04 Bank Reconciliation · Deliverable: Bank statement upload auto-matches transactions</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> Manually cross-checking every bank transaction against the books is slow and error-prone. Automated matching means the accountant only looks at genuine exceptions (a cheque that bounced, a bank charge not yet booked) instead of every single line.</p>
+    <p><span class="ctx-label">In practice:</span> At month-end, the accountant uploads the SBI current account statement. The tool auto-matches 95 of 100 transactions by amount and date instantly. The remaining 5 — an unexpected bank charge and 4 delayed cheque clearances — are the only ones needing a human look.</p>
+    <span class="ctx-ref">Requirement: AC-04 Bank Reconciliation · Accounts Management Module.pdf §4</span>
+  </div>
+  <ol class="task-steps">
+    <li>Go to top search bar → type <strong>Bank Account</strong> → click <strong>+ New</strong> for each real bank account. Fill: <em>Account Name</em>, <em>Bank</em> (link to Bank master, create if missing), <em>Account Number</em>, link to the GL <em>Account</em> created in T01.</li>
+    <li>Get a sample statement export from the client's actual bank (SBI/HDFC/Axis) → go to top search bar → type <strong>Bank Reconciliation Tool</strong> → upload the CSV → check the column mapping screen matches Date/Description/Amount correctly.</li>
+    <li>Enable "Balance as per Bank Statement" field on each Bank Account for daily balance tracking.</li>
+    <li>Go to <strong>Bank Reconciliation Tool</strong> settings → confirm auto-match tolerance (amount exact match, date within configurable days).</li>
+    <li><strong>Known issue:</strong> HDFC and Axis CSVs use non-standard date formats (DD/MM/YY vs YYYY-MM-DD). Test with the client's actual first statement before go-live — if the format breaks the import, a short pre-processing script (reformat the date column) is needed before upload each time.</li>
+    <li><strong>Verify:</strong> Upload a real (or realistic test) bank statement → confirm at least 80% of lines auto-match on the first pass, and unmatched lines are clearly flagged for manual review, not silently skipped.</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">R01</span>
+    <span class="task-assign-u">Uday</span>
+    <span class="task-date">Aug 8</span>
+  </div>
+  <h4>Export custom field fixtures — first code commit for Accounts module</h4>
+  <div class="task-meta">Feature: All custom fields created in T01–T03 · Deliverable: Custom fields version-controlled in git</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> Custom fields and Property Setters created via the ERPNext UI exist only in this one database until exported. Without this step, a new developer's bench or the staging environment would be missing them, needing manual recreation every time.</p>
+    <span class="ctx-ref">Requirement: Foundation · Section C.2 Change-Test-Commit cycle</span>
+  </div>
+  <ol class="task-steps">
+    <li>Confirm all custom fields/accounts from Week 1 are saved and tested.</li>
+    <li>Run: <code>bench --site scale.localhost export-fixtures --app scale_accounts</code></li>
+    <li>Verify: <code>apps/scale_accounts/scale_accounts/fixtures/custom_field.json</code> exists and contains the Week 1 fields.</li>
+    <li>Commit: <code>git commit -m "feat(accounts): custom field fixtures — Week 1 CoA/AR/AP/Bank setup"</code></li>
+    <li>Push: <code>git push origin main</code></li>
+  </ol>
+</div>
+
+<div class="week-label">Week 2 · Aug 10–16 · Statutory Tax Compliance</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T04</span>
+    <span class="task-assign-u">Uday</span>
+    <span class="task-date">Aug 10–12</span>
+  </div>
+  <h4>Install India Compliance app — configure GST</h4>
+  <div class="task-meta">Feature: AC-05 Tax Compliance (GST) · Deliverable: GSTR-1 report tested with sample invoices</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> GST is a statutory requirement — invoices legally cannot go out with a wrong GSTIN, missing HSN code, or incorrect tax split. This gates every Sales and Purchase transaction from this point forward, and mistakes here mean rejected government filings, not just internal cleanup.</p>
+    <p><span class="ctx-label">In practice:</span> A Sales Invoice for a Karnataka-based customer with an 18% GST item auto-splits into 9% CGST + 9% SGST (intra-state) rather than IGST, because the system knows both parties' state codes from their GSTIN. Get GSTIN or HSN wrong, and the GSTR-1 filing gets rejected by the government portal — this is why validation happens before any invoice is trusted.</p>
+    <span class="ctx-ref">Requirement: AC-05 Tax Compliance (GST) · Accounts Management Module.pdf §5</span>
+  </div>
+  <ol class="task-steps">
+    <li>Install: <code>bench get-app india_compliance</code> → <code>bench --site scale.localhost install-app india_compliance</code></li>
+    <li>Go to top search bar → type <strong>India Compliance Settings</strong> → enter GSTIN, API username, state code.</li>
+    <li>Go to top search bar → type <strong>Item Tax Template</strong> → click <strong>+ New</strong> for each rate: 0%, 5%, 12%, 18%, 28% — for each, add Tax Rate rows for CGST + SGST (intra-state) split correctly per rate.</li>
+    <li>Open every <strong>Item</strong> master → add the HSN/SAC Code field — get the complete Item list with HSN codes from Uday before starting this step, it cannot be guessed.</li>
+    <li>Open each <strong>Customer</strong> and <strong>Supplier</strong> master → use the built-in GSTIN lookup (auto-validates format and fetches registered name) to confirm GSTIN is correct.</li>
+    <li>Create 3 sample invoices covering intra-state and inter-state scenarios → go to top search bar → type <strong>GSTR-1</strong> → run the report → verify B2B, B2C, and HSN summary sections populate correctly.</li>
+    <li>Go to top search bar → type <strong>Notification</strong> → set up a monthly reminder for GSTR-3B filing deadline.</li>
+    <li><strong>Verify:</strong> The GSTR-1 report for your 3 test invoices should show correct tax splits with no validation errors.</li>
+  </ol>
+  <div class="task-note">Delay risk — High: HSN code mapping requires the complete Item master list. Missing/wrong HSN codes cause GSTR-1 rejection at the government portal, not just an internal error.</div>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T05</span>
+    <span class="task-assign-d">Dev2</span>
+    <span class="task-date">Aug 10–14</span>
+  </div>
+  <h4>Configure TDS/TCS — Tax Withholding Categories</h4>
+  <div class="task-meta">Feature: AC-08 TDS/TCS Management · Deliverable: TDS auto-deducts on Purchase Invoice above threshold</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> Tax law requires TDS deduction at source for specific payment categories (contractor fees, rent, professional services) above set thresholds. Manually calculating and deducting this on every invoice is error-prone and a common source of tax notices if missed.</p>
+    <p><span class="ctx-label">In practice:</span> A ₹50,000 professional services invoice from a consultant triggers automatic 10% TDS deduction (194J category) the moment the Purchase Invoice is submitted — no accountant has to remember the rate or the threshold.</p>
+    <span class="ctx-ref">Requirement: AC-08 TDS/TCS Management · Accounts Management Module.pdf §8</span>
+  </div>
+  <ol class="task-steps">
+    <li>Go to top search bar → type <strong>Tax Withholding Category</strong> → click <strong>+ New</strong>. Create: 194C (contractors, 1%/2%), 194J (professional fees, 10%), 194H (commission, 5%), 194I (rent, 10%/2%), 194Q (purchase of goods, 0.1%). 192B salary TDS is handled via Payroll, not here.</li>
+    <li>For each category, set the annual threshold field (e.g. 194C threshold = ₹30,000 per transaction or ₹1,00,000 per year).</li>
+    <li>Open each relevant <strong>Supplier</strong> master → link the correct Tax Withholding Category — validate PAN is on file first (TDS rate doubles under Section 206AA without a valid PAN).</li>
+    <li>Submit a test Purchase Invoice above the threshold for a linked Supplier → verify a TDS deduction row appears automatically.</li>
+    <li>Go to top search bar → type <strong>Notification</strong> → schedule quarterly TDS Return reminders (26Q deadlines: 31 Jul / 31 Oct / 31 Jan / 31 May).</li>
+    <li><strong>Verify:</strong> The test Purchase Invoice's outstanding amount should be net of the auto-deducted TDS, and a TDS Payable ledger entry should exist.</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T06</span>
+    <span class="task-assign-u">Uday</span>
+    <span class="task-date">Aug 13–16</span>
+  </div>
+  <h4>Configure E-Invoicing and E-Way Bill</h4>
+  <div class="task-meta">Feature: AC-14 E-Invoicing &amp; GST Filing · Deliverable: IRN + QR code auto-generated on Sales Invoice submit</div>
+  <ol class="task-steps">
+    <li>In India Compliance Settings, enable E-Invoicing — provide GSP API credentials (NIC portal).</li>
+    <li>Confirm applicability with Uday: mandatory only if turnover &gt; ₹5 Cr.</li>
+    <li>Test IRN generation on the NIC sandbox endpoint before going live.</li>
+    <li>Configure E-Way Bill transporter defaults (vehicle type, transporter ID).</li>
+    <li><strong>Verify:</strong> Submit a test Sales Invoice above the E-Way Bill threshold → confirm IRN, QR code, and E-Way Bill number are generated and visible on the printed invoice.</li>
+  </ol>
+</div>
+
+<div class="week-label">Week 3 · Aug 17–22 · Journals, Controls &amp; Multi-Currency</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T07</span>
+    <span class="task-assign-u">Uday</span>
+    <span class="task-date">Aug 17–19</span>
+  </div>
+  <h4>Configure Journal Entry templates and approval workflow</h4>
+  <div class="task-meta">Feature: AC-07 Journal Entries · Deliverable: Journal approval routes correctly; period locking enabled</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> Journal Entries can post directly to any GL account with no supporting sales/purchase document behind them — the highest-risk transaction type in the system. A workflow and period lock are the controls auditors check first.</p>
+    <p><span class="ctx-label">In practice:</span> An accountant tries to post a ₹2 lakh correcting entry. Because it's above the ₹1 lakh threshold, it routes to the Finance Controller for approval before it can be submitted — it doesn't just go straight to the books.</p>
+    <span class="ctx-ref">Requirement: AC-07 Journal Entries · Accounts Management Module.pdf §7</span>
+  </div>
+  <ol class="task-steps">
+    <li>Go to top search bar → type <strong>Journal Entry</strong> → create templates for routine entries: Monthly Depreciation, Prepaid Expense amortisation, Accrual entries, Provision entries (save each as a draft template document to copy from).</li>
+    <li>Go to top search bar → type <strong>Workflow</strong> → click <strong>+ New</strong>. Document Type = Journal Entry. States: Draft → Accountant Review → Accounts Manager Approve → Finance Controller Approve → Submitted. Add transition rules per role.</li>
+    <li>Go to <strong>Role Permission Manager</strong> → restrict Journal Entry submission for amounts &gt; ₹1 lakh to Finance Controller role and above.</li>
+    <li>Go to top search bar → type <strong>Accounts Settings</strong> → set "Accounts Frozen Up To" monthly after each period close.</li>
+    <li>Confirm the <code>journal_hooks.check_period_lock</code> hook from Section C.4 is wired in hooks.py and active (enforces this in code, not just UI, so it can't be bypassed via API).</li>
+    <li><strong>Verify:</strong> Submit a test Journal Entry above ₹1 lakh as a non-Finance-Controller user → confirm it routes to approval rather than submitting directly.</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T08</span>
+    <span class="task-assign-d">Dev2</span>
+    <span class="task-date">Aug 19–22</span>
+  </div>
+  <h4>Enable Audit Trail, Multi-currency accounts, Petty Cash flow</h4>
+  <div class="task-meta">Feature: AC-06 Audit Trail, AC-09 Multi-Currency Accounting, AC-12 Petty Cash Management · Deliverable: Track Changes live; USD transactions post with forex revaluation; petty cash flow tested</div>
+  <ol class="task-steps">
+    <li>Go to top search bar → type <strong>System Settings</strong> → enable "Track Changes" (compliance-grade, cannot be disabled once on — confirm with Uday first).</li>
+    <li>Go to top search bar → type <strong>Bank Account</strong> → create a foreign currency account (e.g. USD) linked to a USD-denominated GL account.</li>
+    <li>Go to <strong>System Settings</strong> → Currency Exchange → enable auto-fetching (RBI/Frankfurter API).</li>
+    <li>Test: create a USD Sales Invoice → record a USD payment → go to top search bar → type <strong>Exchange Rate Revaluation</strong> → run it → verify a forex gain/loss Journal Entry is created.</li>
+    <li>Set up Petty Cash: create a dedicated GL account per custodian → for disbursement, go to top search bar → type <strong>Employee Advance</strong> → for settlement, use <strong>Expense Claim</strong> with receipt attachment enabled → configure Expense Approver per department.</li>
+    <li><strong>Verify:</strong> Submit a test Employee Advance → settle it with an Expense Claim → confirm the petty cash GL account balance reduces correctly and the receipt attachment is visible on the claim.</li>
+  </ol>
+</div>
+
+<div class="week-label">Week 4 · Aug 24–29 · Fixed Assets, Depreciation &amp; Cost Centres</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T09</span>
+    <span class="task-assign-d">Dev2</span>
+    <span class="task-date">Aug 24–29</span>
+  </div>
+  <h4>Configure Asset Categories and Depreciation schedules</h4>
+  <div class="task-meta">Feature: AC-10 Fixed Assets, AC-11 Depreciation Management · Deliverable: Legacy asset register imported; depreciation JEs auto-posting daily</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> Depreciation runs as a background scheduled job once configured — getting Asset Categories and GL mapping right up front means the client never has to think about it again. Getting it wrong means every historical depreciation entry needs correction.</p>
+    <span class="ctx-ref">Requirement: AC-10 Fixed Assets · AC-11 Depreciation Management</span>
+  </div>
+  <ol class="task-steps">
+    <li>Go to top search bar → type <strong>Asset Category</strong> → create: Computers (SLM, 3yr), Vehicles (WDV, 40%), Furniture (WDV, 10%), Plant &amp; Machinery (WDV, 15%), Software Licenses (SLM, 3yr).</li>
+    <li>For each category, map to its accumulated depreciation and depreciation expense GL accounts.</li>
+    <li>Import legacy asset register: for each existing asset, go to top search bar → type <strong>Asset</strong> → create with purchase date + original cost — the system back-calculates accumulated depreciation to date.</li>
+    <li>Assign custodians (link each asset to an Employee) — enables the scale_hr exit hook to fetch allocated assets.</li>
+    <li>Verify scheduler is running: <code>bench --site scale.localhost doctor</code></li>
+    <li><strong>Critical/Verify:</strong> pick one sample asset and confirm its WDV schedule matches the client's income-tax depreciation register exactly, before bulk-importing the rest.</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T10</span>
+    <span class="task-assign-u">Uday</span>
+    <span class="task-date">Aug 27–29</span>
+  </div>
+  <h4>Build Cost Centre tree and enforce mandatory tagging</h4>
+  <div class="task-meta">Feature: AC-13 Cost Centre Accounting (also FI-05) · Deliverable: Cost Centre profitability view live for all departments/branches</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Note:</span> Check whether Finance module's team is building this instead (see AC-13 accordion's overlap flag above) before starting.</p>
+  </div>
+  <ol class="task-steps">
+    <li>Go to top search bar → type <strong>Cost Center</strong> → build the tree matching org structure (Company Root → Sales / Marketing / HR / Finance / Operations / Manufacturing / Projects / each Branch).</li>
+    <li>Go to <strong>Customize Form</strong> on Journal Entry and Purchase Invoice → set "Cost Center" field as Reqd via Property Setter → export fixture.</li>
+    <li>Assign default Cost Centre per Department in Department master.</li>
+    <li><strong>Verify:</strong> Test Financial Analytics report — confirm Revenue vs Expense shows correctly per Cost Centre.</li>
+  </ol>
+</div>
+
+<div class="week-label">Week 5 · Sep 1–5 · MIS Reports &amp; Wave 1 Close-out</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T11</span>
+    <span class="task-assign-u">Uday</span>
+    <span class="task-assign-d">Dev2</span>
+    <span class="task-date">Sep 1–3</span>
+  </div>
+  <h4>Assemble the Monthly MIS Reports Pack and Daily Financial Summary</h4>
+  <div class="task-meta">Feature: AC-15 MIS Reports · Deliverable: Automated daily and monthly MIS emails to CFO/MD</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> All the individual reports (P&amp;L, Aging, GST, TDS) exist by this point — this task assembles them into the single owner-grade reports management actually reads, on a schedule that removes any manual work.</p>
+    <span class="ctx-ref">Requirement: AC-15 MIS Reports</span>
+  </div>
+  <ol class="task-steps">
+    <li><strong>Pre-work:</strong> get the exact MIS layout/KPIs required from Uday before building — must match what management already expects to see.</li>
+    <li>Build Script Report: Monthly MIS Pack — Revenue vs Budget, Gross Margin %, Cash Position, Top 10 Expenses, Branch-wise P&amp;L, DSO trend.</li>
+    <li>Build Script Report: Daily Financial Summary — cash position, day's collections, day's payments, outstanding AR/AP snapshot.</li>
+    <li>Add <code>monthly_mis_pack_email()</code> in tasks.py — runs 3rd of each month, generates PDF, emails CFO + MD.</li>
+    <li>Build Compliance Dashboard Number Cards (GST filing status, TDS filing status, pending deadlines).</li>
+    <li>Test full monthly job manually before relying on the schedule.</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T12</span>
+    <span class="task-assign-u">Uday</span>
+    <span class="task-assign-d">Dev2</span>
+    <span class="task-date">Sep 3–5</span>
+  </div>
+  <h4>Build Executive Dashboard (CFO &amp; CXO View) — Phase 1</h4>
+  <div class="task-meta">Feature: AC-16 Executive Dashboard (Client PRD addition) · Deliverable: Live workspace dashboard with 13 of 15 PRD-specified KPIs</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> The client PRD asks for one consolidated CFO/CXO cockpit rather than scattered reports. Before starting, confirm with Uday whether this is the merged home for both AC-16 and Finance module's FI-16 (see the accordion note above) or whether it stays separate.</p>
+    <span class="ctx-ref">Requirement: AC-16 Executive Dashboard (CFO &amp; CXO View) · see accordion above for full KPI-to-feature mapping</span>
+  </div>
+  <ol class="task-steps">
+    <li>Build Number Card widgets on Scale Accounts workspace: Cash &amp; Bank Balance (from AC-04), Accounts Receivable/Payable, Daily Collections/Payments (from AC-03).</li>
+    <li>Add: Revenue &amp; Expenses, P&amp;L Snapshot (from AC-02/AC-15).</li>
+    <li>Add: GST Liability (from AC-05), TDS/TCS Status (from AC-08), Fixed Asset Value (from AC-10/AC-11).</li>
+    <li>Add: Cost Centre Performance (from AC-13), Pending Journal Approvals (from AC-07 workflow queue).</li>
+    <li>Add "Budget vs Actual" as a placeholder tile labelled "Pending Finance module" until scale_finance is live.</li>
+    <li>Arrange as a single CFO/CXO landing page — pin as default workspace view for Finance Controller and above roles.</li>
+    <li>Leave placeholder tiles for Audit Exceptions, AI Financial Health Score, and Top AI Recommendations — labelled "Available Wave 2" rather than left blank.</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">R02</span>
+    <span class="task-assign-u">Uday</span>
+    <span class="task-date">Sep 5</span>
+  </div>
+  <h4>Final Wave 1 fixture export and git tag</h4>
+  <div class="task-meta">Feature: All Wave 1 Accounts features (AC-01 to AC-15, AC-16 Phase 1) · Deliverable: Wave 1 scope fully version-controlled; Finance Analytics unblocked</div>
+  <ol class="task-steps">
+    <li>Run full fixture export: <code>bench --site scale.localhost export-fixtures --app scale_accounts</code></li>
+    <li>Verify a clean clone + install + migrate reproduces the entire Wave 1 configuration with no manual steps.</li>
+    <li>Commit and tag: <code>git tag scale_accounts-wave1-complete</code></li>
+    <li>Push: <code>git push origin main --tags</code></li>
+    <li>Notify Finance module team (finance-module.html T00) that Accounts Foundation is signed off and scale_finance can be created.</li>
+  </ol>
+  <div class="task-note">Wave 2 AI suites (Duplicate/Anomaly Detection, Predictive Compliance &amp; Risk, Forecasting &amp; Optimisation, Executive Dashboard AI tiles) begin once 3+ months of clean Wave 1 data exists — see the AI Feature Triage accordions above.</div>
+</div>
+
+<!-- AI TRACK -->
+<h2>AI Track (Veeren)</h2>
+<p class="no-print">Veeren runs parallel to the developer track from Day 1. V01–V02 wire up AI foundations and the Accounts NL Query assistant alongside Wave 1 config work. V03–V06 are Wave 2 builds — grouped suites that triage the client PRD's 60+ individual AI bullets into four manageable tracks (see the accordions above).</p>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">V01</span>
+    <span class="task-assign">Veeren</span>
+    <span class="task-date">Aug 1</span>
+  </div>
+  <h4>Review scale_accounts app — wire OpenAI key — test ai_utils.call_llm()</h4>
+  <div class="task-meta">Feature: AI Foundation · Deliverable: LLM API call works from scale_accounts context</div>
+  <ol class="task-steps">
+    <li>Pull latest from main after Uday pushes T00.</li>
+    <li>Open <code>apps/scale_accounts/scale_accounts/ai_utils.py</code> — implement <code>call_llm(prompt, model="gpt-4o-mini")</code> using the openai library.</li>
+    <li>Set OpenAI key: <code>bench --site scale.localhost set-config openai_api_key "sk-..."</code></li>
+    <li>Test from bench console: <code>bench --site scale.localhost console</code> → <code>from scale_accounts.ai_utils import call_llm; print(call_llm("Hello"))</code></li>
+  </ol>
+  <div class="task-note">Never commit the OpenAI key — it lives in site_config.json (gitignored). Read via <code>frappe.conf.get("openai_api_key")</code>.</div>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">V02</span>
+    <span class="task-assign">Veeren</span>
+    <span class="task-date">Aug 1 → Aug 22 (4 phases)</span>
+  </div>
+  <h4>NL Query Assistant — Accounts Intelligence (start Day 1 with schema mapping)</h4>
+  <div class="task-meta">Feature: AI Foundation · Deliverable: "What's our GST liability this month?" answered in plain English</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why start Day 1:</span> Schema mapping (which Accounts DocTypes hold which data) can be written before any code is ready and is the most time-consuming part of a safe NL Query engine. Starting Day 1 means the rest of the build moves faster later.</p>
+    <span class="ctx-ref">Pattern: same approach as scale_hr's HR Intelligence assistant</span>
+  </div>
+  <ol class="task-steps">
+    <li>V02-A (Aug 1): Write Accounts schema document — map queryable DocTypes: GL Entry, Sales Invoice, Purchase Invoice, Payment Entry, Journal Entry, Asset, Bank Transaction. 20 test question-answer pairs.</li>
+    <li>V02-B (Aug 10): Build <code>api/accounts_query.py</code> whitelisted endpoint — LLM translates NL question to <code>frappe.get_list()</code> call — safe execute — format answer.</li>
+    <li>V02-C (Aug 17): Build Frappe Page "Accounts Intelligence" — chat UI wired to endpoint.</li>
+    <li>V02-D (Aug 22): Accounts Query Log DocType, error handling, 18/20 test accuracy target.</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">V03</span>
+    <span class="task-assign">Veeren</span>
+    <span class="task-date">Wave 2</span>
+  </div>
+  <h4>Duplicate &amp; Anomaly Detection Suite</h4>
+  <div class="task-meta">Feature: AC-01, AC-02, AC-04, AC-06, AC-12 (AI extensions) · Deliverable: Weekly digest of flagged duplicates/anomalies to Uday</div>
+  <ol class="task-steps">
+    <li>Build shared <code>ai_utils.detect_duplicates(doctype, fields)</code> fuzzy-matcher.</li>
+    <li>Daily scan of Bank Transaction, Expense Claim, Journal Entry for near-duplicates.</li>
+    <li>Wire in-app notification to submitter + weekly digest email to Uday.</li>
+  </ol>
+  <div class="task-note">See full spec in the Duplicate &amp; Anomaly Detection Suite accordion above. Requires 3+ months of clean Wave 1 data before pattern detection is meaningful.</div>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">V04</span>
+    <span class="task-assign">Veeren</span>
+    <span class="task-date">Wave 2</span>
+  </div>
+  <h4>Predictive Compliance &amp; Risk Suite</h4>
+  <div class="task-meta">Feature: AC-05, AC-06, AC-08, AC-14 (AI extensions) · Deliverable: Weekly GST/TDS compliance risk report, audit anomaly scan</div>
+  <ol class="task-steps">
+    <li>Weekly GST reconciliation scan (GSTR-2B vs Purchase Invoices) with LLM-explained mismatches.</li>
+    <li>TDS rate validator on Purchase Invoice submit.</li>
+    <li>Nightly audit anomaly scan of Version/Activity Log.</li>
+    <li>E-Invoice pre-submit validator.</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">V05</span>
+    <span class="task-assign">Veeren</span>
+    <span class="task-date">Wave 2</span>
+  </div>
+  <h4>Forecasting &amp; Optimisation Suite</h4>
+  <div class="task-meta">Feature: AC-03, AC-09, AC-10, AC-11, AC-13 (AI extensions) · Deliverable: Payment-delay scoring, forex exposure forecast, asset/cost centre recommendations</div>
+  <ol class="task-steps">
+    <li>Customer payment-delay model from historical on-time/late pattern.</li>
+    <li>Forex exposure forecast against forward exchange rate trend.</li>
+    <li>Asset maintenance predictor (warranty/maintenance gaps).</li>
+    <li>Cost Centre spend-efficiency benchmarking.</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">V06</span>
+    <span class="task-assign">Veeren</span>
+    <span class="task-date">Wave 2</span>
+  </div>
+  <h4>Executive Dashboard AI Tiles (AC-16 Phase 2)</h4>
+  <div class="task-meta">Feature: AC-16 Executive Dashboard (Client PRD addition) · Deliverable: Audit Exceptions, AI Financial Health Score, Top AI Recommendations tiles live</div>
+  <ol class="task-steps">
+    <li>Audit Exceptions tile surfacing V04's flagged items.</li>
+    <li>AI Financial Health Score combining compliance risk (V04), AR/AP ageing (V05), and cash position trend.</li>
+    <li>Top AI Recommendations tile ranking the highest-priority action across all active AI signals.</li>
+  </ol>
+  <div class="task-note">This is the last Accounts AI task — it depends on V03, V04, and V05 all being live first, and coordinates with Finance module's V07 if the dashboards are merged.</div>
+</div>
+
+<!-- PROGRESS TRACKER -->
+<h2>Progress Tracker</h2>
+<div class="tbl-wrap">
+<table>
+  <tr>
+    <th>Feature ID</th><th>Feature</th><th>Priority</th><th>Status</th><th>Assigned Tasks</th>
+  </tr>
+  <tr style="background:#e0f2fe;"><td colspan="5" style="padding:7px 10px;font-size:.78rem;font-weight:700;color:#0369a1;border:1px solid #bae6fd;">ACCOUNTS FOUNDATION — AC-01 to AC-15</td></tr>
+  <tr><td>AC-01</td><td>Chart of Accounts</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T01</td></tr>
+  <tr><td>AC-02</td><td>General Ledger Management</td><td><span class="pill bp2">P2</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T01</td></tr>
+  <tr><td>AC-03</td><td>AR / AP</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T02</td></tr>
+  <tr><td>AC-04</td><td>Bank Reconciliation</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T03</td></tr>
+  <tr><td>AC-05</td><td>Tax Compliance (GST)</td><td><span class="pill bp2">P2</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T04</td></tr>
+  <tr><td>AC-06</td><td>Audit Trail</td><td><span class="pill bp3">P3</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T08</td></tr>
+  <tr><td>AC-07</td><td>Journal Entries</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T07</td></tr>
+  <tr><td>AC-08</td><td>TDS / TCS Management</td><td><span class="pill bp3">P3</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T05</td></tr>
+  <tr><td>AC-09</td><td>Multi-Currency Accounting</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T08</td></tr>
+  <tr><td>AC-10</td><td>Fixed Assets</td><td><span class="pill bp3">P3</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T09</td></tr>
+  <tr><td>AC-11</td><td>Depreciation Management</td><td><span class="pill bp3">P3</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T09</td></tr>
+  <tr><td>AC-12</td><td>Petty Cash Management</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T08</td></tr>
+  <tr><td>AC-13</td><td>Cost Centre Accounting <span style="font-size:.68rem;color:#6b7280;">(also FI-05)</span></td><td><span class="pill bp2">P2</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T10</td></tr>
+  <tr><td>AC-14</td><td>E-Invoicing &amp; GST Filing</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T06</td></tr>
+  <tr><td>AC-15</td><td>MIS Reports</td><td><span class="pill bp3">P3</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T11</td></tr>
+  <tr style="background:#fffbeb;"><td colspan="5" style="padding:7px 10px;font-size:.78rem;font-weight:700;color:#92400e;border:1px solid #fcd34d;">CLIENT PRD ADDITION — AC-16</td></tr>
+  <tr><td>AC-16</td><td>Executive Dashboard (CFO &amp; CXO View) <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">New PRD · also FI-16</span></td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T12, V06</td></tr>
+</table>
+</div>
+
+<div class="page-nav no-print">
+  <a class="prev" href="hr-module.html">← HR Module Plan</a>
+  <a class="next" href="finance-module.html">Finance Module Plan →</a>
+</div>
+
+</main>
+</body>
+</html>

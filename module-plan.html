@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All 13 Modules — AIWS ERP</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="s-title">AIWS ERP</div>
+    <div class="s-sub">Implementation Master Plan</div>
+    <span class="s-tag">Claude / implementation</span>
+  </div>
+  <nav>
+    <div class="nav-group">Start Here</div>
+    <a class="nav-link" href="index.html">Program Overview</a>
+    <div class="nav-group">Foundation</div>
+    <a class="nav-link" href="frappe-verdict.html">Frappe Capability</a>
+    <a class="nav-link" href="architecture.html">System Architecture</a>
+    <div class="nav-group">Development Framework</div>
+    <a class="nav-link" href="customization-guide.html">Customization Guide</a>
+    <a class="nav-link" href="developer-guide.html">Developer Workflow</a>
+    <div class="nav-group">Implementation</div>
+    <a class="nav-link active" href="module-plan.html">All 13 Modules</a>
+    <a class="nav-link" href="sprint-plan.html">Parallel Sprint Plan</a>
+    <a class="nav-link" href="wave-1.html">Sales &amp; Marketing Detail</a>
+
+    <div class="nav-group">Module Plans</div>
+    <a class="nav-link" href="sales-module.html">Sales Module Plan</a>
+    <a class="nav-link" href="hr-module.html">HR Module Plan</a>
+    <a class="nav-link" href="accounts-module.html">Accounts Module Plan</a>
+    <a class="nav-link" href="finance-module.html">Finance Module Plan</a>
+    <a class="nav-link" href="pmo-module.html">PMO Module Plan</a>
+
+    <div class="nav-group">User Manual</div>
+    <a class="nav-link" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
+
+    <div class="nav-group">AI Strategy</div>
+    <a class="nav-link" href="ai-plan-strategy.html">AI Plan Strategy</a>
+
+    <div class="nav-group">Tracking</div>
+    <a class="nav-link" href="sales-tracker.html">Sales Tracker</a>
+    <a class="nav-link" href="sales-demo-showcase.html">Sales Showcase ✨</a>
+  </nav>
+  <div class="sidebar-foot">Pixaflip × SIL · AIWS ERP<br><a href="../../index.html">← AIWS Setup portal</a></div>
+</aside>
+
+<main>
+  <div class="breadcrumb">AIWS ERP <span>›</span> <a href="index.html">Plan</a> <span>›</span> All 13 Modules</div>
+  <div class="page-header">
+    <h1>All 13 Modules — Plan &amp; Dependencies</h1>
+    <p class="subtitle">Full roadmap: build wave, custom app, OOTB coverage, key build items, dependencies, and definition of done for every module.</p>
+  </div>
+
+  <div class="summary-strip">
+    <div class="s-stat"><div class="sv">4</div><div class="sl">P1 Modules</div></div>
+    <div class="s-stat"><div class="sv">5</div><div class="sl">P2 Modules</div></div>
+    <div class="s-stat"><div class="sv">3</div><div class="sl">P3 Modules</div></div>
+    <div class="s-stat"><div class="sv">1</div><div class="sl">Scope TBD</div></div>
+    <div class="s-stat"><div class="sv">F0→W4</div><div class="sl">Build Sequence</div></div>
+  </div>
+
+  <h2>F0 — Foundation (prerequisite for everything)</h2>
+  <div class="card" style="margin-bottom:24px;">
+    <div class="grid g2">
+      <div>
+        <h3>What F0 delivers</h3>
+        <ul class="chk">
+          <li>Frappe bench (version-15) running — local macOS native bench per developer, shared staging on AWS</li>
+          <li>ERPNext + Frappe CRM + Frappe HR + India Compliance installed</li>
+          <li><code>scale</code> app (in repo at <code>apps/scale/</code>) installed and migrated — branding, SSO hooks, audit log, Event Outbox DocType, AIWS Config Profile DocType</li>
+          <li>Multi-site provisioning: first client site created, admin access verified</li>
+          <li>CI/CD pipeline: GitHub Actions → staging auto-deploy on every PR merge to <code>develop</code></li>
+          <li>Backup strategy: daily automated backup to S3</li>
+          <li>Developer onboarding: every team member can spin up a local bench in under 30 minutes</li>
+        </ul>
+      </div>
+      <div>
+        <h3>F0 gate — do not start Wave 1 until all are true</h3>
+        <ul class="chk">
+          <li>A developer who was not involved in setup can create a new site from scratch using documented steps</li>
+          <li>CI passes on a dummy PR to <code>scale</code></li>
+          <li>Staging site accessible at a real URL (not localhost)</li>
+          <li>Backup verified: a restore from backup works on a fresh bench</li>
+          <li>ERPNext Selling, CRM, HR modules enabled on the staging site</li>
+        </ul>
+        <div class="callout cw" style="margin-top:12px;">
+          <p><strong>F0 is not a soft prerequisite.</strong> Starting Wave 1 before F0 is complete means developers will be building on an unvalidated platform — and fixing CI/infra issues in parallel with feature work. That destroys velocity.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Module master plan</h2>
+  <div class="tbl-wrap">
+    <table>
+      <tr>
+        <th>#</th>
+        <th>Module</th>
+        <th>Wave</th>
+        <th>Lead</th>
+        <th>Custom App</th>
+        <th>Frappe Base</th>
+        <th>OOTB%</th>
+        <th>Key Build Items (what we code)</th>
+        <th>Depends on</th>
+        <th>Definition of Done</th>
+      </tr>
+
+      <!-- Wave 1 -->
+      <tr class="row-p1">
+        <td>1</td>
+        <td><strong>Sales</strong></td>
+        <td><span class="badge b-w1">Wave 1</span></td>
+        <td><strong>Raghib</strong></td>
+        <td><code>scale_sales</code></td>
+        <td>ERPNext Selling + Frappe CRM</td>
+        <td class="td-center">72%</td>
+        <td>
+          Custom fields: BANT on Lead, Stakeholders/Competitors child tables on Opportunity<br>
+          Custom DocTypes: Dealer Profile, Field Force Activity, Sales Commission Rule<br>
+          Scripts: duplicate Lead detection, probability auto-calc, stale deal alert scheduler<br>
+          Reports: Pipeline Health, Target vs Actual, Sales Forecast (weighted)
+        </td>
+        <td>F0 complete; ERPNext Selling enabled</td>
+        <td>Lead → Opportunity → Quotation → Order → Invoice end-to-end on staging. Dealer scorecard computing. Target tracking live.</td>
+      </tr>
+      <tr class="row-p1">
+        <td>2</td>
+        <td><strong>Marketing</strong></td>
+        <td><span class="badge b-w1">Wave 1</span></td>
+        <td><strong>Raghib</strong></td>
+        <td><code>scale_sales</code></td>
+        <td>Frappe CRM + GentooLeads API</td>
+        <td class="td-center">38%</td>
+        <td>
+          GentooLeads connector (campaign sync, WhatsApp lead ingestion, analytics pull)<br>
+          Custom DocTypes: Content Calendar, Brand Asset, Marketing Budget Entry<br>
+          Webhook receivers: Meta Lead Ads, Google Ads, IG/FB events<br>
+          Reports: Campaign ROI, Lead Source Attribution, Budget vs Spend
+        </td>
+        <td>scale_sales installed (shares Lead DocType); GentooLeads API credentials</td>
+        <td>Campaign created in GentooLeads → leads ingested in Frappe → attribution showing in reports. WhatsApp broadcast tracked.</td>
+      </tr>
+
+      <!-- Wave 1 — Vandana track (PMO, HR) -->
+      <tr class="row-p1">
+        <td>3</td>
+        <td><strong>PMO</strong></td>
+        <td><span class="badge b-w1">Wave 1</span></td>
+        <td><strong>Vandana</strong></td>
+        <td><code>scale_hr</code></td>
+        <td>ERPNext Projects</td>
+        <td class="td-center">58%</td>
+        <td>
+          Custom DocTypes: Consultant Onboarding, Logsheet, Risk Register, Change Request, Project Library<br>
+          Custom fields on Project: strategy milestones section, consultant allocation table<br>
+          Reports: Mandays Dashboard, Logsheet Summary, Project Profitability, Impact Report
+        </td>
+        <td>scale_sales (project may link to a client/deal)</td>
+        <td>Consultant onboarded → project created → tasks assigned → logsheets submitted → project profitability visible.</td>
+      </tr>
+      <tr class="row-p1">
+        <td>4</td>
+        <td><strong>Service</strong></td>
+        <td><span class="badge b-w2">Wave 2</span></td>
+        <td>TBD</td>
+        <td><code>scale_supply</code></td>
+        <td>ERPNext Support (Helpdesk)</td>
+        <td class="td-center">52%</td>
+        <td>
+          Custom DocTypes: AMC Contract, Field Service Ticket, Technician Schedule, Spare Parts Requirement<br>
+          Frappe UI page: mobile technician app (ticket view, close, photo capture)<br>
+          Scripts: SLA breach alert, AMC renewal reminder scheduler<br>
+          Reports: Technician utilisation, AMC renewal pipeline, Service Revenue
+        </td>
+        <td>scale_sales (service for customers); scale_supply PMO items</td>
+        <td>Ticket raised → SLA timer running → technician dispatched → field job closed → AMC renewal tracked.</td>
+      </tr>
+      <tr class="row-p2">
+        <td>5</td>
+        <td><strong>Production</strong></td>
+        <td><span class="badge b-w2">Wave 2</span></td>
+        <td>TBD</td>
+        <td><code>scale_supply</code></td>
+        <td>ERPNext Manufacturing</td>
+        <td class="td-center">83%</td>
+        <td>
+          Custom DocType: Downtime Log (machine, cause, duration, shift)<br>
+          Custom fields on Work Order: OEE calculation fields<br>
+          Reports: Shift-wise OEE, Downtime Analysis, Batch Job Costing
+        </td>
+        <td>scale_supply stores (BOM needs Items); scale_accounts (job costing)</td>
+        <td>BOM created → Work Order raised → production tracked → finished goods stocked → batch cost computed.</td>
+      </tr>
+      <tr class="row-p2">
+        <td>6</td>
+        <td><strong>Purchase</strong></td>
+        <td><span class="badge b-w2">Wave 2</span></td>
+        <td>TBD</td>
+        <td><code>scale_supply</code></td>
+        <td>ERPNext Buying</td>
+        <td class="td-center">88%</td>
+        <td>
+          Vendor Portal: Frappe UI pages for supplier self-service (PO view, invoice upload)<br>
+          RFQ Comparison matrix: Script Report comparing quotes across suppliers<br>
+          Fixtures: Approval workflow (PR → PO), Vendor evaluation scorecard fields
+        </td>
+        <td>scale (vendor portal auth)</td>
+        <td>Purchase Request raised → approved → RFQ sent → quotes compared → PO created → GRN done → invoice matched.</td>
+      </tr>
+      <tr class="row-p2">
+        <td>7</td>
+        <td><strong>Stores</strong></td>
+        <td><span class="badge b-w2">Wave 2</span></td>
+        <td>TBD</td>
+        <td><code>scale_supply</code></td>
+        <td>ERPNext Stock</td>
+        <td class="td-center">85%</td>
+        <td>
+          Scheduled job: slow-moving &amp; non-moving stock alert (configurable threshold)<br>
+          Fixtures: reorder alert rules, batch/serial tracking config, multi-warehouse setup<br>
+          Custom fields: expiry management extension on Batch DocType
+        </td>
+        <td>scale_supply purchase (GRN), scale_supply production (consumption)</td>
+        <td>Stock receipt → valuation correct → transfers working → cycle count done → slow-moving alerts triggered.</td>
+      </tr>
+
+      <!-- Wave 1 — Uday track (Finance, Accounts) -->
+      <tr class="row-p2">
+        <td>8</td>
+        <td><strong>Accounts</strong></td>
+        <td><span class="badge b-w1">Wave 1</span></td>
+        <td><strong>Uday</strong></td>
+        <td><code>scale_accounts</code></td>
+        <td>ERPNext Accounts + India Compliance</td>
+        <td class="td-center">90%</td>
+        <td>
+          India Compliance app install + GST/e-Invoice/TDS configuration (fixtures)<br>
+          Custom fields: Cost Centre allocation rules, petty cash tracking extension<br>
+          Fixtures: Chart of Accounts template, TDS/TCS rate masters, GST tax templates
+        </td>
+        <td>scale_supply (sales invoices, purchase invoices feed accounts)</td>
+        <td>Sales Invoice posted → GST computed → e-Invoice generated → bank reconciliation working → trial balance correct.</td>
+      </tr>
+      <tr class="row-p2">
+        <td>9</td>
+        <td><strong>Finance</strong></td>
+        <td><span class="badge b-w1">Wave 1</span></td>
+        <td><strong>Uday</strong></td>
+        <td><code>scale_accounts</code></td>
+        <td>ERPNext Accounts (Script Reports)</td>
+        <td class="td-center">68%</td>
+        <td>
+          Script Reports: Sales Forecast (weighted), Cash Flow Projector, Working Capital Tracker, P&amp;L by Segment, ROI by Product/Project, Budget Variance<br>
+          Custom DocType: MSME Scheme Tracker<br>
+          Frappe Dashboard: Finance Controller cockpit (live KPIs)
+        </td>
+        <td>scale_accounts accounts (feeds data)</td>
+        <td>Monthly close: P&amp;L, balance sheet, cash flow accessible. Budget vs actual visible. MSME tracking live.</td>
+      </tr>
+      <tr class="row-p3">
+        <td>10</td>
+        <td><strong>HR</strong></td>
+        <td><span class="badge b-w1">Wave 1</span></td>
+        <td><strong>Vandana</strong></td>
+        <td><code>scale_hr</code></td>
+        <td>Frappe HR (hrms)</td>
+        <td class="td-center">74%</td>
+        <td>
+          Custom DocType: 360 Feedback (peer + manager review cycle)<br>
+          Custom fields on Employee: skills matrix, DPDP consent flag<br>
+          Appraisal cycle extension: multi-rater, rating normalization<br>
+          DPDP consent tracking: consent log DocType, data minimization hooks (EMS integration gated on this)
+        </td>
+        <td>scale (employee identity for EMS integration)</td>
+        <td>Employee hired → onboarded → leave management working → payroll run → 360 review cycle completed → DPDP consent on file.</td>
+      </tr>
+      <tr class="row-p3">
+        <td>11</td>
+        <td><strong>Logistics</strong></td>
+        <td><span class="badge b-w3">Wave 3</span></td>
+        <td>TBD</td>
+        <td><code>scale_accounts</code></td>
+        <td>ERPNext Stock (Delivery Trip)</td>
+        <td class="td-center">42%</td>
+        <td>
+          Custom DocTypes: Fleet Vehicle, Vehicle Trip, Fuel Log, Driver<br>
+          Route Optimisation: Google Directions API integration (batch waypoints → optimal sequence)<br>
+          Frappe UI page: driver mobile app (trip view, POD capture, photo upload)<br>
+          Courier connectors: webhook receivers for Delhivery, Bluedart, Ekart<br>
+          e-Way Bill: India Compliance extension
+        </td>
+        <td>scale_supply stores (stock dispatch triggers logistics)</td>
+        <td>Delivery note created → dispatch planned → route optimised → driver app showing trip → POD captured → courier tracking linked.</td>
+      </tr>
+
+      <!-- Wave 4 -->
+      <tr class="row-p3">
+        <td>12</td>
+        <td><strong>Dashboards &amp; BI</strong></td>
+        <td><span class="badge b-w4">Wave 4</span></td>
+        <td>TBD</td>
+        <td><code>scale_bi</code></td>
+        <td>Apache Superset + ERPNext Dashboards</td>
+        <td class="td-center">62%</td>
+        <td>
+          KPI mart: ETL job pulling data from all modules into an analytics PostgreSQL DB<br>
+          Superset embed config: per-role dashboard provisioning, row-level security<br>
+          Frappe Dashboard pages: role-specific live KPI tiles (sales, finance, HR)<br>
+          Cross-module drill-down reports: lead-to-cash, purchase-to-pay, hire-to-retire
+        </td>
+        <td>All Wave 1–3 modules (reads their data)</td>
+        <td>Each module has a live dashboard. CEO sees consolidated P&amp;L + pipeline. Module heads see their KPIs. Superset embedded on the portal.</td>
+      </tr>
+      <tr>
+        <td>13</td>
+        <td><strong>Survey</strong></td>
+        <td><span class="badge b-w4">Wave 4</span></td>
+        <td>TBD</td>
+        <td><code>scale_bi</code></td>
+        <td>Frappe (Web Form)</td>
+        <td class="td-center">20%</td>
+        <td>
+          Custom DocTypes: Survey Template, Survey Question, Survey Response<br>
+          Conditional logic engine for question branching<br>
+          Frappe UI page: end-customer survey interface<br>
+          Response analytics: completion rate, NPS calculation, response breakdown reports
+        </td>
+        <td>Scope to be confirmed by business team (Open Question)</td>
+        <td>Survey created → link shared → responses captured → analytics visible. Scope gate: business team sign-off on OQ.</td>
+      </tr>
+    </table>
+  </div>
+
+  <hr class="section">
+
+  <h2>Module dependency graph</h2>
+  <p style="font-size:13px;color:var(--text-3);margin-bottom:16px;">All Wave 1 tracks run in parallel from <strong>Jul 24, 2026</strong>. F0 is the prerequisite for everything. Sales &amp; Marketing hold no special priority over Finance, Accounts, HR, or PMO — they are one of three equally weighted tracks.</p>
+  <figure>
+    <svg viewBox="0 0 860 345" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,sans-serif" font-size="11">
+      <defs>
+        <marker id="dep" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+          <path d="M0,0 L7,3.5 L0,7 z" fill="#94a3b8"/>
+        </marker>
+      </defs>
+
+      <!-- ── F0 Foundation ── -->
+      <rect x="330" y="8" width="200" height="40" rx="6" fill="#112236" stroke="#1e3a5f"/>
+      <text x="430" y="24" text-anchor="middle" fill="#fff" font-weight="700" font-size="12">F0 — Foundation</text>
+      <text x="430" y="38" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="10">scale · ERPNext · CRM · HRMS</text>
+
+      <!-- ── Wave 1 — 3 parallel tracks ── -->
+
+      <!-- Raghib group background -->
+      <rect x="10" y="70" width="254" height="80" rx="6" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+      <text x="137" y="83" text-anchor="middle" fill="#1e40af" font-weight="700" font-size="10">Raghib · Wave 1</text>
+      <!-- Sales -->
+      <rect x="18" y="88" width="112" height="38" rx="5" fill="#dbeafe" stroke="#60a5fa" stroke-width="1.5"/>
+      <text x="74" y="103" text-anchor="middle" fill="#1e3a8a" font-weight="700">Sales</text>
+      <text x="74" y="117" text-anchor="middle" fill="#2563eb" font-size="9">scale_sales</text>
+      <!-- Marketing -->
+      <rect x="138" y="88" width="118" height="38" rx="5" fill="#dbeafe" stroke="#60a5fa" stroke-width="1.5"/>
+      <text x="197" y="103" text-anchor="middle" fill="#1e3a8a" font-weight="700">Marketing</text>
+      <text x="197" y="117" text-anchor="middle" fill="#2563eb" font-size="9">scale_sales</text>
+
+      <!-- Uday group background -->
+      <rect x="282" y="70" width="296" height="80" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+      <text x="430" y="83" text-anchor="middle" fill="#166534" font-weight="700" font-size="10">Uday · Wave 1</text>
+      <!-- Finance -->
+      <rect x="290" y="88" width="130" height="38" rx="5" fill="#dcfce7" stroke="#4ade80" stroke-width="1.5"/>
+      <text x="355" y="103" text-anchor="middle" fill="#14532d" font-weight="700">Finance</text>
+      <text x="355" y="117" text-anchor="middle" fill="#15803d" font-size="9">scale_accounts</text>
+      <!-- Accounts -->
+      <rect x="430" y="88" width="138" height="38" rx="5" fill="#dcfce7" stroke="#4ade80" stroke-width="1.5"/>
+      <text x="499" y="103" text-anchor="middle" fill="#14532d" font-weight="700">Accounts</text>
+      <text x="499" y="117" text-anchor="middle" fill="#15803d" font-size="9">scale_accounts</text>
+
+      <!-- Vandana group background -->
+      <rect x="596" y="70" width="254" height="80" rx="6" fill="#fdf4ff" stroke="#d8b4fe" stroke-width="1.5"/>
+      <text x="723" y="83" text-anchor="middle" fill="#6b21a8" font-weight="700" font-size="10">Vandana · Wave 1</text>
+      <!-- HR -->
+      <rect x="604" y="88" width="112" height="38" rx="5" fill="#f3e8ff" stroke="#c084fc" stroke-width="1.5"/>
+      <text x="660" y="103" text-anchor="middle" fill="#581c87" font-weight="700">HR</text>
+      <text x="660" y="117" text-anchor="middle" fill="#7c3aed" font-size="9">scale_hr</text>
+      <!-- PMO -->
+      <rect x="724" y="88" width="118" height="38" rx="5" fill="#f3e8ff" stroke="#c084fc" stroke-width="1.5"/>
+      <text x="783" y="103" text-anchor="middle" fill="#581c87" font-weight="700">PMO</text>
+      <text x="783" y="117" text-anchor="middle" fill="#7c3aed" font-size="9">scale_hr</text>
+
+      <!-- ── Wave 2 ── -->
+      <text x="430" y="174" text-anchor="middle" fill="#94a3b8" font-size="9" font-weight="700" letter-spacing="1">WAVE 2</text>
+      <!-- Service -->
+      <rect x="82" y="182" width="162" height="38" rx="5" fill="#eff6ff" stroke="#93c5fd"/>
+      <text x="163" y="197" text-anchor="middle" fill="#1e40af" font-weight="700">Service</text>
+      <text x="163" y="211" text-anchor="middle" fill="#1e40af" font-size="9">scale_supply</text>
+      <!-- Production -->
+      <rect x="260" y="182" width="162" height="38" rx="5" fill="#eff6ff" stroke="#93c5fd"/>
+      <text x="341" y="197" text-anchor="middle" fill="#1e40af" font-weight="700">Production</text>
+      <text x="341" y="211" text-anchor="middle" fill="#1e40af" font-size="9">scale_supply</text>
+      <!-- Purchase -->
+      <rect x="438" y="182" width="162" height="38" rx="5" fill="#eff6ff" stroke="#93c5fd"/>
+      <text x="519" y="197" text-anchor="middle" fill="#1e40af" font-weight="700">Purchase</text>
+      <text x="519" y="211" text-anchor="middle" fill="#1e40af" font-size="9">scale_supply</text>
+      <!-- Stores -->
+      <rect x="616" y="182" width="162" height="38" rx="5" fill="#eff6ff" stroke="#93c5fd"/>
+      <text x="697" y="197" text-anchor="middle" fill="#1e40af" font-weight="700">Stores</text>
+      <text x="697" y="211" text-anchor="middle" fill="#1e40af" font-size="9">scale_supply</text>
+
+      <!-- ── Wave 3 / 4 ── -->
+      <text x="430" y="264" text-anchor="middle" fill="#94a3b8" font-size="9" font-weight="700" letter-spacing="1">WAVE 3 · 4</text>
+      <!-- Logistics -->
+      <rect x="130" y="272" width="185" height="38" rx="5" fill="#fffbeb" stroke="#fcd34d"/>
+      <text x="222" y="287" text-anchor="middle" fill="#78350f" font-weight="700">Logistics</text>
+      <text x="222" y="301" text-anchor="middle" fill="#78350f" font-size="9">scale_supply</text>
+      <!-- Dashboards -->
+      <rect x="337" y="272" width="185" height="38" rx="5" fill="#fdf4ff" stroke="#e9d5ff"/>
+      <text x="430" y="287" text-anchor="middle" fill="#581c87" font-weight="700">Dashboards</text>
+      <text x="430" y="301" text-anchor="middle" fill="#581c87" font-size="9">scale_bi</text>
+      <!-- Survey -->
+      <rect x="544" y="272" width="185" height="38" rx="5" fill="#fdf4ff" stroke="#e9d5ff"/>
+      <text x="637" y="287" text-anchor="middle" fill="#581c87" font-weight="700">Survey</text>
+      <text x="637" y="301" text-anchor="middle" fill="#581c87" font-size="9">scale_bi</text>
+
+      <!-- ═══ ARROWS ═══ -->
+
+      <!-- F0 → 3 groups (dashed — prerequisite for all): T-junction, no crossing diagonals -->
+      <line x1="430" y1="48" x2="430" y2="58" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="4 3"/>
+      <line x1="137" y1="58" x2="723" y2="58" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="4 3"/>
+      <line x1="137" y1="58" x2="137" y2="70" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#dep)"/>
+      <line x1="430" y1="58" x2="430" y2="70" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#dep)"/>
+      <line x1="723" y1="58" x2="723" y2="70" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#dep)"/>
+
+      <!-- Wave 1 groups → Wave 2 (tree connector) -->
+      <!-- vertical drops from group bottoms to horizontal bar at y=162 -->
+      <line x1="137" y1="150" x2="137" y2="162" stroke="#cbd5e1" stroke-width="1.2"/>
+      <line x1="430" y1="150" x2="430" y2="162" stroke="#cbd5e1" stroke-width="1.2"/>
+      <line x1="723" y1="150" x2="723" y2="162" stroke="#cbd5e1" stroke-width="1.2"/>
+      <!-- horizontal bar spanning all 3 groups -->
+      <line x1="137" y1="162" x2="723" y2="162" stroke="#cbd5e1" stroke-width="1.2"/>
+      <!-- single down arrow from midpoint to Wave 2 -->
+      <line x1="430" y1="162" x2="430" y2="182" stroke="#94a3b8" stroke-width="1.2" marker-end="url(#dep)"/>
+
+      <!-- Wave 2 → Wave 3/4 (tree connector) -->
+      <!-- vertical drops from Wave 2 module bottoms -->
+      <line x1="163" y1="220" x2="163" y2="234" stroke="#cbd5e1" stroke-width="1.2"/>
+      <line x1="341" y1="220" x2="341" y2="234" stroke="#cbd5e1" stroke-width="1.2"/>
+      <line x1="519" y1="220" x2="519" y2="234" stroke="#cbd5e1" stroke-width="1.2"/>
+      <line x1="697" y1="220" x2="697" y2="234" stroke="#cbd5e1" stroke-width="1.2"/>
+      <!-- horizontal bar -->
+      <line x1="163" y1="234" x2="697" y2="234" stroke="#cbd5e1" stroke-width="1.2"/>
+      <!-- single down arrow to Wave 3/4 -->
+      <line x1="430" y1="234" x2="430" y2="272" stroke="#94a3b8" stroke-width="1.2" marker-end="url(#dep)"/>
+    </svg>
+    <p class="muted" style="text-align:center;margin-top:8px;">Dashed lines = F0 prerequisite. Tree connectors = sequential build dependency. All three Wave 1 groups start simultaneously on Jul 24.</p>
+  </figure>
+
+  <hr class="section">
+
+  <h2>Module implementation checklist — template for every module</h2>
+  <p>When building any module, it is "done" only when all of these are true:</p>
+  <div class="grid g2">
+    <div class="card">
+      <h4>Development</h4>
+      <ul class="chk">
+        <li>Custom fields exported as fixtures and committed to the app repo</li>
+        <li>Custom DocTypes created with Python controllers and tests</li>
+        <li>Server Scripts tested with edge cases covered</li>
+        <li>Background jobs registered in <code>hooks.py</code> and tested on staging</li>
+        <li>All custom APIs decorated with <code>@frappe.whitelist()</code> and permission-tested</li>
+        <li>Patch script added if any data migration was needed</li>
+        <li>Integration connectors mocked in tests; real credentials in Settings DocType</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Quality gate</h4>
+      <ul class="chk">
+        <li>Test suite passing on CI (GitHub Actions)</li>
+        <li>Module installed cleanly on a fresh staging site (no manual steps)</li>
+        <li>End-to-end flow walkthrough completed by the module owner on staging</li>
+        <li>Cross-module links verified (linked DocTypes resolve correctly)</li>
+        <li>Reports loading without errors for all user roles</li>
+        <li>Permissions verified: each role can only access what they're supposed to</li>
+        <li>Module reviewed by Raghib (Product Lead sign-off)</li>
+        <li>Tracker in <a href="../../AIWS_ERP_MODULES_CONTEXT.md">AIWS_ERP_MODULES_CONTEXT.md</a> updated</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <a class="prev" href="developer-guide.html">← Developer Workflow</a>
+    <a class="next" href="wave-1.html">Sales &amp; Marketing Detail →</a>
+  </div>
+</main>
+</body>
+</html>

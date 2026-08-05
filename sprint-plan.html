@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parallel Sprint Plan — AIWS ERP</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+/* ── Lead cards ── */
+.lead-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 28px; }
+.lead-card { border: 2px solid var(--border); border-radius: 10px; overflow: hidden; }
+.lead-head { padding: 14px 18px 10px; }
+.lead-head.raghib { background: #eff6ff; border-bottom: 2px solid #3b82f6; }
+.lead-head.uday   { background: #f0fdf4; border-bottom: 2px solid #22c55e; }
+.lead-head.vandana{ background: #fdf4ff; border-bottom: 2px solid #a855f7; }
+.lead-name { font-size: 16px; font-weight: 800; color: var(--text-1); }
+.lead-role { font-size: 12px; color: var(--text-3); margin-bottom: 8px; }
+.lead-tracks { display: flex; gap: 6px; flex-wrap: wrap; }
+.lead-track-tag { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+.raghib .lead-track-tag { background: #dbeafe; color: #1d4ed8; }
+.uday   .lead-track-tag { background: #dcfce7; color: #15803d; }
+.vandana .lead-track-tag { background: #f3e8ff; color: #7c3aed; }
+.lead-body { padding: 12px 18px; }
+.lead-stat-row { display: flex; gap: 20px; }
+.lead-stat { text-align: center; }
+.lead-stat .lsv { font-size: 20px; font-weight: 800; color: var(--text-1); }
+.lead-stat .lsl { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; }
+.lead-app { display: inline-block; background: var(--bg-2); font-family: monospace; font-size: 11px; color: var(--text-2); padding: 2px 7px; border-radius: 4px; border: 1px solid var(--border); margin-top: 8px; }
+
+/* ── Sprint block ── */
+.sprint-block { margin-bottom: 32px; }
+.sprint-label {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--navy); color: #fff;
+  padding: 10px 18px; border-radius: 8px 8px 0 0;
+  font-size: 13px; font-weight: 700;
+}
+.sprint-label .sprint-dates { font-size: 12px; font-weight: 400; opacity: 0.75; }
+.sprint-label .sprint-note  { font-size: 11px; font-weight: 400; opacity: 0.6; margin-left: auto; }
+.sprint-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; border: 1px solid var(--border); border-top: none; border-radius: 0 0 8px 8px; overflow: hidden; }
+.sprint-col { padding: 14px 16px; border-right: 1px solid var(--border); }
+.sprint-col:last-child { border-right: none; }
+.sprint-col-head { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-3); margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+.sprint-col-head.c-r { color: #1d4ed8; }
+.sprint-col-head.c-u { color: #15803d; }
+.sprint-col-head.c-v { color: #7c3aed; }
+
+/* ── Feature line ── */
+.feat { display: flex; align-items: flex-start; gap: 7px; margin-bottom: 9px; font-size: 12.5px; color: var(--text-2); }
+.feat:last-child { margin-bottom: 0; }
+.feat-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
+.feat-dot.p1 { background: #22c55e; }
+.feat-dot.p2 { background: #3b82f6; }
+.feat-dot.p3 { background: #94a3b8; }
+.feat-c { flex: 1; }
+.feat-name { font-weight: 600; color: var(--text-1); }
+.feat-meta { display: flex; gap: 5px; margin-top: 3px; flex-wrap: wrap; }
+.feat-date { font-size: 10.5px; color: var(--text-3); }
+.feat-app  { font-size: 10px; font-family: monospace; background: var(--bg-2); border: 1px solid var(--border); padding: 0 4px; border-radius: 3px; color: var(--text-3); }
+.risk-h { color: #dc2626; font-size: 10px; font-weight: 700; }
+.risk-m { color: #d97706; font-size: 10px; font-weight: 700; }
+.risk-l { color: #16a34a; font-size: 10px; font-weight: 700; }
+
+/* ── Track section label ── */
+.track-section { margin-bottom: 6px; }
+.track-section-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-3); margin-bottom: 6px; padding: 2px 0; border-top: 1px dashed var(--border); margin-top: 10px; }
+.track-section-label:first-child { border-top: none; margin-top: 0; }
+
+/* ── Legend ── */
+.legend { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; margin-bottom: 20px; font-size: 12px; color: var(--text-3); }
+.legend-item { display: flex; align-items: center; gap: 5px; }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+/* ── Completion bar ── */
+.cbar-wrap { margin-bottom: 24px; }
+.cbar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; font-size: 12px; }
+.cbar-label { width: 160px; font-weight: 600; color: var(--text-2); flex-shrink: 0; }
+.cbar { flex: 1; height: 8px; background: var(--bg-2); border-radius: 4px; overflow: hidden; border: 1px solid var(--border); }
+.cbar-fill { height: 100%; border-radius: 4px; }
+.cbar-fill.raghib { background: #3b82f6; }
+.cbar-fill.uday   { background: #22c55e; }
+.cbar-fill.vandana { background: #a855f7; }
+.cbar-count { width: 80px; color: var(--text-3); font-size: 11px; }
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="s-title">AIWS ERP</div>
+    <div class="s-sub">Implementation Master Plan</div>
+    <span class="s-tag">Claude / implementation</span>
+  </div>
+  <nav>
+    <div class="nav-group">Start Here</div>
+    <a class="nav-link" href="index.html">Program Overview</a>
+    <div class="nav-group">Foundation</div>
+    <a class="nav-link" href="frappe-verdict.html">Frappe Capability</a>
+    <a class="nav-link" href="architecture.html">System Architecture</a>
+    <div class="nav-group">Development Framework</div>
+    <a class="nav-link" href="customization-guide.html">Customization Guide</a>
+    <a class="nav-link" href="developer-guide.html">Developer Workflow</a>
+    <div class="nav-group">Implementation</div>
+    <a class="nav-link" href="module-plan.html">All 13 Modules</a>
+    <a class="nav-link active" href="sprint-plan.html">Parallel Sprint Plan</a>
+    <a class="nav-link" href="wave-1.html">Sales &amp; Marketing Detail</a>
+
+    <div class="nav-group">Module Plans</div>
+    <a class="nav-link" href="sales-module.html">Sales Module Plan</a>
+    <a class="nav-link" href="hr-module.html">HR Module Plan</a>
+    <a class="nav-link" href="accounts-module.html">Accounts Module Plan</a>
+    <a class="nav-link" href="finance-module.html">Finance Module Plan</a>
+    <a class="nav-link" href="pmo-module.html">PMO Module Plan</a>
+
+    <div class="nav-group">User Manual</div>
+    <a class="nav-link" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
+
+    <div class="nav-group">AI Strategy</div>
+    <a class="nav-link" href="ai-plan-strategy.html">AI Plan Strategy</a>
+
+    <div class="nav-group">Tracking</div>
+    <a class="nav-link" href="sales-tracker.html">Sales Tracker</a>
+    <a class="nav-link" href="sales-demo-showcase.html">Sales Showcase ✨</a>
+  </nav>
+  <div class="sidebar-foot">Pixaflip × SIL · AIWS ERP<br><a href="../../index.html">← AIWS Setup portal</a></div>
+</aside>
+
+<main>
+  <div class="breadcrumb">AIWS ERP <span>›</span> <a href="index.html">Plan</a> <span>›</span> Parallel Sprint Plan</div>
+  <div class="page-header">
+    <h1>Parallel Sprint Plan — 3 Lead Tracks</h1>
+    <p class="subtitle">All three tracks start <strong>July 24, 2026</strong> and run in parallel. Dates sourced from the SCALE ERP Modules Scope &amp; Capability workbook. Leads own their tracks end-to-end.</p>
+  </div>
+
+  <div class="summary-strip">
+    <div class="s-stat"><div class="sv">3</div><div class="sl">Parallel Tracks</div></div>
+    <div class="s-stat"><div class="sv">Jul 24</div><div class="sl">All Tracks Start</div></div>
+    <div class="s-stat"><div class="sv">19+33</div><div class="sl">Sales+Marketing Features</div></div>
+    <div class="s-stat"><div class="sv">15+15</div><div class="sl">Finance+Accounts Features</div></div>
+    <div class="s-stat"><div class="sv">23+14</div><div class="sl">HR+PMO Features</div></div>
+  </div>
+
+  <!-- ── LEAD PROFILES ── -->
+  <h2>Track leads</h2>
+  <div class="lead-row">
+
+    <div class="lead-card">
+      <div class="lead-head raghib">
+        <div class="lead-name">Raghib Nasri</div>
+        <div class="lead-role">Product Lead · Pixaflip</div>
+        <div class="lead-tracks">
+          <span class="lead-track-tag">Sales</span>
+          <span class="lead-track-tag">Marketing</span>
+        </div>
+      </div>
+      <div class="lead-body">
+        <div class="lead-stat-row">
+          <div class="lead-stat"><div class="lsv">19</div><div class="lsl">Sales items</div></div>
+          <div class="lead-stat"><div class="lsv">33</div><div class="lsl">Marketing items</div></div>
+          <div class="lead-stat"><div class="lsv">Nov</div><div class="lsl">Track end</div></div>
+        </div>
+        <div style="margin-top:10px">
+          <span class="lead-app">scale_sales</span>
+        </div>
+        <p style="font-size:12px;margin-top:10px;color:var(--text-3)">Highest complexity track. CRM + GentooLeads integration + Meta API. Marketing runs ~4 months total.</p>
+      </div>
+    </div>
+
+    <div class="lead-card">
+      <div class="lead-head uday">
+        <div class="lead-name">Uday</div>
+        <div class="lead-role">Finance Lead</div>
+        <div class="lead-tracks">
+          <span class="lead-track-tag">Finance</span>
+          <span class="lead-track-tag">Accounts</span>
+        </div>
+      </div>
+      <div class="lead-body">
+        <div class="lead-stat-row">
+          <div class="lead-stat"><div class="lsv">15</div><div class="lsl">Finance items</div></div>
+          <div class="lead-stat"><div class="lsv">15</div><div class="lsl">Accounts items</div></div>
+          <div class="lead-stat"><div class="lsv">Sep</div><div class="lsl">Track end</div></div>
+        </div>
+        <div style="margin-top:10px">
+          <span class="lead-app">scale_accounts</span>
+        </div>
+        <p style="font-size:12px;margin-top:10px;color:var(--text-3)">Both Finance and Accounts go in one app. Highest ERPNext OOTB coverage (~90%). Shortest track — done by early Sep.</p>
+      </div>
+    </div>
+
+    <div class="lead-card">
+      <div class="lead-head vandana">
+        <div class="lead-name">Vandana</div>
+        <div class="lead-role">HR &amp; PMO Lead</div>
+        <div class="lead-tracks">
+          <span class="lead-track-tag">Human Resource</span>
+          <span class="lead-track-tag">PMO</span>
+        </div>
+      </div>
+      <div class="lead-body">
+        <div class="lead-stat-row">
+          <div class="lead-stat"><div class="lsv">23</div><div class="lsl">HR items</div></div>
+          <div class="lead-stat"><div class="lsv">14</div><div class="lsl">PMO items</div></div>
+          <div class="lead-stat"><div class="lsv">Sep</div><div class="lsl">Track end</div></div>
+        </div>
+        <div style="margin-top:10px">
+          <span class="lead-app">scale_hr</span>
+        </div>
+        <p style="font-size:12px;margin-top:10px;color:var(--text-3)">HR uses Frappe HRMS. PMO extends ERPNext Projects. Both P1 items complete by end-Sep.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── SCOPE SCALE ── -->
+  <div class="cbar-wrap">
+    <div class="cbar-row">
+      <span class="cbar-label">Raghib — Sales</span>
+      <div class="cbar"><div class="cbar-fill raghib" style="width:58%"></div></div>
+      <span class="cbar-count">19 features · Sep 15</span>
+    </div>
+    <div class="cbar-row">
+      <span class="cbar-label">Raghib — Marketing</span>
+      <div class="cbar"><div class="cbar-fill raghib" style="width:100%"></div></div>
+      <span class="cbar-count">33 features · Nov</span>
+    </div>
+    <div class="cbar-row">
+      <span class="cbar-label">Uday — Finance</span>
+      <div class="cbar"><div class="cbar-fill uday" style="width:45%"></div></div>
+      <span class="cbar-count">15 features · Sep 1</span>
+    </div>
+    <div class="cbar-row">
+      <span class="cbar-label">Uday — Accounts</span>
+      <div class="cbar"><div class="cbar-fill uday" style="width:45%"></div></div>
+      <span class="cbar-count">15 features · Sep 2</span>
+    </div>
+    <div class="cbar-row">
+      <span class="cbar-label">Vandana — HR</span>
+      <div class="cbar"><div class="cbar-fill vandana" style="width:70%"></div></div>
+      <span class="cbar-count">23 features · Sep 24</span>
+    </div>
+    <div class="cbar-row">
+      <span class="cbar-label">Vandana — PMO</span>
+      <div class="cbar"><div class="cbar-fill vandana" style="width:42%"></div></div>
+      <span class="cbar-count">14 features · Sep 26</span>
+    </div>
+  </div>
+
+  <!-- ── LEGEND ── -->
+  <div class="legend">
+    <strong style="color:var(--text-2)">Priority:</strong>
+    <span class="legend-item"><span class="legend-dot" style="background:#22c55e"></span> P1 — Must ship</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#3b82f6"></span> P2 — High value</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#94a3b8"></span> P3 — Nice to have</span>
+    <span style="margin-left:12px;border-left:1px solid var(--border);padding-left:12px"><strong style="color:var(--text-2)">Risk:</strong></span>
+    <span class="legend-item risk-h">H — High</span>
+    <span class="legend-item risk-m">M — Medium</span>
+    <span class="legend-item risk-l">L — Low</span>
+  </div>
+
+  <!-- ══════════════ SPRINT 0 ══════════════ -->
+  <h2>Sprint timeline — parallel execution</h2>
+  <div class="callout ci">
+    <p>Each sprint column shows what that lead's team is delivering in that window. Features are listed in date order within the sprint. P1 features must be completed before their end date — no deferrals without lead approval.</p>
+  </div>
+
+  <div class="sprint-block">
+    <div class="sprint-label">
+      <span>Sprint 0</span>
+      <span class="sprint-dates">Jul 24 – Aug 6</span>
+      <span class="sprint-note">All three tracks kick off simultaneously · Foundation must be live on Jul 24</span>
+    </div>
+    <div class="sprint-grid">
+
+      <!-- Raghib -->
+      <div class="sprint-col">
+        <div class="sprint-col-head c-r">Raghib — Sales &amp; Marketing</div>
+
+        <div class="track-section-label">Sales — scale_sales</div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">CRM Setup</span><div class="feat-meta"><span class="feat-date">Jul 24–27</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">AI Features (Sales)</span><div class="feat-meta"><span class="feat-date">Jul 24–28</span><span class="feat-app">scale_sales</span><span class="risk-m">M</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Lead Management</span><div class="feat-meta"><span class="feat-date">Jul 28–30</span><span class="feat-app">scale_sales</span><span class="risk-m">M</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Lost Opportunity Analysis</span><div class="feat-meta"><span class="feat-date">Jul 29–31</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Quotation</span><div class="feat-meta"><span class="feat-date">Jul 31–Aug 1</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Next Best Action</span><div class="feat-meta"><span class="feat-date">Aug 1–4</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Collections</span><div class="feat-meta"><span class="feat-date">Aug 3–5</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+
+        <div class="track-section-label">Marketing — scale_sales</div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Lead Generation</span><div class="feat-meta"><span class="feat-date">Jul 24–28</span><span class="feat-app">scale_sales</span><span class="risk-m">M</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">AI Features (Marketing)</span><div class="feat-meta"><span class="feat-date">Jul 24–29</span><span class="feat-app">scale_sales</span><span class="risk-m">M</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Lead Management (Mktg)</span><div class="feat-meta"><span class="feat-date">Jul 29–31</span><span class="feat-app">scale_sales</span><span class="risk-m">M</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Email Integration</span><div class="feat-meta"><span class="feat-date">Aug 1–3</span><span class="feat-app">scale_sales</span><span class="risk-m">M</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Website</span><div class="feat-meta"><span class="feat-date">Aug 4–6</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+      </div>
+
+      <!-- Uday -->
+      <div class="sprint-col">
+        <div class="sprint-col-head c-u">Uday — Finance &amp; Accounts</div>
+
+        <div class="track-section-label">Finance — scale_accounts</div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Budgeting</span><div class="feat-meta"><span class="feat-date">Jul 24–27</span><span class="feat-app">scale_accounts</span><span class="risk-m">M</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Forecasting</span><div class="feat-meta"><span class="feat-date">Jul 28–29</span><span class="feat-app">scale_accounts</span><span class="risk-h">H</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">P&amp;L Management</span><div class="feat-meta"><span class="feat-date">Jul 30–31</span><span class="feat-app">scale_accounts</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Cash Flow</span><div class="feat-meta"><span class="feat-date">Aug 3–4</span><span class="feat-app">scale_accounts</span><span class="risk-h">H</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Cost Centres</span><div class="feat-meta"><span class="feat-date">Aug 5–6</span><span class="feat-app">scale_accounts</span><span class="risk-m">M</span></div></div></div>
+
+        <div class="track-section-label">Accounts — scale_accounts</div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Chart of Accounts</span><div class="feat-meta"><span class="feat-date">Jul 24–27</span><span class="feat-app">scale_accounts</span><span class="risk-h">H</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Ledger Management</span><div class="feat-meta"><span class="feat-date">Jul 28</span><span class="feat-app">scale_accounts</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">AR / AP</span><div class="feat-meta"><span class="feat-date">Jul 29–30</span><span class="feat-app">scale_accounts</span><span class="risk-m">M</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Bank Reconciliation</span><div class="feat-meta"><span class="feat-date">Jul 31–Aug 3</span><span class="feat-app">scale_accounts</span><span class="risk-m">M</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Tax Compliance (GST)</span><div class="feat-meta"><span class="feat-date">Aug 4–6</span><span class="feat-app">scale_accounts</span><span class="risk-h">H</span></div></div></div>
+
+        <div class="callout cg" style="margin-top:12px;font-size:12px;">
+          <p><strong>Note:</strong> Finance and Accounts both go in <code>scale_accounts</code>. Uday runs both sub-tracks. Chart of Accounts must be done before AR/AP — it's a gate.</p>
+        </div>
+      </div>
+
+      <!-- Vandana -->
+      <div class="sprint-col">
+        <div class="sprint-col-head c-v">Vandana — HR &amp; PMO</div>
+
+        <div class="track-section-label">Human Resource — scale_hr</div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Hiring</span><div class="feat-meta"><span class="feat-date">Jul 24–27</span><span class="feat-app">scale_hr</span><span class="risk-m">M</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Onboarding</span><div class="feat-meta"><span class="feat-date">Jul 28–30</span><span class="feat-app">scale_hr</span><span class="risk-l">L</span></div></div></div>
+
+        <div class="track-section-label">PMO — scale_hr</div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Project Onboarding</span><div class="feat-meta"><span class="feat-date">Jul 24–27</span><span class="feat-app">scale_hr</span><span class="risk-m">M</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Consultant Onboarding</span><div class="feat-meta"><span class="feat-date">Jul 28–Aug 5</span><span class="feat-app">scale_hr</span><span class="risk-h">H</span></div></div></div>
+
+        <div class="callout cw" style="margin-top:12px;font-size:12px;">
+          <p><strong>Sprint 0 is Vandana's lightest sprint</strong> — 4 features. This is intentional: Hiring and Project Onboarding are foundational entities that other HR/PMO features depend on.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SPRINT 1 ══════════════ -->
+  <div class="sprint-block">
+    <div class="sprint-label">
+      <span>Sprint 1</span>
+      <span class="sprint-dates">Aug 7 – Aug 21</span>
+      <span class="sprint-note">Sales field features · Finance mid-tier · HR performance cycle begins</span>
+    </div>
+    <div class="sprint-grid">
+
+      <div class="sprint-col">
+        <div class="sprint-col-head c-r">Raghib — Sales &amp; Marketing</div>
+
+        <div class="track-section-label">Sales</div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Sales Prediction</span><div class="feat-meta"><span class="feat-date">Aug 5–8</span><span class="feat-app">scale_sales</span><span class="risk-m">M</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Customer Visits</span><div class="feat-meta"><span class="feat-date">Aug 6–12</span><span class="feat-app">scale_sales</span><span class="risk-h">H</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Lead Scoring</span><div class="feat-meta"><span class="feat-date">Aug 10–12</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Distributor Management</span><div class="feat-meta"><span class="feat-date">Aug 13–20</span><span class="feat-app">scale_sales</span><span class="risk-h">H</span></div></div></div>
+        <div class="feat"><span class="feat-dot p3"></span><div class="feat-c"><span class="feat-name">Win Probability</span><div class="feat-meta"><span class="feat-date">Aug 13–15</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p3"></span><div class="feat-c"><span class="feat-name">Sales Coaching</span><div class="feat-meta"><span class="feat-date">Aug 17–20</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+
+        <div class="track-section-label">Marketing</div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">IG &amp; FB</span><div class="feat-meta"><span class="feat-date">Aug 7–11</span><span class="feat-app">scale_sales</span><span class="risk-h">H — Meta API review</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Website Management</span><div class="feat-meta"><span class="feat-date">Aug 12–13</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">SEO &amp; SEM</span><div class="feat-meta"><span class="feat-date">Aug 14–15</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">AEO &amp; GEO</span><div class="feat-meta"><span class="feat-date">Aug 17–19</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">WhatsApp (start)</span><div class="feat-meta"><span class="feat-date">Aug 20–26</span><span class="feat-app">scale_sales</span><span class="risk-h">H — Meta API approval</span></div></div></div>
+      </div>
+
+      <div class="sprint-col">
+        <div class="sprint-col-head c-u">Uday — Finance &amp; Accounts</div>
+
+        <div class="track-section-label">Finance</div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Financial Reporting</span><div class="feat-meta"><span class="feat-date">Aug 7–10</span><span class="feat-app">scale_accounts</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p3"></span><div class="feat-c"><span class="feat-name">Working Capital Mgt</span><div class="feat-meta"><span class="feat-date">Aug 11–12</span><span class="feat-app">scale_accounts</span><span class="risk-m">M</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Loan &amp; Liability Tracking</span><div class="feat-meta"><span class="feat-date">Aug 13–14</span><span class="feat-app">scale_accounts</span><span class="risk-h">H</span></div></div></div>
+        <div class="feat"><span class="feat-dot p3"></span><div class="feat-c"><span class="feat-name">MSME Scheme Tracking</span><div class="feat-meta"><span class="feat-date">Aug 17–18</span><span class="feat-app">scale_accounts</span><span class="risk-h">H</span></div></div></div>
+        <div class="feat"><span class="feat-dot p3"></span><div class="feat-c"><span class="feat-name">Investment Planning</span><div class="feat-meta"><span class="feat-date">Aug 19–20</span><span class="feat-app">scale_accounts</span><span class="risk-m">M</span></div></div></div>
+
+        <div class="track-section-label">Accounts</div>
+        <div class="feat"><span class="feat-dot p3"></span><div class="feat-c"><span class="feat-name">Audit Trail</span><div class="feat-meta"><span class="feat-date">Aug 7</span><span class="feat-app">scale_accounts</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Journal Entries</span><div class="feat-meta"><span class="feat-date">Aug 10</span><span class="feat-app">scale_accounts</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p3"></span><div class="feat-c"><span class="feat-name">TDS / TCS Management</span><div class="feat-meta"><span class="feat-date">Aug 11–12</span><span class="feat-app">scale_accounts</span><span class="risk-m">M</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Multi-currency</span><div class="feat-meta"><span class="feat-date">Aug 13–14</span><span class="feat-app">scale_accounts</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p3"></span><div class="feat-c"><span class="feat-name">Fixed Assets</span><div class="feat-meta"><span class="feat-date">Aug 17–18</span><span class="feat-app">scale_accounts</span><span class="risk-m">M</span></div></div></div>
+        <div class="feat"><span class="feat-dot p3"></span><div class="feat-c"><span class="feat-name">Depreciation</span><div class="feat-meta"><span class="feat-date">Aug 19–20</span><span class="feat-app">scale_accounts</span><span class="risk-l">L</span></div></div></div>
+      </div>
+
+      <div class="sprint-col">
+        <div class="sprint-col-head c-v">Vandana — HR &amp; PMO</div>
+
+        <div class="track-section-label">Human Resource</div>
+        <div class="feat"><span class="feat-dot p3"></span><div class="feat-c"><span class="feat-name">Induction</span><div class="feat-meta"><span class="feat-date">Jul 31–Aug 8</span><span class="feat-app">scale_hr</span><span class="risk-m">M</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Performance Management</span><div class="feat-meta"><span class="feat-date">Aug 6–10</span><span class="feat-app">scale_hr</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">360 Feedback</span><div class="feat-meta"><span class="feat-date">Aug 11–14</span><span class="feat-app">scale_hr</span><span class="risk-m">M</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Expense</span><div class="feat-meta"><span class="feat-date">Aug 15–17</span><span class="feat-app">scale_hr</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Grievance</span><div class="feat-meta"><span class="feat-date">Aug 18–20</span><span class="feat-app">scale_hr</span><span class="risk-l">L</span></div></div></div>
+
+        <div class="track-section-label">PMO</div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Client Onboarding</span><div class="feat-meta"><span class="feat-date">Aug 6–8</span><span class="feat-app">scale_hr</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Task Management</span><div class="feat-meta"><span class="feat-date">Aug 12–13</span><span class="feat-app">scale_hr</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Log Sheet Management</span><div class="feat-meta"><span class="feat-date">Aug 14–18</span><span class="feat-app">scale_hr</span><span class="risk-m">M</span></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SPRINT 2 ══════════════ -->
+  <div class="sprint-block">
+    <div class="sprint-label">
+      <span>Sprint 2</span>
+      <span class="sprint-dates">Aug 22 – Sep 4</span>
+      <span class="sprint-note">Finance/Accounts wrapping up · HR operations cycle · Sales channel management</span>
+    </div>
+    <div class="sprint-grid">
+
+      <div class="sprint-col">
+        <div class="sprint-col-head c-r">Raghib — Sales &amp; Marketing</div>
+
+        <div class="track-section-label">Sales</div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Order Management</span><div class="feat-meta"><span class="feat-date">Aug 21–22</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Dealer Management</span><div class="feat-meta"><span class="feat-date">Aug 24–27</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Pipeline (Kanban)</span><div class="feat-meta"><span class="feat-date">Aug 28–29</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Sales Targets</span><div class="feat-meta"><span class="feat-date">Aug 31–Sep 2</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+
+        <div class="track-section-label">Marketing</div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">WhatsApp (complete)</span><div class="feat-meta"><span class="feat-date">Aug 20–26</span><span class="feat-app">scale_sales</span><span class="risk-h">H</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Budget Tracking</span><div class="feat-meta"><span class="feat-date">Aug 27–29</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Approval Workflows</span><div class="feat-meta"><span class="feat-date">Aug 31–Sep 1</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Reports &amp; Dashboards</span><div class="feat-meta"><span class="feat-date">Sep 2–4</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+      </div>
+
+      <div class="sprint-col">
+        <div class="sprint-col-head c-u">Uday — Finance &amp; Accounts</div>
+
+        <div class="track-section-label">Finance — final features</div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Profit by Product / Segment</span><div class="feat-meta"><span class="feat-date">Aug 21–24</span><span class="feat-app">scale_accounts</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Variance Analysis</span><div class="feat-meta"><span class="feat-date">Aug 25–26</span><span class="feat-app">scale_accounts</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p3"></span><div class="feat-c"><span class="feat-name">Break-even Analysis</span><div class="feat-meta"><span class="feat-date">Aug 27–28</span><span class="feat-app">scale_accounts</span><span class="risk-h">H</span></div></div></div>
+        <div class="feat"><span class="feat-dot p3"></span><div class="feat-c"><span class="feat-name">ROI Tracking</span><div class="feat-meta"><span class="feat-date">Aug 31–Sep 1</span><span class="feat-app">scale_accounts</span><span class="risk-h">H</span></div></div></div>
+
+        <div class="track-section-label">Accounts — final features</div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Petty Cash</span><div class="feat-meta"><span class="feat-date">Aug 21</span><span class="feat-app">scale_accounts</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Cost Centre Accounting</span><div class="feat-meta"><span class="feat-date">Aug 24–25</span><span class="feat-app">scale_accounts</span><span class="risk-m">M</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">E-invoicing / GST Filing</span><div class="feat-meta"><span class="feat-date">Aug 26–28</span><span class="feat-app">scale_accounts</span><span class="risk-h">H</span></div></div></div>
+        <div class="feat"><span class="feat-dot p3"></span><div class="feat-c"><span class="feat-name">MIS Reports</span><div class="feat-meta"><span class="feat-date">Aug 31–Sep 2</span><span class="feat-app">scale_accounts</span><span class="risk-m">M</span></div></div></div>
+
+        <div class="callout cg" style="margin-top:12px;font-size:12px;">
+          <p><strong>Uday's track wraps up Sep 2.</strong> Both Finance (15 items) and Accounts (15 items) complete within ~6 weeks of start. Uday can shift to support scale_supply (Production/Purchase) from Sep onwards.</p>
+        </div>
+      </div>
+
+      <div class="sprint-col">
+        <div class="sprint-col-head c-v">Vandana — HR &amp; PMO</div>
+
+        <div class="track-section-label">Human Resource</div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Travel</span><div class="feat-meta"><span class="feat-date">Aug 21–24</span><span class="feat-app">scale_hr</span><span class="risk-m">M</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Claims</span><div class="feat-meta"><span class="feat-date">Aug 28–29</span><span class="feat-app">scale_hr</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Payroll</span><div class="feat-meta"><span class="feat-date">Aug 31–Sep 4</span><span class="feat-app">scale_hr</span><span class="risk-m">M</span></div></div></div>
+
+        <div class="track-section-label">PMO</div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Invoicing / Expense</span><div class="feat-meta"><span class="feat-date">Aug 19–24</span><span class="feat-app">scale_hr</span><span class="risk-m">M</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Dashboard (Mandays · Logsheet · Profitability)</span><div class="feat-meta"><span class="feat-date">Aug 25–28</span><span class="feat-app">scale_hr</span><span class="risk-m">M</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Project Gantt Chart</span><div class="feat-meta"><span class="feat-date">Aug 29–Sep 4</span><span class="feat-app">scale_hr</span><span class="risk-m">M</span></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SPRINT 3 ══════════════ -->
+  <div class="sprint-block">
+    <div class="sprint-label">
+      <span>Sprint 3</span>
+      <span class="sprint-dates">Sep 5 – Sep 19</span>
+      <span class="sprint-note">Finance complete · Sales incentive tail · HR compliance · PMO risk/change</span>
+    </div>
+    <div class="sprint-grid">
+
+      <div class="sprint-col">
+        <div class="sprint-col-head c-r">Raghib — Sales &amp; Marketing</div>
+
+        <div class="track-section-label">Sales</div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Forecasting (Sales)</span><div class="feat-meta"><span class="feat-date">Sep 3–7</span><span class="feat-app">scale_sales</span><span class="risk-m">M</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Sales Incentives</span><div class="feat-meta"><span class="feat-date">Sep 8–15</span><span class="feat-app">scale_sales</span><span class="risk-h">H — complex multi-tier slabs</span></div></div></div>
+
+        <div class="track-section-label">Marketing</div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Marketing Analytics</span><div class="feat-meta"><span class="feat-date">Sep 5–8</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Digital Marketing Dashboard</span><div class="feat-meta"><span class="feat-date">Sep 9–11</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Integrations</span><div class="feat-meta"><span class="feat-date">Sep 12–16</span><span class="feat-app">scale_sales</span><span class="risk-m">M</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Customer Feedback</span><div class="feat-meta"><span class="feat-date">Sep 17–19</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+      </div>
+
+      <div class="sprint-col">
+        <div class="sprint-col-head c-u">Uday — Finance &amp; Accounts</div>
+
+        <div class="callout cg" style="font-size:12px;margin-bottom:0">
+          <p><strong>Uday's track is complete by Sep 2.</strong> Both Finance (15) and Accounts (15) items are done. From Sprint 3 onwards, Uday supports scale_supply (Purchase, Production) and acts as reviewer for Finance-adjacent features in other tracks (Sales Incentives commission calculations, PMO project costing).</p>
+        </div>
+      </div>
+
+      <div class="sprint-col">
+        <div class="sprint-col-head c-v">Vandana — HR &amp; PMO</div>
+
+        <div class="track-section-label">Human Resource</div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Leave Management</span><div class="feat-meta"><span class="feat-date">Sep 5–8</span><span class="feat-app">scale_hr</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Attendance &amp; Shifts</span><div class="feat-meta"><span class="feat-date">Sep 9–12</span><span class="feat-app">scale_hr</span><span class="risk-m">M</span></div></div></div>
+        <div class="feat"><span class="feat-dot p3"></span><div class="feat-c"><span class="feat-name">Training &amp; Skilling</span><div class="feat-meta"><span class="feat-date">Sep 14–17</span><span class="feat-app">scale_hr</span><span class="risk-m">M</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Exit Management</span><div class="feat-meta"><span class="feat-date">Sep 18–19</span><span class="feat-app">scale_hr</span><span class="risk-m">M</span></div></div></div>
+
+        <div class="track-section-label">PMO</div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Risk Management</span><div class="feat-meta"><span class="feat-date">Sep 5–9</span><span class="feat-app">scale_hr</span><span class="risk-m">M</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Change Management</span><div class="feat-meta"><span class="feat-date">Sep 10–17</span><span class="feat-app">scale_hr</span><span class="risk-h">H</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Project Impact Report</span><div class="feat-meta"><span class="feat-date">Sep 18–23</span><span class="feat-app">scale_hr</span><span class="risk-m">M</span></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SPRINT 4 ══════════════ -->
+  <div class="sprint-block">
+    <div class="sprint-label">
+      <span>Sprint 4</span>
+      <span class="sprint-dates">Sep 20 – Oct 9</span>
+      <span class="sprint-note">Marketing campaign wave · HR compliance · PMO wraps up</span>
+    </div>
+    <div class="sprint-grid">
+
+      <div class="sprint-col">
+        <div class="sprint-col-head c-r">Raghib — Marketing</div>
+        <div class="track-section-label">Sales — complete from Sep 15</div>
+        <div class="track-section-label">Marketing — campaign &amp; social wave</div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Loyalty &amp; Referral</span><div class="feat-meta"><span class="feat-date">Sep 21–22</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Campaign Management</span><div class="feat-meta"><span class="feat-date">Sep 23–25</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Marketing Calendar</span><div class="feat-meta"><span class="feat-date">Sep 26–28</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Social Media Management</span><div class="feat-meta"><span class="feat-date">Sep 29–Oct 1</span><span class="feat-app">scale_sales</span><span class="risk-h">H — Meta API</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Event Management</span><div class="feat-meta"><span class="feat-date">Oct 2–6</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Campaign Management (P2)</span><div class="feat-meta"><span class="feat-date">Oct 7–9</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+      </div>
+
+      <div class="sprint-col">
+        <div class="sprint-col-head c-u">Uday — Wave 2 Support</div>
+        <div class="callout ci" style="font-size:12px;margin-bottom:0">
+          <p>Finance &amp; Accounts complete. Uday joins the Wave 2 build (Production, Purchase, Stores) starting Sprint 4. He also acts as Frappe finance expert reviewer for Sales Incentives and PMO Invoicing.</p>
+        </div>
+      </div>
+
+      <div class="sprint-col">
+        <div class="sprint-col-head c-v">Vandana — HR &amp; PMO wrap-up</div>
+
+        <div class="track-section-label">Human Resource</div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Compliance (PF / ESI / PT)</span><div class="feat-meta"><span class="feat-date">Sep 21–24</span><span class="feat-app">scale_hr</span><span class="risk-h">H</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Employee Self-Service Portal</span><div class="feat-meta"><span class="feat-date">TBD</span><span class="feat-app">scale_hr</span><span class="risk-m">M</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Manager Self-Service</span><div class="feat-meta"><span class="feat-date">TBD</span><span class="feat-app">scale_hr</span><span class="risk-l">L</span></div></div></div>
+
+        <div class="track-section-label">PMO — final item</div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Library Management</span><div class="feat-meta"><span class="feat-date">Sep 24–26</span><span class="feat-app">scale_hr</span><span class="risk-m">M</span></div></div></div>
+        <div class="feat"><span class="feat-dot p1"></span><div class="feat-c"><span class="feat-name">Calendar Management</span><div class="feat-meta"><span class="feat-date">Oct 8–Nov 8</span><span class="feat-app">scale_hr</span><span class="risk-l">L</span></div></div></div>
+
+        <div class="callout cg" style="margin-top:12px;font-size:12px;">
+          <p><strong>PMO P1 items complete Sep 26.</strong> Vandana then joins Wave 2 (Service, Logistics) and handles remaining HR items (ESS portal, succession planning, engagement — dates TBD from Excel).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SPRINT 5 (TAIL) ══════════════ -->
+  <div class="sprint-block">
+    <div class="sprint-label">
+      <span>Sprint 5 — Marketing P2/P3 Tail</span>
+      <span class="sprint-dates">Oct 10 – Nov 13</span>
+      <span class="sprint-note">Raghib only — all other tracks complete or in Wave 2</span>
+    </div>
+    <div class="sprint-grid">
+
+      <div class="sprint-col">
+        <div class="sprint-col-head c-r">Raghib — Marketing P2/P3</div>
+
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Content Calendar</span><div class="feat-meta"><span class="feat-date">Oct 10–12</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">SMS &amp; Push Notifications</span><div class="feat-meta"><span class="feat-date">Oct 13–15</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Creative Request Module</span><div class="feat-meta"><span class="feat-date">Oct 16–19</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Vendor Management (Mktg)</span><div class="feat-meta"><span class="feat-date">Oct 20–22</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Budget Management</span><div class="feat-meta"><span class="feat-date">Oct 23–26</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Marketing Automation</span><div class="feat-meta"><span class="feat-date">Oct 27–29</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p2"></span><div class="feat-c"><span class="feat-name">Executive Dashboard (CXO)</span><div class="feat-meta"><span class="feat-date">Oct 30–Nov 2</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p3"></span><div class="feat-c"><span class="feat-name">Loyalty &amp; Referral (P3)</span><div class="feat-meta"><span class="feat-date">Nov 3–5</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p3"></span><div class="feat-c"><span class="feat-name">Event Management (P3)</span><div class="feat-meta"><span class="feat-date">Nov 6–11</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+        <div class="feat"><span class="feat-dot p3"></span><div class="feat-c"><span class="feat-name">Brand Assets Library</span><div class="feat-meta"><span class="feat-date">Nov 12–13</span><span class="feat-app">scale_sales</span><span class="risk-l">L</span></div></div></div>
+      </div>
+
+      <div class="sprint-col">
+        <div class="sprint-col-head c-u">Uday — Wave 2</div>
+        <div class="callout ci" style="font-size:12px;margin-bottom:0">
+          <p>Full focus on Wave 2: Production, Purchase, Stores. These three modules have 83%, 88%, and 85% OOTB coverage respectively — Uday should complete them by Dec.</p>
+        </div>
+      </div>
+
+      <div class="sprint-col">
+        <div class="sprint-col-head c-v">Vandana — Wave 2 + HR Remaining</div>
+        <div class="callout ci" style="font-size:12px;margin-bottom:0">
+          <p>Service and Logistics modules (Wave 2). Remaining HR items without dates (Succession Planning, Employee Engagement, Workforce Analytics, Document Management) get scheduled here based on bandwidth.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CROSS-TRACK DEPENDENCIES ── -->
+  <h2>Cross-track dependencies</h2>
+  <div class="grid g2">
+    <div>
+      <h3>Raghib → needs from Uday</h3>
+      <ul>
+        <li><strong>Sales Incentives (Sep 8–15)</strong> — Commission calculation logic needs Accounts payment DocTypes. Uday reviews the commission payout posting.</li>
+        <li><strong>Collections (Aug 3–5)</strong> — reads AR aging from Accounts. Chart of Accounts must be live before Collections can be tested end-to-end.</li>
+      </ul>
+      <h3>Raghib → needs from Vandana</h3>
+      <ul>
+        <li><strong>PMO Invoicing</strong> — project-linked Sales Invoice depends on <code>scale_sales</code> Customer master. Coordinate naming convention.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Vandana → needs from Uday</h3>
+      <ul>
+        <li><strong>PMO Invoicing / Expense (Aug 19–24)</strong> — billing entries post to GL. Chart of Accounts and Cost Centre setup must be complete first.</li>
+        <li><strong>Payroll (Aug 31)</strong> — salary journal entries post to Accounts. Tax accounts (PF, ESI, TDS) must exist in CoA before payroll can run.</li>
+      </ul>
+      <h3>All tracks → need F0</h3>
+      <ul>
+        <li>F0 must be complete by <strong>Jul 23</strong>. Any slip delays all three tracks simultaneously.</li>
+        <li>Dev environments must be identical — use the same <code>bench</code> version + <code>requirements.txt</code>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── RISK FLAGS ── -->
+  <h2>High-risk items — watch list</h2>
+  <div class="grid g3">
+    <div class="callout cw">
+      <p><strong>Meta API (Raghib)</strong><br>IG &amp; FB, WhatsApp, Social Media Management all depend on Meta Business API approval. Start the app review process in Sprint 0 — it can take 1–2 weeks. Blocking risk for Sprint 1–2 Marketing.</p>
+    </div>
+    <div class="callout cw">
+      <p><strong>Chart of Accounts (Uday)</strong><br>Rated High risk because legacy CoA migration + GST account mapping is client-specific. Sprint 0 day 1 item. Slip here delays AR/AP, Bank Recon, and PMO Invoicing in other tracks.</p>
+    </div>
+    <div class="callout cw">
+      <p><strong>Sales Incentives (Raghib)</strong><br>Multi-tier retrospective slabs rated High risk. Needs business rules locked in writing before Sep 8. Formula sign-off from Uday (for payment posting) needed by Sep 5.</p>
+    </div>
+  </div>
+
+</main>
+</body>
+</html>

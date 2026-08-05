@@ -1,0 +1,246 @@
+{
+  "_status": "SUPERSEDED / HISTORICAL — 2026-08-03. This was originally a throwaway POC meant to be reverted after the demo. Plan changed: it was approved live, audited, fixed, and permanently merged to main via PR #7 (merge commit 8da61c3). There was no revert. This file is kept as a historical record of the build — for CURRENT status of T01-T17, read apps/scale_sales/README.md + TESTING.md + sales-module.html (which now has per-task status lines) instead of trusting the fields below as live state.",
+  "_purpose": "[HISTORICAL] Was: machine-resumable state for the Sales Demo POC, for resuming the build or running the revert. Neither applies anymore — see _status above.",
+  "_do_not_confuse_with": "Claude/implementation/sales-context.json — that tracked the ORIGINAL reviewed team track before this branch became the real implementation. Largely moot now that sales_demo IS main's T01-T17 implementation.",
+
+  "demo_meta": {
+    "created": "2026-07-31",
+    "demo_date": "2026-08-02",
+    "reason": "Product demo in 2 days — cannot wait for Archit/Muhammad's reviewed PR track, needed a fast aggressive POC covering most non-AI Sales tasks.",
+    "scope": "Non-AI Sales tasks only (T01-T17, T15 already existed). No scale_marketing app created — Marketing already lives inside scale_sales per architecture decision, and none of T01-T17 are Marketing features.",
+    "outcome": "Approved in the 2026-08-02 demo. Owner decided 2026-08-03 to submit permanently instead of reverting. Branch audited for team-safety (README/TESTING.md added, Company-name assumption verified against team convention, no merge conflicts with main), pushed, PR #7 opened and merged same day."
+  },
+
+  "git": {
+    "branch": "sales_demo",
+    "base_commit": "697a963",
+    "base_branch": "main",
+    "merged": true,
+    "merge_commit": "8da61c3",
+    "merge_pr": "PR #7 (ehiddenbrain/scale)",
+    "merge_date": "2026-08-03",
+    "never_push": false,
+    "never_push_reason": "SUPERSEDED — was true for the original POC plan; owner reversed this decision and had it pushed + merged permanently instead.",
+    "commits_on_branch": [
+      {
+        "hash": "c5881d6",
+        "message": "sales_demo: Tier 1-3 (T01-T13, T16-T17) + demo UI polish"
+      },
+      {
+        "hash": "e09ea6b",
+        "message": "sales_demo: seed sample data + fix 2 pre-existing scaffold bugs"
+      },
+      {
+        "hash": "b3aed9f",
+        "message": "sales_demo: fix Quotation blank-page bug (india_compliance form conflict)"
+      },
+      {
+        "hash": "c2c6291",
+        "message": "sales_demo: territory-based Lead auto-assignment (PDF Lead Management automation)"
+      },
+      {
+        "hash": "d62271e",
+        "message": "sales_demo: fix missing demo badges + missing workspace shortcuts"
+      },
+      {
+        "hash": "d234ba4",
+        "message": "sales_demo: expand Win Probability popup with the real rule + a found bug"
+      },
+      {
+        "hash": "be8271f",
+        "message": "sales_demo: fix Win Probability + Next Best Action field-mismatch bugs"
+      }
+    ],
+    "verified_2026-07-31": "git log/status re-checked directly against the bench after the be8271f fix commit — 7 commits, working tree clean, on branch sales_demo, confirmed not present on origin (git ls-remote --heads origin)."
+  },
+
+  "win_probability_and_next_best_action_bug_fixed_2026-07-31": {
+    "trigger": "Owner asked for the full rule behind the Win Probability badge (led to discovering the bug, documented in d234ba4), then explicitly asked to explain again and attempt an actual fix.",
+    "bug_was": "Neither win_probability() nor next_best_action() in ai_utils.py could ever produce a differentiated result. win_probability()'s stage_weights keys were PDF-style names that don't match our actual sales_stage field values; its stakeholder bonus checked influence_level instead of the real field role_in_decision. next_best_action() read doc.stage (doesn't exist) instead of doc.sales_stage, and compared against PDF-style stage strings. _days_since_activity was referenced in both but never computed anywhere, permanently disabling 4 of next_best_action()'s 5 branches.",
+    "fix_applied_2026-07-31_commit_be8271f": "ai_utils.py: _STAGE_WEIGHTS now keyed on our real Sales Stage master values (Prospecting 5 ... Closed Won 100), stakeholder check now reads role_in_decision, added a status=='Lost' -> 0 override. next_best_action() now reads sales_stage and compares against real stage names. opportunity_hooks.py: added _days_since_last_activity(doc), a real SQL query over tabCommunication + tabComment (falls back to days since creation), wired into on_opportunity_update() so _days_since_activity is genuinely populated on every save.",
+    "still_intentionally_inert": "scale_sales_budget_confirmed (+10 bonus in win_probability()) has no backing field anywhere in the Opportunity schema — Budget lives on Lead, not Opportunity. Left inert rather than inventing a new field without sign-off; called out explicitly in the popup's amber 'Still not wired' box.",
+    "verified_live": "bench console: re-saved all 5 seeded Opportunities post-fix. Probability moved from a flat 20.00 (identical for every deal, pre-fix) to correctly varied 83/65/35/25/15, matching each deal's actual Sales Stage + stakeholder makeup (CRM-OPP-2026-00001: Negotiation/Review base 75 + 8 for CFO Decision Maker = 83). Both demo_ui.js popups (AI Win Probability, AI Next Best Action) re-verified rendering correctly in-browser on CRM-OPP-2026-00001's Contacts tab, showing the corrected rule text plus a green 'Bug found and fixed' callout with the concrete before/after numbers.",
+    "demo_ui_js_updated": "Both popup bodies rewritten (commit be8271f) — green 'Bug found and fixed' box replaces the earlier amber 'known issue' framing now that it's genuinely fixed; amber 'Still not wired' box retained only for the budget_confirmed limitation."
+  },
+
+  "badge_and_workspace_audit_2026-07-31": {
+    "trigger": "Owner asked live why the 'Next Best Action' field had no '✨ New' badge despite being a built, working feature.",
+    "found": "7 fields missing their demo_ui.js badge: Lead (need_description, expected_closure, utm_campaign, ai_lead_score), Customer (competitor_products), Opportunity (next_action_recommendation, probability). Also: Field Visit and the Sales Demo Command Center were never added to the Scale Sales workspace — no click-path existed to reach either through the UI, only direct URLs.",
+    "fixed": "commit d62271e — all 7 badges added, Field Visit + Command Center added as workspace shortcut tiles plus a new 'Field Sales' card group. Verified live in browser: Probability and Next Best Action both show the badge on CRM-OPP-2026-00001; workspace screenshot confirms both new shortcut tiles render.",
+    "still_not_flagged": "Quotation still has zero live 'New' badge — this is the india_compliance doctype_js conflict from commit b3aed9f, not something skippable this time. No safe workaround found yet. Explicitly called out in the deck (Section 9) rather than silently left unmarked.",
+    "showcase_deck_updated": "All 18 PDF-section slides now show (where applicable): the exact custom fieldnames added as monospace chips, AND a click-path flow row (Home → Scale Sales workspace → ... → destination) matching the real workspace structure just verified — not a guessed navigation."
+  },
+
+  "business_showcase": {
+    "file": "Claude/implementation/sales-demo-showcase.html",
+    "audience": "Business/client-facing — non-technical, built to support a demo presentation",
+    "linked_from": "Nav 'Tracking' group on all 14 sidebar pages, plus a prominent end-of-page CTA card on Claude/implementation/index.html",
+    "content": "REWRITTEN 2026-07-31 (four passes): (1) organized around the REAL 18 sections of Sales Management Module.pdf, verbatim titles, no invented sub-numbering; (2) reformatted into a full-screen SLIDE DECK (CSS scroll-snap, one topic per viewport-height slide, 26 slides) with much shorter text; (3) added a 'Use Case' scenario box to the lower half of all 18 PDF-section slides — a persona (role) + short arrow-flow of how they'd actually use that feature, framed 'Use Case — Once Built' (amber) for Planned sections vs neutral/live for Progressed/Initiated ones; (4) all use-case personas renamed to fictional names not matching any real team member — Naveen (Sales Rep), Farhan (Field Sales Rep), Meera (Sales Manager), Kabir (Sales Lead/Channel Manager) — per owner instruction, since the originals reused Archit/Muhammad/Priya/Raghib. Score: 4 Progressed, 7 Initiated, 7 Planned of 18. Slide 03 is a dedicated Task List slide (T01-T17+R01 grid, 16/17 addressed). Naming-alignment comparison consolidated onto Slide 04 only. Includes a transparency callout that NL Query Assistant is NOT one of the 18 PDF sections.",
+    "citation_accuracy_fix": {
+      "issue": "The original version (and sales-module.html's task cards) cited fabricated PDF sub-sections like '§3.2 Lead Tracking' and '§7.2 Promise Tracking' that don't exist — the real PDF has 18 plain numbered sections with no sub-numbering at all. Found by actually reading Claude/reference_from_team/Sales Management Module.pdf (18 pages) in full.",
+      "fix": "All citations in sales-demo-showcase.html now read 'Sales Management Module.pdf — Section N: <verbatim title>'. sales-module.html's task-card citations were NOT corrected (out of scope for this pass) — still contain the fabricated sub-section references. Worth fixing separately if that page will ever be shown to the client directly."
+    },
+    "pdf_section_status": {
+      "1_CRM": "Initiated", "2_Lead_Management": "Progressed", "3_Sales_Pipeline": "Initiated",
+      "4_Sales_Forecasting": "Planned", "5_Sales_Target_Management": "Initiated", "6_Dealer_Management": "Planned",
+      "7_Distributor_Management": "Planned", "8_Customer_Visit_Management": "Progressed", "9_Quotation_Management": "Progressed",
+      "10_Order_Management": "Planned", "11_Collection_Management": "Progressed", "12_Sales_Incentive_Management": "Planned",
+      "13_Sales_Prediction": "Planned", "14_Lost_Opportunity_Analysis": "Initiated", "15_Lead_Scoring": "Initiated",
+      "16_Next_Best_Action": "Initiated", "17_Win_Probability": "Initiated", "18_AI_Sales_Coaching": "Planned"
+    },
+    "pending_decisions_flagged_in_page": {
+      "consolidated_into_one_section": "Per owner instruction 2026-07-31 ('dont rename just highlight at one appropriate place'), the two separate flag-boxes in Section 2/3 cards were replaced with a single consolidated 'A Naming Choice — Worth Discussing Live' section (anchor #naming-alignment), placed right after the PDF Alignment Scorecard. Contains full side-by-side comparison tables for both Sales Stage and Lead Status, framed as a live discussion point for the demo — not yet actioned, no renames done.",
+      "lead_status_realignment": "Section 2 — ERPNext's native Lead status values track document-stage, not the PDF's conversation-stage list. NOT a simple relabel (different data model) — table shown side-by-side, not row-matched, with that caveat stated explicitly on the page.",
+      "sales_stage_realignment": "Section 3 — ERPNext's native Sales Stage names differ from the PDF's exact 9-stage list. This one IS a straightforward relabel — table shown row-matched where a sensible pairing exists."
+    },
+    "second_iteration_completed": {
+      "territory_auto_assignment": {
+        "status": "done, commit c2c6291",
+        "what": "4 Assignment Rule docs (Round Robin) on Lead, one per zone, using the existing Territory tree (T05). Verified live: a Karnataka lead auto-assigns to the South zone's user.",
+        "bug_found": "frappe.safe_eval() runs assign_condition with the document's own fields as bare local variables (eval_locals=doc.as_dict()), not nested under a 'doc' name. First attempt used 'doc.territory in [...]' and silently failed with zero assignments and no visible error. Fixed to 'territory in [...]'. Verified via reading assignment_rule.py source, not guessed."
+      }
+    },
+    "flagship_live_links": {
+      "lead": "/app/lead/CRM-LEAD-2026-00016 (Amit Joshi, Zenith Manufacturing, Hot)",
+      "opportunity": "/app/opportunity/CRM-OPP-2026-00001 (Nova Retail, enriched with 3 stakeholders + 2 competitors)",
+      "quotation": "/app/quotation/SAL-QTN-2026-00003 (25% discount, ready to demo the VP-escalation workflow action live)",
+      "field_visit": "/app/field-visit/FV-2026-07-31-00001",
+      "command_center": "/app/sales-demo"
+    },
+    "bug_found_while_building_this": {
+      "issue": "india_compliance monkey-patches frappe.ui.form.Form globally (gst_api_handler.js:132) for GST-relevant doctypes. Registering a custom doctype_js on Quotation triggered a TypeError in its ScriptManager, blanking the ENTIRE Quotation form — would have broken the live demo link.",
+      "fix": "Removed Quotation from scale_sales's doctype_js registration (commit b3aed9f). Dropped the on-form banner for Quotation only — same explanation now lives in the showcase page instead. All other doctype_js registrations (Lead, Customer, Opportunity, Sales Invoice, Field Visit) unaffected.",
+      "scope_note": "This is a framework-level interaction (india_compliance x custom doctype_js), not specific to this demo — worth being aware of if the real team ever adds a custom Client Script to Quotation or Sales Invoice."
+    }
+  },
+
+  "pre_existing_bugs_found_and_fixed": {
+    "_note": "Both bugs predate this demo — from the original 191e213 main scaffold. They'd crash for ANY real user creating a Lead/Opportunity today, not just this demo. Worth porting the fixes back to main separately, outside this POC branch.",
+    "bugs": [
+      {
+        "file": "lead_hooks.py",
+        "issue": "after_insert hook writes to scale_sales_ai_lead_score, a field that was never created — crashes on every new Lead.",
+        "fix": "Added the field (passive Int, read-only). Not new AI behavior — just gives the existing rule-based scoring function somewhere to write its result."
+      },
+      {
+        "file": "opportunity_hooks.py",
+        "issue": "from scale_sales.scale_sales.ai_utils import ... — the exact doubled-module-path bug already documented as fixed once before elsewhere in the app (see feedback_work_rules memory). Crashes on every Opportunity save.",
+        "fix": "Corrected to from scale_sales.ai_utils import ... Also added scale_sales_next_action_recommendation field its on_update hook needs."
+      }
+    ]
+  },
+
+  "seed_data": {
+    "function": "scale_sales.demo_setup.seed_demo_data",
+    "run_via": "bench --site scale.localhost execute scale_sales.demo_setup.seed_demo_data",
+    "idempotent": true,
+    "not_wired_to_after_migrate": "Transactional data shouldn't recreate on every migrate — run once manually.",
+    "created": { "leads": 8, "opportunities": 5, "quotations": 2 },
+    "note": "Lead priorities you'll see in the UI may differ slightly from what was seeded — the pre-existing auto_score_lead hook recalculates scale_sales_lead_priority from BANT fields on insert, overriding the seed value. That's expected, working behavior, not a bug."
+  },
+
+  "revert": {
+    "pre_demo_backup_file": "sites/scale.localhost/private/backups/20260731_011009-scale_localhost-database.sql.gz",
+    "backup_taken_while_on_branch": "main",
+    "backup_command_used": "bench --site scale.localhost backup --with-files",
+    "mariadb_root_password": "admin (see Claude/implementation/developer-guide.html Phase 3 — dev-only local password)",
+    "steps": [
+      "cd Claude/code/scale-bench",
+      "git status   # confirm nothing uncommitted would be lost",
+      "git checkout main",
+      "bench --site scale.localhost restore sites/scale.localhost/private/backups/20260731_011009-scale_localhost-database.sql.gz --mariadb-root-password admin",
+      "# kill + restart bench start processes (running Python workers won't see the branch/package change otherwise)",
+      "bench --site scale.localhost list-apps   # verify only the original 8 apps",
+      "bench --site scale.localhost migrate     # idempotent sanity check on main"
+    ],
+    "verification_after_revert": [
+      "git branch --show-current == main",
+      "git status == clean",
+      "SELECT COUNT(*) FROM `tabLead Source` == 10 (native defaults only)",
+      "SELECT COUNT(*) FROM `tabCustom Field` WHERE fieldname LIKE 'scale_sales_%' == 0",
+      "SELECT COUNT(*) FROM `tabDocType` WHERE name IN ('Field Visit','Opportunity Stakeholder','Opportunity Competitor') == 0",
+      "SELECT COUNT(*) FROM `tabWorkflow` WHERE name='Quotation Discount Approval' == 0",
+      "SELECT COUNT(*) FROM `tabAssignment Rule` WHERE document_type='Lead' == 0 (the 4 zone rules from c2c6291)",
+      "SELECT COUNT(*) FROM `tabLead` WHERE email_id LIKE '%@demo-seed.example' == 0 (seed data gone)",
+      "bench --site scale.localhost list-apps shows no ModuleNotFoundError"
+    ],
+    "not_yet_run": true
+  },
+
+  "tasks": [
+    { "id": "T01", "title": "Lead Source master values",        "status": "done", "note": "10 values via demo_setup.setup_lead_sources()" },
+    { "id": "T02", "title": "Customer Group hierarchy",          "status": "done", "note": "5 groups via setup_customer_groups()" },
+    { "id": "T03", "title": "4 Customer custom fields",          "status": "done", "note": "setup_customer_fields()" },
+    { "id": "T04", "title": "BANT + UTM Lead fields",             "status": "done", "note": "7 fields (no AI-score field — stayed non-AI), setup_lead_bant_fields()" },
+    { "id": "T05", "title": "Territory tree",                    "status": "done", "note": "4 zones + states under existing native India node" },
+    { "id": "T06", "title": "Install + Selling Settings",        "status": "done", "note": "App already installed from main scaffold; Selling Settings defaults set" },
+    { "id": "T07", "title": "Sales Person + Price Lists",        "status": "done", "note": "4 sales persons + 2 price lists" },
+    { "id": "T08", "title": "Quotation discount approval Workflow", "status": "done", "note": "Manager tier <=20%, VP tier >20%, via setup_quotation_discount_workflow()" },
+    { "id": "T09", "title": "Dunning types",                     "status": "done", "note": "3 types, company=AIWS Technologies" },
+    { "id": "T10", "title": "Promise-to-Pay + Collection Status on Sales Invoice", "status": "done", "note": "Fields collection_hooks.py already expected" },
+    { "id": "T11", "title": "AR aging + Payment Terms",          "status": "done", "note": "3 templates + Accounts Settings default_ageing_range" },
+    { "id": "T12", "title": "Field Visit DocType (16 fields)",   "status": "done", "note": "New custom DocType, auto-exported via developer_mode" },
+    { "id": "T13", "title": "GPS Check-In client script",        "status": "done", "note": "public/js/field_visit.js — Check In/Out buttons, navigator.geolocation" },
+    { "id": "T14", "title": "Mobile e2e test",                   "status": "skipped", "note": "Manual QA task, not a build task — explicitly out of scope" },
+    { "id": "T15", "title": "Lead duplicate detection",          "status": "already_done", "note": "Was already live in lead_hooks.py from the original main scaffold" },
+    { "id": "T16", "title": "10 Pipeline stages",                "status": "done", "note": "8 native + 2 added (Contract Sent, Closed Won)" },
+    { "id": "T17", "title": "Opportunity Stakeholder + Competitor tables", "status": "done", "note": "2 new child DocTypes + Table fields on Opportunity" },
+    { "id": "R01", "title": "Export fixtures — first commit",    "status": "not_applicable", "note": "Branch never pushed, no team fixture handoff needed" }
+  ],
+
+  "ui_polish": {
+    "demo_badges": {
+      "file": "apps/scale_sales/scale_sales/public/js/demo_ui.js",
+      "wired_to": ["Lead", "Customer", "Opportunity", "Sales Invoice", "Quotation", "Field Visit"],
+      "what": "Purple gradient '✨ New' pulsing badge + (i) icon next to each new field label; click opens a frappe.ui.Dialog with a plain-English explanation. Quotation/Field Visit get a full-width intro banner instead (whole-doctype features, not single fields).",
+      "verified": true
+    },
+    "command_center_page": {
+      "route": "/app/sales-demo",
+      "files": [
+        "apps/scale_sales/scale_sales/scale_sales/page/sales_demo/sales_demo.json",
+        "apps/scale_sales/scale_sales/scale_sales/page/sales_demo/sales_demo.js"
+      ],
+      "server_method": "scale_sales.demo_setup.get_command_center_stats",
+      "what": "KPI dashboard — Total Leads, Hot Leads, Open Opportunities, Pipeline Value, Pending Collections, Field Visits (7 days) — all live queries, plus a feature-highlight list.",
+      "verified": true,
+      "bug_found_and_fixed": "Local helper was named format_currency(), same name as Frappe's own global formatter — caused infinite recursion / RangeError. Renamed to scale_demo_format_currency()."
+    }
+  },
+
+  "verification_log": [
+    "Tier 1: bench migrate run twice consecutively, zero errors both times (idempotency proven). Fixed 2 real bugs found during this: Accounts Settings field was default_ageing_range (Data), not age_column_1-4; Dunning Type autonames as '<type> - <company abbr>' so exists-check needed to filter by field values not name.",
+    "Tier 1 browser check: Customer form (new tab, since a previous tab got wedged after a hooks.py reload) — all 4 fields render correctly after Website.",
+    "Tier 2: migrate clean, re-ran to confirm idempotent. Verified via DB: Workflow (1) + 5 states + 7 transitions, Sales Invoice custom fields (2), Opportunity custom fields (2), both child DocTypes registered. workflow_state field confirmed as a Custom Field (not native DocField) on Quotation.",
+    "Tier 2 browser check: Opportunity form → Contacts tab → Stakeholders + Competitors grids render correctly under 'Address & Contact'. Quotation new-form loads with no errors.",
+    "Tier 3: migrate clean. Field Visit DocType auto-exported full file set (json/py/js/test) via developer_mode=1. Browser check: created test record 'FV-2026-07-31-00001', title shows customer name, '📍 Check In' button appears correctly per client-script logic.",
+    "UI polish: Command Center page verified with live data (Pending Collections showed real ₹5,78,200.00 from existing seed invoices). Lead form badges verified — 4 pulsing badges render, info icon click opens dialog with correct copy."
+  ],
+
+  "known_limitations": [
+    "Geo-fencing (50m radius validation against customer address) was scoped down to just capturing GPS coordinates — full radius validation would need customer address geocoding, which isn't set up. Mentioned honestly in the T13 UI banner as future work, not oversold.",
+    "Revert has not been run yet as of this file's last update — `revert.not_yet_run: true`. Run it after the demo, then flip this to false and log the outcome here."
+  ],
+
+  "planned_todo_2026-07-31": {
+    "wire_customer_status_at_risk_rule": {
+      "what": "scale_sales_customer_status ('At Risk' etc.) on Customer is a plain manual Select field today — no hook, no scheduled job, nothing computes it. A rep sets it by judgment.",
+      "todo": "Define and wire a real rule once agreed — candidate signals: order volume/frequency drop, overdue invoices (scale_sales_collection_status on Sales Invoice already has real data for this), competitor mentioned (scale_sales_competitor_products / scale_sales_competitors), no recent activity/renewal approaching.",
+      "flagged_in": "demo_ui.js Customer Status popup (commit a38f2fe) and this file, so it's visible from both the live app and the tracker, not silently assumed done."
+    },
+    "dedicated_sales_config_screen": {
+      "what": "Win Probability and Next Best Action rules ARE written and live (ai_utils.py: win_probability(), next_best_action()), but the thresholds/weights/messages are hardcoded in Python — changing them today means a code change + redeploy.",
+      "todo": "Build a dedicated 'Sales Config' desk page/DocType where an admin can edit all three rules without touching code: Win Probability stage-weights + bonuses, Next Best Action thresholds + messages, and the future Customer Risk rule (once defined above). Same UI pattern as the existing Sales Demo Command Center page.",
+      "flagged_in": "demo_ui.js — blue 'TODO — make this configurable' callout added to all 3 popups (Customer Status, Next Best Action, Win Probability) in commit a38f2fe, pointing at this same planned screen so the three rules read as one coherent future feature, not three separate asks."
+    }
+  },
+
+  "collection_management_audit_2026-08-01": {
+    "trigger": "Owner asked to elaborate what Collection Management's 3 claimed features actually are, then reported clicking into SINV-26-00001 directly and seeing neither field nor status.",
+    "overclaim_found_and_fixed": "'Escalating auto reminders' overstated reality — only 3 Dunning Type master records exist (T-7 Reminder, T-0 Due Alert, T+15 Dunning Notice), pure templates a rep manually selects when creating a Dunning document. No scheduled job, no actual escalation. Slide corrected to 'Reminder templates (manual — not auto-escalating)'; a demo_ui.js banner on Dunning Type now states this honestly (commit cc0ccbf).",
+    "stale_data_found_and_fixed": "SINV-26-00001 was created/submitted 2026-07-27, before collection_hooks.py existed — its on_submit hook never fired, so scale_sales_collection_status/scale_sales_promise_to_pay_date sat permanently null despite the invoice being submitted. Backfilled by manually re-running on_invoice_submit() (not fabricated — this is exactly what the hook is supposed to auto-set), then set Collection Status to 'Promised' + a real Promise-to-Pay Date (+7 days) for a fuller demo view.",
+    "navigation_bug_found_and_fixed": "Owner correctly couldn't find the fields on the invoice — they render on the 'More Info' tab inside the collapsed 'Additional Info' section, NOT the Details tab as the old flow-path implied. Also: Frappe auto-applies a 'hide-control' class to EMPTY fields on a submitted (docstatus=1) document, so before the backfill above, Promise-to-Pay Date was invisible even though hidden=0 and no depends_on — it wasn't a bug in our field, just stock Frappe decluttering empty+uneditable fields. Slide's flow-path and links corrected to point at the exact record + tab + section; the generic /app/sales-invoice list link replaced with a direct link to SINV-26-00001.",
+    "ageing_buckets_verified": "Confirmed live on /app/query-report/Accounts Receivable — filter shows '30, 60, 90, 120' and the report legend shows matching 0-30/31-60/61-90/91-120/121-Above buckets. Added a direct link to this report; the old link (invoice list) never showed buckets at all.",
+    "bonus_bug_found_and_fixed_unrelated": "While checking scheduler_events for a Dunning-related job (none exists), found tasks.py's daily_ai_next_best_action() had the same doubled-import-path bug already fixed once in opportunity_hooks.py (scale_sales.scale_sales.ai_utils instead of scale_sales.ai_utils) - silently crashing every scheduled run via a caught exception. Fixed in commit 393c176, verified via direct bench execute with zero new Error Log entries."
+  }
+}

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Architecture — AIWS ERP</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="s-title">AIWS ERP</div>
+    <div class="s-sub">Implementation Master Plan</div>
+    <span class="s-tag">Claude / implementation</span>
+  </div>
+  <nav>
+    <div class="nav-group">Start Here</div>
+    <a class="nav-link" href="index.html">Program Overview</a>
+    <div class="nav-group">Foundation</div>
+    <a class="nav-link" href="frappe-verdict.html">Frappe Capability</a>
+    <a class="nav-link active" href="architecture.html">System Architecture</a>
+    <div class="nav-group">Development Framework</div>
+    <a class="nav-link" href="customization-guide.html">Customization Guide</a>
+    <a class="nav-link" href="developer-guide.html">Developer Workflow</a>
+    <div class="nav-group">Implementation</div>
+    <a class="nav-link" href="module-plan.html">All 13 Modules</a>
+    <a class="nav-link" href="sprint-plan.html">Parallel Sprint Plan</a>
+    <a class="nav-link" href="wave-1.html">Sales &amp; Marketing Detail</a>
+
+    <div class="nav-group">Module Plans</div>
+    <a class="nav-link" href="sales-module.html">Sales Module Plan</a>
+    <a class="nav-link" href="hr-module.html">HR Module Plan</a>
+    <a class="nav-link" href="accounts-module.html">Accounts Module Plan</a>
+    <a class="nav-link" href="finance-module.html">Finance Module Plan</a>
+    <a class="nav-link" href="pmo-module.html">PMO Module Plan</a>
+
+    <div class="nav-group">User Manual</div>
+    <a class="nav-link" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
+
+    <div class="nav-group">AI Strategy</div>
+    <a class="nav-link" href="ai-plan-strategy.html">AI Plan Strategy</a>
+
+    <div class="nav-group">Tracking</div>
+    <a class="nav-link" href="sales-tracker.html">Sales Tracker</a>
+    <a class="nav-link" href="sales-demo-showcase.html">Sales Showcase ✨</a>
+  </nav>
+  <div class="sidebar-foot">Pixaflip × SIL · AIWS ERP<br><a href="../../index.html">← AIWS Setup portal</a></div>
+</aside>
+
+<main>
+  <div class="breadcrumb">AIWS ERP <span>›</span> <a href="index.html">Plan</a> <span>›</span> System Architecture</div>
+  <div class="page-header">
+    <h1>System Architecture</h1>
+    <p class="subtitle">How the custom apps are structured, how multi-tenancy works, how data flows, and how the system will be deployed at scale.</p>
+  </div>
+
+  <h2>The custom app family</h2>
+  <p>All AIWS-specific code lives in <strong>custom Frappe apps</strong> installed on top of the standard ERPNext stack. Each app is an independent pip package with its own Git repository, version, and release cycle. This is the only correct way to build on Frappe without forking.</p>
+
+  <figure>
+    <svg viewBox="0 0 860 380" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,sans-serif">
+      <!-- Frappe foundation -->
+      <rect x="20" y="310" width="820" height="50" rx="8" fill="#112236" stroke="#1e3a5f"/>
+      <text x="430" y="330" font-size="12" font-weight="700" fill="rgba(255,255,255,.7)" text-anchor="middle">FRAPPE FRAMEWORK v15 (MIT)</text>
+      <text x="430" y="348" font-size="11" fill="rgba(255,255,255,.4)" text-anchor="middle">DocType engine · REST API · Auth · Background jobs · Webhooks · Print · Reports · Multi-tenant sites</text>
+      <!-- ERPNext layer -->
+      <rect x="20" y="250" width="820" height="48" rx="8" fill="#1e3a5f" stroke="#2d5186"/>
+      <text x="430" y="269" font-size="12" font-weight="700" fill="rgba(255,255,255,.8)" text-anchor="middle">ERPNext v15 + Frappe CRM + Frappe HR + India Compliance (GPL — adopt as-is, never modify)</text>
+      <text x="430" y="286" font-size="11" fill="rgba(255,255,255,.45)" text-anchor="middle">Selling · Buying · Accounts · Stock · Manufacturing · Projects · HR/Payroll · CRM pipeline · GST/TDS/e-Invoice</text>
+      <!-- scale_core -->
+      <rect x="20" y="170" width="820" height="68" rx="8" fill="#1d4ed8" stroke="#2563eb"/>
+      <text x="430" y="192" font-size="13" font-weight="800" fill="#fff" text-anchor="middle">scale_core — shared foundation (install on every site)</text>
+      <text x="430" y="210" font-size="11" fill="rgba(255,255,255,.75)" text-anchor="middle">Branding &amp; UI theme · Tenant config API · SSO hooks (Keycloak/OIDC) · Audit log DocType</text>
+      <text x="430" y="228" font-size="11" fill="rgba(255,255,255,.75)" text-anchor="middle">Event Outbox DocType · AIWS Config Profile receiver · Shared permission roles · Helper utilities</text>
+      <!-- Module apps -->
+      <rect x="20"  y="80" width="148" height="76" rx="8" fill="#f0fdf4" stroke="#86efac"/>
+      <text x="94"  y="100" font-size="12" font-weight="700" fill="#166534" text-anchor="middle">scale_sales</text>
+      <text x="94"  y="116" font-size="10.5" fill="#166534" text-anchor="middle">Sales module</text>
+      <text x="94"  y="130" font-size="10" fill="#15803d" text-anchor="middle">Wave 1</text>
+      <text x="94"  y="144" font-size="10" fill="#15803d" text-anchor="middle">CRM + Selling</text>
+
+      <rect x="178" y="80" width="148" height="76" rx="8" fill="#f0fdf4" stroke="#86efac"/>
+      <text x="252" y="100" font-size="12" font-weight="700" fill="#166534" text-anchor="middle">scale_sales</text>
+      <text x="252" y="116" font-size="10.5" fill="#166534" text-anchor="middle">Marketing module</text>
+      <text x="252" y="130" font-size="10" fill="#15803d" text-anchor="middle">Wave 1</text>
+      <text x="252" y="144" font-size="10" fill="#15803d" text-anchor="middle">GentooLeads connector</text>
+
+      <rect x="336" y="80" width="148" height="76" rx="8" fill="#eff6ff" stroke="#93c5fd"/>
+      <text x="410" y="100" font-size="12" font-weight="700" fill="#1e40af" text-anchor="middle">scale_supply</text>
+      <text x="410" y="116" font-size="10.5" fill="#1e40af" text-anchor="middle">PMO · Service</text>
+      <text x="410" y="130" font-size="10" fill="#1d4ed8" text-anchor="middle">Wave 2</text>
+      <text x="410" y="144" font-size="10" fill="#1d4ed8" text-anchor="middle">Production · Purchase · Stores</text>
+
+      <rect x="494" y="80" width="148" height="76" rx="8" fill="#fffbeb" stroke="#fcd34d"/>
+      <text x="568" y="100" font-size="12" font-weight="700" fill="#78350f" text-anchor="middle">scale_accounts</text>
+      <text x="568" y="116" font-size="10.5" fill="#78350f" text-anchor="middle">Accounts · Finance</text>
+      <text x="568" y="130" font-size="10" fill="#92400e" text-anchor="middle">Wave 3</text>
+      <text x="568" y="144" font-size="10" fill="#92400e" text-anchor="middle">Logistics</text>
+
+      <rect x="652" y="80" width="188" height="76" rx="8" fill="#fdf4ff" stroke="#e9d5ff"/>
+      <text x="746" y="100" font-size="12" font-weight="700" fill="#581c87" text-anchor="middle">scale_hr + scale_bi</text>
+      <text x="746" y="116" font-size="10.5" fill="#581c87" text-anchor="middle">HR · Dashboards</text>
+      <text x="746" y="130" font-size="10" fill="#6b21a8" text-anchor="middle">Wave 3–4</text>
+      <text x="746" y="144" font-size="10" fill="#6b21a8" text-anchor="middle">Survey</text>
+
+      <!-- Arrows down -->
+      <line x1="94"  y1="156" x2="94"  y2="168" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#ar)"/>
+      <line x1="252" y1="156" x2="252" y2="168" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#ar)"/>
+      <line x1="410" y1="156" x2="410" y2="168" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#ar)"/>
+      <line x1="568" y1="156" x2="568" y2="168" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#ar)"/>
+      <line x1="746" y1="156" x2="746" y2="168" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#ar)"/>
+      <line x1="430" y1="238" x2="430" y2="248" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#ar)"/>
+      <line x1="430" y1="298" x2="430" y2="308" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#ar)"/>
+      <defs>
+        <marker id="ar" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+          <path d="M0,0 L7,3.5 L0,7 z" fill="#94a3b8"/>
+        </marker>
+      </defs>
+
+      <!-- Future seam label -->
+      <rect x="20" y="20" width="820" height="46" rx="8" fill="none" stroke="#dc2626" stroke-dasharray="6 4"/>
+      <text x="430" y="39" font-size="12" font-weight="700" fill="#dc2626" text-anchor="middle">FUTURE: AIWS Intelligent Bridge + Strategy Document Engine</text>
+      <text x="430" y="57" font-size="11" fill="#dc2626" text-anchor="middle">Seams kept open in scale_core (Config Profile receiver + Event Outbox) — no code built in this program</text>
+    </svg>
+    <p class="muted" style="text-align:center;margin-top:8px;">The custom app stack. Module apps depend on scale_core; all depend on ERPNext; all run on Frappe.</p>
+  </figure>
+
+  <hr class="section">
+
+  <h2>What goes in each custom app</h2>
+  <div class="tbl-wrap">
+    <table>
+      <tr><th>App</th><th>Depends on</th><th>Contains</th><th>Owns</th></tr>
+      <tr>
+        <td><code>scale_core</code></td>
+        <td>frappe, erpnext</td>
+        <td>SSO/OIDC hooks, tenant config DocType, Event Outbox DocType, AIWS Config Profile receiver, shared roles (AIWS Admin, AIWS User, AIWS Viewer), branding/theme fixtures, helper utilities</td>
+        <td>Platform services. Every other AIWS app depends on this.</td>
+      </tr>
+      <tr>
+        <td><code>scale_sales</code></td>
+        <td>scale_core, erpnext, crm</td>
+        <td>Custom fields on Lead/Opportunity/Customer, Dealer Management DocType, Field Force Activity DocType, Sales Commission Calculator, Follow-up automation scripts, channel partner portal pages</td>
+        <td>Everything in the Sales module not covered by native ERPNext Selling + Frappe CRM.</td>
+      </tr>
+      <tr>
+        <td><code>scale_sales</code></td>
+        <td>scale_core, crm</td>
+        <td>GentooLeads API connector, Content Calendar DocType, Brand Assets Library DocType, Campaign ROI aggregator, WhatsApp/IG/FB webhook receivers, SEO tracker DocType</td>
+        <td>All marketing module functionality; integration surface to GentooLeads.</td>
+      </tr>
+      <tr>
+        <td><code>scale_supply</code></td>
+        <td>scale_core, erpnext</td>
+        <td>Consultant Onboarding DocType, Logsheet DocType, Risk/Change Management DocTypes, AMC Management DocType, Field Service Dispatch DocType, Technician scheduling scripts, Downtime Tracking extension</td>
+        <td>PMO, Service, Production extensions; Purchase and Stores are mostly OOTB (config only).</td>
+      </tr>
+      <tr>
+        <td><code>scale_accounts</code></td>
+        <td>scale_core, erpnext</td>
+        <td>Budget Forecasting Script Reports, Working Capital dashboard, MSME tracking DocType, Fleet Management DocTypes, Route Optimisation (Google Directions API), e-Way Bill (India Compliance extension), Driver assignment scripts</td>
+        <td>Accounts extensions (minimal), Finance analytics, Logistics module.</td>
+      </tr>
+      <tr>
+        <td><code>scale_hr</code></td>
+        <td>scale_core, hrms</td>
+        <td>360 Feedback DocType, Skills Matrix extension, DPDP consent tracking, appraisal cycle extensions, EMS integration connector (DPDP-gated)</td>
+        <td>HR module extensions on top of Frappe HR.</td>
+      </tr>
+      <tr>
+        <td><code>scale_bi</code></td>
+        <td>scale_core, erpnext</td>
+        <td>Superset embed configuration, KPI mart ETL scripts, cross-module report views, Survey DocType, role-based dashboard provisioner</td>
+        <td>Dashboards, BI integration, Survey module.</td>
+      </tr>
+    </table>
+  </div>
+
+  <hr class="section">
+
+  <h2>Multi-tenancy model</h2>
+  <p>Frappe's native multi-tenancy is <strong>site-per-tenant</strong>. Each client gets their own Frappe site with a dedicated MariaDB database. All sites on a bench share the same app code — they install from the same apps — but have completely isolated data.</p>
+
+  <div class="grid g2">
+    <div class="card">
+      <h3>Tier A — Pooled SaaS (default)</h3>
+      <p>Multiple client sites on one bench cluster. Cheapest to operate — 4–8× lower cost than dedicated. Frappe Cloud manages this for you if you use their hosting. Self-managed on AWS EKS with <code>frappe_docker</code> otherwise.</p>
+      <p><strong>When to use:</strong> All new clients by default. SMB and mid-market.</p>
+      <p><strong>Isolation:</strong> Database-level (separate MariaDB DB per site). App-level code is shared.</p>
+    </div>
+    <div class="card">
+      <h3>Tier B — Dedicated (enterprise)</h3>
+      <p>One client per bench cluster (or per VM). Full isolation at the infrastructure level. Same codebase — same apps, same version — but the client gets their own server.</p>
+      <p><strong>When to use:</strong> Enterprise clients with compliance requirements or high data sensitivity.</p>
+      <p><strong>Migration path:</strong> Tier A → Tier B via <code>bench --site sitename backup</code> + restore on a new bench.</p>
+    </div>
+  </div>
+
+  <div class="callout ci">
+    <p><strong>Control plane (future):</strong> A separate Python/FastAPI service (not part of this ERP build) will serve as the tenant registry and provisioning API — tracking which clients exist, which tier they're on, and automating site creation. For now, a spreadsheet or simple admin script suffices. Design the <code>scale_core</code> AIWS Config Profile DocType as the future control-plane "write surface."</p>
+  </div>
+
+  <hr class="section">
+
+  <h2>Data architecture</h2>
+  <div class="tbl-wrap">
+    <table>
+      <tr><th>Layer</th><th>Technology</th><th>Purpose</th><th>Who owns it</th></tr>
+      <tr>
+        <td><strong>Tenant ERP DB</strong></td>
+        <td>MariaDB (one DB per site)</td>
+        <td>All ERP transactional data: documents, masters, ledger entries. Managed by Frappe ORM — no direct SQL writes.</td>
+        <td>Frappe framework</td>
+      </tr>
+      <tr>
+        <td><strong>Cache &amp; Queue</strong></td>
+        <td>Redis (shared across sites on bench)</td>
+        <td>Session cache, background job queue (RQ), real-time websocket pub/sub.</td>
+        <td>Frappe framework</td>
+      </tr>
+      <tr>
+        <td><strong>File Storage</strong></td>
+        <td>S3-compatible (AWS S3 or MinIO)</td>
+        <td>Attachments, screen recordings (EMS), exports. Configure <code>s3_backup</code> in site config.</td>
+        <td>scale_core config</td>
+      </tr>
+      <tr>
+        <td><strong>Analytics DB</strong> (Wave 4)</td>
+        <td>PostgreSQL or ClickHouse (separate)</td>
+        <td>KPI mart for Superset. Read-only replicated subset of ERP data, denormalized for reporting.</td>
+        <td>scale_bi ETL</td>
+      </tr>
+      <tr>
+        <td><strong>Event Outbox</strong></td>
+        <td>MariaDB (in site DB) → async</td>
+        <td>AIWS Outbox DocType written in same DB transaction as business events. Background publisher ships to future Bridge backbone. Graceful degradation: ERP keeps working when Bridge is absent.</td>
+        <td>scale_core</td>
+      </tr>
+    </table>
+  </div>
+
+  <hr class="section">
+
+  <h2>API surface</h2>
+  <div class="grid g2">
+    <div class="card">
+      <h3>Auto-generated REST APIs</h3>
+      <p>Every DocType in ERPNext and your custom apps automatically gets CRUD REST APIs at:</p>
+      <div class="code-label">Endpoint pattern</div>
+      <pre><code>/api/resource/{DocType}/{name}   GET, PUT, DELETE
+/api/resource/{DocType}          GET (list), POST (create)
+/api/v2/document/{DocType}/{name}</code></pre>
+      <p>These are authenticated via session cookie or API key/secret. No extra work needed.</p>
+    </div>
+    <div class="card">
+      <h3>Custom whitelisted APIs</h3>
+      <p>For complex business operations, expose custom Python functions via the <code>@frappe.whitelist()</code> decorator:</p>
+      <div class="code-label">Python — custom API</div>
+      <pre><code><span class="kw">import</span> frappe
+
+<span class="kw">@frappe.whitelist</span>()
+<span class="kw">def</span> <span class="fn">get_dealer_scorecard</span>(dealer_id, period):
+    <span class="cmt"># complex business logic</span>
+    <span class="kw">return</span> frappe.db.sql(<span class="str">"..."</span>)</code></pre>
+      <p>Called at: <code>/api/method/scale_sales.api.dealer.get_dealer_scorecard</code></p>
+    </div>
+  </div>
+
+  <hr class="section">
+
+  <h2>Deployment model</h2>
+  <div class="tbl-wrap">
+    <table>
+      <tr><th>Environment</th><th>How to run</th><th>Notes</th></tr>
+      <tr>
+        <td><strong>Local development</strong></td>
+        <td><code>bench start</code> on a local bench, or <code>docker compose up</code> with <code>frappe_docker</code></td>
+        <td>Each developer maintains their own local bench with a dev site. See <a href="developer-guide.html">Developer Workflow</a>.</td>
+      </tr>
+      <tr>
+        <td><strong>CI/CD</strong></td>
+        <td>GitHub Actions — run <code>bench run-tests --app scale_sales</code> on every PR</td>
+        <td>Use <code>frappe/frappe_docker</code> as the CI base image. Tests run against a fresh site.</td>
+      </tr>
+      <tr>
+        <td><strong>Staging</strong></td>
+        <td>Single AWS EC2 instance (t3.medium) or Frappe Cloud dev environment</td>
+        <td>Mirror of production; all migrations tested here first. Dedicated staging site per module team.</td>
+      </tr>
+      <tr>
+        <td><strong>Production — SaaS</strong></td>
+        <td>AWS EKS cluster using <code>frappe_docker</code> Helm chart, or Frappe Cloud (managed)</td>
+        <td>Recommended: Frappe Cloud for MVP/early clients (managed updates, backups, monitoring). Move to self-managed AWS when scale justifies it.</td>
+      </tr>
+      <tr>
+        <td><strong>Production — On-prem</strong></td>
+        <td>Customer-hosted Docker Compose or single VM bench</td>
+        <td>Ship an installation script and Docker Compose file. Customer gets a support SLA for updates.</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="callout cw">
+    <p><strong>Recommendation for early stage:</strong> Start with <strong>Frappe Cloud</strong> for the first wave of clients. It handles infrastructure, SSL, backups, and bench updates. Once you have 10+ clients, evaluate migrating to self-managed AWS EKS to reduce per-client infrastructure cost. Don't prematurely optimize infrastructure.</p>
+  </div>
+
+  <div class="page-nav">
+    <a class="prev" href="frappe-verdict.html">← Frappe Capability</a>
+    <a class="next" href="customization-guide.html">Customization Guide →</a>
+  </div>
+</main>
+</body>
+</html>

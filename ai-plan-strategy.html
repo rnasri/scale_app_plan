@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Plan Strategy — AIWS ERP</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.gstat { display:inline-flex; align-items:center; gap:6px; padding:4px 12px; border-radius:20px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.4px; white-space:nowrap; }
+.gstat-merged  { background:var(--green-bg);  color:var(--green);  border:1px solid var(--green-bdr); }
+.gstat-ns      { background:#f9fafb;          color:#6b7280;       border:1px solid #e5e7eb; }
+.xref-link { color:var(--blue); font-weight:600; text-decoration:none; }
+.xref-link:hover { text-decoration:underline; }
+.priority-note { border:2px solid var(--purple-bdr); background:var(--purple-bg); border-radius:var(--r-lg); padding:16px 20px; margin-bottom:22px; }
+.priority-note p { margin:0; font-size:13.5px; color:#4c1d95; line-height:1.6; }
+.priority-note strong { color:#3b0764; }
+.compare-table td, .compare-table th { vertical-align:top; }
+.mech-tag { display:inline-block; font-size:11px; font-weight:700; padding:2px 9px; border-radius:5px; margin-top:4px; }
+.mech-ours { background:var(--blue-bg); color:#1d4ed8; }
+.mech-fac  { background:var(--purple-bg); color:var(--purple); }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="s-title">AIWS ERP</div>
+    <div class="s-sub">Implementation Master Plan</div>
+    <span class="s-tag">Claude / implementation</span>
+  </div>
+  <nav>
+    <div class="nav-group">Start Here</div>
+    <a class="nav-link" href="index.html">Program Overview</a>
+
+    <div class="nav-group">Foundation</div>
+    <a class="nav-link" href="frappe-verdict.html">Frappe Capability</a>
+    <a class="nav-link" href="architecture.html">System Architecture</a>
+
+    <div class="nav-group">Development Framework</div>
+    <a class="nav-link" href="customization-guide.html">Customization Guide</a>
+    <a class="nav-link" href="developer-guide.html">Developer Workflow</a>
+
+    <div class="nav-group">Implementation</div>
+    <a class="nav-link" href="module-plan.html">All 13 Modules</a>
+    <a class="nav-link" href="sprint-plan.html">Parallel Sprint Plan</a>
+    <a class="nav-link" href="wave-1.html">Sales &amp; Marketing Detail</a>
+
+    <div class="nav-group">Module Plans</div>
+    <a class="nav-link" href="sales-module.html">Sales Module Plan</a>
+    <a class="nav-link" href="hr-module.html">HR Module Plan</a>
+    <a class="nav-link" href="accounts-module.html">Accounts Module Plan</a>
+    <a class="nav-link" href="finance-module.html">Finance Module Plan</a>
+    <a class="nav-link" href="pmo-module.html">PMO Module Plan</a>
+
+    <div class="nav-group">User Manual</div>
+    <a class="nav-link" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
+
+    <div class="nav-group">AI Strategy</div>
+    <a class="nav-link active" href="ai-plan-strategy.html">AI Plan Strategy</a>
+
+    <div class="nav-group">Tracking</div>
+    <a class="nav-link" href="sales-tracker.html">Sales Tracker</a>
+    <a class="nav-link" href="sales-demo-showcase.html">Sales Showcase ✨</a>
+  </nav>
+  <div class="sidebar-foot">
+    Pixaflip × SIL · AIWS ERP<br>
+    <a href="../../index.html">← AIWS Setup portal</a>
+  </div>
+</aside>
+
+<main>
+<div class="breadcrumb">AIWS ERP <span>›</span> AI Plan Strategy</div>
+
+<div class="page-header">
+  <h1>AI Plan Strategy — Ours vs. Veeren's AI ⇄ Dev Bridge</h1>
+  <p class="subtitle">Reconciling the AI task plan we handed over (V01–V08, <a href="sales-module.html#V01" style="color:inherit;">Sales Module Plan</a>) with the document Veeren's AI team shared back — what's aligned, what we're adopting from his side, and what genuinely conflicts.</p>
+</div>
+
+<div class="summary-strip">
+  <div class="s-stat"><div class="sv">8</div><div class="sl">Our AI Tasks (V01–V08)</div></div>
+  <div class="s-stat"><div class="sv">1</div><div class="sl">Doc From Veeren (3pp)</div></div>
+  <div class="s-stat"><div class="sv">3</div><div class="sl">Confirmed Aligned</div></div>
+  <div class="s-stat"><div class="sv">3</div><div class="sl">New — Recommend Adopt</div></div>
+  <div class="s-stat"><div class="sv">2</div><div class="sl">Open Conflicts</div></div>
+</div>
+
+<div class="priority-note">
+  <p><strong>Priority rule for this page:</strong> Veeren's <code>SCALE_AI_DEV_BRIDGE.md</code> (4 Aug 2026) takes priority — it's the AI team's own account of how they intend to work day-to-day, and Raghib's explicit instruction is to align to it. This page only exists to flag the places where our plan and his genuinely disagree, or where our original approach looks better and is worth raising back with him — not to silently override his document. Where the two already agree, nothing here changes anything.</p>
+</div>
+
+<div class="callout ci">
+  <p><strong>Source documents:</strong> our plan is the "AI Track" section of the <a href="sales-module.html#V01" class="xref-link">Sales Module Plan</a> (tasks V01–V08, written by us before hand-over). Veeren's document is <code>Claude/reference_from_team/SCALE_AI_DEV_BRIDGE.pdf</code>, dated 4 Aug 2026 — a 3-page process note, not a feature list.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     WHAT WE PLANNED
+═══════════════════════════════════════════ -->
+<h2>1. What we planned — the V01–V08 AI track</h2>
+<p style="margin-bottom:14px;">Handed to Veeren ahead of this document. Full detail, steps, and code on the <a href="sales-module.html#V01" class="xref-link">Sales Module Plan</a> page.</p>
+
+<div class="tbl-wrap">
+  <table class="compare-table">
+    <tr><th>Task</th><th>What it delivers</th><th>Delivery mechanism</th><th>Status</th></tr>
+    <tr>
+      <td><a class="xref-link" href="sales-module.html#V01">V01–V02</a></td>
+      <td>NL Query chatbot — setup + console proof of concept + schema document</td>
+      <td><code>ai_utils.call_llm()</code> called directly from bench console<span class="mech-tag mech-ours">our mechanism</span></td>
+      <td><span class="gstat gstat-ns">Not started</span></td>
+    </tr>
+    <tr>
+      <td><a class="xref-link" href="sales-module.html#V03">V03</a></td>
+      <td>NL Query production endpoint — translates plain English to a safe <code>frappe.get_list()</code> call</td>
+      <td>Custom whitelisted API: <code>scale_sales.api.ai_query.answer()</code><span class="mech-tag mech-ours">our mechanism</span></td>
+      <td><span class="gstat gstat-ns">Not started</span></td>
+    </tr>
+    <tr>
+      <td><a class="xref-link" href="sales-module.html#V04">V04</a></td>
+      <td>NL Query chat widget — end users type a question, see an answer</td>
+      <td>Hand-built HTML/JS chat UI on a custom Frappe Page ("Sales Intelligence"), embedded in the Sales Workspace<span class="mech-tag mech-ours">our mechanism</span></td>
+      <td><span class="gstat gstat-ns">Not started</span></td>
+    </tr>
+    <tr>
+      <td><a class="xref-link" href="sales-module.html#V05">V05</a></td>
+      <td>NL Query hardening — AI Query Log DocType, error handling, accuracy target</td>
+      <td>New DocType + logging in <code>ai_query.py</code></td>
+      <td><span class="gstat gstat-ns">Not started</span></td>
+    </tr>
+    <tr>
+      <td><a class="xref-link" href="sales-module.html#V06">V06–V08</a></td>
+      <td>Calibrate &amp; test Lead Scoring, Win Probability, Next Best Action, Lost Deal Analysis</td>
+      <td>Tune existing functions in <code>ai_utils.py</code></td>
+      <td><span class="gstat gstat-merged">✓ Base functions already live</span> — rule-based, shipped via <code>sales_demo → main</code>. Extend, don't rebuild.</td>
+    </tr>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     WHAT VEEREN PROVIDED
+═══════════════════════════════════════════ -->
+<h2>2. What Veeren provided — SCALE_AI_DEV_BRIDGE.md</h2>
+
+<div class="callout cw">
+  <p><strong>This is not a feature plan.</strong> It never mentions the NL Query chatbot, Lost Deal Analysis, or any V01–V08 task by name. It's a <strong>process document</strong> — how the AI team and the module-dev team share the same <code>scale_sales</code> codebase without stepping on each other. Explicitly scoped to be reused for <code>scale_finance</code> / <code>scale_hr</code> / <code>scale_account</code> later, the same way <code>SCALE_DOMAIN_APP_PLAYBOOK.md</code> was reused across modules for the dev-side build.</p>
+</div>
+
+<h3 style="margin-top:22px;">New mechanism it introduces: frappe_assistant_core (FAC)</h3>
+<p>AI capabilities get wrapped as <code>BaseTool</code> classes in a new <code>fac_tools.py</code>, registered via an <code>assistant_tools</code> key in <code>hooks.py</code>, and discovered by an AI client after a bench restart. The document's own worked example verifies a tool call through <strong>Claude Desktop</strong> — this is a tool-calling / MCP-style framework, not previously part of our plan in any form.</p>
+
+<h3 style="margin-top:22px;">§1 — File ownership map (as given)</h3>
+<div class="tbl-wrap">
+  <table>
+    <tr><th>Path</th><th>Owner</th><th>Gate?</th></tr>
+    <tr><td><code>scale_sales/scale_sales/ai_utils.py</code></td><td>AI team</td><td>No — direct commit</td></tr>
+    <tr><td><code>scale_sales/scale_sales/fac_tools.py</code> (new)</td><td>AI team</td><td>No — direct commit</td></tr>
+    <tr><td><code>hooks.py</code> — <code>assistant_tools</code>, <code>scheduler_events</code> keys only</td><td>AI writes, Dev flagged</td><td>No, but dev lead CC'd on PR</td></tr>
+    <tr><td><code>hooks.py</code> — <code>required_apps</code>, <code>doctype_js</code>, <code>doc_events</code>, <code>fixtures</code></td><td>Dev team</td><td><strong>Yes</strong></td></tr>
+    <tr><td><code>tasks.py</code></td><td>Dev team (AI proposes new jobs)</td><td><strong>Yes</strong></td></tr>
+    <tr><td>Any DocType JSON (<code>**/doctype/**</code>)</td><td>Dev team</td><td><strong>Yes</strong></td></tr>
+    <tr><td>Custom Fields / Property Setters (fixtures)</td><td>Dev team</td><td><strong>Yes</strong></td></tr>
+    <tr><td><code>opportunity_hooks.py</code>, <code>lead_hooks.py</code>, <code>collection_hooks.py</code></td><td>Dev team</td><td><strong>Yes</strong> — AI's functions get called from here, never edited in here</td></tr>
+  </table>
+</div>
+<p style="font-size:13px;color:var(--text-3);">Rule of thumb (Veeren's, verbatim): the AI team can always ship logic that reads/writes through <strong>existing</strong> fields. The moment a feature needs a field or DocType that doesn't exist yet, it becomes a Dev-team PR, not an AI-team PR.</p>
+
+<h3 style="margin-top:22px;">§2 — Setup TODOs for our dev team (not yet done)</h3>
+<ol style="font-size:13.5px;padding-left:20px;line-height:1.9;">
+  <li>Commit the pending FAC vendor-app registration — <code>.gitignore</code>, <code>sites/apps.txt</code>, <code>sites/apps.json</code> changes currently sit uncommitted on Veeren's machine.</li>
+  <li>Add <code>frappe_assistant_core</code> to <code>required_apps</code> in <code>hooks.py</code> the moment the first <code>assistant_tools</code> entry lands — skipping this caused a live <code>ModuleNotFoundError</code> crash in the scheduler during Veeren's session already.</li>
+  <li>Add a <code>CODEOWNERS</code> file at repo root enforcing the "Dev team / Yes" rows above via GitHub branch protection (leaving <code>ai_utils.py</code> / <code>fac_tools.py</code> unlisted so AI PRs merge without waiting).</li>
+  <li>Document the FAC install step in <code>scale_sales/README.md</code>'s Quick Commands.</li>
+</ol>
+
+<h3 style="margin-top:22px;">§3 — Delivery &amp; sync workflow (as given)</h3>
+<ul style="font-size:13.5px;padding-left:20px;line-height:1.9;">
+  <li><strong>Branch:</strong> <code>feature/sales-ai-&lt;topic&gt;</code> off <code>main</code> → PR into <code>main</code></li>
+  <li><strong>Daily sync</strong> (read-only, no gate): pull <code>main</code>, check <code>demo_setup.py</code>'s T## comments for schema state</li>
+  <li><strong>Build</strong> (no gate): logic in <code>ai_utils.py</code>; new tool = new <code>BaseTool</code> class in <code>fac_tools.py</code></li>
+  <li><strong>Discover + test:</strong> FAC picks up the tool after <code>migrate</code> + <code>bench build</code> + restart; verified via a live AI chat session against real site data</li>
+  <li><strong>Flag</strong> (not gate): any <code>hooks.py</code>/<code>tasks.py</code> diff — CC dev lead, don't wait unless CODEOWNERS forces it</li>
+  <li><strong>Propose + wait</strong> (real gate): new field/DocType need → a PR note or T##-style comment naming the exact field, the tool that needs it, and why. Dev team implements it as their own task.</li>
+</ul>
+
+<h3 style="margin-top:22px;">§4 — Worked example (condensed)</h3>
+<p style="font-size:13.5px;">Scenario: AI team wants a <code>get_win_probability</code> FAC tool and discovers <code>ai_utils.win_probability()</code> has a dead branch — it checks <code>scale_sales_budget_confirmed</code>, a field that doesn't exist on Opportunity yet.</p>
+<div class="tbl-wrap">
+  <table>
+    <tr><th>Step</th><th>Who</th><th>What</th></tr>
+    <tr><td>1</td><td>AI</td><td>Wrap existing logic — add <code>GetWinProbabilityTool(BaseTool)</code> in <code>fac_tools.py</code>, calling <code>ai_utils.win_probability()</code></td></tr>
+    <tr><td>2–3</td><td>AI</td><td>Register in <code>hooks.py</code> (<code>assistant_tools</code>, <code>required_apps</code>) — CC dev lead, ungated</td></tr>
+    <tr><td>4</td><td>AI</td><td>Build + verify via a live tool call in Claude Desktop</td></tr>
+    <tr><td>5</td><td>AI</td><td>Flag the schema gap in the PR description — proposing the field, not building it</td></tr>
+    <tr style="background:var(--red-bg);"><td>6</td><td>Dev</td><td>Implement the field — a new <code>demo_setup.py</code> block <strong>labeled "T18"</strong> in the doc's own example ⚠ see conflict below</td></tr>
+    <tr><td>7</td><td>AI</td><td>Next daily sync picks it up — <code>win_probability()</code> now gets real data, no AI-side code change needed</td></tr>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     ALIGNMENT ANALYSIS
+═══════════════════════════════════════════ -->
+<h2>3. Alignment analysis</h2>
+
+<div class="callout cs">
+  <p><strong>✅ Confirmed aligned — no changes needed</strong></p>
+  <ul style="margin:8px 0 0;padding-left:20px;font-size:13.5px;line-height:1.8;">
+    <li>Branch naming (<code>feature/sales-ai-&lt;topic&gt;</code>) matches our existing convention (<code>feature/hrm</code>, <code>feature/muhammad-sales</code>) — no clash.</li>
+    <li>The worked example wraps <code>ai_utils.win_probability()</code> — the exact rule-based function already shipped via the <code>sales_demo → main</code> merge. Confirms Veeren's team is <strong>extending, not rebuilding</strong> the live AI layer, exactly as we asked in the V06–V08 note on the Sales Module Plan.</li>
+    <li>The flagged gap — <code>scale_sales_budget_confirmed</code> missing on Opportunity — is the exact same known limitation already documented in <code>apps/scale_sales/README.md</code>. Independent confirmation from Veeren's side that the gap is real.</li>
+  </ul>
+</div>
+
+<div class="callout ci">
+  <p><strong>🆕 New from Veeren — better than what we had, recommend adopting as-is</strong></p>
+  <ul style="margin:8px 0 0;padding-left:20px;font-size:13.5px;line-height:1.8;">
+    <li>The file-level ownership/gating map (§1). We never defined which files the AI team can touch without review vs. which need a Dev-team gate — this is genuinely useful and worth adopting verbatim for <code>scale_sales</code>, then reusing for <code>scale_finance</code>/<code>scale_hr</code>/<code>scale_account</code> exactly as the doc proposes.</li>
+    <li>The "Propose + wait" mechanism for schema gaps. Cleaner than anything we'd specified — it's effectively a formalization of what already happened organically with T18/T19/T20 during the PR #7 audit.</li>
+    <li>The concrete §2 setup TODOs (commit FAC registration, gate <code>required_apps</code>, add CODEOWNERS, document install) are real, actionable, and currently undone — see Recommended Path Forward below.</li>
+  </ul>
+</div>
+
+<div class="callout cd">
+  <p><strong>🚩 Open conflicts — need a decision before AI work starts using these</strong></p>
+  <ol style="margin:8px 0 0;padding-left:20px;font-size:13.5px;line-height:1.85;">
+    <li><strong>Task-ID collision on "T18."</strong> Veeren's worked example has the Dev team implementing the new <code>scale_sales_budget_confirmed</code> field under a "T18" comment block in <code>demo_setup.py</code>. Our own, already-real <a class="xref-link" href="sales-module.html#T18">T18</a> on the Sales Module Plan is a completely different task — "Wire a Real Customer Risk Rule + Build the Sales Config Screen." If Veeren's team starts using sequential T## numbering for AI-proposed schema needs, it collides with the numbering the dev side already uses (T18–T20 exist; T08 already carries an unresolved discount-rule conflict per the <a class="xref-link" href="sales-tracker.html">Sales Tracker</a>). <strong>Recommend:</strong> AI-proposed schema needs get their own numbering — either prefixed (<code>AI-T01</code>, <code>AI-T02</code>…) or continuing after our highest existing ID (T21 onward) — confirmed with Veeren before his team's first PR actually touches <code>demo_setup.py</code>.</li>
+    <li><strong>Delivery surface for the NL Query chatbot (V01–V05) is undefined.</strong> Our plan builds a self-contained, hand-built chat widget on a custom "Sales Intelligence" Frappe Page inside the ERPNext UI, calling our own <code>ai_query.answer()</code> endpoint — no external client needed. Veeren's document verifies its FAC tools through an external AI client ("test tool call in Claude Desktop") — a fundamentally different delivery model (AI-agent-callable tools vs. an in-app widget), and it never mentions NL Query, V01–V05, or the chat widget at all. Two readings are possible: (a) FAC is purely additive infrastructure for developer/agent-callable tools like Win Probability, and the NL Query chatbot still gets built exactly as V01–V05 describe, independent of FAC — or (b) the NL Query interface itself is meant to be delivered as a FAC tool, in which case V04's custom widget may not be needed — but that would mean actual sales managers need an MCP-capable AI client connected to the site to ask a question, which doesn't fit "ask in plain English inside the ERP" as V04 describes it. <strong>This needs Veeren's confirmation before V03/V04-equivalent work starts</strong> — building the wrong one wastes real Wave-1 time.</li>
+  </ol>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     RECOMMENDED PATH FORWARD
+═══════════════════════════════════════════ -->
+<h2>4. Recommended path forward</h2>
+<div class="grid g2">
+  <div class="card">
+    <h3>Adopt now, no discussion needed</h3>
+    <ol style="font-size:13.5px;padding-left:18px;line-height:1.9;">
+      <li>Adopt the §1 ownership/gating map for <code>scale_sales</code> as written.</li>
+      <li>Assign an owner (sales-dev-lead) to push the pending FAC registration commit, add the <code>required_apps</code> gate, and add the <code>CODEOWNERS</code> file + branch-protection rule.</li>
+      <li>Document the FAC install step in <code>scale_sales/README.md</code>.</li>
+    </ol>
+  </div>
+  <div class="card">
+    <h3>Confirm with Veeren before AI work proceeds</h3>
+    <ol style="font-size:13.5px;padding-left:18px;line-height:1.9;">
+      <li>Is "T18" in his example illustrative, or does his team intend to actually use it? Either way, agree a separate ID scheme for AI-proposed schema needs.</li>
+      <li>Is the NL Query chatbot (V01–V05) still a standalone in-app widget, or does FAC change that plan? Get this answered before V03/V04-equivalent work starts.</li>
+    </ol>
+  </div>
+</div>
+
+<div class="callout ci" style="margin-top:18px;">
+  <p><strong>Once answered:</strong> update this page the same way the <a href="sales-tracker.html" class="xref-link">Sales Tracker</a> tracks git submissions — move each 🚩 item to ✅ as it's resolved, rather than deleting the history of the disagreement. Reuse this same reconciliation exercise for <code>scale_finance</code> / <code>scale_hr</code> / <code>scale_account</code> once the AI team's bridge document gets extended there, per its own stated scope.</p>
+</div>
+
+<div class="page-nav">
+  <a class="prev" href="index.html">← Program Overview</a>
+  <a class="next" href="sales-module.html">Sales Module Plan (V01–V08 detail) →</a>
+</div>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR Module — Implementation Plan | AIWS ERP</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.pill-ootb    { background:#d1fae5; color:#065f46; }
+.pill-refine  { background:#dbeafe; color:#1e40af; }
+.pill-custom  { background:#fef3c7; color:#92400e; }
+.pill-ai      { background:#ede9fe; color:#5b21b6; }
+.pill-partial { background:#fce7f3; color:#9d174d; }
+.bp1 { background:#fee2e2; color:#991b1b; }
+.bp2 { background:#fef3c7; color:#78350f; }
+.bp3 { background:#f0f9ff; color:#075985; }
+.bpd { background:#f3f4f6; color:#6b7280; }
+.st-done { color:#10b981; font-weight:700; }
+.st-wip  { color:#f59e0b; font-weight:700; }
+.st-ns   { color:#9ca3af; }
+details.feat { border:1px solid #e5e7eb; border-radius:8px; margin-bottom:8px; }
+details.feat summary { cursor:pointer; padding:12px 16px; font-weight:600; font-size:.93rem; list-style:none; display:flex; align-items:center; gap:8px; }
+details.feat summary::-webkit-details-marker { display:none; }
+details.feat summary .feat-arrow { margin-left:auto; font-size:.8rem; color:#6b7280; transition:transform .2s; }
+details.feat[open] summary .feat-arrow { transform:rotate(90deg); }
+details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
+.task-card { border:1px solid #e5e7eb; border-radius:10px; padding:16px 20px; margin-bottom:14px; page-break-inside:avoid; }
+.task-card h4 { margin:0 0 6px; font-size:.97rem; }
+.task-card .task-meta { font-size:.8rem; color:#6b7280; margin-bottom:10px; }
+.task-card .task-steps { padding-left:18px; margin:6px 0 0; }
+.task-card .task-steps li { margin-bottom:5px; font-size:.88rem; line-height:1.5; }
+.task-card .task-note  { font-size:.82rem; background:#f8fafc; border-left:3px solid #6366f1; padding:6px 10px; margin-top:10px; border-radius:0 4px 4px 0; }
+.task-context { background:#f0f9ff; border:1px solid #bae6fd; border-radius:8px; padding:12px 14px; margin:10px 0 12px; font-size:.86rem; line-height:1.6; }
+.task-context p { margin:0 0 5px; }
+.task-context p:last-child { margin:0; }
+.ctx-label { font-weight:700; color:#0369a1; }
+.ctx-ref { display:inline-block; font-size:.78rem; background:#e0f2fe; color:#0369a1; border-radius:4px; padding:2px 8px; margin-top:4px; font-weight:600; }
+.task-header { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.task-id { font-weight:700; font-size:.8rem; background:#1e3a5f; color:#fff; padding:2px 8px; border-radius:4px; }
+.task-date { font-size:.78rem; color:#6b7280; }
+.task-assign { font-size:.78rem; background:#ede9fe; color:#5b21b6; padding:2px 8px; border-radius:4px; }
+.task-assign-v2 { font-size:.78rem; background:#d1fae5; color:#065f46; padding:2px 8px; border-radius:4px; }
+.print-btn { background:#1e3a5f; color:#fff; border:none; padding:8px 20px; border-radius:6px; cursor:pointer; font-size:.85rem; margin-bottom:20px; }
+.print-btn:hover { background:#2d5580; }
+.week-label { background:#1e3a5f; color:#fff; padding:8px 16px; border-radius:6px; font-weight:700; font-size:.88rem; margin:24px 0 12px; }
+.app-phase-label { background:#065f46; color:#fff; padding:8px 16px; border-radius:6px; font-weight:700; font-size:.88rem; margin:24px 0 12px; }
+.prog-bar-wrap { background:#f3f4f6; border-radius:6px; height:8px; margin-top:4px; }
+.prog-bar { background:#10b981; border-radius:6px; height:8px; }
+.dev-guide-box { background:#f8fafc; border:1px solid #e5e7eb; border-radius:10px; padding:18px 20px; margin-bottom:16px; }
+.dev-guide-box h4 { margin:0 0 10px; font-size:.95rem; color:#1e3a5f; }
+.change-type-row { display:flex; gap:10px; margin-bottom:8px; align-items:flex-start; font-size:.87rem; }
+.change-type-badge { flex-shrink:0; font-weight:700; font-size:.75rem; padding:2px 8px; border-radius:4px; min-width:110px; text-align:center; }
+.ct-config  { background:#d1fae5; color:#065f46; }
+.ct-custom  { background:#fef3c7; color:#92400e; }
+.ct-python  { background:#ede9fe; color:#5b21b6; }
+.ct-fixture { background:#dbeafe; color:#1e40af; }
+@media print {
+  .sidebar, .breadcrumb, .page-header, .no-print, .page-nav, .print-btn { display:none !important; }
+  main { margin:0 !important; padding:16px 24px !important; max-width:none !important; }
+  .print-section { display:block !important; }
+  body { font-size:10.5pt; background:#fff !important; }
+  .task-card { border:1px solid #ccc; }
+  pre { background:#f4f4f4 !important; color:#111 !important; font-size:9pt; }
+  h1,h2,h3 { page-break-after:avoid; }
+  .task-card, details { page-break-inside:avoid; }
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="s-title">AIWS ERP</div>
+    <div class="s-sub">Implementation Master Plan</div>
+    <span class="s-tag">Claude / implementation</span>
+  </div>
+  <nav>
+    <div class="nav-group">Start Here</div>
+    <a class="nav-link" href="index.html">Program Overview</a>
+    <div class="nav-group">Foundation</div>
+    <a class="nav-link" href="frappe-verdict.html">Frappe Capability</a>
+    <a class="nav-link" href="architecture.html">System Architecture</a>
+    <div class="nav-group">Development Framework</div>
+    <a class="nav-link" href="customization-guide.html">Customization Guide</a>
+    <a class="nav-link" href="developer-guide.html">Developer Workflow</a>
+    <div class="nav-group">Implementation</div>
+    <a class="nav-link" href="module-plan.html">All 13 Modules</a>
+    <a class="nav-link" href="sprint-plan.html">Parallel Sprint Plan</a>
+    <a class="nav-link" href="wave-1.html">Sales &amp; Marketing Detail</a>
+    <div class="nav-group">Module Plans</div>
+    <a class="nav-link" href="sales-module.html">Sales Module Plan</a>
+    <a class="nav-link active" href="hr-module.html">HR Module Plan</a>
+    <a class="nav-link" href="accounts-module.html">Accounts Module Plan</a>
+    <a class="nav-link" href="finance-module.html">Finance Module Plan</a>
+    <a class="nav-link" href="pmo-module.html">PMO Module Plan</a>
+
+    <div class="nav-group">User Manual</div>
+    <a class="nav-link" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
+
+    <div class="nav-group">AI Strategy</div>
+    <a class="nav-link" href="ai-plan-strategy.html">AI Plan Strategy</a>
+
+    <div class="nav-group">Tracking</div>
+    <a class="nav-link" href="sales-tracker.html">Sales Tracker</a>
+    <a class="nav-link" href="sales-demo-showcase.html">Sales Showcase ✨</a>
+  </nav>
+  <div class="sidebar-foot">Pixaflip × SIL · AIWS ERP<br><a href="../../index.html">← AIWS Setup portal</a></div>
+</aside>
+
+<main>
+<div class="breadcrumb">AIWS ERP <span>›</span> HR Module Implementation Plan</div>
+
+<!-- PAGE HEADER -->
+<div class="page-header no-print">
+  <h1>HR Module — Implementation Plan</h1>
+  <p class="subtitle">23 features (15 Wave 1 + 8 from client PRD) · <code>scale_hr</code> app · Module Lead: Vandana · Developer2: Vinay · AI Head: Veeren · Jul 29 → Sep 24, 2026</p>
+</div>
+
+<button class="print-btn no-print" onclick="window.print()">Print / Save as PDF</button>
+
+<div class="summary-strip no-print">
+  <div class="s-stat"><div class="sv">23</div><div class="sl">HR Features (incl. Wave 2)</div></div>
+  <div class="s-stat"><div class="sv">8</div><div class="sl">Native OOTB</div></div>
+  <div class="s-stat"><div class="sv">4</div><div class="sl">Config + Extend</div></div>
+  <div class="s-stat"><div class="sv">3</div><div class="sl">Custom Build</div></div>
+  <div class="s-stat"><div class="sv">Sep 24</div><div class="sl">Target Complete</div></div>
+</div>
+
+<!-- ═══════════════════════════════════
+     PRINTABLE SECTION
+═══════════════════════════════════ -->
+<div class="print-section">
+
+<!-- SECTION A: OVERVIEW -->
+<div style="border-bottom:3px solid #1e3a5f;padding-bottom:16px;margin-bottom:24px;">
+  <div style="font-size:10pt;color:#666;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">AIWS ERP · Pixaflip × SIL</div>
+  <div style="font-size:20pt;font-weight:900;color:#1e3a5f;letter-spacing:-.5px;">HR Module — Developer Handover Pack</div>
+  <div style="font-size:10pt;color:#444;margin-top:6px;">Module Lead: <strong>Vandana</strong> · Developer2: <strong>Vinay</strong> · AI Head: <strong>Veeren</strong> · Printed: July 2026</div>
+</div>
+
+<h2 style="margin-top:0;">Section A — Overview &amp; Scope</h2>
+
+<p>This document is the single authoritative reference for the AIWS HR module build. It covers the <strong>15 HR features</strong> in scope for Wave 1 (Jul 29 – Sep 24, 2026) and <strong>8 additional features</strong> identified from the client PRD (Wave 2 scope — see PRD Delta section in Section D), the steps to create and configure the <code>scale_hr</code> custom app, the developer activity guide for ongoing development, and the complete week-by-week task breakdown.</p>
+
+<p><strong>How to navigate to the HR module:</strong> Launch the bench → open <code>scale.localhost:8001</code> (or your site) → click <em>Scale</em> from the app launcher → find <em>Scale HR</em> in the left sidebar. After you complete T00 (app creation) and run <code>bench migrate</code>, this entry will appear automatically.</p>
+
+<p><strong>App:</strong> <code>scale_hr</code> (Python package name, git folder name, and ERPNext app name — all the same). &nbsp;<strong>Module:</strong> Scale HR. &nbsp;<strong>Platform:</strong> Frappe v15 + ERPNext v15 + Frappe HRMS v15.</p>
+
+<div style="background:#fffbeb;border:2px solid #fcd34d;border-radius:8px;padding:14px 16px;margin:16px 0;font-size:.86rem;">
+  <strong style="color:#92400e;">Client PRD Analysis — 8 additional features identified (updated per client PRD document, Jul 2026)</strong>
+  <p style="margin:8px 0 4px;color:#78350f;">The client-shared HRM Product Requirement Document specifies 22 features. Wave 1 covers 14 of those (plus Travel/Claims split as HR-08+HR-09). The following <strong>8 features appear in the client PRD but are not in Wave 1 scope.</strong> HR-17, HR-18, HR-19 are OOTB configuration and can be added within the Sep 24 window; the rest are Wave 2.</p>
+  <ul style="margin:6px 0 0 16px;padding:0;line-height:1.9;color:#78350f;">
+    <li><strong>HR-16 — Governance &amp; Funding</strong> — HR policies, government skill schemes, grant applications (Wave 2 · Custom Build)</li>
+    <li><strong>HR-17 — Asset Management</strong> — Laptops, mobiles, ID cards, vehicles, software licenses assigned to employee (Wave 1 · ERPNext OOTB Asset module, config only)</li>
+    <li><strong>HR-18 — Employee Self-Service (ESS)</strong> — View payslips, apply leave, submit expenses, raise grievances via portal (Wave 1 · native ERPNext portal, config only)</li>
+    <li><strong>HR-19 — Manager Self-Service (MSS)</strong> — Approve leave, expenses, attendance corrections, initiate hiring (Wave 1 · native roles/permissions config)</li>
+    <li><strong>HR-20 — Succession Planning &amp; Talent Management</strong> — Talent pools, hi-potential employees, career paths, successor mapping (Wave 2 · Custom DocTypes)</li>
+    <li><strong>HR-21 — Employee Engagement Management</strong> — Pulse surveys, recognition programs, rewards, wellness (Wave 2 · Custom Build)</li>
+    <li><strong>HR-22 — Workforce Planning &amp; Analytics</strong> — Headcount, workforce cost, attrition trends, diversity metrics (Wave 2 · Script Reports)</li>
+    <li><strong>HR-23 — Document Management</strong> — Employee document repository with version control, expiry alerts, digital signatures (Wave 2 · Custom DocType)</li>
+  </ul>
+  <p style="margin:10px 0 0;color:#92400e;font-size:.82rem;"><strong>Sub-feature additions to existing Wave 1 features (flagged in their task cards):</strong> HR-12 Attendance — Geo Attendance, Face Recognition, Work From Home mode · HR-15 Compliance — LWF (Labour Welfare Fund), Gratuity, Labour Registers · HR-04 Performance — OKRs, Monthly/Quarterly/Annual Reviews, Development Plans.</p>
+</div>
+
+<div style="background:#fff1f2;border:1px solid #fca5a5;border-radius:8px;padding:12px 14px;margin:16px 0;font-size:.86rem;">
+  <strong style="color:#991b1b;">⚠ Note to AI Team</strong>
+  <p style="margin:6px 0 0;color:#7f1d1d;">Do not modify any upstream Frappe/ERPNext/HRMS source files. All custom logic lives exclusively inside <code>apps/scale_hr/</code>. Hook paths must use the outer Python package name only — e.g. <code>scale_hr.employee_hooks.fn</code>, never <code>scale_hr.scale_hr.employee_hooks.fn</code>. The inner <code>scale_hr/scale_hr/</code> folder is the Frappe module for DocTypes and Workspaces, not for Python logic files.</p>
+</div>
+
+<table style="width:100%;border-collapse:collapse;font-size:.85rem;margin:16px 0;">
+  <tr style="background:#1e3a5f;color:#fff;">
+    <th style="padding:8px 12px;text-align:left;">Role</th>
+    <th style="padding:8px 12px;text-align:left;">Name</th>
+    <th style="padding:8px 12px;text-align:left;">Responsibilities</th>
+  </tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;"><strong>HR Module Lead</strong></td><td style="padding:7px 12px;border:1px solid #ddd;"><strong style="color:#166534;">Vandana</strong></td><td style="padding:7px 12px;border:1px solid #ddd;">Architecture decisions, custom DocType design, payroll config, appraisal setup, fixture exports, git commits, team coordination</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Developer2</td><td style="padding:7px 12px;border:1px solid #ddd;">Vinay</td><td style="padding:7px 12px;border:1px solid #ddd;">Leave, attendance, grievance, travel, 360 feedback scripts, compliance PF/ESI/PT, training skill gap report</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">AI Head</td><td style="padding:7px 12px;border:1px solid #ddd;">Veeren</td><td style="padding:7px 12px;border:1px solid #ddd;">AI hooks wiring, LLM prompts, candidate scoring, retention risk, NL query for HR data</td></tr>
+</table>
+
+<!-- SECTION B: APP SCAFFOLD -->
+<h2>Section B — Creating the scale_hr App</h2>
+<p>This section is a one-time setup. Vandana runs these commands on Day 1 to create the <code>scale_hr</code> app, wire it up, and push the scaffold to git so Vinay and Veeren can clone and start work.</p>
+
+<p><strong>Prerequisites:</strong> Your bench is running, <code>scale.localhost</code> is accessible, and you can see the Scale app on the home screen. Node 20 must be active (<code>nvm use 20</code>). These are the same prerequisites as any bench work.</p>
+
+<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 16px;margin:12px 0;font-size:.86rem;line-height:1.8;">
+  <strong style="color:#166534; display:block; margin-bottom:8px;">Step 1 — Create the app</strong>
+  <p style="margin:0 0 6px;">From your bench root directory (<code>Claude/code/scale-bench/</code>), run:</p>
+  <pre style="background:#0d1f35;color:#c8d8ea;padding:14px 18px;border-radius:6px;font-size:.82rem;margin:0;">bench new-app scale_hr</pre>
+  <p style="margin:8px 0 0;">When prompted, fill in:<br>
+  App Title: <strong>Scale HR</strong> &nbsp;·&nbsp; Publisher: <strong>Pixaflip Technologies</strong> &nbsp;·&nbsp; Description: <strong>HR Module for Scale ERP</strong> &nbsp;·&nbsp; Email: <strong>dev@pixaflip.com</strong> &nbsp;·&nbsp; License: <strong>MIT</strong><br>
+  Leave other prompts as default (press Enter).</p>
+</div>
+
+<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 16px;margin:12px 0;font-size:.86rem;line-height:1.8;">
+  <strong style="color:#166534; display:block; margin-bottom:8px;">Step 2 — Add to apps.txt and install</strong>
+  <pre style="background:#0d1f35;color:#c8d8ea;padding:14px 18px;border-radius:6px;font-size:.82rem;margin:0;"># Add to bench app registry
+echo "scale_hr" >> sites/apps.txt
+
+# Install on your site (replace with your site name if different)
+bench --site scale.localhost install-app scale_hr
+
+# Migrate to load everything
+bench --site scale.localhost migrate</pre>
+</div>
+
+<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 16px;margin:12px 0;font-size:.86rem;line-height:1.8;">
+  <strong style="color:#166534; display:block; margin-bottom:8px;">Step 3 — Edit hooks.py to declare the app</strong>
+  <p style="margin:0 0 6px;">Open <code>apps/scale_hr/scale_hr/hooks.py</code> and replace its contents with:</p>
+  <pre style="background:#0d1f35;color:#c8d8ea;padding:14px 18px;border-radius:6px;font-size:.82rem;margin:0;">app_name        = "scale_hr"
+app_title       = "Scale HR"
+app_publisher   = "Pixaflip Technologies"
+app_description = "HR Module for Scale ERP"
+app_email       = "dev@pixaflip.com"
+app_license     = "MIT"
+app_version     = "0.0.1"
+
+required_apps = ["frappe", "erpnext", "hrms"]
+
+# Fixtures — run bench export-fixtures after UI changes
+fixtures = [
+    {"dt": "Custom Field",    "filters": [["module", "=", "Scale HR"]]},
+    {"dt": "Property Setter", "filters": [["module", "=", "Scale HR"]]},
+    {"dt": "Workflow",        "filters": [["document_type", "in",
+        ["Job Offer", "Employee Grievance", "Travel Request"]]]},
+    {"dt": "Notification",   "filters": [["module", "=", "Scale HR"]]},
+]
+
+doc_events = {
+    "Employee": {
+        "on_update": "scale_hr.employee_hooks.on_employee_update",
+    },
+    "Appraisal": {
+        "on_submit": "scale_hr.appraisal_hooks.on_appraisal_submit",
+    },
+    "Employee Separation": {
+        "before_submit": "scale_hr.exit_hooks.fetch_allocated_assets",
+    },
+    "Training Result": {
+        "on_submit": "scale_hr.training_hooks.auto_update_skill",
+    },
+}
+
+scheduler_events = {
+    "daily": [
+        "scale_hr.tasks.daily_grievance_sla_check",
+        "scale_hr.tasks.daily_travel_advance_overdue_check",
+        "scale_hr.tasks.daily_certification_expiry_alert",
+    ],
+    "weekly": [
+        "scale_hr.tasks.weekly_missing_timesheet_reminder",
+    ],
+}</pre>
+</div>
+
+<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 16px;margin:12px 0;font-size:.86rem;line-height:1.8;">
+  <strong style="color:#166534; display:block; margin-bottom:8px;">Step 4 — Create stub Python files</strong>
+  <p style="margin:0 0 6px;">Create these empty files so the hook paths resolve without errors:</p>
+  <pre style="background:#0d1f35;color:#c8d8ea;padding:14px 18px;border-radius:6px;font-size:.82rem;margin:0;"># From apps/scale_hr/scale_hr/
+touch employee_hooks.py appraisal_hooks.py exit_hooks.py training_hooks.py tasks.py ai_utils.py</pre>
+  <p style="margin:8px 0 0;">Each stub file needs at minimum a pass-through function. For example, in <code>employee_hooks.py</code>:<br>
+  <code>def on_employee_update(doc, method=None): pass</code><br>
+  Same pattern for all other stubs.</p>
+</div>
+
+<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 16px;margin:12px 0;font-size:.86rem;line-height:1.8;">
+  <strong style="color:#166534; display:block; margin-bottom:8px;">Step 5 — Create the Workspace (sidebar entry)</strong>
+  <p style="margin:0 0 6px;">Create the directory and JSON file for the Scale HR sidebar entry:</p>
+  <pre style="background:#0d1f35;color:#c8d8ea;padding:14px 18px;border-radius:6px;font-size:.82rem;margin:0;">mkdir -p apps/scale_hr/scale_hr/scale_hr/workspace/scale_hr</pre>
+  <p style="margin:8px 0 6px;">Then create <code>apps/scale_hr/scale_hr/scale_hr/workspace/scale_hr/scale_hr.json</code> — the Workspace DocType fixture. Set <code>"module": "Scale HR"</code>, <code>"public": 1</code>, <code>"sequence_id": 2.0</code> (places it below Scale Sales in the sidebar). Add shortcuts to: Employee, Leave Application, Attendance, Job Applicant. Add card groups: Core HR · Payroll · Recruitment · Compliance. Then run <code>bench --site &lt;site&gt; migrate</code> and the sidebar entry appears.</p>
+</div>
+
+<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 16px;margin:12px 0;font-size:.86rem;line-height:1.8;">
+  <strong style="color:#166534; display:block; margin-bottom:8px;">Step 6 — Push to git</strong>
+  <pre style="background:#0d1f35;color:#c8d8ea;padding:14px 18px;border-radius:6px;font-size:.82rem;margin:0;">git add apps/scale_hr/ sites/apps.txt
+git commit -m "feat(hr): scale_hr app scaffold — hooks, stubs, workspace sidebar"
+git push origin main</pre>
+  <p style="margin:8px 0 0;"><strong>What the team gets after git pull:</strong></p>
+  <ul style="margin:4px 0 0 16px;padding:0;font-size:.86rem;">
+    <li>Run <code>env/bin/pip install -e apps/scale_hr</code></li>
+    <li>Run <code>bench --site &lt;site&gt; install-app scale_hr</code></li>
+    <li>Run <code>bench --site &lt;site&gt; migrate</code></li>
+    <li>Scale HR appears in the left sidebar of the Scale app</li>
+    <li>All HR hook stubs active (no-op until logic is added)</li>
+  </ul>
+</div>
+
+<!-- SECTION C: DEVELOPER ACTIVITY GUIDE -->
+<h2>Section C — Developer Activity Guide</h2>
+<p>This section explains how to carry out every type of development activity in the Frappe framework, using HR-specific examples. Read this before starting any task.</p>
+
+<h3>C.1 — The Golden Rule: Which File Do You Touch?</h3>
+<table style="width:100%;border-collapse:collapse;font-size:.84rem;margin:12px 0 20px;">
+  <tr style="background:#1e3a5f;color:#fff;">
+    <th style="padding:8px 12px;text-align:left;">What you want to do</th>
+    <th style="padding:8px 12px;text-align:left;">Where to make the change</th>
+    <th style="padding:8px 12px;text-align:left;">Do you need bench migrate?</th>
+  </tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Configure Leave Types, Departments, Designations</td><td style="padding:7px 12px;border:1px solid #ddd;">ERPNext UI only — no code</td><td style="padding:7px 12px;border:1px solid #ddd;">No</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Add a custom field to Employee or any existing DocType</td><td style="padding:7px 12px;border:1px solid #ddd;">ERPNext UI (Customize Form) → then export fixture</td><td style="padding:7px 12px;border:1px solid #ddd;">Yes (after import)</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Change validation or field label on existing DocType</td><td style="padding:7px 12px;border:1px solid #ddd;">Property Setter in ERPNext UI → export fixture</td><td style="padding:7px 12px;border:1px solid #ddd;">Yes (after import)</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Write business logic that runs on document save/submit</td><td style="padding:7px 12px;border:1px solid #ddd;">Python file in <code>apps/scale_hr/scale_hr/</code> + declare in <code>hooks.py doc_events</code></td><td style="padding:7px 12px;border:1px solid #ddd;">No (bench restart only)</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Write a scheduled/cron job (daily/weekly)</td><td style="padding:7px 12px;border:1px solid #ddd;"><code>tasks.py</code> + declare in <code>hooks.py scheduler_events</code></td><td style="padding:7px 12px;border:1px solid #ddd;">No (bench restart only)</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Add UI behaviour — show/hide fields, calculated display</td><td style="padding:7px 12px;border:1px solid #ddd;">Client Script in ERPNext UI (or JS file in app)</td><td style="padding:7px 12px;border:1px solid #ddd;">No</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Create a brand-new DocType (e.g. Induction Plan)</td><td style="padding:7px 12px;border:1px solid #ddd;">ERPNext UI → Developer Mode → then export as fixture JSON</td><td style="padding:7px 12px;border:1px solid #ddd;">Yes</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Build a PDF print format (Offer Letter, Payslip)</td><td style="padding:7px 12px;border:1px solid #ddd;">ERPNext UI → Print Format → Jinja HTML → export fixture</td><td style="padding:7px 12px;border:1px solid #ddd;">No</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Build a data report (Skill Gap, Leave Balance)</td><td style="padding:7px 12px;border:1px solid #ddd;">ERPNext UI → Script Report → export fixture OR Python report file in app</td><td style="padding:7px 12px;border:1px solid #ddd;">No</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Set up a Workflow (approval chain)</td><td style="padding:7px 12px;border:1px solid #ddd;">ERPNext UI → Workflow → add to <code>fixtures</code> list in hooks.py → export</td><td style="padding:7px 12px;border:1px solid #ddd;">No</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Add AI / LLM call on a document event</td><td style="padding:7px 12px;border:1px solid #ddd;">Python hook file calls <code>ai_utils.call_llm()</code> — implement logic there</td><td style="padding:7px 12px;border:1px solid #ddd;">No (bench restart only)</td></tr>
+</table>
+
+<h3>C.2 — The Change-Test-Commit Cycle</h3>
+<p>Every task follows this loop. Do not skip the fixture export step — without it, a teammate who clones the repo and runs migrate will not get your changes.</p>
+<ol style="margin:8px 0 16px 20px;font-size:.87rem;line-height:1.9;">
+  <li><strong>Make the change</strong> — in ERPNext UI (Customize Form / DocType / Workflow / Script) or in a Python file.</li>
+  <li><strong>Test it on your bench</strong> — create a test document, submit it, verify the behaviour is correct.</li>
+  <li><strong>Export fixtures</strong> (only for UI-made changes): <code>bench --site &lt;site&gt; export-fixtures --app scale_hr</code></li>
+  <li><strong>Commit</strong>: <code>git add apps/scale_hr/</code> → <code>git commit -m "feat(hr): &lt;description&gt;"</code></li>
+  <li><strong>Push</strong>: <code>git push origin main</code></li>
+  <li><strong>Notify team</strong>: after pull, they run <code>bench --site &lt;site&gt; migrate</code> to load DocType changes and fixtures.</li>
+</ol>
+<div class="callout cw" style="font-size:.85rem;">
+  <p><strong>When do teammates need bench migrate?</strong> Only when DocTypes changed (new field, new DocType, new workflow). Pure Python logic changes (hooks, tasks, ai_utils) only need <code>bench restart</code>. When in doubt, migrate — it's safe to run repeatedly.</p>
+</div>
+
+<h3>C.3 — How to Add a Custom Field to an Existing DocType</h3>
+<p style="font-size:.87rem;">Example: adding <code>scale_hr_joining_source</code> (Select) to the Employee DocType.</p>
+<ol style="margin:8px 0 16px 20px;font-size:.87rem;line-height:1.9;">
+  <li>Go to: <strong>ERPNext → Customize Form → DocType = Employee</strong></li>
+  <li>Scroll to the section where the field should appear. Click <em>Add Row</em>.</li>
+  <li>Field Label: <code>Joining Source</code> · Field Name: <code>scale_hr_joining_source</code> · Field Type: Select · Module: <strong>Scale HR</strong> (critical — this makes it appear in fixtures)</li>
+  <li>Add options in the Options box: one per line (e.g. Referral / Job Portal / Campus / Walk-in / Social Media).</li>
+  <li>Save. The field appears on the Employee form immediately.</li>
+  <li>Run: <code>bench --site &lt;site&gt; export-fixtures --app scale_hr</code> — the field is written to <code>apps/scale_hr/scale_hr/fixtures/custom_field.json</code>.</li>
+  <li>Commit the fixtures file.</li>
+</ol>
+<p style="font-size:.87rem;"><strong>Rule:</strong> Always set Module = <em>Scale HR</em> on every custom field. Without it, the export filter misses it.</p>
+
+<h3>C.4 — How to Create a New DocType</h3>
+<p style="font-size:.87rem;">Example: creating the <em>Induction Plan</em> DocType.</p>
+<ol style="margin:8px 0 16px 20px;font-size:.87rem;line-height:1.9;">
+  <li>Enable Developer Mode: <code>bench --site &lt;site&gt; set-config developer_mode 1</code> then <code>bench restart</code>.</li>
+  <li>Go to: <strong>ERPNext → DocType → New</strong>. Set Name: <code>Induction Plan</code>, Module: <strong>Scale HR</strong>, Is Submittable: yes (if you need submit/cancel), Track Changes: yes.</li>
+  <li>Add all fields. For a child table, create a separate DocType first with Is Child Table checked, then link it with a Table field.</li>
+  <li>Save. Frappe creates the JSON at <code>apps/scale_hr/scale_hr/scale_hr/doctype/induction_plan/induction_plan.json</code> automatically (because Developer Mode writes to the app folder).</li>
+  <li>Run <code>bench --site &lt;site&gt; migrate</code> to create the DB table for the new DocType.</li>
+  <li>Commit: <code>git add apps/scale_hr/scale_hr/scale_hr/doctype/</code></li>
+</ol>
+<div class="callout ci" style="font-size:.85rem;margin:0 0 16px;">
+  <p><strong>Key difference from custom fields:</strong> Custom fields are exported as fixtures JSON. New DocTypes created in Developer Mode are saved directly into the app folder as JSON files — no fixture export needed. Both end up in git, but via different paths.</p>
+</div>
+
+<h3>C.5 — How to Write a Python Hook</h3>
+<p style="font-size:.87rem;">Example: auto-fetching employee assets on separation (for Exit Management).</p>
+<pre style="font-size:.82rem;">
+# apps/scale_hr/scale_hr/exit_hooks.py
+
+import frappe
+
+def fetch_allocated_assets(doc, method=None):
+    """Pull all assets assigned to employee into the F&amp;F asset deduction rows."""
+    assets = frappe.get_all(
+        "Asset",
+        filters={"custodian": doc.employee, "status": "In Location"},
+        fields=["name", "asset_name", "purchase_amount"],
+    )
+    for asset in assets:
+        doc.append("asset_deductions", {          # child table field name on your DocType
+            "asset": asset.name,
+            "asset_name": asset.asset_name,
+            "deduction_amount": asset.purchase_amount,
+        })
+</pre>
+<p style="font-size:.87rem;">Then in <code>hooks.py</code> declare: <code>"Employee Separation": {"before_submit": "scale_hr.exit_hooks.fetch_allocated_assets"}</code>. After saving hooks.py, run <code>bench restart</code> — no migrate needed.</p>
+
+<h3>C.6 — Git Project Structure</h3>
+<pre style="font-size:.8rem;background:#1e3a5f;color:#c8d8ea;padding:14px 18px;border-radius:6px;">
+apps/scale_hr/
+├── scale_hr/                          <span style="color:#86efac;">← Python package (hooks + logic files here)</span>
+│   ├── hooks.py                       <span style="color:#86efac;">← Central wiring: doc_events, scheduler, fixtures</span>
+│   ├── employee_hooks.py              <span style="color:#86efac;">← Employee on_update logic</span>
+│   ├── appraisal_hooks.py             <span style="color:#86efac;">← Appraisal on_submit logic</span>
+│   ├── exit_hooks.py                  <span style="color:#86efac;">← Exit separation — asset fetch</span>
+│   ├── training_hooks.py              <span style="color:#86efac;">← Training result → auto skill update</span>
+│   ├── tasks.py                       <span style="color:#86efac;">← Scheduled jobs (daily/weekly)</span>
+│   ├── ai_utils.py                    <span style="color:#86efac;">← LLM helper — call_llm(), score_candidate()</span>
+│   ├── fixtures/                      <span style="color:#fbbf24;">← Auto-generated by export-fixtures (Custom Fields, Workflows)</span>
+│   │   ├── custom_field.json
+│   │   ├── workflow.json
+│   │   └── notification.json
+│   └── scale_hr/                      <span style="color:#fca5a5;">← Frappe module folder (DocTypes + Workspace live here)</span>
+│       ├── doctype/
+│       │   ├── induction_plan/        <span style="color:#fca5a5;">← Custom DocType JSON files live here</span>
+│       │   └── exit_checklist_item/
+│       └── workspace/
+│           └── scale_hr/
+│               └── scale_hr.json      <span style="color:#fca5a5;">← Sidebar workspace definition</span>
+├── setup.py
+└── MANIFEST.in
+</pre>
+<p style="font-size:.85rem;"><strong>The triple nesting is intentional:</strong> <code>apps/scale_hr/</code> (pip root) → <code>scale_hr/</code> (Python package) → <code>scale_hr/</code> (Frappe module). Python logic files live in the middle layer. DocType JSONs and the Workspace JSON live in the inner layer. Never mix them up.</p>
+
+<!-- SECTION D: FEATURE COVERAGE -->
+<h2>Section D — Feature Coverage Matrix</h2>
+<table style="width:100%;border-collapse:collapse;font-size:.83rem;margin:12px 0;">
+  <tr style="background:#1e3a5f;color:#fff;">
+    <th style="padding:8px 10px;text-align:left;">#</th>
+    <th style="padding:8px 10px;text-align:left;">Feature</th>
+    <th style="padding:8px 10px;text-align:left;">Priority</th>
+    <th style="padding:8px 10px;text-align:left;">Platform</th>
+    <th style="padding:8px 10px;text-align:left;">Classification</th>
+    <th style="padding:8px 10px;text-align:left;">Window</th>
+  </tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">HR-01</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Hiring</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native HRMS</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Jul 29–Aug 7</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">HR-02</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Onboarding</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp2">P2</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native HRMS</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Aug 3–8</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">HR-03</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Induction</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp3">P3</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Custom DocType</td><td style="padding:7px 10px;border:1px solid #ddd;">Custom Build</td><td style="padding:7px 10px;border:1px solid #ddd;">Sep 10–13</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">HR-04</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Performance Management</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native HRMS</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Aug 24–Sep 3</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">HR-05</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>360 Feedback</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native + Script</td><td style="padding:7px 10px;border:1px solid #ddd;">Extend + Script</td><td style="padding:7px 10px;border:1px solid #ddd;">Sep 1–6</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">HR-06</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Expense Claims</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bpd">—</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native HRMS</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Aug 10–12</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">HR-07</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Grievance Management</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bpd">—</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native HRMS</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Aug 13–15</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">HR-08</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Travel Management</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native HRMS</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Aug 17–21</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">HR-09</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Claims &amp; Advances</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bpd">—</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native HRMS</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Aug 22–24</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">HR-10</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Payroll</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bpd">—</span></td><td style="padding:7px 10px;border:1px solid #ddd;">HRMS + India Payroll app</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Aug 25–Sep 1</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">HR-11</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Leave Management</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bpd">—</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native HRMS</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Jul 29–Aug 2</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">HR-12</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Attendance &amp; Shifts</strong> <span style="background:#fef3c7;color:#92400e;font-size:.7rem;font-weight:700;padding:1px 5px;border-radius:3px;">Updated · Client PRD</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bpd">—</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native HRMS + Script</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Script</td><td style="padding:7px 10px;border:1px solid #ddd;">Aug 1–5</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">HR-13</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Training &amp; Skilling</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp3">P3</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native + Custom Script</td><td style="padding:7px 10px;border:1px solid #ddd;">Extend + Script</td><td style="padding:7px 10px;border:1px solid #ddd;">Sep 8–13</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">HR-14</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Exit Management</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bpd">—</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native + Custom Script</td><td style="padding:7px 10px;border:1px solid #ddd;">Custom Build</td><td style="padding:7px 10px;border:1px solid #ddd;">Sep 4–7</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">HR-15</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Compliance PF/ESI/PT/LWF/Gratuity</strong> <span style="background:#fef3c7;color:#92400e;font-size:.7rem;font-weight:700;padding:1px 5px;border-radius:3px;">Updated · Client PRD</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bpd">—</span></td><td style="padding:7px 10px;border:1px solid #ddd;">India Payroll app + Script</td><td style="padding:7px 10px;border:1px solid #ddd;">Config + Extend</td><td style="padding:7px 10px;border:1px solid #ddd;">Sep 1–6</td></tr>
+  <!-- PRD DELTA — 8 new features from client HRM PRD -->
+  <tr style="background:#fffbeb;"><td colspan="6" style="padding:8px 10px;font-size:.78rem;font-weight:700;color:#92400e;border:1px solid #fcd34d;">CLIENT PRD ADDITIONS — HR-16 to HR-23 · Identified from HRM PRD (Jul 2026) · HR-17/18/19 = Wave 1 config · HR-16/20/21/22/23 = Wave 2</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">HR-16</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Governance &amp; Funding</strong> <span style="background:#fef3c7;color:#92400e;font-size:.7rem;font-weight:700;padding:1px 5px;border-radius:3px;">New · Client PRD</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bpd">W2</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Custom DocType</td><td style="padding:7px 10px;border:1px solid #ddd;">Custom Build</td><td style="padding:7px 10px;border:1px solid #ddd;">Wave 2</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">HR-17</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Asset Management</strong> <span style="background:#fef3c7;color:#92400e;font-size:.7rem;font-weight:700;padding:1px 5px;border-radius:3px;">New · Client PRD</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp2">P2</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native ERPNext Asset module</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Sep 15–20 (Wave 1)</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">HR-18</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Employee Self-Service (ESS)</strong> <span style="background:#fef3c7;color:#92400e;font-size:.7rem;font-weight:700;padding:1px 5px;border-radius:3px;">New · Client PRD</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp2">P2</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native HRMS Portal</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Sep 18–20 (Wave 1)</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">HR-19</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Manager Self-Service (MSS)</strong> <span style="background:#fef3c7;color:#92400e;font-size:.7rem;font-weight:700;padding:1px 5px;border-radius:3px;">New · Client PRD</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp2">P2</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native HRMS Roles</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Sep 20–22 (Wave 1)</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">HR-20</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Succession Planning &amp; Talent Mgmt</strong> <span style="background:#fef3c7;color:#92400e;font-size:.7rem;font-weight:700;padding:1px 5px;border-radius:3px;">New · Client PRD</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bpd">W2</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Custom DocType</td><td style="padding:7px 10px;border:1px solid #ddd;">Custom Build</td><td style="padding:7px 10px;border:1px solid #ddd;">Wave 2</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">HR-21</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Employee Engagement Management</strong> <span style="background:#fef3c7;color:#92400e;font-size:.7rem;font-weight:700;padding:1px 5px;border-radius:3px;">New · Client PRD</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bpd">W2</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Custom + Frappe Survey</td><td style="padding:7px 10px;border:1px solid #ddd;">Custom Build</td><td style="padding:7px 10px;border:1px solid #ddd;">Wave 2</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">HR-22</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Workforce Planning &amp; Analytics</strong> <span style="background:#fef3c7;color:#92400e;font-size:.7rem;font-weight:700;padding:1px 5px;border-radius:3px;">New · Client PRD</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bpd">W2</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Script Reports + Dashboard</td><td style="padding:7px 10px;border:1px solid #ddd;">Extend + Reports</td><td style="padding:7px 10px;border:1px solid #ddd;">Wave 2</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">HR-23</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Document Management</strong> <span style="background:#fef3c7;color:#92400e;font-size:.7rem;font-weight:700;padding:1px 5px;border-radius:3px;">New · Client PRD</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bpd">W2</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Custom DocType</td><td style="padding:7px 10px;border:1px solid #ddd;">Custom Build</td><td style="padding:7px 10px;border:1px solid #ddd;">Wave 2</td></tr>
+</table>
+
+<!-- SECTION E: TEAM -->
+<h2>Section E — Team Assignments</h2>
+<table style="width:100%;border-collapse:collapse;font-size:.84rem;margin:12px 0;">
+  <tr style="background:#1e3a5f;color:#fff;">
+    <th style="padding:8px 12px;text-align:left;">Name</th><th style="padding:8px 12px;text-align:left;">Role</th><th style="padding:8px 12px;text-align:left;">Owns</th>
+  </tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;"><strong style="color:#166534;">Vandana</strong></td><td style="padding:7px 12px;border:1px solid #ddd;">HR Module Lead</td><td style="padding:7px 12px;border:1px solid #ddd;">App scaffold · masters config · payroll setup · appraisal · exit management · custom DocTypes · fixture exports · git commits</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Vinay</td><td style="padding:7px 12px;border:1px solid #ddd;">Developer2</td><td style="padding:7px 12px;border:1px solid #ddd;">Leave types · attendance shifts · grievance setup · travel config · 360 feedback script · compliance PF/ESI/PT · training skill gap · SLA scripts</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Veeren</td><td style="padding:7px 12px;border:1px solid #ddd;">AI Head</td><td style="padding:7px 12px;border:1px solid #ddd;">ai_utils.py wiring · candidate scoring hook · retention risk flag · HR NL Query assistant</td></tr>
+</table>
+
+</div><!-- /print-section -->
+
+<!-- ═══════════════════════════════════
+     WEB-ONLY: FEATURE ACCORDIONS
+═══════════════════════════════════ -->
+<h2 class="no-print">HR Feature Breakdown</h2>
+<p class="no-print">Expand each feature to see what exists natively, what needs to be built, and the lean implementation approach.</p>
+
+<h3 class="no-print">Phase 1 — Core HR Foundation (Jul 29 – Aug 15)</h3>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-ootb">OOTB</span> HR-11 · Leave Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Leave Types, Leave Policy, Leave Allocation, Leave Application with approval chain, team leave calendar, carry-forward and encashment via year-end close.</p>
+    <p><strong>What to configure:</strong></p>
+    <ul>
+      <li>Define Leave Types per HR policy: CL (12/yr), SL (12/yr), EL (accrual), ML, PL (for applicable grades)</li>
+      <li>Create Holiday Lists per office location (different regions may have different state holidays)</li>
+      <li>Assign Leave Policy to Employee Grade so allocations are auto-created</li>
+      <li>Enable Team Leave Calendar view from Workspace</li>
+      <li>Configure carry-forward limits and encashment salary component linked to payroll</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-ootb">OOTB</span> HR-12 · Attendance &amp; Shifts <span style="background:#fef3c7;color:#92400e;font-size:.7rem;font-weight:700;padding:1px 5px;border-radius:3px;vertical-align:middle;">Updated · Client PRD</span> <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Shift Types, Shift Assignment, Employee Checkin log, Auto-Attendance cron job, Late Entry / Early Exit detection, LOP-linked payroll deductions.</p>
+    <p><strong>What to configure (original scope):</strong></p>
+    <ul>
+      <li>Define Shift Types per work pattern: General Shift (9–6), Morning, Evening, Flex — with grace periods and break rules</li>
+      <li>Set up Auto-Attendance scheduled job: runs nightly, marks Present/Absent from checkin logs</li>
+      <li>Configure biometric device integration or mobile geo-fenced check-in (Client Script on Employee Checkin)</li>
+      <li>Build exception anomaly dashboard: late arrivals, early exits, untracked days — Exception Report</li>
+      <li>Define LOP deduction rules tied to attendance outcomes for payroll</li>
+    </ul>
+    <p><strong style="color:#92400e;">Client PRD additions (configure in Wave 1):</strong></p>
+    <ul style="border-left:3px solid #fcd34d;padding-left:12px;">
+      <li><strong>Geo Attendance:</strong> Frappe HRMS supports geo-fenced mobile check-in (Employee Checkin with latitude/longitude). Enable location tracking on Employee Checkin form. Configure allowed geo-fence radius per office location. Employees outside the fence get flagged for HR review.</li>
+      <li><strong>Face Recognition:</strong> Not natively in Frappe HRMS — this requires integration with a biometric device vendor (ZKTeco, eSSL, etc.) or a third-party face-recognition attendance API. Frappe has a biometric attendance sync service. Decide with Vandana: Day 1 = manual/mobile check-in; Phase 2 = biometric API integration.</li>
+      <li><strong>Work From Home (WFH) mode:</strong> Add a custom field <code>scale_hr_work_mode</code> (Select: Office / WFH / Field) on the Attendance DocType. Employees or managers can mark WFH on their attendance. This field feeds into the exception report so HR can track WFH frequency per employee. Add via Customize Form → export fixture.</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-ootb">OOTB</span> HR-01 · Hiring (Recruitment) <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Staffing Plan, Job Opening, Job Applicant, Interview, Interview Feedback, Job Offer with salary terms, auto-Employee creation on offer acceptance, external applicant portal.</p>
+    <p><strong>What to configure:</strong></p>
+    <ul>
+      <li>Configure Job Opening templates per department (pre-fill requirements and description)</li>
+      <li>Set up multi-round interview types: Screening → Technical → HR → Final</li>
+      <li>Enable external Frappe Web Portal for applicant self-submission</li>
+      <li>Build Offer Letter HTML Print Format with company letterhead, salary break-up, joining date</li>
+      <li>Configure approval Workflow on Job Offer: Draft → HR Review → Approved → Sent</li>
+      <li>Set up stage-wise email Notification Rules to applicants (acknowledgement, shortlist, rejection)</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-ootb">OOTB</span> HR-02 · Employee Onboarding <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Employee Onboarding Template with activity list and due-date offsets, auto-task assignment to department owners, status tracking to Onboarding Complete.</p>
+    <p><strong>What to configure:</strong></p>
+    <ul>
+      <li>Create Onboarding Templates per department: IT (system access, email ID, laptop), Admin (ID card, access card), Finance (bank details, PF enrolment), HR (policy orientation, document collection), Manager (goal setting, buddy assignment)</li>
+      <li>Configure automated email reminders for overdue pending activities</li>
+      <li>Build Day-1 Readiness dashboard: shows pending activities per new hire at a glance for HR</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-ootb">OOTB</span> HR-06 · Expense Claims <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Expense Claim DocType, line-item expense types, receipt attachment, approval chain, auto Journal Entry on approval, Payment Entry for reimbursement.</p>
+    <p><strong>What to configure:</strong></p>
+    <ul>
+      <li>Configure Expense Types: Travel, Meals, Communication, Medical, Client Entertainment, Printing</li>
+      <li>Set up Expense Approver roles per department</li>
+      <li>Map GL accounts and cost centres per expense type (coordinate with Accounts team)</li>
+      <li>Mark receipt attachment as mandatory in Customize Form (Property Setter)</li>
+      <li>Enable mobile form access via Frappe HR mobile interface</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-ootb">OOTB</span> HR-07 · Grievance Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Employee Grievance DocType with type, raised-against, HR owner, status lifecycle (Open → Under Review → Resolved/Closed), full resolution audit trail.</p>
+    <p><strong>What to configure:</strong></p>
+    <ul>
+      <li>Define Grievance Types per HR policy: Pay Dispute, Interpersonal, Policy Violation, Harassment, Workplace Safety</li>
+      <li>Configure role-based permissions for confidentiality: only HR + directly involved parties can view</li>
+      <li>Note: Grievance Type DocType needs its own separate read/write permission config — known setup step</li>
+      <li>Add SLA escalation script in <code>tasks.py</code>: auto-notify HR Head if grievance unresolved beyond 7 days</li>
+      <li>Build open grievances dashboard by type and department</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-ootb">OOTB</span> HR-08 · Travel Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Travel Request, Employee Advance, advance disbursement via Payment Entry, Expense Claim for actuals, auto-allocation of advance against claim, advance recovery in payroll if unsettled.</p>
+    <p><strong>What to configure:</strong></p>
+    <ul>
+      <li>Configure Travel Request approval chain: Employee → Supervisor → Department Head → Finance</li>
+      <li>Link advance disbursement to treasury/accounts approval</li>
+      <li>Add validation in <code>tasks.py</code>: block new Travel Requests if prior advance unsettled beyond 30 days</li>
+      <li>Pending travel advances report by employee for Finance team</li>
+      <li>Configure multi-currency support for outstation travel if required</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-ootb">OOTB</span> HR-09 · Claims &amp; Advances <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Employee Advance types, disbursement via Payment Entry, Expense Claim auto-allocation against advance, payroll recovery component for unsettled balance.</p>
+    <p><strong>What to configure:</strong></p>
+    <ul>
+      <li>Configure Advance Types: Travel, Medical, Personal</li>
+      <li>Create <em>Advance Recovery</em> salary deduction component linked to payroll</li>
+      <li>Set approval workflow for advance disbursement</li>
+      <li>Add maximum advance limit validation per employee per category (via Server Script on before_submit)</li>
+      <li>Test payroll recovery linkage end-to-end with Accounts team before go-live</li>
+    </ul>
+  </div>
+</details>
+
+<h3 class="no-print">Phase 2 — Payroll, Performance &amp; Custom (Aug 24 – Sep 13)</h3>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-ootb">OOTB</span> HR-10 · Payroll <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Salary Components (formula-based), Salary Structure, Salary Structure Assignment, Payroll Entry (batch run), Salary Slips, Bank Payment Summary, GL auto-posting.</p>
+    <p><strong>What to configure:</strong></p>
+    <ul>
+      <li>Design salary components: Basic, HRA (40%/50% of Basic), Special Allowance, LTA, PF (12% of Basic), ESI (0.75%), PT (state-wise), TDS</li>
+      <li>Install and configure <strong>India Payroll</strong> companion app (installed alongside Frappe HRMS)</li>
+      <li>Define Salary Structures per employee grade (Junior / Senior / Manager / Leadership)</li>
+      <li>Configure payroll calendar and approver chain</li>
+      <li>Test NEFT bank file format with Finance team before first live run</li>
+      <li>Validate GL postings to Chart of Accounts — ensure payroll expense heads are mapped</li>
+      <li><strong>Mandatory:</strong> perform a dry-run payroll with 2–3 test employees before go-live</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-partial">Partial</span> HR-15 · Compliance — PF / ESI / PT / LWF / Gratuity <span style="background:#fef3c7;color:#92400e;font-size:.7rem;font-weight:700;padding:1px 5px;border-radius:3px;vertical-align:middle;">Updated · Client PRD</span> <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What exists:</strong> India Payroll app handles PF, ESI, PT, TDS once configured. Form 16 / Form 24Q generation is built in.</p>
+    <p><strong>What to configure (original scope):</strong></p>
+    <ul>
+      <li>PF Settings: wage ceiling (₹15,000), employer EPF 3.67% + EPS 8.33% + EDLI 0.5%, employee 12%</li>
+      <li>ESI Settings: ₹21,000 gross threshold, PwD exemption flag</li>
+      <li>State-wise PT Slabs per employee work location (Maharashtra, Karnataka, etc. all differ)</li>
+      <li>TDS: support old and new tax regime, investment declaration workflow, generate Form 16 annually</li>
+      <li>Test ECR file against EPFO portal validation rules before first submission</li>
+      <li>Set up compliance calendar: PF monthly by 15th, ESI by 15th, PT monthly/quarterly, TDS quarterly</li>
+    </ul>
+    <p><strong style="color:#92400e;">Client PRD additions (configure in T11):</strong></p>
+    <ul style="border-left:3px solid #fcd34d;padding-left:12px;">
+      <li><strong>LWF (Labour Welfare Fund):</strong> State-specific biannual contribution. India Payroll app supports LWF — configure state-wise LWF slabs (Employee + Employer contribution amounts per state). Deducted in June and December salary runs. Collect state list and slab amounts from HR.</li>
+      <li><strong>Gratuity:</strong> Payable after 5 years continuous service. Formula: (15/26) × Last Basic × Years of Service. Add Gratuity calculation to the F&amp;F settlement print format (T14). Also create a Gratuity Provision Script Report for Finance (shows all employees with 4.5+ years tenure and estimated gratuity liability).</li>
+      <li><strong>Labour Registers:</strong> Statutory registers required under Factories Act / Shops &amp; Establishments Act. Build Script Reports for: Form 12 (Register of Wages / Muster Roll), Attendance Register export, Advance &amp; Loan Register, Leave Register. These must be printable in the prescribed format — check with HR for applicable state act.</li>
+    </ul>
+    <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:10px 12px;margin-top:10px;font-size:.84rem;">
+      <strong>Delay Risk — High:</strong> PT slab setup + LWF state list requires exact data from HR policy. Get this from Vandana before starting T11. EPFO ECR file format can cause issues — validate against the EPFO staging portal. Gratuity calculation links to T14 (Exit Management).
+    </div>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-ootb">OOTB</span> HR-04 · Performance Management <span style="background:#fef3c7;color:#92400e;font-size:.7rem;font-weight:700;padding:1px 5px;border-radius:3px;vertical-align:middle;">Updated · Client PRD</span> <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Appraisal Template with KRAs and weights (must total 100%), Appraisal Cycle, individual Appraisal documents auto-created per employee, self-rating, manager rating, weighted total auto-calculated.</p>
+    <p><strong>What to configure (original scope):</strong></p>
+    <ul>
+      <li>Design KRA templates per department and role level — this is a business task, not a tech task. Get the KRA list from Vandana / HR leadership before development</li>
+      <li>Configure cycle periods: quarterly / half-yearly / annual with open and close dates</li>
+      <li>Set up email Notifications for cycle open, weekly reminder, cycle close</li>
+      <li>Build Appraisal PDF Print Format with company letterhead, KRA table, weighted score, manager remarks</li>
+    </ul>
+    <p><strong style="color:#92400e;">Client PRD additions (configure in T12):</strong></p>
+    <ul style="border-left:3px solid #fcd34d;padding-left:12px;">
+      <li><strong>OKRs (Objectives &amp; Key Results):</strong> The client PRD requires OKR tracking alongside KRAs. Frappe Appraisals use KRAs natively. Decision for Vandana: Option A — add a child table <code>scale_hr_objectives</code> to Appraisal with columns: Objective, Key Result, Target, Actual, Completion %; Option B — a separate Goal DocType. Document the decision before building.</li>
+      <li><strong>Monthly / Quarterly / Annual Review cadences:</strong> Configure three separate Appraisal Cycle template types — Monthly (lightweight pulse), Quarterly (manager review), Annual (full KRA + 360 + development plan). Each cycle type has different forms and notification rules.</li>
+      <li><strong>Development Plans (IDP):</strong> On Appraisal submit, capture agreed IDP actions. Add custom fields <code>scale_hr_idp_actions</code> (Long Text) and <code>scale_hr_idp_target_date</code> (Date) to Appraisal — module = Scale HR → export fixture.</li>
+      <li><strong>Performance Ratings:</strong> The PRD wants explicit rating labels (e.g. Exceptional / Exceeds Expectations / Meets Expectations / Below Expectations / Unsatisfactory). Configure rating display labels in the Appraisal print format to translate numeric scores to these labels.</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-partial">Partial</span> HR-05 · 360 Feedback <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What exists:</strong> Employee Performance Feedback DocType (criteria-based), reviewer assignment, average score aggregation to Appraisal.</p>
+    <p><strong>What to build:</strong></p>
+    <ul>
+      <li>Auto-rater assignment script: based on reports-to (manager) and peer relationships from Employee master — runs as Server Script on Appraisal Cycle submit</li>
+      <li>Anonymous feedback: use Frappe User Permission masking to hide reviewer identity from employee during active feedback period</li>
+      <li>Automated email invitation with direct feedback form link per reviewer (Frappe Notification with dynamic link)</li>
+      <li>Competency summary report: radar / heatmap style Script Report per employee and by department</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-custom">Custom</span> HR-14 · Exit Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What exists:</strong> Employee Separation DocType (template-based clearance checklist), Exit Interview, basic Full &amp; Final Settlement.</p>
+    <p><strong>What to build:</strong></p>
+    <ul>
+      <li>Create separation templates per department with clearance activity list (IT: laptop, email revoke; Admin: access card; Finance: advance recovery; HR: PF withdrawal form; Manager: knowledge transfer)</li>
+      <li>Build exit interview questionnaire form (web form)</li>
+      <li><strong>Asset auto-fetch Python hook</strong>: on <code>before_submit</code> of Employee Separation, query ERPNext Asset module for all assets where Custodian = this Employee → auto-populate F&amp;F asset deduction rows (see C.5 example)</li>
+      <li>Create F&amp;F PDF Print Format: salary dues, gratuity, leave encashment, advance recoveries, asset deductions — all itemised</li>
+      <li>SLA alert in <code>tasks.py</code>: if any clearance task pending beyond 5 days, notify HR Head</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-partial">Partial</span> HR-13 · Training &amp; Skilling <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What exists:</strong> Training Program, Training Event, employee enrolment, Training Result, Training Feedback, Employee Skill master.</p>
+    <p><strong>What to build:</strong></p>
+    <ul>
+      <li>Define Employee Skill taxonomy with Vandana: skills, proficiency levels, certifications per role</li>
+      <li>Auto-skill-update hook: on Training Result <code>on_submit</code> with passing score → update Employee Skill record (Python hook in <code>training_hooks.py</code>)</li>
+      <li>Certification expiry alert in <code>tasks.py</code>: daily check for certs expiring within 30 days → email to employee + HR</li>
+      <li>Skill Gap Report (Script Report): required skills per Designation vs. Employee Skill actual → shows gap per person and per team</li>
+      <li><strong>Pre-work required:</strong> Skill taxonomy and role-skill matrix must be provided by HR before dev starts. Block T17 on this.</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-custom">Custom</span> HR-03 · Induction Plan <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What exists:</strong> Training Program (type: Induction) as a native container. The structured first-month curriculum with week-wise sequence and manager sign-offs requires a custom DocType.</p>
+    <p><strong>What to build:</strong></p>
+    <ul>
+      <li>Custom DocType: <strong>Induction Plan</strong> — fields: Employee (Link), Start Date, Department, Status (Select: In Progress / Completed / Cancelled). Child table: <strong>Induction Session</strong> (Week, Session Title, Training Event link, Sign-off Required checkbox, Signed Off By, Sign-off Date)</li>
+      <li>Add custom fields on Training Event: pre-read URL, material link, sign-off required flag</li>
+      <li>Build sign-off workflow on Training Event: Draft → In Progress → Signed Off (manager approval)</li>
+      <li>Web form for new hire: view own schedule, acknowledge session completion</li>
+      <li>Script Report: first-month progress tracker per new hire for HR review</li>
+    </ul>
+  </div>
+</details>
+
+<!-- ═══════════════════════════════════
+     WEB-ONLY: NEW FEATURES FROM CLIENT PRD
+═══════════════════════════════════ -->
+<h3 class="no-print" style="margin-top:32px;border-top:2px solid #fcd34d;padding-top:16px;color:#92400e;">Client PRD Extended Features (HR-16 to HR-23) — Wave 2 Scope</h3>
+<p class="no-print" style="font-size:.88rem;color:#78350f;background:#fffbeb;padding:10px 14px;border-radius:6px;border:1px solid #fcd34d;">These 8 features are in the client HRM PRD (Jul 2026) but are outside Wave 1 scope (except HR-17/18/19 which have task cards T18–T20 above). Expand for approach notes.</p>
+
+<details class="feat no-print">
+  <summary><span style="background:#fef3c7;color:#92400e;font-size:.75rem;font-weight:700;padding:2px 6px;border-radius:4px;">NEW</span> HR-16 · Governance &amp; Funding <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Client PRD objective:</strong> Track HR governance initiatives, HR policies, CSR-funded workforce programs, government employment schemes, and workforce development grants.</p>
+    <p><strong>What the PRD requires:</strong> HR Policies document repository, Governance Frameworks, Employee Welfare Programs, Government Skill Development Schemes (PMKVY etc.), Funding &amp; Grant Applications, Compliance Documentation. AI should recommend applicable government schemes and monitor policy compliance.</p>
+    <p><strong>Wave 2 approach:</strong> Build custom DocTypes: <code>HR Policy</code> (version-controlled policy repository), <code>Government Scheme</code> (scheme name, eligibility, deadline, status), <code>Grant Application</code> (linked to scheme, amounts, approvals). AI task: prompt LLM with employee profile → suggest applicable schemes.</p>
+    <p><strong>Pre-work for Wave 2 planning:</strong> Get the list of government schemes the client is currently enrolled in or interested in (PMKVY, NSDC, Skill India, CSR-funded programs). This is a business data collection task.</p>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span style="background:#fef3c7;color:#92400e;font-size:.75rem;font-weight:700;padding:2px 6px;border-radius:4px;">NEW</span> HR-17 · Asset Management <span style="background:#d1fae5;color:#065f46;font-size:.72rem;font-weight:700;padding:1px 5px;border-radius:3px;vertical-align:middle;">Wave 1 · T18</span> <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Client PRD objective:</strong> Manage assets assigned to employees throughout their employment lifecycle. Track: Laptops, Mobiles, ID Cards, Access Cards, Vehicles, Uniforms, Software Licenses. AI: asset utilisation analysis, replacement prediction, asset recovery reminders.</p>
+    <p><strong>What ERPNext provides:</strong> Full Asset module with asset categories, custodian tracking, depreciation, maintenance schedules. Our exit hook already queries the Asset module (<code>frappe.get_all("Asset", filters={"custodian": doc.employee})</code>). This is largely already wired.</p>
+    <p><strong>See task card T18</strong> for step-by-step configuration. Wave 2 additions: AI replacement prediction (flag assets near end-of-life), asset utilization dashboard (is that laptop actually being used?), software license seat tracking.</p>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span style="background:#fef3c7;color:#92400e;font-size:.75rem;font-weight:700;padding:2px 6px;border-radius:4px;">NEW</span> HR-18 · Employee Self-Service (ESS) <span style="background:#d1fae5;color:#065f46;font-size:.72rem;font-weight:700;padding:1px 5px;border-radius:3px;vertical-align:middle;">Wave 1 · T19</span> <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Client PRD objective:</strong> Employees can independently: View Payslips, Apply Leave, Submit Expenses, Update Profile, Download Documents, View Attendance, Complete Learning, Raise Grievances. AI: HR chatbot, smart policy search, personalised notifications.</p>
+    <p><strong>What ERPNext provides:</strong> Full ESS portal already built into Frappe HRMS (employees access the same ERPNext instance with restricted permissions). Payslip view, leave application, expense submission — all native.</p>
+    <p><strong>See task card T19</strong> for configuration steps. Wave 2 AI additions (Veeren): HR chatbot for policy queries, smart document search, burnout/engagement alerts pushed via ESS notification.</p>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span style="background:#fef3c7;color:#92400e;font-size:.75rem;font-weight:700;padding:2px 6px;border-radius:4px;">NEW</span> HR-19 · Manager Self-Service (MSS) <span style="background:#d1fae5;color:#065f46;font-size:.72rem;font-weight:700;padding:1px 5px;border-radius:3px;vertical-align:middle;">Wave 1 · T20</span> <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Client PRD objective:</strong> Managers can: Approve Leave, Approve Expenses, Approve Attendance Corrections, Review Performance, View Team Analytics, Initiate Hiring Requests. AI: team productivity insights, performance alerts, attrition risk indicators.</p>
+    <p><strong>See task card T20</strong> for configuration steps. Wave 2 AI additions (Veeren): V03 retention risk flag already covers attrition risk indicators. Team productivity AI insights can be added to the Manager workspace as a dashboard tile using existing HR data.</p>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span style="background:#fef3c7;color:#92400e;font-size:.75rem;font-weight:700;padding:2px 6px;border-radius:4px;">NEW</span> HR-20 · Succession Planning &amp; Talent Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Client PRD objective:</strong> Identify, develop, and retain high-potential employees while ensuring leadership continuity. Requirements: Talent Pools, Hi-Potential Employees (HiPo flag), Career Paths, Leadership Development Plans, Successor Mapping. AI: leadership potential prediction, promotion readiness scoring, successor recommendations, skill gap analysis.</p>
+    <p><strong>What ERPNext provides:</strong> None natively — this is a fully custom build. However, the Employee master has enough data (performance scores, skills, tenure, department) to derive HiPo indicators.</p>
+    <p><strong>Wave 2 approach:</strong></p>
+    <ul>
+      <li>Custom field <code>scale_hr_hipo_flag</code> (Check) + <code>scale_hr_talent_tier</code> (Select: A / B / C) on Employee</li>
+      <li>Custom DocType: <strong>Succession Plan</strong> — fields: Role/Position (Link to Designation), Current Holder (Link to Employee), Successor 1/2/3 (Link to Employee), Readiness (Select: Ready Now / 1 Year / 2 Years / Development Required), Development Plan (Long Text)</li>
+      <li>Custom DocType: <strong>Career Path</strong> — for each Designation, define the next-level roles and required skills/certifications</li>
+      <li>AI task (Veeren Wave 2): weekly scan of Employee performance + skills + tenure → suggest HiPo candidates + promotion readiness scores</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span style="background:#fef3c7;color:#92400e;font-size:.75rem;font-weight:700;padding:2px 6px;border-radius:4px;">NEW</span> HR-21 · Employee Engagement Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Client PRD objective:</strong> Measure and improve employee satisfaction, motivation, and organisational culture. Requirements: Surveys, Pulse Surveys, Recognition Programs, Rewards, Wellness Programs, Employee Communities. AI: Engagement score prediction, Sentiment analysis, Burnout detection, Recognition recommendations.</p>
+    <p><strong>What ERPNext provides:</strong> Frappe has a basic survey/questionnaire feature in Quality Management, but it is not designed for HR engagement use. This is a significant custom build.</p>
+    <p><strong>Wave 2 approach:</strong></p>
+    <ul>
+      <li>Custom DocType: <strong>Engagement Survey</strong> — survey questions (child table), target audience (all / department / grade), open/close date, anonymous flag, responses (child table → Employee + score per question)</li>
+      <li>Custom DocType: <strong>Recognition Award</strong> — giver (Employee), receiver (Employee), category (Team Player / Innovation / Client Success), points, public/private, date</li>
+      <li>Pulse Survey: lightweight 3-question monthly survey auto-emailed to all employees (scheduler task)</li>
+      <li>Engagement dashboard: trend of survey NPS scores by department and quarter</li>
+      <li>AI (Veeren Wave 2): sentiment analysis on open-text survey responses → burnout risk flag</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span style="background:#fef3c7;color:#92400e;font-size:.75rem;font-weight:700;padding:2px 6px;border-radius:4px;">NEW</span> HR-22 · Workforce Planning &amp; Analytics <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Client PRD objective:</strong> Support strategic workforce planning by forecasting manpower needs, analyzing workforce costs, and monitoring organisational productivity. Requirements: Headcount analysis, Workforce Costs, Productivity, Skill Availability, Vacancy Planning, Attrition Trends, Diversity Metrics. AI: workforce demand forecasting, hiring recommendations, attrition prediction, productivity forecasting.</p>
+    <p><strong>What ERPNext provides:</strong> The data exists across Employee, Payroll, Attendance, Appraisal, and Training DocTypes — what's missing is aggregated analytics dashboards and Script Reports that cross these.</p>
+    <p><strong>Wave 2 approach (reports-based, no new DocTypes needed):</strong></p>
+    <ul>
+      <li>Headcount Report: employees by department / grade / location / employment type, with month-on-month trend</li>
+      <li>Workforce Cost Report: salary cost by department and month (from Payroll Entry)</li>
+      <li>Attrition Dashboard: resignations by month, department, tenure bucket, exit reason (from Employee Separation)</li>
+      <li>Skill Availability Report: for each required skill, how many employees are at each proficiency level (from Employee Skill)</li>
+      <li>Diversity Metrics: gender ratio by department and grade (from Employee master)</li>
+      <li>AI (Veeren Wave 2): retention risk model (V03 already covers this), workforce demand forecasting from historical headcount + business plan data</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span style="background:#fef3c7;color:#92400e;font-size:.75rem;font-weight:700;padding:2px 6px;border-radius:4px;">NEW</span> HR-23 · Document Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Client PRD objective:</strong> Maintain a secure digital repository of employee documents throughout the employee lifecycle. Document types: Offer Letters, Employment Contracts, Educational Certificates, Identity Proofs, Address Proofs, PF &amp; ESI Documents, Salary Revision Letters, Performance Appraisals, Training Certificates, Exit Documents. Features: Version Control, Expiry Alerts, Digital Signatures, Role-Based Access, Document Search, Bulk Upload, Secure Storage. AI: OCR-based reading, auto-classification, missing document detection, expiry prediction.</p>
+    <p><strong>What ERPNext provides:</strong> Frappe File system allows attachments on any DocType. But a structured per-employee document repository with version control, expiry dates, and category tagging does not exist natively.</p>
+    <p><strong>Wave 2 approach:</strong></p>
+    <ul>
+      <li>Custom DocType: <strong>Employee Document</strong> — fields: Employee (Link), Document Type (Select: Offer Letter / Contract / ID Proof / Address Proof / Certificate / Appraisal / PF Doc / Exit Doc / Other), Document Number (Data), Issue Date, Expiry Date, File (Attach), Version (Int), Status (Select: Active / Superseded / Expired), Uploaded By (Link to User)</li>
+      <li>Scheduler: daily check for documents expiring within 30 days → email HR to collect updated documents</li>
+      <li>Missing Document Report: for each employee, check required document types → flag if any is missing or expired</li>
+      <li>Role-based access: HR Manager = full access; HR User = upload/view; Employee = view own only</li>
+      <li>AI (Veeren Wave 2): OCR to extract text from uploaded PDFs and auto-fill document fields (document number, expiry date) using Claude/GPT vision API</li>
+    </ul>
+  </div>
+</details>
+
+<!-- ═══════════════════════════════════
+     TASK CARDS
+═══════════════════════════════════ -->
+<h2>Week-by-Week Task Breakdown</h2>
+
+<div class="app-phase-label">T00 — App Creation Phase (Day 1, before Jul 29)</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T00</span>
+    <span class="task-assign">Vandana</span>
+    <span class="task-date">Jul 29, 2026 · Day 1</span>
+  </div>
+  <h4>Create scale_hr app scaffold and push to git</h4>
+  <div class="task-meta">Feature: Foundation · Deliverable: scale_hr app installed + workspace sidebar visible + team can pull</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this task:</span> Every custom feature in the HR module lives inside <code>scale_hr</code>. Without this app, there is no safe place to put custom DocTypes, Python hooks, or fixtures — any UI config done without it cannot be version-controlled. This is the starting gate for everything else.</p>
+    <p><span class="ctx-label">In practice:</span> After T00, Vinay and Veeren clone the repo and run three commands to get a working bench with the HR app active and the Scale HR sidebar visible. No manual setup steps for the team.</p>
+    <span class="ctx-ref">Requirement: Foundation · Section B of this document</span>
+  </div>
+  <ol class="task-steps">
+    <li>Run <code>bench new-app scale_hr</code> — fill in details as per Section B Step 1</li>
+    <li>Add <code>scale_hr</code> to <code>sites/apps.txt</code></li>
+    <li>Run <code>bench --site scale.localhost install-app scale_hr</code></li>
+    <li>Edit <code>hooks.py</code> with the full content from Section B Step 3</li>
+    <li>Create stub files: <code>employee_hooks.py</code>, <code>appraisal_hooks.py</code>, <code>exit_hooks.py</code>, <code>training_hooks.py</code>, <code>tasks.py</code>, <code>ai_utils.py</code> — each with a single pass-through function</li>
+    <li>Create the Workspace JSON at <code>scale_hr/scale_hr/workspace/scale_hr/scale_hr.json</code></li>
+    <li>Run <code>bench --site scale.localhost migrate</code> — verify Scale HR appears in sidebar</li>
+    <li>Commit: <code>git commit -m "feat(hr): scale_hr app scaffold — hooks, stubs, workspace sidebar"</code></li>
+    <li>Push: <code>git push origin main</code></li>
+  </ol>
+  <div class="task-note">Verify: Open <code>scale.localhost:8001</code> → Scale app → Scale HR should appear in left sidebar with shortcut tiles (Employee, Leave Application, Attendance, Job Applicant).</div>
+</div>
+
+<div class="week-label">Week 1 · Jul 29 – Aug 8 · Leave, Attendance, Hiring Masters</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T01</span>
+    <span class="task-assign">Vandana</span>
+    <span class="task-date">Jul 29–30</span>
+  </div>
+  <h4>Configure HR Masters — Departments, Designations, Employment Types, Grades</h4>
+  <div class="task-meta">Feature: HR-01, HR-04 · Deliverable: All master data configured, Employee form fully usable</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this task:</span> Every other HR feature depends on these masters. Leave policies attach to Grades, Appraisal Templates link to Designations, payroll Salary Structures are assigned by Grade. Getting this right first avoids cascading data corrections later.</p>
+    <p><span class="ctx-label">In practice:</span> Vandana creates the Department tree, Designation list, and Employment Type list in ERPNext UI. Then creates Employee Grades (Junior, Senior, Manager, Leadership) and links them to the structure.</p>
+    <span class="ctx-ref">Requirement: HR-01 Hiring · HR-04 Performance Management</span>
+  </div>
+  <ol class="task-steps">
+    <li>Go to HRMS → Department → create department tree matching org chart</li>
+    <li>Go to HRMS → Designation → create all job titles</li>
+    <li>Go to HRMS → Employment Type → create: Full-time, Contractual, Part-time, Intern, Probation</li>
+    <li>Go to HRMS → Employee Grade → create: Junior, Senior, Manager, Leadership — each with Default Leave Policy (to be updated after T02)</li>
+    <li>Add custom field <code>scale_hr_joining_source</code> (Select) on Employee via Customize Form — options: Referral / Job Portal / Campus / Walk-in / Social Media — Module: Scale HR</li>
+    <li>Export fixtures: <code>bench --site scale.localhost export-fixtures --app scale_hr</code></li>
+    <li>Commit fixtures</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T02</span>
+    <span class="task-assign-v2">Vinay</span>
+    <span class="task-date">Jul 29–31</span>
+  </div>
+  <h4>Configure Leave Types, Leave Policies, and Holiday Lists</h4>
+  <div class="task-meta">Feature: HR-11 Leave Management · Deliverable: Leave system live for all employees</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this task:</span> Leave Management is the highest-frequency HR interaction for employees. Getting Leave Types and Policies configured early means employees can start applying leaves from Day 1 of go-live rather than waiting weeks for HR setup.</p>
+    <p><span class="ctx-label">In practice:</span> An employee applies for 2 days CL via the HR portal. The system checks their allocation (auto-created by policy), deducts from balance, routes to their manager for approval, sends email confirmation, and updates the team calendar — all without HR manually tracking anything.</p>
+    <span class="ctx-ref">Requirement: HR-11 Leave Management</span>
+  </div>
+  <ol class="task-steps">
+    <li>Create Leave Types: CL (12/yr, paid), SL (12/yr, paid, not encashable), EL (accrual-based, encashable), ML (6 months, paid), PL (as applicable), LWP (unpaid)</li>
+    <li>Create Leave Policy: allocate each Leave Type to the appropriate Employee Grades</li>
+    <li>Create Holiday Lists per location: set national and state-specific public holidays for 2026–27</li>
+    <li>Assign Holiday Lists to each Company branch/location</li>
+    <li>Enable team leave calendar view in Workspace settings</li>
+    <li>Set Leave Encashment salary component (coordinate with Vandana for payroll link)</li>
+  </ol>
+  <div class="task-note">Do not configure carry-forward until Vandana confirms the payroll salary structure is ready — carry-forward encashment is paid via payroll.</div>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T03</span>
+    <span class="task-assign-v2">Vinay</span>
+    <span class="task-date">Aug 1–5</span>
+  </div>
+  <h4>Configure Shift Types and Auto-Attendance Job</h4>
+  <div class="task-meta">Feature: HR-12 Attendance &amp; Shifts · Deliverable: Auto-attendance running; attendance feeds into payroll LOP</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this task:</span> Without auto-attendance, HR must manually mark attendance for every employee every day — impractical at scale. The Auto-Attendance scheduled job reads check-in logs and marks Present/Absent/Late automatically each night, so payroll can calculate LOP deductions without manual intervention.</p>
+    <p><span class="ctx-label">In practice:</span> A field employee checks in via mobile browser at 9:12am. The system logs the check-in. That night, Auto-Attendance marks them as Late Entry (grace: 15 min). Payroll picks this up as 0.5 LOP if configured accordingly.</p>
+    <span class="ctx-ref">Requirement: HR-12 Attendance &amp; Shifts</span>
+  </div>
+  <ol class="task-steps">
+    <li>Create Shift Types: General (9:00–18:00, grace 15 min), Morning (7:00–15:00), Flex (core hours 11–16)</li>
+    <li>Configure break rules per shift type</li>
+    <li>Create Shift Assignment rules linking Designation/Department to default shift</li>
+    <li>Enable Auto-Attendance: HRMS → Auto Attendance → configure for each Shift Type</li>
+    <li>Test: manually create a test Employee Checkin entry → run auto-attendance → verify attendance record created</li>
+    <li>Set up LOP deduction rule: Late Entry = 0.5 LOP after 3 occurrences/month (per HR policy — confirm with Vandana)</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T04</span>
+    <span class="task-assign">Vandana</span>
+    <span class="task-date">Aug 3–7</span>
+  </div>
+  <h4>Configure Hiring — Job Openings, Interview Rounds, Offer Letter print format</h4>
+  <div class="task-meta">Feature: HR-01 Hiring · Deliverable: Full recruitment flow live — applicant → offer → employee</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this task:</span> Hiring is a P1 feature. Every new joiner goes through this flow. Without it, HR tracks candidates in spreadsheets and manually creates Employee records — creating data quality risks at the source of the employee master.</p>
+    <p><span class="ctx-label">In practice:</span> HR raises a Job Opening for a Sales Executive vacancy. It appears on the external portal. Applicants submit. HR screens and shortlists. Interview rounds are scheduled with interviewers who get calendar invites. Job Offer is generated with the salary break-up, routed for approval, and digitally sent. On acceptance, the Employee record auto-creates with all fields pre-filled from the applicant data.</p>
+    <span class="ctx-ref">Requirement: HR-01 Hiring</span>
+  </div>
+  <ol class="task-steps">
+    <li>Enable Frappe HR external applicant portal in Website settings</li>
+    <li>Create Job Opening templates per department: pre-fill requirements, skills, grade, salary range</li>
+    <li>Configure Interview Types: Screening, Technical Round 1, Technical Round 2, HR Round, Final</li>
+    <li>Build Offer Letter HTML Print Format: company letterhead, designation, joining date, salary break-up table, acceptance clause</li>
+    <li>Set up Workflow on Job Offer: Draft → HR Review → Department Head Approval → Approved → Sent to Candidate</li>
+    <li>Configure Notification Rules: applicant acknowledgement on submission, interview schedule, offer email with PDF</li>
+    <li>Test end-to-end: create Job Applicant → schedule interview → record feedback → generate offer → verify Employee auto-created</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T05</span>
+    <span class="task-assign">Vandana</span>
+    <span class="task-date">Aug 5–8</span>
+  </div>
+  <h4>Configure Employee Onboarding Templates</h4>
+  <div class="task-meta">Feature: HR-02 Onboarding · Deliverable: Onboarding auto-triggers on Employee creation; all activities assigned</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this task:</span> Without a structured onboarding process, new hires experience inconsistent first days — missing system access, no ID card, unconfigured payroll. Automated onboarding templates ensure every activity gets assigned to the right department owner with a deadline, and HR can track completion on a single dashboard.</p>
+    <span class="ctx-ref">Requirement: HR-02 Onboarding</span>
+  </div>
+  <ol class="task-steps">
+    <li>Create Onboarding Template for each department track (e.g. Sales, HR, Finance, Tech)</li>
+    <li>Add activities per template: IT (system access, email setup — Day 0), Admin (ID card, access card — Day 0), Finance (bank details, PF enrolment — Day 1), HR (policy orientation, document collection — Day 1), Manager (goal setting, buddy assignment — Week 1)</li>
+    <li>Set due-date offsets per activity (days from joining date)</li>
+    <li>Configure email reminder Notification Rule: escalate to HR if any activity overdue beyond 3 days</li>
+    <li>Test: create a test Employee → raise Employee Onboarding document → verify all activities auto-assigned to correct owners with correct deadlines</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">R01</span>
+    <span class="task-assign">Vandana</span>
+    <span class="task-date">Aug 8</span>
+  </div>
+  <h4>Export custom field fixtures — first code commit for HR module</h4>
+  <div class="task-meta">Feature: All custom fields (T01) · Deliverable: Custom fields version-controlled in git</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this task:</span> Custom fields created via the ERPNext UI exist only in the database until exported. After this commit, any developer who clones the repo and runs <code>bench migrate</code> gets the custom fields automatically — no manual UI steps.</p>
+    <span class="ctx-ref">Requirement: Foundation · Section C.2 Change-Test-Commit cycle</span>
+  </div>
+  <ol class="task-steps">
+    <li>Confirm T01 custom fields are saved and tested on your bench</li>
+    <li>Run: <code>bench --site scale.localhost export-fixtures --app scale_hr</code></li>
+    <li>Verify: <code>apps/scale_hr/scale_hr/fixtures/custom_field.json</code> exists and contains the joining_source field</li>
+    <li>Commit: <code>git commit -m "feat(hr): custom fields fixtures — Employee joining source"</code></li>
+    <li>Push: <code>git push origin main</code></li>
+  </ol>
+</div>
+
+<div class="week-label">Week 2 · Aug 10–21 · Expense, Grievance, Travel, Claims</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T06</span>
+    <span class="task-assign-v2">Vinay</span>
+    <span class="task-date">Aug 10–12</span>
+  </div>
+  <h4>Configure Expense Types, Approval Hierarchy, GL Mapping</h4>
+  <div class="task-meta">Feature: HR-06 Expense Claims · Deliverable: Expense claim flow live; GL entries auto-posting</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this task:</span> Expense claims are a near-daily activity for field teams, sales reps, and managers. Without configuration, employees cannot get reimbursements and Finance cannot track project costs — blocking both HR and the Finance module's cost centre reporting.</p>
+    <span class="ctx-ref">Requirement: HR-06 Expense Claims</span>
+  </div>
+  <ol class="task-steps">
+    <li>Create Expense Types: Travel, Meals &amp; Entertainment, Communication, Medical, Stationery/Printing, Client Gifts — each with GL account mapping</li>
+    <li>Configure Expense Approver roles per department (coordinate with Vandana who sets up the role)</li>
+    <li>Set receipt attachment as mandatory: Customize Form → Expense Claim → attach field → Mandatory = 1 → Module = Scale HR → export fixture</li>
+    <li>Map GL accounts and Cost Centres per Expense Type (get account list from Accounts/Finance team)</li>
+    <li>Test: submit a test expense claim → approve → verify GL Journal Entry created with correct cost centre</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T07</span>
+    <span class="task-assign-v2">Vinay</span>
+    <span class="task-date">Aug 13–15</span>
+  </div>
+  <h4>Configure Grievance Types, Permissions, and SLA Escalation</h4>
+  <div class="task-meta">Feature: HR-07 Grievance Management · Deliverable: Confidential grievance flow live with SLA alert</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this task:</span> Grievances must be handled confidentially and within defined timelines. Without role-based permission config, any manager can see all grievances, which is a compliance and trust risk. The SLA script ensures HR doesn't miss escalation windows.</p>
+    <span class="ctx-ref">Requirement: HR-07 Grievance Management</span>
+  </div>
+  <ol class="task-steps">
+    <li>Create Grievance Types: Pay Dispute, Interpersonal Conflict, Policy Violation, Harassment, Workplace Safety</li>
+    <li>Configure Grievance Type DocType permissions separately: HR Manager (read/write/submit), HR User (create), Employee (create only for own)</li>
+    <li>Configure Employee Grievance DocType user permissions: only HR + involved parties can see each record</li>
+    <li>Write SLA scheduler in <code>tasks.py</code>: <code>daily_grievance_sla_check()</code> — find grievances with status Open/Under Review older than 7 days → send email to HR Head</li>
+    <li>Declare in <code>hooks.py</code> scheduler_events (already declared in scaffold) → <code>bench restart</code></li>
+    <li>Test: create a grievance → let 1 day pass (or manually trigger task) → verify escalation email fires</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T08</span>
+    <span class="task-assign">Vandana</span>
+    <span class="task-date">Aug 17–21</span>
+  </div>
+  <h4>Configure Travel Request Workflow and Advance Validation</h4>
+  <div class="task-meta">Feature: HR-08 Travel Management · Deliverable: Travel request → advance → claim → settlement cycle live</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this task:</span> Travel advances are a Finance liability until settled. Without the validation blocking new requests for employees with unsettled advances, Finance accumulates untracked advance balances — a common audit finding. The full cycle ensures every advance is accounted for.</p>
+    <span class="ctx-ref">Requirement: HR-08 Travel Management</span>
+  </div>
+  <ol class="task-steps">
+    <li>Configure Travel Request approval chain via Workflow: Draft → Supervisor Approval → Department Head → Finance Approval → Approved</li>
+    <li>Configure Employee Advance for Travel type with disbursement via Payment Entry</li>
+    <li>Add validation in <code>tasks.py</code>: <code>daily_travel_advance_overdue_check()</code> — employees with unsettled advance beyond 30 days → email reminder to employee + HR</li>
+    <li>Optionally add a Server Script on Travel Request <code>before_submit</code>: block if employee has unsettled advance older than 30 days</li>
+    <li>Configure multi-currency if outstation travel is required</li>
+    <li>Test full cycle: raise request → approve → create advance → disburse → submit expense claim → verify advance cleared</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T09</span>
+    <span class="task-assign-v2">Vinay</span>
+    <span class="task-date">Aug 22–24</span>
+  </div>
+  <h4>Configure Claims &amp; Advances — Types, Approval, Payroll Recovery</h4>
+  <div class="task-meta">Feature: HR-09 Claims &amp; Advances · Deliverable: Advance-to-payroll-recovery cycle configured</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this task:</span> Unrecovered advances show up as employee receivables in Finance. Linking advance recovery to payroll ensures automatic deduction in the next salary run rather than manual follow-up, which almost never gets done consistently.</p>
+    <span class="ctx-ref">Requirement: HR-09 Claims &amp; Advances</span>
+  </div>
+  <ol class="task-steps">
+    <li>Configure Advance Types: Travel, Medical, Personal — each with a maximum limit per employee grade (coordinate with Vandana)</li>
+    <li>Create Advance Recovery salary deduction component (link to payroll — coordinate with T10)</li>
+    <li>Set approval workflow for advance disbursement</li>
+    <li>Add Server Script on Employee Advance <code>before_submit</code>: validate employee has not exceeded maximum per-category limit</li>
+    <li>Test payroll recovery: create advance → mark partially claimed → run test payroll → verify recovery deduction appears in salary slip</li>
+  </ol>
+</div>
+
+<div class="week-label">Week 3 · Aug 24 – Sep 6 · Payroll, Compliance, Performance, Exit</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T10</span>
+    <span class="task-assign">Vandana</span>
+    <span class="task-date">Aug 25–Sep 1</span>
+  </div>
+  <h4>Configure Salary Components, Salary Structures, Payroll Calendar</h4>
+  <div class="task-meta">Feature: HR-10 Payroll · Deliverable: Salary Structures assigned; dry-run payroll completes without error</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this task:</span> Payroll is the most operationally critical HR deliverable. A misconfigured salary structure or wrong GL mapping can cause Finance to post incorrect entries that are hard to reverse after month close. The mandatory dry-run catches issues before the first live payroll run.</p>
+    <span class="ctx-ref">Requirement: HR-10 Payroll</span>
+  </div>
+  <ol class="task-steps">
+    <li>Design salary components with formulas: Basic (fixed), HRA (50% of Basic for metro, 40% non-metro), Special Allowance (Basic × factor), LTA (annual, annual payout), PF Employee (12% of Basic), PF Employer (12%), ESI Employee (0.75%), TDS (as per declaration)</li>
+    <li>Build Salary Structures per grade: Junior, Senior, Manager, Leadership — each with the right component set</li>
+    <li>Assign Salary Structure to each Employee (or by grade rule)</li>
+    <li>Configure Payroll Calendar: monthly cycle, close date, approver</li>
+    <li>Validate GL posting account heads with Finance team (expense accounts for salaries, liability accounts for deductions)</li>
+    <li><strong>Dry-run mandatory:</strong> run Payroll Entry for 2–3 test employees → review salary slips → verify GL entries → confirm NEFT file format with Finance before any live run</li>
+  </ol>
+  <div class="task-note">Do not run live payroll until dry-run is confirmed by Vandana and signed off by Finance. This is the highest-risk task in the HR module.</div>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T11</span>
+    <span class="task-assign-v2">Vinay</span>
+    <span class="task-date">Sep 1–6</span>
+    <span style="background:#fef3c7;color:#92400e;font-size:.72rem;font-weight:700;padding:2px 7px;border-radius:4px;">Updated · Client PRD</span>
+  </div>
+  <h4>Configure PF / ESI / PT / LWF / Gratuity Compliance via India Payroll App</h4>
+  <div class="task-meta">Feature: HR-15 Compliance · Deliverable: All statutory deductions auto-calculating; ECR and ESIC files exportable; LWF deducted; Gratuity calculated</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this task:</span> PF/ESI/PT are legal obligations — wrong configuration means statutory filings are incorrect, which carries significant penalty risk. This task has the highest delay risk in the HR module because PT slab data must come from HR leadership, and ECR file validation requires access to the EPFO portal.</p>
+    <span class="ctx-ref">Requirement: HR-15 Compliance PF/ESI/PT</span>
+  </div>
+  <ol class="task-steps">
+    <li>Verify India Payroll app is installed on the bench (it should be — part of HRMS install)</li>
+    <li>Configure PF Settings: wage ceiling ₹15,000, Employee 12%, Employer EPF 3.67% + EPS 8.33% + EDLI 0.5%</li>
+    <li>Configure ESI Settings: threshold ₹21,000 gross, Employee 0.75%, Employer 3.25%, PwD exemption toggle</li>
+    <li>Get PT slab data from Vandana for each state where employees are based → configure state-wise PT Slabs</li>
+    <li>Configure TDS: old regime and new regime support, investment declaration workflow, Form 16 generation</li>
+    <li>Set up compliance calendar Notifications: PF by 15th, ESI by 15th, PT monthly/quarterly</li>
+    <li>Test ECR file export against EPFO portal validation (staging/test mode) — do not assume it is correct without validation</li>
+    <li><strong style="color:#92400e;">[Client PRD addition]</strong> Configure LWF (Labour Welfare Fund): India Payroll app supports LWF — configure state-wise LWF slabs; LWF is typically deducted twice a year (Jun/Dec). Confirm which states apply and get the slab amounts from HR.</li>
+    <li><strong style="color:#92400e;">[Client PRD addition]</strong> Configure Gratuity: Gratuity is payable after 5 years of service = 15/26 × last basic salary × years of service. Add Gratuity calculation to F&amp;F settlement in the Exit Management flow (T14). Also add a Gratuity provision report for Finance.</li>
+    <li><strong style="color:#92400e;">[Client PRD addition]</strong> Maintain Labour Registers: export Form 12 (Register of Wages), Muster Roll (attendance register), and Loan/Advance register in the format required by labour law. ERPNext can generate these via Script Reports — build or configure these reports for each required register.</li>
+  </ol>
+  <div class="task-note">Block this task on PT slab data and LWF state list from HR team. Start items 1–4 and 6 while waiting. Gratuity calculation links to T14 (Exit Management) — coordinate with Vandana.</div>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T12</span>
+    <span class="task-assign">Vandana</span>
+    <span class="task-date">Aug 24–Sep 3</span>
+    <span style="background:#fef3c7;color:#92400e;font-size:.72rem;font-weight:700;padding:2px 7px;border-radius:4px;">Updated · Client PRD</span>
+  </div>
+  <h4>Configure Appraisal Templates, KRA/KPI/OKR Framework, and Appraisal Cycle</h4>
+  <div class="task-meta">Feature: HR-04 Performance Management · Deliverable: Appraisal cycle runs end-to-end with KRA+OKR framework; PDF print format generated</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this task:</span> Performance appraisal is a P1 feature and a key cultural deliverable. Without KRA templates configured before the first cycle, employees and managers have no shared framework for rating — making the appraisal process subjective and legally indefensible. The KRA list is a business input, not a technical one.</p>
+    <p><span class="ctx-label">In practice:</span> An employee opens their Appraisal form, sees their 5 KRAs with weights (Customer Satisfaction 30%, Revenue Target 25%, Visits 20%, Collections 15%, Accuracy 10%), rates themselves on each, and submits. Manager reviews and adds ratings. Weighted total auto-calculates. HR exports the PDF with company letterhead.</p>
+    <span class="ctx-ref">Requirement: HR-04 Performance Management</span>
+  </div>
+  <ol class="task-steps">
+    <li><strong>Pre-work (business task):</strong> collect KRA list per department and role from HR leadership — this must be completed before development starts on this task</li>
+    <li>Create Appraisal Templates: one per department track. Add KRA rows with weights totalling exactly 100%</li>
+    <li>Configure Appraisal Cycle: set period (quarterly/half-yearly), open date, close date, linked template</li>
+    <li>Set up Notification Rules: email to all employees on cycle open; weekly reminder; email on cycle close</li>
+    <li>Build Appraisal PDF Print Format: company letterhead, KRA table (KRA, Weight, Self Score, Manager Score, Weighted Score), total, remarks, signature line</li>
+    <li>Test: open a cycle → verify appraisals auto-created for all active employees → complete one as employee and manager → verify weighted score calculated → print PDF</li>
+    <li><strong style="color:#92400e;">[Client PRD addition]</strong> OKR Framework: the client PRD specifies OKR tracking alongside KRAs. Frappe HRMS Appraisals use KRA-based scoring natively. For OKRs, decide approach with Vandana: Option A — add a child table <code>scale_hr_objectives</code> to Appraisal (custom DocType) for Objective/Key Results; Option B — use a separate lightweight Goal DocType. Document the decision and build accordingly.</li>
+    <li><strong style="color:#92400e;">[Client PRD addition]</strong> Review cadences: the client PRD requires Monthly, Quarterly, and Annual review cycles — not just one annual appraisal. Configure three separate Appraisal Cycle templates with different cadences. Monthly = lightweight self-check; Quarterly = manager review; Annual = full KRA + 360 + development plan.</li>
+    <li><strong style="color:#92400e;">[Client PRD addition]</strong> Development Plans: on Appraisal submit, ensure there is a Development Plan section capturing agreed IDP (Individual Development Plan) actions. Add custom fields <code>scale_hr_idp_actions</code> (Long Text) and <code>scale_hr_idp_target_date</code> (Date) to Appraisal — export fixture.</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T13</span>
+    <span class="task-assign-v2">Vinay</span>
+    <span class="task-date">Sep 1–6</span>
+  </div>
+  <h4>Build 360 Feedback — Rater Assignment Script and Anonymous Mode</h4>
+  <div class="task-meta">Feature: HR-05 360 Feedback · Deliverable: Rater assignment auto-runs; reviewers receive email with form link</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this task:</span> Manual rater selection is slow and prone to bias. Auto-assignment from the org chart (reports-to for manager, peers from same department) removes this bottleneck. Anonymous feedback increases honesty and is required by the HR policy specification.</p>
+    <span class="ctx-ref">Requirement: HR-05 360 Feedback</span>
+  </div>
+  <ol class="task-steps">
+    <li>Write rater assignment Server Script (or Python hook on Appraisal Cycle submit): for each employee, find their manager (reports-to) and 2 peers (same department, same grade) → create Employee Performance Feedback documents for each rater</li>
+    <li>Configure anonymous feedback: use Frappe User Permission masking on Employee Performance Feedback — reviewer field hidden from employee's view during active period</li>
+    <li>Build Notification Rule: on Feedback document creation, email reviewer with direct link to their feedback form</li>
+    <li>Build competency radar Script Report: per employee, show multi-rater scores vs self-scores across KRAs</li>
+    <li>Test: run cycle for 3 test employees → verify raters assigned correctly → complete feedback as a reviewer → verify employee cannot see reviewer name</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T14</span>
+    <span class="task-assign">Vandana</span>
+    <span class="task-date">Sep 4–7</span>
+  </div>
+  <h4>Build Exit Management — Asset Fetch Hook, F&amp;F Print Format, Clearance SLA</h4>
+  <div class="task-meta">Feature: HR-14 Exit Management · Deliverable: Employee Separation auto-fetches assets; F&amp;F PDF generates correctly</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this task:</span> Missing an asset during exit causes financial loss and creates unresolved liability in the Asset module. Manually checking all assigned assets per employee is error-prone. The auto-fetch hook eliminates this risk. The F&amp;F PDF is required for legal settlement.</p>
+    <span class="ctx-ref">Requirement: HR-14 Exit Management</span>
+  </div>
+  <ol class="task-steps">
+    <li>Create separation clearance templates per department (as per HR policy)</li>
+    <li>Write <code>exit_hooks.fetch_allocated_assets()</code> in <code>apps/scale_hr/scale_hr/exit_hooks.py</code> (see Section C.5 for exact code pattern)</li>
+    <li>Declare in hooks.py: <code>"Employee Separation": {"before_submit": "scale_hr.exit_hooks.fetch_allocated_assets"}</code></li>
+    <li>Run <code>bench restart</code></li>
+    <li>Build exit interview web form (Frappe Web Form on Exit Interview DocType)</li>
+    <li>Build F&amp;F PDF Print Format: salary dues, gratuity calculation, leave encashment, advance recoveries, asset deduction rows, net payable, signature blocks</li>
+    <li>Write SLA scheduler in <code>tasks.py</code>: daily check for clearance tasks overdue beyond 5 days → email HR Head</li>
+    <li>Test end-to-end: raise Employee Separation for a test employee who has assets assigned → submit → verify assets auto-appear in F&amp;F → generate PDF</li>
+  </ol>
+</div>
+
+<div class="week-label">Week 4 · Sep 8–24 · Training, Induction, Final Testing</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T15</span>
+    <span class="task-assign-v2">Vinay</span>
+    <span class="task-date">Sep 8–13</span>
+  </div>
+  <h4>Training Programs — Skill Taxonomy, Auto-Skill Update, Certification Expiry Alert</h4>
+  <div class="task-meta">Feature: HR-13 Training &amp; Skilling · Deliverable: Training result → skill auto-updated; expiry alerts running</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this task:</span> Without auto skill updates, the Employee Skill master becomes stale and useless. The skill gap report is only actionable if the skill data is accurate and current. The certification expiry alert prevents legal and operational risk for certified roles.</p>
+    <span class="ctx-ref">Requirement: HR-13 Training &amp; Skilling</span>
+  </div>
+  <ol class="task-steps">
+    <li><strong>Pre-work:</strong> get Employee Skill taxonomy from Vandana (skills list, proficiency levels: Beginner/Intermediate/Expert, certification list per role) — block this task until received</li>
+    <li>Set up Training Programs and Event types in HRMS</li>
+    <li>Write <code>training_hooks.auto_update_skill()</code>: on Training Result submit with passing score → find or create Employee Skill record → update proficiency level and last trained date</li>
+    <li>Declare in hooks.py: <code>"Training Result": {"on_submit": "scale_hr.training_hooks.auto_update_skill"}</code></li>
+    <li>Write <code>daily_certification_expiry_alert()</code> in <code>tasks.py</code>: query Employee Skill records with certification expiry within 30 days → email employee + HR</li>
+    <li>Build Skill Gap Script Report: for each Designation, get required skills → compare to Employee Skill actuals → show gap table</li>
+    <li>Test: submit a Training Result with passing score → verify Employee Skill updated → run expiry alert manually → verify email fires</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T16</span>
+    <span class="task-assign">Vandana</span>
+    <span class="task-date">Sep 10–13</span>
+  </div>
+  <h4>Create Induction Plan Custom DocType</h4>
+  <div class="task-meta">Feature: HR-03 Induction · Deliverable: Induction Plan DocType live; first-month curriculum trackable</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this task:</span> The native Training Program handles event scheduling but cannot model a sequenced first-month curriculum with week-wise dependencies and manager sign-offs. A custom DocType gives HR a proper onboarding checklist that goes beyond Day 1 into the full first month.</p>
+    <span class="ctx-ref">Requirement: HR-03 Induction</span>
+  </div>
+  <ol class="task-steps">
+    <li>Enable Developer Mode: <code>bench --site scale.localhost set-config developer_mode 1</code> and <code>bench restart</code></li>
+    <li>Create child DocType: <strong>Induction Session</strong> (Is Child Table: yes) — fields: Week (Select: Week 1/2/3/4), Session Title (Data), Training Event (Link), Pre-read URL (Data), Sign-off Required (Check), Signed Off By (Link → User), Sign-off Date (Date)</li>
+    <li>Create parent DocType: <strong>Induction Plan</strong> — fields: Employee (Link, mandatory), Department (Link), Start Date (Date), Status (Select: In Progress / Completed / Cancelled), Sessions (child table → Induction Session)</li>
+    <li>Run <code>bench --site scale.localhost migrate</code></li>
+    <li>Build sign-off Workflow on Induction Plan: In Progress → sign-off action by Manager → Completed</li>
+    <li>Build Script Report: first-month progress per new hire (% sessions completed per week)</li>
+    <li>Commit the auto-generated DocType JSON: <code>git add apps/scale_hr/scale_hr/scale_hr/doctype/</code></li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T17</span>
+    <span class="task-assign">Vandana</span>
+    <span class="task-date">Sep 15–20</span>
+  </div>
+  <h4>End-to-end HR Module Testing</h4>
+  <div class="task-meta">Feature: All · Deliverable: Full employee lifecycle tested — hire to exit — without errors</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this task:</span> Individual feature testing catches isolated bugs, but lifecycle testing catches integration failures — e.g. an advance not recovering in payroll, or a separation not blocking leave allocation carry-forward. This is the final quality gate before any team goes live.</p>
+    <span class="ctx-ref">Requirement: All HR features</span>
+  </div>
+  <ol class="task-steps">
+    <li>Test hire cycle: Job Applicant → Job Offer → Employee auto-created with correct masters</li>
+    <li>Test onboarding: Onboarding document raised automatically → all activities assigned → mark complete</li>
+    <li>Test leave: apply leave → approve → verify balance deducted → check team calendar</li>
+    <li>Test attendance: create check-in → run auto-attendance → verify attendance record and LOP calculation</li>
+    <li>Test payroll dry-run: all employees → salary slips correct → GL entries correct → NEFT file exports</li>
+    <li>Test compliance: PF/ESI deductions on salary slip → verify amounts are correct vs statutory rates</li>
+    <li>Test exit: raise separation → submit → verify asset auto-fetch → F&amp;F PDF → Employee status = Left</li>
+    <li>Document any issues found and assign fixes before Sep 24 deadline</li>
+  </ol>
+</div>
+
+<div class="week-label" style="background:#92400e;">Wave 1 PRD Extensions · Sep 15–24 · From Client PRD (Jul 2026)</div>
+
+<div class="task-card" style="border-color:#fcd34d;">
+  <div class="task-header">
+    <span class="task-id">T18</span>
+    <span class="task-assign">Vandana</span>
+    <span class="task-date">Sep 15–17</span>
+    <span style="background:#fef3c7;color:#92400e;font-size:.72rem;font-weight:700;padding:2px 7px;border-radius:4px;">New · Client PRD · HR-17</span>
+  </div>
+  <h4>Configure Asset Management for HR Lifecycle (Laptops, Mobiles, ID Cards, Access Cards)</h4>
+  <div class="task-meta">Feature: HR-17 Asset Management · Deliverable: Employee assets tracked from allocation to return; exit clearance linked to Asset module</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this task:</span> The client PRD explicitly requires tracking of Laptops, Mobiles, ID Cards, Access Cards, Vehicles, Uniforms, and Software Licenses throughout the employee lifecycle. ERPNext already has a full Asset module — this task wires it to the HR workflow without building anything from scratch.</p>
+    <p><span class="ctx-label">In practice:</span> When a new employee joins, HR creates Asset records (Laptop SN#1234, ID Card, Access Card) and sets the employee as the custodian. When the employee resigns, the exit hook (already written in T14) auto-fetches these assets in the F&amp;F settlement. No asset leaves the company untracked.</p>
+    <span class="ctx-ref">Requirement: HR-17 Asset Management · Client PRD feature #16</span>
+  </div>
+  <ol class="task-steps">
+    <li>Create Asset Categories in ERPNext: Laptop, Mobile, ID Card, Access Card, Vehicle, Uniform, Software License — with their depreciation methods</li>
+    <li>Configure Asset Location = office location / employee desk for custody tracking</li>
+    <li>Create a few Asset records per category for existing employees (data entry task — can be delegated to HR team)</li>
+    <li>Set employee as Custodian on each Asset record — this is the field our exit hook queries (<code>filters={"custodian": doc.employee}</code>)</li>
+    <li>Test the exit flow: assign assets to a test employee → create Employee Separation → submit → verify T14 hook auto-fetches all assets in the F&amp;F → mark as returned</li>
+    <li>Build Asset Register Script Report: list all assets per employee, current location, asset age, estimated replacement date</li>
+  </ol>
+  <div class="task-note">This task is pure configuration (no custom code needed beyond the hook already built in T14). Coordinate with Finance/Accounts if assets need to be capitalized on the Balance Sheet.</div>
+</div>
+
+<div class="task-card" style="border-color:#fcd34d;">
+  <div class="task-header">
+    <span class="task-id">T19</span>
+    <span class="task-assign-v2">Vinay</span>
+    <span class="task-date">Sep 18–20</span>
+    <span style="background:#fef3c7;color:#92400e;font-size:.72rem;font-weight:700;padding:2px 7px;border-radius:4px;">New · Client PRD · HR-18</span>
+  </div>
+  <h4>Enable Employee Self-Service (ESS) Portal — Payslips, Leave, Expenses, Grievances</h4>
+  <div class="task-meta">Feature: HR-18 Employee Self-Service · Deliverable: Employees can access payslips, apply leave, submit expenses, raise grievances independently via browser</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this task:</span> The client PRD requires employees to self-serve for routine HR activities (view payslips, apply leave, submit expenses, update profile, download documents, raise grievances, complete learning). Frappe HRMS ships with a built-in ESS portal — this is mostly a configuration and permissions task.</p>
+    <span class="ctx-ref">Requirement: HR-18 Employee Self-Service · Client PRD feature #17</span>
+  </div>
+  <ol class="task-steps">
+    <li>Enable Frappe HR web portal: Website Settings → enable portal for Employee role</li>
+    <li>Configure Employee role permissions: Employee user can create Leave Application, Expense Claim, Employee Grievance — own records only (user permissions)</li>
+    <li>Enable Salary Slip portal page: HRMS Settings → allow employees to view and download their own salary slips</li>
+    <li>Enable attendance view for employees: allow read access to their own Attendance records</li>
+    <li>Configure the Frappe HR mobile-friendly layout for self-service forms (Customize Form for Leave Application and Expense Claim — simplify fields for employee view)</li>
+    <li>Test: log in as a test employee user → apply leave → submit expense → view payslip → raise grievance → verify HR team gets notifications</li>
+  </ol>
+</div>
+
+<div class="task-card" style="border-color:#fcd34d;">
+  <div class="task-header">
+    <span class="task-id">T20</span>
+    <span class="task-assign">Vandana</span>
+    <span class="task-date">Sep 20–22</span>
+    <span style="background:#fef3c7;color:#92400e;font-size:.72rem;font-weight:700;padding:2px 7px;border-radius:4px;">New · Client PRD · HR-19</span>
+  </div>
+  <h4>Enable Manager Self-Service (MSS) — Approve Leave, Expenses, Attendance, Review Performance, Initiate Hiring</h4>
+  <div class="task-meta">Feature: HR-19 Manager Self-Service · Deliverable: Managers can action all team HR tasks from a single approval queue</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this task:</span> The client PRD requires managers to approve leave, expenses, attendance corrections, review team performance, and initiate hiring requests without HR involvement at every step. ERPNext handles this natively via the Leave Approver / Expense Approver roles — this task correctly configures those roles and sets up the manager's workspace view.</p>
+    <span class="ctx-ref">Requirement: HR-19 Manager Self-Service · Client PRD feature #18</span>
+  </div>
+  <ol class="task-steps">
+    <li>Configure Leave Approver: on each Employee record, set their direct manager as Leave Approver — or use Department Head as bulk approver</li>
+    <li>Configure Expense Approver: set Department Head as Expense Approver per department</li>
+    <li>Enable Attendance Correction workflow: Employee can submit attendance regularisation request → manager approves</li>
+    <li>Add Manager Dashboard to Scale HR Workspace: shortcuts to Pending Leave Approvals, Pending Expense Claims, Team Attendance Summary, Open Appraisals, Open Job Openings</li>
+    <li>Test with a manager-level test user: verify they can see and approve their direct reports' leave and expense requests; verify they can initiate a Job Opening for their department</li>
+    <li>Configure "View Team Analytics" — manager can see team headcount, leave calendar, and attendance summary (report links in workspace)</li>
+  </ol>
+</div>
+
+<!-- AI TRACK -->
+<h2>AI Track (Veeren)</h2>
+<p class="no-print">Veeren runs parallel to the developer track from Day 1. Tasks V01–V04 wire up the AI hooks on top of features the dev team has configured. V05 is the NL Query assistant for HR data — start schema mapping on Day 1 even before any dev work is done.</p>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">V01</span>
+    <span class="task-assign" style="background:#ede9fe;">Veeren</span>
+    <span class="task-date">Jul 29</span>
+  </div>
+  <h4>Review scale_hr app — wire OpenAI key — test ai_utils.call_llm()</h4>
+  <div class="task-meta">Feature: AI Foundation · Deliverable: LLM API call works from scale_hr context</div>
+  <ol class="task-steps">
+    <li>Pull latest from main after Vandana pushes T00</li>
+    <li>Open <code>apps/scale_hr/scale_hr/ai_utils.py</code> — implement <code>call_llm(prompt, model="gpt-4o-mini")</code> using openai library</li>
+    <li>Set OpenAI key: <code>bench --site scale.localhost set-config openai_api_key "sk-..."</code></li>
+    <li>Test from bench console: <code>bench --site scale.localhost console</code> → <code>from scale_hr.ai_utils import call_llm; print(call_llm("Hello"))</code></li>
+  </ol>
+  <div class="task-note">Never commit the OpenAI key. It is set in site_config.json which is in .gitignore. Read it in code via <code>frappe.conf.get("openai_api_key")</code>.</div>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">V02</span>
+    <span class="task-assign" style="background:#ede9fe;">Veeren</span>
+    <span class="task-date">Aug 7–10</span>
+  </div>
+  <h4>AI Candidate Scoring — rank Job Applicants by job requirements</h4>
+  <div class="task-meta">Feature: HR-01 Hiring (AI) · Deliverable: Score 0–100 on each Job Applicant form</div>
+  <ol class="task-steps">
+    <li>Add custom field <code>scale_hr_ai_candidate_score</code> (Int) and <code>scale_hr_ai_score_summary</code> (Small Text) to Job Applicant — Module: Scale HR → export fixture</li>
+    <li>Write <code>score_candidate(doc)</code> in <code>ai_utils.py</code>: send applicant resume summary + Job Opening requirements to LLM → parse 0–100 score + 1-line rationale</li>
+    <li>Add doc_event in hooks.py: <code>"Job Applicant": {"after_insert": "scale_hr.employee_hooks.auto_score_applicant"}</code></li>
+    <li>Test on 5 real applicants — verify score is directionally correct (Senior roles score lower-qualified applicants below 50)</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">V03</span>
+    <span class="task-assign" style="background:#ede9fe;">Veeren</span>
+    <span class="task-date">Sep 1–6</span>
+  </div>
+  <h4>AI Retention Risk Flag on Employee — predict flight risk from signals</h4>
+  <div class="task-meta">Feature: HR-04 Performance (AI) · Deliverable: Retention risk score visible on Employee form</div>
+  <ol class="task-steps">
+    <li>Add fields to Employee: <code>scale_hr_retention_risk</code> (Select: Low/Medium/High), <code>scale_hr_risk_factors</code> (Small Text) — export fixture after T01's fixture is done</li>
+    <li>Write <code>daily_retention_risk_scan()</code> in <code>tasks.py</code>: for each active employee, gather signals (appraisal score trend, leave pattern, tenure, grievance count) → call LLM → update risk level</li>
+    <li>Add to scheduler_events weekly job</li>
+    <li>Test on 10 employees — verify High risk flags go to employees with visible signals (low appraisal scores, high leave, recent grievance)</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">V04</span>
+    <span class="task-assign" style="background:#ede9fe;">Veeren</span>
+    <span class="task-date">Sep 8–13</span>
+  </div>
+  <h4>AI Appraisal KRA Suggestion — suggest KRAs on Appraisal document open</h4>
+  <div class="task-meta">Feature: HR-04 Performance (AI) · Deliverable: Manager sees LLM-suggested improvement areas per employee</div>
+  <ol class="task-steps">
+    <li>Add field <code>scale_hr_ai_coaching_note</code> (Long Text) on Appraisal</li>
+    <li>Write hook on Appraisal <code>on_submit</code>: gather employee KRA scores → call LLM for a coaching note → save to field</li>
+    <li>Wire in hooks.py appraisal_hooks.on_appraisal_submit</li>
+    <li>Test with 3 submitted appraisals — coaching note should reference actual KRA scores, not be generic</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">V05</span>
+    <span class="task-assign" style="background:#ede9fe;">Veeren</span>
+    <span class="task-date">Jul 29 → Sep 20 (4 phases)</span>
+  </div>
+  <h4>NL Query Assistant — HR Intelligence (Start Day 1 with schema mapping)</h4>
+  <div class="task-meta">Feature: AI Foundation · Deliverable: "How many employees are on leave today?" answered in plain English</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why start Day 1:</span> The schema mapping (which HR DocTypes hold which data) can be written before any code is ready. This work is non-blocking and is the most time-consuming part of building a safe NL Query engine. Starting Day 1 means the rest of the build can move faster later.</p>
+    <span class="ctx-ref">Pattern: same approach as SALES-20 NL Query in scale_sales</span>
+  </div>
+  <ol class="task-steps">
+    <li>V05-A (Jul 29): Write HR schema document — map queryable DocTypes: Employee, Leave Application, Attendance, Salary Slip, Job Applicant, Appraisal, Training Result. 20 test question-answer pairs</li>
+    <li>V05-B (Aug 25): Build <code>api/hr_query.py</code> whitelisted endpoint — LLM translates NL question to frappe.get_list() call — safe execute — format answer</li>
+    <li>V05-C (Sep 8): Build Frappe Page "HR Intelligence" — chat UI wired to endpoint</li>
+    <li>V05-D (Sep 15): HR Query Log DocType, error handling, 18/20 test accuracy target</li>
+  </ol>
+</div>
+
+<!-- PROGRESS TRACKER -->
+<h2>Progress Tracker</h2>
+<div class="tbl-wrap">
+<table>
+  <tr>
+    <th>Feature ID</th><th>Feature</th><th>Priority</th><th>Status</th><th>Assigned Tasks</th>
+  </tr>
+  <tr><td>HR-01</td><td>Hiring</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T04</td></tr>
+  <tr><td>HR-02</td><td>Onboarding</td><td><span class="pill bp2">P2</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T05</td></tr>
+  <tr><td>HR-03</td><td>Induction</td><td><span class="pill bp3">P3</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T16</td></tr>
+  <tr><td>HR-04</td><td>Performance Management</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T12</td></tr>
+  <tr><td>HR-05</td><td>360 Feedback</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T13</td></tr>
+  <tr><td>HR-06</td><td>Expense Claims</td><td><span class="pill bpd">—</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T06</td></tr>
+  <tr><td>HR-07</td><td>Grievance Management</td><td><span class="pill bpd">—</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T07</td></tr>
+  <tr><td>HR-08</td><td>Travel Management</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T08</td></tr>
+  <tr><td>HR-09</td><td>Claims &amp; Advances</td><td><span class="pill bpd">—</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T09</td></tr>
+  <tr><td>HR-10</td><td>Payroll</td><td><span class="pill bpd">—</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T10</td></tr>
+  <tr><td>HR-11</td><td>Leave Management</td><td><span class="pill bpd">—</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T02</td></tr>
+  <tr><td>HR-12</td><td>Attendance &amp; Shifts</td><td><span class="pill bpd">—</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T03</td></tr>
+  <tr><td>HR-13</td><td>Training &amp; Skilling</td><td><span class="pill bp3">P3</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T15</td></tr>
+  <tr><td>HR-14</td><td>Exit Management</td><td><span class="pill bpd">—</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T14</td></tr>
+  <tr><td>HR-15</td><td>Compliance PF/ESI/PT/LWF/Gratuity <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">Updated PRD</span></td><td><span class="pill bpd">—</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T11</td></tr>
+  <tr style="background:#fffbeb;"><td colspan="5" style="padding:7px 10px;font-size:.78rem;font-weight:700;color:#92400e;border:1px solid #fcd34d;">CLIENT PRD ADDITIONS — HR-16 to HR-23</td></tr>
+  <tr><td>HR-16</td><td>Governance &amp; Funding <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">New PRD</span></td><td><span class="pill bpd">W2</span></td><td><span class="st-ns">◯ Wave 2</span></td><td>—</td></tr>
+  <tr><td>HR-17</td><td>Asset Management <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">New PRD</span></td><td><span class="pill bp2">P2</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T18</td></tr>
+  <tr><td>HR-18</td><td>Employee Self-Service (ESS) <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">New PRD</span></td><td><span class="pill bp2">P2</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T19</td></tr>
+  <tr><td>HR-19</td><td>Manager Self-Service (MSS) <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">New PRD</span></td><td><span class="pill bp2">P2</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T20</td></tr>
+  <tr><td>HR-20</td><td>Succession Planning &amp; Talent Mgmt <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">New PRD</span></td><td><span class="pill bpd">W2</span></td><td><span class="st-ns">◯ Wave 2</span></td><td>—</td></tr>
+  <tr><td>HR-21</td><td>Employee Engagement Management <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">New PRD</span></td><td><span class="pill bpd">W2</span></td><td><span class="st-ns">◯ Wave 2</span></td><td>—</td></tr>
+  <tr><td>HR-22</td><td>Workforce Planning &amp; Analytics <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">New PRD</span></td><td><span class="pill bpd">W2</span></td><td><span class="st-ns">◯ Wave 2</span></td><td>—</td></tr>
+  <tr><td>HR-23</td><td>Document Management <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">New PRD</span></td><td><span class="pill bpd">W2</span></td><td><span class="st-ns">◯ Wave 2</span></td><td>—</td></tr>
+</table>
+</div>
+
+<div class="page-nav no-print">
+  <a class="prev" href="sales-module.html">← Sales Module Plan</a>
+  <a class="next" href="module-plan.html">All 13 Modules →</a>
+</div>
+
+</main>
+</body>
+</html>

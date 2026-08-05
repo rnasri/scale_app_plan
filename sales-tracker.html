@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sales Module — Implementation Tracker | AIWS ERP</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+/* ── Git status badges ── */
+.gstat { display:inline-flex; align-items:center; gap:6px; padding:4px 12px; border-radius:20px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.4px; white-space:nowrap; }
+.gstat-merged  { background:var(--green-bg);  color:var(--green);  border:1px solid var(--green-bdr); }
+.gstat-pending { background:var(--blue-bg);   color:#1d4ed8;       border:1px solid #bfdbfe; }
+.gstat-review  { background:var(--amber-bg);  color:var(--amber);  border:1px solid var(--amber-bdr); }
+.gstat-ns      { background:#f9fafb;          color:#6b7280;       border:1px solid #e5e7eb; }
+.gstat-blocked { background:var(--red-bg);    color:var(--red);    border:1px solid var(--red-bdr); }
+
+/* ── Git submission card ── */
+.git-card { border:1px solid var(--border); border-radius:var(--r-lg); padding:22px 26px; margin-bottom:22px; box-shadow:var(--sh); background:var(--surface); }
+.git-card-head { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px; }
+.git-card-head h3 { font-size:16px; margin:0; }
+.branch-chip { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; background:var(--navy-dark); color:#e2e8f0; padding:4px 10px; border-radius:6px; font-size:12.5px; }
+.commit-chip { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; background:var(--surface-2); color:var(--text-2); padding:2px 8px; border-radius:5px; font-size:12px; border:1px solid var(--border); }
+.git-meta { font-size:12.5px; color:var(--text-3); margin-bottom:16px; }
+.git-meta b { color:var(--text-2); }
+.git-section-label { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; color:var(--text-4); margin:16px 0 8px; }
+.commit-list { list-style:none; margin:0 0 4px; padding:0; display:grid; gap:5px; }
+.commit-list li { font-size:13px; display:flex; gap:8px; align-items:baseline; }
+.commit-list .superseded { text-decoration:line-through; opacity:.5; }
+.review-log { border-left:3px solid var(--red); background:var(--red-bg); padding:10px 14px; border-radius:0 8px 8px 0; font-size:13.5px; margin:6px 0; }
+.review-log.fixed { border-left-color:var(--green); background:var(--green-bg); }
+.task-badge { display:inline-flex; align-items:center; gap:4px; background:var(--navy); color:#fff; font-weight:700; font-size:11.5px; padding:3px 10px; border-radius:5px; text-decoration:none; }
+.task-badge:hover { background:var(--navy-light); }
+.check-list { list-style:none; padding:0; margin:0; display:grid; gap:7px; }
+.check-list li { font-size:13.5px; }
+.check-list code { font-size:12px; word-break:break-all; }
+.decision-box { margin-top:16px; padding:12px 16px; border-radius:var(--r); background:var(--surface-2); border:1px solid var(--border); font-size:13.5px; }
+.xref-link { color:var(--blue); font-weight:600; text-decoration:none; }
+.xref-link:hover { text-decoration:underline; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="s-title">AIWS ERP</div>
+    <div class="s-sub">Implementation Master Plan</div>
+    <span class="s-tag">Claude / implementation</span>
+  </div>
+  <nav>
+    <div class="nav-group">Start Here</div>
+    <a class="nav-link" href="index.html">Program Overview</a>
+
+    <div class="nav-group">Foundation</div>
+    <a class="nav-link" href="frappe-verdict.html">Frappe Capability</a>
+    <a class="nav-link" href="architecture.html">System Architecture</a>
+
+    <div class="nav-group">Development Framework</div>
+    <a class="nav-link" href="customization-guide.html">Customization Guide</a>
+    <a class="nav-link" href="developer-guide.html">Developer Workflow</a>
+
+    <div class="nav-group">Implementation</div>
+    <a class="nav-link" href="module-plan.html">All 13 Modules</a>
+    <a class="nav-link" href="sprint-plan.html">Parallel Sprint Plan</a>
+    <a class="nav-link" href="wave-1.html">Sales &amp; Marketing Detail</a>
+
+    <div class="nav-group">Module Plans</div>
+    <a class="nav-link" href="sales-module.html">Sales Module Plan</a>
+    <a class="nav-link" href="hr-module.html">HR Module Plan</a>
+    <a class="nav-link" href="accounts-module.html">Accounts Module Plan</a>
+    <a class="nav-link" href="finance-module.html">Finance Module Plan</a>
+    <a class="nav-link" href="pmo-module.html">PMO Module Plan</a>
+
+    <div class="nav-group">User Manual</div>
+    <a class="nav-link" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
+
+    <div class="nav-group">AI Strategy</div>
+    <a class="nav-link" href="ai-plan-strategy.html">AI Plan Strategy</a>
+
+    <div class="nav-group">Tracking</div>
+    <a class="nav-link active" href="sales-tracker.html">Sales Tracker</a>
+    <a class="nav-link" href="sales-demo-showcase.html">Sales Showcase ✨</a>
+  </nav>
+  <div class="sidebar-foot">
+    Pixaflip × SIL · AIWS ERP<br>
+    <a href="../../index.html">← AIWS Setup portal</a>
+  </div>
+</aside>
+
+<main>
+<div class="breadcrumb">AIWS ERP <span>›</span> <a href="sales-module.html" style="color:inherit;">Sales Module</a> <span>›</span> Implementation Tracker</div>
+
+<div class="page-header">
+  <h1>Sales Module — Implementation Tracker</h1>
+  <p class="subtitle">Git-submission-by-submission log for <code>scale_sales</code> · updated as branches are reviewed, tested, and merged · cross-referenced to <a href="sales-module.html" class="xref-link">the task list</a></p>
+</div>
+
+<div class="summary-strip">
+  <div class="s-stat"><div class="sv">29</div><div class="sl">Total Tasks (T + R + V)</div></div>
+  <div class="s-stat"><div class="sv">7</div><div class="sl">Merged — Matches Spec</div></div>
+  <div class="s-stat"><div class="sv">10</div><div class="sl">Merged — Built Differently</div></div>
+  <div class="s-stat"><div class="sv">12</div><div class="sl">Not Started / Open</div></div>
+  <div class="s-stat"><div class="sv">1</div><div class="sl">Unresolved Conflict</div></div>
+</div>
+
+<div class="callout cw">
+  <p><strong>Branch reality changed — read this first:</strong> everything below the old submission log now reflects <code>main</code> as of <b>3 Aug 2026</b>. What started as a solo <code>sales_demo</code> throwaway POC branch (for the 2 Aug client demo) was approved live in the demo, then audited and hardened over several sessions, and <b>merged permanently</b> — it was not reverted. Merge commit <span class="commit-chip">8da61c3</span> "Merge pull request #7 from ehiddenbrain/sales_demo" on <code>ehiddenbrain/scale</code>. The <code>feature/muhammad-sales</code> branch entries below are kept as history — their content is now superseded by what actually landed in the merge.</p>
+</div>
+
+<div class="callout ci">
+  <p><strong>How to read this page:</strong> each card in the Git Submissions Log is one submission — what it implements, what we found in review, how it was verified, and its current merge status. The Task Cross-Reference table maps every task ID (T01–T20, R01, V01–V08) to its real status on <code>main</code> today. Click any task badge to jump to that exact task card on the <a href="sales-module.html" class="xref-link">Sales Module Plan</a>.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     GIT SUBMISSIONS LOG
+═══════════════════════════════════════════ -->
+<h2>Git Submissions Log</h2>
+<p style="font-size:13.5px;color:var(--text-3);margin-bottom:18px;">Newest first. Repo: <code>ehiddenbrain/scale</code>.</p>
+
+<!-- ── Submission: sales_demo -> main (PR #7) ── -->
+<div class="git-card" style="border-color:var(--green);">
+  <div class="git-card-head">
+    <span class="branch-chip">sales_demo → main</span>
+    <span class="gstat gstat-merged">✓ Merged — PR #7</span>
+  </div>
+  <div class="git-meta">Author: <b>Raghib</b> (solo build) &nbsp;·&nbsp; Merge commit: <span class="commit-chip">8da61c3</span> &nbsp;·&nbsp; Merged: 3 Aug 2026 &nbsp;·&nbsp; Originally scoped as a 2-day throwaway POC branch for the 2 Aug client demo — approved live, then audited/fixed/hardened and merged permanently instead of reverted.</div>
+
+  <div class="git-section-label">Recent commit history on the branch (newest first)</div>
+  <ul class="commit-list">
+    <li><span class="commit-chip">8da61c3</span> Merge pull request #7 from ehiddenbrain/sales_demo</li>
+    <li><span class="commit-chip">1802e2d</span> Merge origin/main into sales_demo before PR</li>
+    <li><span class="commit-chip">e63f4c6</span> sales_demo: auto-create zone rep users so Territory auto-assign works on every site</li>
+    <li><span class="commit-chip">ac19b6f</span> sales_sales: add README.md + TESTING.md, matching scale_account/scale_finance convention</li>
+    <li><span class="commit-chip">73e20ad</span> sales_demo: rename Sales Demo Command Center → Sales Command Center</li>
+  </ul>
+
+  <div class="git-section-label">What it implements</div>
+  <p style="font-size:13.5px;">The real T01–T17 implementation — this branch <b>is</b> the module now, not a demo artifact sitting alongside it. Ready end-to-end per <code>apps/scale_sales/TESTING.md</code>: Lead Management (10 Lead Sources, rule-based BANT scoring, duplicate detection, territory auto-assignment), CRM/Customer intelligence (turnover, competitor products, A/B/C/Key/Strategic classification, Active/At Risk/Churned status), Sales Pipeline (stakeholder + competitor mapping, rule-based Win Probability + Next Best Action, auto-recalculate on save), Quotation discount approval workflow, Field Visit (GPS check-in/out), Collection Management (Promise-to-Pay, Collection Status, Dunning Type templates, AR ageing), and a live Sales Command Center KPI dashboard.</p>
+
+  <div class="git-section-label">Genuinely new work beyond the original T01–T17 scope</div>
+  <ul style="font-size:13.5px;padding-left:20px;margin-top:6px;line-height:1.8;">
+    <li>Territory-based Lead auto-assignment — 4 Assignment Rules by zone (North/South/East/West India), plus auto-created placeholder rep Users so it works on every site, not just the original dev's</li>
+    <li>A rule-based AI layer that's actually live — Lead Scoring, Win Probability, Next Best Action — ahead of Veeren's AI track (see V06–V08 below)</li>
+    <li>Sales Command Center — a full KPI dashboard page (Total Leads, Hot Leads, Pipeline Value, Pending Collections, Field Visits)</li>
+    <li>2 pre-existing scaffold bugs fixed for everyone — a doubled-import-path crash pattern, which had recurred in <code>tasks.py</code> too</li>
+  </ul>
+
+  <div class="git-section-label">Tasks covered</div>
+  <div class="tags">
+    <a class="task-badge" href="sales-module.html#T01">T01 ✓</a>
+    <a class="task-badge" href="sales-module.html#T02">T02 ✓</a>
+    <a class="task-badge" href="sales-module.html#T03">T03 🟡</a>
+    <a class="task-badge" href="sales-module.html#T04">T04 ✓</a>
+    <a class="task-badge" href="sales-module.html#T05">T05 ✓</a>
+    <a class="task-badge" href="sales-module.html#T06">T06 ✓</a>
+    <a class="task-badge" href="sales-module.html#T07">T07 🟡</a>
+    <a class="task-badge" href="sales-module.html#T08">T08 🟡</a>
+    <a class="task-badge" href="sales-module.html#T09">T09 🟡</a>
+    <a class="task-badge" href="sales-module.html#T10">T10 🟡</a>
+    <a class="task-badge" href="sales-module.html#T11">T11 🟡</a>
+    <a class="task-badge" href="sales-module.html#T12">T12 🟡</a>
+    <a class="task-badge" href="sales-module.html#T13">T13 ✓</a>
+    <a class="task-badge" href="sales-module.html#T15">T15 ✓</a>
+    <a class="task-badge" href="sales-module.html#T16">T16 🟡</a>
+    <a class="task-badge" href="sales-module.html#T17">T17 🟡</a>
+    <a class="task-badge" href="sales-module.html#R01">R01 🟡</a>
+  </div>
+  <p style="font-size:12px;color:var(--text-3);margin-top:6px;">✓ = done, matches original spec &nbsp;·&nbsp; 🟡 = done but built differently than the original task steps describe (field names, thresholds, or which system) — see per-task flags on <a href="sales-module.html" class="xref-link">the task cards</a>. T14 not covered — see Task Cross-Reference below.</p>
+
+  <div class="git-section-label">🚩 Unresolved: Quotation discount rule — 3-way conflict</div>
+  <div class="review-log">
+    <b>Three different numbers, none of them match:</b> the original task doc (T08) specified &gt;10% requires Manager-only approval. The signed-off scope Excel (<code>_PIXAFLIP_ SCALE_ERP Modules Scope and Capability.xlsx</code>, Sales sheet, cell L27) specifies &gt;10% Manager / &gt;20% VP. What actually got built and shipped in this merge is <b>≤20% Manager / &gt;20% VP</b>. This needs an explicit decision before anything else is built on top of the discount workflow — currently tracked only here and on the T08 card, not resolved.
+  </div>
+
+  <div class="git-section-label">Known permanent limitation</div>
+  <p style="font-size:13.5px;">Quotation has no custom "✨ New" JS field badges — a global <code>india_compliance</code> conflict blocks <code>doctype_js</code> specifically on that doctype. Documented, not fixed. Worked around for one specific banner via <code>app_include_js</code> instead (Quotation workflow explanation only) — that banner is not a general badge mechanism.</p>
+
+  <div class="git-section-label">Team install / pull instructions</div>
+  <p style="font-size:13px;color:var(--text-3);">Also documented in <code>apps/scale_sales/README.md</code>.</p>
+  <pre style="font-size:12.5px;background:var(--navy-dark);color:#e2e8f0;padding:12px 16px;border-radius:8px;overflow-x:auto;">git pull origin main
+bench --site &lt;their-site&gt; migrate
+bench build --app scale_sales      # needed once, new bundled JS file
+bench restart                       # picks up 2 new scheduled jobs</pre>
+  <p style="font-size:12.5px;color:var(--text-3);">Optional, not automatic — sample Leads/Opportunities/Quotations for testing (company AIWS Technologies): <code>bench --site &lt;their-site&gt; execute scale_sales.demo_setup.seed_demo_data</code>. Creates each developer's own local copy — not shared/synced between machines, git never carries DB contents.</p>
+
+  <div class="decision-box"><b>Decision:</b> merged permanently, not reverted. Do not re-do T01–T17 — extend or fix what's here. Next real work is T14 + T18–T20 (new follow-ups, see Task Cross-Reference) and resolving the 🚩 discount-rule conflict above.</div>
+</div>
+
+<!-- ── Submission: feature/muhammad-sales ── -->
+<div class="git-card" style="opacity:.6;">
+  <div class="git-card-head">
+    <span class="branch-chip">feature/muhammad-sales</span>
+    <span class="gstat gstat-ns">⬤ Superseded — content covers T01/T04, now merged via sales_demo</span>
+  </div>
+  <div class="git-meta">Author: <b>Muhammad Parkar</b> &nbsp;·&nbsp; Latest commit: <span class="commit-chip">926eadd</span> &nbsp;·&nbsp; Pushed: 30 Jul 2026 &nbsp;·&nbsp; PR: <b>not confirmed open</b> — follow up with Muhammad directly</div>
+
+  <div class="git-section-label">Commit history on this branch</div>
+  <ul class="commit-list">
+    <li><span class="commit-chip superseded">4ac9e93</span> "Update apps.json and apps.txt; remove scale_demo_seed.py" — <em>force-pushed over, see review notes</em></li>
+    <li><span class="commit-chip">a0f516b</span> Update apps.json and apps.txt; remove scale_demo_seed.py</li>
+    <li><span class="commit-chip">41ba287</span> feat(scale_sales): add installation and migration hooks</li>
+    <li><span class="commit-chip">bce1493</span> Update apps.txt to maintain consistent app ordering</li>
+    <li><span class="commit-chip">926eadd</span> Remove Sales Module Implementation Plan PDF from the repository</li>
+  </ul>
+
+  <div class="git-section-label">What it implements</div>
+  <p style="font-size:13.5px;">New file <code>apps/scale_sales/scale_sales/setup.py</code> (108 lines) with two functions, now wired into <code>after_install</code> / <code>after_migrate</code> via a new <code>install.py</code> + <code>hooks.py</code> update:</p>
+  <ul style="font-size:13.5px;padding-left:20px;margin-top:6px;line-height:1.8;">
+    <li><code>setup_lead_sources()</code> — creates the 10 Lead Source master values</li>
+    <li><code>setup_lead_bant_fields()</code> — creates 8 custom fields on Lead (7 planned BANT/UTM fields + <code>scale_sales_ai_lead_score</code>, added early / out of T04's original scope but harmless)</li>
+  </ul>
+
+  <div class="git-section-label">Tasks covered</div>
+  <div class="tags">
+    <a class="task-badge" href="sales-module.html#T01">T01 — Lead Source Master Values</a>
+    <a class="task-badge" href="sales-module.html#T04">T04 — BANT + UTM Fields on Lead</a>
+  </div>
+
+  <div class="git-section-label">Review history</div>
+  <div class="review-log">
+    <b>First push (4ac9e93) — 5 issues found:</b> branch predated Vandana's <code>scale_hr</code> commit (needed rebase) · <code>sites/apps.json</code> carried Muhammad's local CRM version, bumping the team's pinned <code>1.79.1</code> to <code>2.0.0-dev</code> on the <code>develop</code> branch · deleted <code>sites/scale.localhost/scale_demo_seed.py</code>, which is referenced in <code>docs/SCALE_TEAM_DEVELOPMENT_GUIDE.md:410</code> · an unrelated PDF was committed · the two setup functions were dead code — nothing called them. Fed back to Muhammad via WhatsApp.
+  </div>
+  <div class="review-log fixed">
+    <b>Force-pushed fix (926eadd) — all 5 resolved:</b> rebased onto current <code>main</code> (now includes <code>scale_hr</code>) · <code>sites/apps.json</code> confirmed byte-identical to <code>main</code> · <code>scale_demo_seed.py</code> restored, identical to <code>main</code> · PDF added-then-removed within his own branch, net zero diff vs <code>main</code> · new <code>install.py</code> wires both functions into <code>after_install</code>/<code>after_migrate</code>.
+  </div>
+
+  <div class="git-section-label">Verification performed (this session)</div>
+  <ol style="font-size:13.5px;padding-left:20px;line-height:1.8;">
+    <li>Took a full DB backup on <code>main</code> first (<code>bench --site scale.localhost backup</code>) as a rollback point.</li>
+    <li>Checked out <code>feature/muhammad-sales</code>, ran <code>bench --site scale.localhost migrate</code> — completed with zero errors across all apps.</li>
+    <li>Confirmed in DB: 10 new <code>Lead Source</code> rows (no collisions with ERPNext's 10 defaults) and all 8 expected <code>Custom Field</code> rows on Lead.</li>
+    <li>Confirmed live in the browser: New Lead form renders every field with correct label/type/position; Source dropdown search ("W") returns both native and new values side by side.</li>
+    <li>Restored the DB from the pre-test backup and returned the branch to <code>main</code>, so the test left no residue.</li>
+  </ol>
+
+  <div class="git-section-label">Where to check in the app (once merged)</div>
+  <ul class="check-list">
+    <li>All Sales custom fields at once: <code>/app/custom-field?dt=Lead&amp;module=Scale%20Sales</code></li>
+    <li>New Lead form (fields as end users see them): <code>/app/lead/new</code></li>
+    <li>Field layout / insert-after order: <code>/app/customize-form?doc_type=Lead</code></li>
+    <li>Lead Source master list: <code>/app/lead-source</code></li>
+  </ul>
+
+  <div class="decision-box"><b>Decision (historical):</b> code was verified safe and functional. <b>Superseded</b> — Lead Source Master Values and BANT+UTM fields (T01, T04) shipped instead via the <code>sales_demo → main</code> merge above; this branch's own PR status was never confirmed and is now moot.</div>
+</div>
+
+<!-- ── Submission: main @ 191e213 ── -->
+<div class="git-card" style="opacity:.6;">
+  <div class="git-card-head">
+    <span class="branch-chip">main</span>
+    <span class="gstat gstat-merged">✓ Merged (early scaffold, superseded by sales_demo)</span>
+  </div>
+  <div class="git-meta">Author: <b>Raghib</b> &nbsp;·&nbsp; Commit: <span class="commit-chip">191e213</span> &nbsp;·&nbsp; Pushed: 28 Jul 2026</div>
+
+  <div class="git-section-label">What it implements</div>
+  <p style="font-size:13.5px;">Initial <code>scale_sales</code> app scaffold: <code>hooks.py</code> (doc_events for Lead/Opportunity/Sales Invoice/Payment Entry, scheduler_events), <code>lead_hooks.py</code> (duplicate check + BANT auto-score, silent until fields exist), <code>collection_hooks.py</code>, <code>opportunity_hooks.py</code>, <code>ai_utils.py</code> (LLM client skeleton), <code>tasks.py</code>, and the Scale Sales workspace/sidebar entry.</p>
+
+  <div class="git-section-label">Tasks covered</div>
+  <div class="tags">
+    <a class="task-badge" href="sales-module.html#T06">T06 — Install scale_sales + configure Selling Settings <span style="opacity:.7;">(app install ✓ / Selling Settings config still pending)</span></a>
+  </div>
+
+  <div class="git-section-label">Verification performed</div>
+  <p style="font-size:13.5px;">Installed and migrated cleanly on the local bench. Confirmed in DB: Module Def "Scale Sales" and Workspace "Scale Sales" both present; 0 Custom Fields / 0 Custom DocTypes (expected — scaffold only, no schema work yet).</p>
+
+  <div class="git-section-label">Where to check in the app</div>
+  <ul class="check-list">
+    <li>Sidebar: open <b>Scale Sales</b> workspace from the left nav inside the Scale app</li>
+    <li>App version: <code>bench --site scale.localhost list-apps</code></li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TASK CROSS-REFERENCE
+═══════════════════════════════════════════ -->
+<h2>Task Cross-Reference</h2>
+<p style="font-size:13.5px;color:var(--text-3);margin-bottom:14px;">Every task from the <a href="sales-module.html" class="xref-link">Sales Module Plan</a>, its current status, and which git submission (if any) covers it. Task ID links jump straight to that task's full card — objective, use case, click-by-click steps, verify step.</p>
+
+<div class="tbl-wrap">
+  <table>
+    <tr><th>Task</th><th>Title</th><th>Owner</th><th>Status</th><th>Git Submission</th></tr>
+    <tr><td><a class="xref-link" href="sales-module.html#T01">T01</a></td><td>Configure Lead Source Master Values</td><td>Muhammad</td><td><span class="gstat gstat-merged">✓ Merged — matches spec</span></td><td><code>sales_demo → main</code> (8da61c3)</td></tr>
+    <tr><td><a class="xref-link" href="sales-module.html#T02">T02</a></td><td>Create Customer Group Hierarchy</td><td>Archit</td><td><span class="gstat gstat-merged">✓ Merged — matches spec</span></td><td><code>sales_demo → main</code> (8da61c3)</td></tr>
+    <tr><td><a class="xref-link" href="sales-module.html#T03">T03</a></td><td>Add 4 Custom Fields to Customer</td><td>Archit</td><td><span class="gstat gstat-review">🟡 Merged — built differently</span></td><td><code>sales_demo → main</code> (8da61c3)</td></tr>
+    <tr><td><a class="xref-link" href="sales-module.html#T04">T04</a></td><td>Add BANT + UTM Fields to Lead</td><td>Muhammad</td><td><span class="gstat gstat-merged">✓ Merged — matches spec</span></td><td><code>sales_demo → main</code> (8da61c3)</td></tr>
+    <tr><td><a class="xref-link" href="sales-module.html#R01">R01</a></td><td>Export Custom Field Fixtures — First Commit</td><td>Raghib</td><td><span class="gstat gstat-review">🟡 Merged — built differently</span></td><td><code>sales_demo → main</code> — fixtures list configured in <code>hooks.py</code>, but no exported fixture JSON committed; fields/masters are created procedurally by <code>demo_setup.run_all()</code> on <code>after_migrate</code> instead</td></tr>
+    <tr><td><a class="xref-link" href="sales-module.html#T05">T05</a></td><td>Create Territory Tree</td><td>Archit</td><td><span class="gstat gstat-merged">✓ Merged — matches spec</span></td><td><code>sales_demo → main</code> (8da61c3)</td></tr>
+    <tr><td><a class="xref-link" href="sales-module.html#T06">T06</a></td><td>Install scale_sales + Selling Settings</td><td>Muhammad</td><td><span class="gstat gstat-merged">✓ Merged — matches spec</span></td><td><code>sales_demo → main</code> (8da61c3)</td></tr>
+    <tr><td><a class="xref-link" href="sales-module.html#T07">T07</a></td><td>Sales Person Hierarchy + Price Lists</td><td>Both</td><td><span class="gstat gstat-review">🟡 Merged — built differently</span></td><td><code>sales_demo → main</code> (8da61c3)</td></tr>
+    <tr style="background:var(--red-bg);"><td><a class="xref-link" href="sales-module.html#T08">T08</a></td><td>Quotation Discount Approval Workflow</td><td>Archit</td><td><span class="gstat gstat-blocked">🚩 Merged — 3-way conflict unresolved</span></td><td><code>sales_demo → main</code> — built as ≤20% Manager / &gt;20% VP; matches neither the original task doc (&gt;10% Manager-only) nor the signed-off Excel (&gt;10% Manager / &gt;20% VP)</td></tr>
+    <tr><td><a class="xref-link" href="sales-module.html#T09">T09</a></td><td>Configure Dunning Types</td><td>Muhammad</td><td><span class="gstat gstat-review">🟡 Merged — built differently</span></td><td><code>sales_demo → main</code> — templates only, step 4 auto-escalation not built (see T19)</td></tr>
+    <tr><td><a class="xref-link" href="sales-module.html#T10">T10</a></td><td>Promise-to-Pay + Collection Status Fields</td><td>Both</td><td><span class="gstat gstat-review">🟡 Merged — built differently</span></td><td><code>sales_demo → main</code> (8da61c3)</td></tr>
+    <tr><td><a class="xref-link" href="sales-module.html#T11">T11</a></td><td>AR Aging Buckets + Payment Terms</td><td>Muhammad</td><td><span class="gstat gstat-review">🟡 Merged — built differently</span></td><td><code>sales_demo → main</code> (8da61c3)</td></tr>
+    <tr><td><a class="xref-link" href="sales-module.html#T12">T12</a></td><td>Field Visit DocType (first custom DocType)</td><td>Archit</td><td><span class="gstat gstat-review">🟡 Merged — built differently</span></td><td><code>sales_demo → main</code> (8da61c3)</td></tr>
+    <tr><td><a class="xref-link" href="sales-module.html#T13">T13</a></td><td>GPS Check-In Client Script</td><td>Muhammad</td><td><span class="gstat gstat-merged">✓ Merged — matches spec</span></td><td><code>sales_demo → main</code> (8da61c3)</td></tr>
+    <tr style="background:var(--amber-bg);"><td><a class="xref-link" href="sales-module.html#T14">T14</a></td><td>Field Visit End-to-End Mobile Test</td><td>Both</td><td><span class="gstat gstat-ns">◯ Not Done</span></td><td>— joint team exercise never happened</td></tr>
+    <tr><td><a class="xref-link" href="sales-module.html#T15">T15</a></td><td>Lead Duplicate Detection Server Script</td><td>Muhammad</td><td><span class="gstat gstat-merged">✓ Merged — matches spec</span></td><td><code>sales_demo → main</code> (8da61c3)</td></tr>
+    <tr><td><a class="xref-link" href="sales-module.html#T16">T16</a></td><td>Configure 10 Pipeline Stages</td><td>Archit</td><td><span class="gstat gstat-review">🟡 Merged — built differently</span></td><td><code>sales_demo → main</code> (8da61c3)</td></tr>
+    <tr><td><a class="xref-link" href="sales-module.html#T17">T17</a></td><td>Opportunity Stakeholder + Competitor Tables</td><td>Both</td><td><span class="gstat gstat-review">🟡 Merged — built differently</span></td><td><code>sales_demo → main</code> (8da61c3)</td></tr>
+    <tr style="background:var(--blue-bg);"><td><a class="xref-link" href="sales-module.html#T18">T18</a></td><td>Real Customer-Risk Rule + Sales Config Screen</td><td>TBD</td><td><span class="gstat gstat-ns">Not Started</span></td><td>— new, found during PR #7 audit; makes AI thresholds editable without code</td></tr>
+    <tr style="background:var(--blue-bg);"><td><a class="xref-link" href="sales-module.html#T19">T19</a></td><td>Dunning Auto-Escalation Job</td><td>TBD</td><td><span class="gstat gstat-ns">Not Started</span></td><td>— new, found during PR #7 audit; T09's step 4 was never built</td></tr>
+    <tr style="background:var(--blue-bg);"><td><a class="xref-link" href="sales-module.html#T20">T20</a></td><td>Lead Status / Sales Stage Naming Alignment — Decision</td><td>TBD</td><td><span class="gstat gstat-ns">Not Started</span></td><td>— new, found during PR #7 audit; flagged, not renamed</td></tr>
+    <tr style="background:var(--amber-bg);"><td><a class="xref-link" href="sales-module.html#V01">V01</a></td><td>Setup + NL Query POC in Console</td><td>Veeren</td><td><span class="gstat gstat-ns">Not Started</span></td><td>—</td></tr>
+    <tr style="background:var(--amber-bg);"><td><a class="xref-link" href="sales-module.html#V02">V02</a></td><td>NL Query Schema Doc + 20 Test Q&amp;A</td><td>Veeren</td><td><span class="gstat gstat-ns">Not Started</span></td><td>—</td></tr>
+    <tr style="background:var(--amber-bg);"><td><a class="xref-link" href="sales-module.html#V03">V03</a></td><td>NL Query Endpoint</td><td>Veeren</td><td><span class="gstat gstat-ns">Not Started</span></td><td>—</td></tr>
+    <tr style="background:var(--amber-bg);"><td><a class="xref-link" href="sales-module.html#V04">V04</a></td><td>Lost Deal Analysis Prompt Engineering</td><td>Veeren</td><td><span class="gstat gstat-ns">Not Started</span></td><td>—</td></tr>
+    <tr style="background:var(--amber-bg);"><td><a class="xref-link" href="sales-module.html#V05">V05</a></td><td>NL Query Phase — schema + pairs (Day 1)</td><td>Veeren</td><td><span class="gstat gstat-ns">Not Started</span></td><td>—</td></tr>
+    <tr style="background:var(--amber-bg);"><td><a class="xref-link" href="sales-module.html#V06">V06</a></td><td>NL Query Phase B — ai_query.py endpoint</td><td>Veeren</td><td><span class="gstat gstat-ns">Not Started</span></td><td>— rule-based Lead Scoring already live in <code>sales_demo → main</code>; extend it, don't rebuild</td></tr>
+    <tr style="background:var(--amber-bg);"><td><a class="xref-link" href="sales-module.html#V07">V07</a></td><td>NL Query Phase C — chat UI widget</td><td>Veeren</td><td><span class="gstat gstat-ns">Not Started</span></td><td>— rule-based Win Probability already live in <code>sales_demo → main</code>; extend it, don't rebuild</td></tr>
+    <tr style="background:var(--amber-bg);"><td><a class="xref-link" href="sales-module.html#V08">V08</a></td><td>NL Query Phase D — AI Query Log + accuracy target</td><td>Veeren</td><td><span class="gstat gstat-ns">Not Started</span></td><td>— rule-based Next Best Action already live in <code>sales_demo → main</code>; extend it, don't rebuild</td></tr>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     WHERE TO CHECK IN THE APP
+═══════════════════════════════════════════ -->
+<h2>Where to Check in the App</h2>
+<p style="font-size:13.5px;color:var(--text-3);margin-bottom:14px;">Local bench: <code>http://127.0.0.1:8000</code> (Administrator / scale@demo). General pattern for reviewing any teammate's field changes: <code>/app/custom-field?dt=&lt;DocType&gt;&amp;module=&lt;Module Name&gt;</code>.</p>
+
+<div class="grid g2">
+  <div class="card">
+    <h3>Sales-specific</h3>
+    <ul class="check-list" style="margin-top:8px;">
+      <li><b>All Sales custom fields on Lead:</b><br><code>/app/custom-field?dt=Lead&amp;module=Scale%20Sales</code></li>
+      <li><b>New Lead form (end-user view):</b><br><code>/app/lead/new</code></li>
+      <li><b>Field layout / order:</b><br><code>/app/customize-form?doc_type=Lead</code></li>
+      <li><b>Lead Source master list:</b><br><code>/app/lead-source</code></li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>General / any module</h3>
+    <ul class="check-list" style="margin-top:8px;">
+      <li><b>All apps + versions:</b><br><code>bench --site scale.localhost list-apps</code></li>
+      <li><b>Any module's fields:</b><br><code>/app/custom-field?dt=&lt;DocType&gt;&amp;module=&lt;Module&gt;</code></li>
+      <li><b>Workspace sidebar:</b> left nav inside the Scale app — one entry per installed module app</li>
+      <li><b>DB-level check (no UI needed):</b> query <code>tabModule Def</code> / <code>tabWorkspace</code> / <code>tabCustom Field</code> directly via <code>mysql --socket=/tmp/mysql.sock</code></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     HOW TO UPDATE
+═══════════════════════════════════════════ -->
+<h2>How to Update This Tracker</h2>
+<div class="callout cw">
+  <p>When a branch's status changes (new commits, PR opened, approved, merged): update its <code>.gstat</code> badge and add a line to its Review History if new issues were found or fixed. When a new branch starts, copy a <code>.git-card</code> block, fill in branch/author/commits/tasks, and add matching rows to the Task Cross-Reference table above. This page is plain HTML — no build step, no JSON to regenerate — edit directly and it's live.</p>
+</div>
+
+<div class="page-nav">
+  <a class="prev" href="sales-module.html">← Sales Module Plan</a>
+</div>
+
+</main>
+</body>
+</html>

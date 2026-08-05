@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sales &amp; Marketing Detail — AIWS ERP</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="s-title">AIWS ERP</div>
+    <div class="s-sub">Implementation Master Plan</div>
+    <span class="s-tag">Claude / implementation</span>
+  </div>
+  <nav>
+    <div class="nav-group">Start Here</div>
+    <a class="nav-link" href="index.html">Program Overview</a>
+    <div class="nav-group">Foundation</div>
+    <a class="nav-link" href="frappe-verdict.html">Frappe Capability</a>
+    <a class="nav-link" href="architecture.html">System Architecture</a>
+    <div class="nav-group">Development Framework</div>
+    <a class="nav-link" href="customization-guide.html">Customization Guide</a>
+    <a class="nav-link" href="developer-guide.html">Developer Workflow</a>
+    <div class="nav-group">Implementation</div>
+    <a class="nav-link" href="module-plan.html">All 13 Modules</a>
+    <a class="nav-link" href="sprint-plan.html">Parallel Sprint Plan</a>
+    <a class="nav-link active" href="wave-1.html">Sales &amp; Marketing Detail</a>
+    <div class="nav-group">Module Plans</div>
+    <a class="nav-link" href="sales-module.html">Sales Module Plan</a>
+    <a class="nav-link" href="hr-module.html">HR Module Plan</a>
+    <a class="nav-link" href="accounts-module.html">Accounts Module Plan</a>
+    <a class="nav-link" href="finance-module.html">Finance Module Plan</a>
+    <a class="nav-link" href="pmo-module.html">PMO Module Plan</a>
+
+    <div class="nav-group">User Manual</div>
+    <a class="nav-link" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
+
+    <div class="nav-group">AI Strategy</div>
+    <a class="nav-link" href="ai-plan-strategy.html">AI Plan Strategy</a>
+
+    <div class="nav-group">Tracking</div>
+    <a class="nav-link" href="sales-tracker.html">Sales Tracker</a>
+    <a class="nav-link" href="sales-demo-showcase.html">Sales Showcase ✨</a>
+  </nav>
+  <div class="sidebar-foot">Pixaflip × SIL · AIWS ERP<br><a href="../../index.html">← AIWS Setup portal</a></div>
+</aside>
+
+<main>
+  <div class="breadcrumb">AIWS ERP <span>›</span> <a href="index.html">Plan</a> <span>›</span> Wave 1</div>
+  <div class="page-header">
+    <h1>Wave 1 — Sales &amp; Marketing</h1>
+    <p class="subtitle">Wave 1 detail for Raghib's track. Sales: 19 features (revised workbook rows 19–37). Marketing: 33 features. Sequence and dates from the SCALE ERP Modules Scope &amp; Capability workbook.</p>
+  </div>
+
+  <div class="callout ci">
+    <p><strong>Before starting Wave 1:</strong> F0 Foundation must be complete — bench running, ERPNext + Frappe CRM installed, <code>scale</code> app installed and migrated, CI green, staging accessible. See <a href="module-plan.html">Module Plan</a> F0 section.</p>
+  </div>
+
+  <div class="summary-strip">
+    <div class="s-stat"><div class="sv">19</div><div class="sl">Sales features</div></div>
+    <div class="s-stat"><div class="sv">33</div><div class="sl">Marketing features</div></div>
+    <div class="s-stat"><div class="sv">~72%</div><div class="sl">Sales OOTB</div></div>
+    <div class="s-stat"><div class="sv">~38%</div><div class="sl">Marketing OOTB</div></div>
+    <div class="s-stat"><div class="sv">10–12 wks</div><div class="sl">Estimated duration</div></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       SALES
+  ═══════════════════════════════════════════ -->
+  <h2>Sales module — <code>scale_sales</code> app</h2>
+  <p>19 features across 3 priority tiers (P1/P2/P3). Source: SCALE ERP Modules Scope &amp; Capability workbook — Sales tab, revised set (rows 19–37). P1 items run Jul 24 – Aug 20, P2 items Aug – Sep 15, P3 items (Win Probability, Sales Coaching) follow after Sep 15.</p>
+
+  <h3>Frappe &amp; ERPNext apps involved</h3>
+  <div class="grid g3">
+    <div class="card">
+      <h4>Frappe CRM</h4>
+      <p>Primary CRM UI. Provides the modern pipeline kanban, lead management, contact management, and activity logging. Install separately alongside ERPNext.</p>
+      <p class="muted">Use Frappe CRM for the sales team's daily interface. ERPNext Selling handles the transactional documents (Quotation, SO, Invoice).</p>
+    </div>
+    <div class="card">
+      <h4>ERPNext Selling</h4>
+      <p>Handles Quotations, Sales Orders, Delivery Notes, and Sales Invoices. Also manages Customer master, Pricing Rules, Sales Person targets, and Sales Partner (channel partners).</p>
+      <p class="muted">The transactional spine — all revenue transactions flow through here to Accounts.</p>
+    </div>
+    <div class="card">
+      <h4>scale_sales (our app)</h4>
+      <p>Built by the team. Contains all custom extensions: BANT fields, Dealer Profile DocType, Field Force Activity DocType, commission calculator, follow-up automation, and all custom reports.</p>
+      <p class="muted">This is the only app we modify. Never touch Frappe CRM or ERPNext Selling source.</p>
+    </div>
+  </div>
+
+  <hr class="section">
+
+  <h3>Sales — feature-by-feature implementation map</h3>
+  <p>Each row maps a revised workbook requirement to the Frappe implementation approach. Ordered by feature number (workbook sequence). Dates from the Excel sprint plan.</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <tr>
+        <th>#</th><th>Feature</th><th>Priority</th><th>Dates</th><th>Frappe Base</th><th>Classification</th><th>Effort</th><th>Implementation approach</th>
+      </tr>
+      <tr>
+        <td>S-01</td>
+        <td><strong>CRM</strong></td>
+        <td><span class="badge b-p1">P1</span></td>
+        <td class="feat-date">Jul 24–27</td>
+        <td>Customer, Lead, Opportunity, Contact, Activity</td>
+        <td><span class="badge b-ootb">OOTB + Refine</span></td>
+        <td>Low</td>
+        <td>3 custom fields on Customer: <code>scale_turnover</code>, <code>scale_competitor_used</code>, <code>scale_account_classification</code>. Standard Frappe Communication timeline for email/call/WhatsApp history. CLV Script Report. Native Customer 360 view OOTB.</td>
+      </tr>
+      <tr>
+        <td>S-02</td>
+        <td><strong>Lead Management</strong></td>
+        <td><span class="badge b-p1">P1</span></td>
+        <td class="feat-date">Jul 28–30</td>
+        <td>Lead DocType, Web Form, Assignment Rule</td>
+        <td><span class="badge b-ootb">OOTB + Integration</span></td>
+        <td>Low</td>
+        <td>Standard REST webhook endpoints receive Meta Lead Ads &amp; Google Ads JSON directly into native Lead DocType. 15-line Python Server Script on <code>before_insert</code> for deduplication. Assignment Rules for territory/workload balance.</td>
+      </tr>
+      <tr>
+        <td>S-03</td>
+        <td><strong>Pipeline</strong></td>
+        <td><span class="badge b-p2">P2</span></td>
+        <td class="feat-date">Aug 28–29</td>
+        <td>Opportunity DocType, Frappe CRM Kanban</td>
+        <td><span class="badge b-refine">OOTB + Refine</span></td>
+        <td>Low</td>
+        <td>100% native Opportunity + Kanban view. Configure 10 stages in CRM Settings. Add 2 fixture child tables: <code>Opportunity Stakeholder</code> and <code>Opportunity Competitor</code>. No custom app code needed.</td>
+      </tr>
+      <tr>
+        <td>S-04</td>
+        <td><strong>Forecasting</strong></td>
+        <td><span class="badge b-p2">P2</span></td>
+        <td class="feat-date">Sep 3–7</td>
+        <td>Script Report (no standalone app)</td>
+        <td><span class="badge b-refine">Refine + Script</span></td>
+        <td>Medium</td>
+        <td>Native Frappe Script Report <em>Sales Forecast Report</em>: Weighted Revenue = Σ(Opportunity Amount × Stage Probability%). Committed vs Best Case buckets. Requires business consensus on stage probability weights before build.</td>
+      </tr>
+      <tr>
+        <td>S-05</td>
+        <td><strong>Sales Targets</strong></td>
+        <td><span class="badge b-p2">P2</span></td>
+        <td class="feat-date">Aug 31–Sep 2</td>
+        <td>Sales Person + Target Detail child table</td>
+        <td><span class="badge b-refine">OOTB + Refine</span></td>
+        <td>Low</td>
+        <td>Extend Sales Person Target child table with Activity columns (Meetings, Proposals, New Accounts, Collections). Nightly Frappe Scheduled Job aggregates actuals from Events, Quotations, Payment Entries. Target vs Actual report.</td>
+      </tr>
+      <tr>
+        <td>S-06</td>
+        <td><strong>Dealer Management</strong></td>
+        <td><span class="badge b-p2">P2</span></td>
+        <td class="feat-date">Aug 24–27</td>
+        <td>Customer + Sales Partner</td>
+        <td><span class="badge b-refine">Refine + Extension</span></td>
+        <td>Medium</td>
+        <td>Native Customer (Customer Group = Dealer) + Sales Partner as base. Custom section on Customer form for Dealer Details. Custom child DocType <code>Dealer Activity</code>. Monthly Dealer Scorecard via Script Report comparing territory penetration, collections, scheme compliance.</td>
+      </tr>
+      <tr>
+        <td>S-07</td>
+        <td><strong>Distributor Management</strong></td>
+        <td><span class="badge b-p1">P1</span></td>
+        <td class="feat-date">Aug 13–20</td>
+        <td>ERPNext Customer master (base only)</td>
+        <td><span class="badge b-build">Build</span></td>
+        <td>High</td>
+        <td>2 new DocTypes: <code>Secondary Sales Entry</code> (distributor upload of secondary sales data) and <code>Distributor Claim</code> (scheme/incentive claim submission). Native Frappe Web Forms for submission, standard Frappe Workflow for claim approvals. Risk: inconsistent secondary sales file formats from third-party distributors.</td>
+      </tr>
+      <tr>
+        <td>S-08</td>
+        <td><strong>Customer Visits</strong></td>
+        <td><span class="badge b-p1">P1</span></td>
+        <td class="feat-date">Aug 6–12</td>
+        <td>None native (no mobile GPS in Frappe)</td>
+        <td><span class="badge b-build">Build</span></td>
+        <td>High</td>
+        <td>Custom DocType <code>Field Visit</code>. Client Script uses HTML5 <code>navigator.geolocation.getCurrentPosition</code> to capture GPS lat/lng + timestamp on Check-In button click. Photo attachment field standard. Works on any mobile browser — no standalone PWA needed. Risk: mobile browser location permission blocks on field devices.</td>
+      </tr>
+      <tr>
+        <td>S-09</td>
+        <td><strong>Quotation</strong></td>
+        <td><span class="badge b-p1">P1</span></td>
+        <td class="feat-date">Jul 31–Aug 1</td>
+        <td>Quotation DocType (100% OOTB)</td>
+        <td><span class="badge b-ootb">OOTB</span></td>
+        <td>Low</td>
+        <td>100% native ERPNext Quotation: pricing rules, tax templates, versioning, amendments. Configure Frappe Workflow for discount approvals (&gt;10% Manager, &gt;20% VP). Jinja HTML Print Format for branded PDF.</td>
+      </tr>
+      <tr>
+        <td>S-10</td>
+        <td><strong>Order Management</strong></td>
+        <td><span class="badge b-p2">P2</span></td>
+        <td class="feat-date">Aug 21–22</td>
+        <td>Sales Order DocType (100% native)</td>
+        <td><span class="badge b-ootb">OOTB</span></td>
+        <td>Low</td>
+        <td>100% native ERPNext SO lifecycle: SO → stock reserve → Delivery Note → Sales Invoice → GL update. Small HTML Client Script progress indicator widget on Sales Order form showing fulfillment status.</td>
+      </tr>
+      <tr>
+        <td>S-11</td>
+        <td><strong>Collections</strong></td>
+        <td><span class="badge b-p1">P1</span></td>
+        <td class="feat-date">Aug 3–5</td>
+        <td>Sales Invoice + Payment Entry + AR Aging + Dunning</td>
+        <td><span class="badge b-ootb">OOTB + Refine</span></td>
+        <td>Low</td>
+        <td>Native AR Aging + Dunning DocType for overdue enforcement. 2 custom fields on Sales Invoice: <code>scale_promise_to_pay_date</code> and <code>scale_collection_status</code>. Standard Frappe Notification rules for payment reminders (email + WhatsApp).</td>
+      </tr>
+      <tr>
+        <td>S-12</td>
+        <td><strong>Sales Incentives</strong></td>
+        <td><span class="badge b-p2">P2</span></td>
+        <td class="feat-date">Sep 8–15</td>
+        <td>None native (flat % only in ERPNext)</td>
+        <td><span class="badge b-build">Build</span></td>
+        <td>High</td>
+        <td>Custom DocType <code>Sales Incentive Scheme</code> for multi-tier slab rules. Monthly Python Server Script queries paid Sales Invoices per rep, evaluates target achievement % and collection realization, generates draft Expense Claim or Journal Entry. Risk: complex multi-tier retrospective slabs — business rules must be locked before Sep 8.</td>
+      </tr>
+      <tr>
+        <td>S-13</td>
+        <td><strong>AI Features</strong></td>
+        <td><span class="badge b-p1">P1</span></td>
+        <td class="feat-date">Jul 24–28</td>
+        <td>None native — LLM API layer</td>
+        <td><span class="badge b-build">Build — AI</span></td>
+        <td>Medium</td>
+        <td>Single modular <code>ai_utils.py</code> inside <code>scale_sales</code> — the shared infrastructure for S-14 through S-19. Server Scripts invoke LLM REST API (OpenAI/Claude) on doc triggers: Opportunity Lost → NLP loss analysis; Lead Created → AI score 0–100; Opportunity Updated → win probability + next best action. All AI outputs stored in custom fields. Risk: LLM API rate limits or latency during peak doc saves.</td>
+      </tr>
+      <tr>
+        <td>S-14</td>
+        <td><strong>Sales Prediction</strong></td>
+        <td><span class="badge b-p2">P2</span></td>
+        <td class="feat-date">Aug 5–8</td>
+        <td>Opportunity + Sales Invoice historical data</td>
+        <td><span class="badge b-refine">Refine + AI</span></td>
+        <td>Medium</td>
+        <td>Python script in <code>ai_utils.py</code>: weighted historical run-rate + pipeline velocity formula. Results stored in custom Opportunity fields. Requires 30+ days of live data — meaningful output only after initial go-live period.</td>
+      </tr>
+      <tr>
+        <td>S-15</td>
+        <td><strong>Lost Opportunity Analysis</strong></td>
+        <td><span class="badge b-p1">P1</span></td>
+        <td class="feat-date">Jul 29–31</td>
+        <td>Opportunity DocType (Lost Reason field)</td>
+        <td><span class="badge b-refine">Refine + AI</span></td>
+        <td>Low</td>
+        <td>Server Script on Opportunity status change to Lost: calls <code>ai_utils.py</code> to extract structured insights from qualitative notes. Outputs competitor named, objection category, rep response quality — stored in custom fields. Loss pattern report shows trends across reps and segments.</td>
+      </tr>
+      <tr>
+        <td>S-16</td>
+        <td><strong>Lead Scoring</strong></td>
+        <td><span class="badge b-p2">P2</span></td>
+        <td class="feat-date">Aug 10–12</td>
+        <td>Lead DocType (Lead Score field)</td>
+        <td><span class="badge b-refine">Refine + AI</span></td>
+        <td>Low</td>
+        <td>Deterministic Python scoring script on Lead DocType: evaluates Industry, Company Size, Budget, Job Title, Lead Source. Score 0–100 saved to custom field on <code>on_update</code>. No ML needed — rule-based algorithm.</td>
+      </tr>
+      <tr>
+        <td>S-17</td>
+        <td><strong>Next Best Action</strong></td>
+        <td><span class="badge b-p1">P1</span></td>
+        <td class="feat-date">Aug 1–4</td>
+        <td>Opportunity + Event + ToDo</td>
+        <td><span class="badge b-refine">Refine + AI</span></td>
+        <td>Low</td>
+        <td>Python recommendation script: evaluates deal age, stage SLA breach, last activity date, competitor mentions. Outputs suggested action text ("Schedule demo", "Send revised proposal") to custom field on Opportunity. Daily scheduled scan across all open deals.</td>
+      </tr>
+      <tr>
+        <td>S-18</td>
+        <td><strong>Win Probability</strong></td>
+        <td><span class="badge b-p3">P3</span></td>
+        <td class="feat-date">Aug 13–15</td>
+        <td>Opportunity Probability % field</td>
+        <td><span class="badge b-refine">Refine + AI</span></td>
+        <td>Low</td>
+        <td>Server Script on Opportunity update: calculates dynamic win probability from stage, deal age, activity level, stakeholder count, competitor mentions. Overwrites native static Probability % field with AI-computed value. P3 — lower priority, can defer post Sep 15.</td>
+      </tr>
+      <tr>
+        <td>S-19</td>
+        <td><strong>Sales Coaching</strong></td>
+        <td><span class="badge b-p3">P3</span></td>
+        <td class="feat-date">Aug 17–20</td>
+        <td>Opportunity + Sales Invoice data</td>
+        <td><span class="badge b-build">Build + AI</span></td>
+        <td>Low</td>
+        <td>Python aggregation script: compares each rep's Conversion %, Cycle Time, Discount %, Collection Efficiency against team benchmarks. Payload sent to LLM for natural language coaching advice. Output stored as manager-visible coaching note on rep record. P3 — lower priority, can defer post Sep 15.</td>
+      </tr>
+    </table>
+  </div>
+
+  <hr class="section">
+
+  <!-- ═══════════════════════════════════════════
+       MARKETING
+  ═══════════════════════════════════════════ -->
+  <h2>Marketing module — <code>scale_sales</code> app</h2>
+  <p>Marketing has 33 features and the largest gap from OOTB Frappe. The core strategy is: <strong>GentooLeads (in-house)</strong> handles WhatsApp, IG/FB, and campaign execution. Frappe CRM handles lead ingestion and attribution. <code>scale_sales</code> is the connector and analytics layer.</p>
+
+  <h3>Integration architecture — Marketing channels</h3>
+  <figure>
+    <svg viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,sans-serif" font-size="11">
+      <defs>
+        <marker id="m1" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#2563eb"/></marker>
+      </defs>
+      <!-- Sources -->
+      <rect x="10"  y="60" width="90" height="80" rx="6" fill="#f0fdf4" stroke="#86efac"/>
+      <text x="55" y="93" text-anchor="middle" fill="#166534" font-weight="700">GentooLeads</text>
+      <text x="55" y="108" text-anchor="middle" fill="#166534">WhatsApp</text>
+      <text x="55" y="122" text-anchor="middle" fill="#166534">IG · FB</text>
+
+      <rect x="115" y="60" width="90" height="80" rx="6" fill="#eff6ff" stroke="#93c5fd"/>
+      <text x="160" y="93" text-anchor="middle" fill="#1e40af" font-weight="700">Meta</text>
+      <text x="160" y="108" text-anchor="middle" fill="#1e40af">Lead Ads</text>
+      <text x="160" y="122" text-anchor="middle" fill="#1e40af">Webhooks</text>
+
+      <rect x="220" y="60" width="90" height="80" rx="6" fill="#eff6ff" stroke="#93c5fd"/>
+      <text x="265" y="93" text-anchor="middle" fill="#1e40af" font-weight="700">Google</text>
+      <text x="265" y="108" text-anchor="middle" fill="#1e40af">Ads · UTM</text>
+      <text x="265" y="122" text-anchor="middle" fill="#1e40af">Webhooks</text>
+
+      <rect x="325" y="60" width="90" height="80" rx="6" fill="#fffbeb" stroke="#fcd34d"/>
+      <text x="370" y="93" text-anchor="middle" fill="#78350f" font-weight="700">Email</text>
+      <text x="370" y="108" text-anchor="middle" fill="#78350f">SMTP</text>
+      <text x="370" y="122" text-anchor="middle" fill="#78350f">+ Tracking</text>
+
+      <rect x="430" y="60" width="90" height="80" rx="6" fill="#fdf4ff" stroke="#e9d5ff"/>
+      <text x="475" y="93" text-anchor="middle" fill="#581c87" font-weight="700">Events</text>
+      <text x="475" y="108" text-anchor="middle" fill="#581c87">Webinars</text>
+      <text x="475" y="122" text-anchor="middle" fill="#581c87">Trade shows</text>
+
+      <!-- scale_sales connector -->
+      <rect x="275" y="5" width="250" height="38" rx="6" fill="#112236" stroke="#1e3a5f"/>
+      <text x="400" y="22" text-anchor="middle" fill="#fff" font-weight="700">scale_sales connector</text>
+      <text x="400" y="36" text-anchor="middle" fill="rgba(255,255,255,.5)">Webhook receivers · GentooLeads API · Attribution engine</text>
+
+      <!-- Frappe CRM target -->
+      <rect x="600" y="60" width="190" height="80" rx="6" fill="#f0fdf4" stroke="#86efac"/>
+      <text x="695" y="88" text-anchor="middle" fill="#166534" font-weight="700">Frappe CRM</text>
+      <text x="695" y="104" text-anchor="middle" fill="#166534">Lead DocType</text>
+      <text x="695" y="120" text-anchor="middle" fill="#166534">Campaign Attribution</text>
+      <text x="695" y="136" text-anchor="middle" fill="#166534">Analytics Reports</text>
+
+      <!-- Arrows to connector -->
+      <line x1="55"  y1="60" x2="290" y2="42" stroke="#2563eb" stroke-width="1.2" marker-end="url(#m1)"/>
+      <line x1="160" y1="60" x2="320" y2="42" stroke="#2563eb" stroke-width="1.2" marker-end="url(#m1)"/>
+      <line x1="265" y1="60" x2="360" y2="42" stroke="#2563eb" stroke-width="1.2" marker-end="url(#m1)"/>
+      <line x1="370" y1="60" x2="400" y2="42" stroke="#2563eb" stroke-width="1.2" marker-end="url(#m1)"/>
+      <line x1="475" y1="60" x2="450" y2="42" stroke="#2563eb" stroke-width="1.2" marker-end="url(#m1)"/>
+      <!-- Connector → CRM -->
+      <line x1="525" y1="24" x2="598" y2="70" stroke="#059669" stroke-width="1.5" marker-end="url(#m1)"/>
+    </svg>
+    <p class="muted" style="text-align:center;margin-top:6px;">All channels funnel through the scale_sales connector into Frappe CRM for unified lead attribution.</p>
+  </figure>
+
+  <h3>Marketing — feature-by-feature implementation map</h3>
+  <p>Condensed from <code>selective_analysis.json → marketing[]</code> (33 features). Items are grouped by implementation pattern.</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <tr><th>Group</th><th>Features</th><th>Implementation pattern</th><th>Effort</th></tr>
+      <tr>
+        <td><strong>Channel integration<br>(GentooLeads)</strong></td>
+        <td>WhatsApp broadcasts, IG/FB campaigns, content scheduling, lead ingestion from social</td>
+        <td><span class="badge b-integ">Integration</span> <strong>GentooLeads API connector in <code>scale_sales</code></strong>. Scheduled job: sync campaigns &amp; lead data every 30 min. GentooLeads remains the execution platform; Frappe CRM is the attribution store. Never duplicate campaign management in Frappe.</td>
+        <td>Medium-High</td>
+      </tr>
+      <tr>
+        <td><strong>Lead generation<br>(paid channels)</strong></td>
+        <td>Meta Lead Ads, Google Ads, UTM tracking, lead scoring</td>
+        <td><span class="badge b-integ">Integration</span> Webhook receiver endpoints in <code>scale_sales</code> (<code>@frappe.whitelist(allow_guest=True)</code> for inbound). Server Script on Lead insert: parse UTM source/medium/campaign → set <code>lead_source</code> and custom attribution fields.</td>
+        <td>Low</td>
+      </tr>
+      <tr>
+        <td><strong>Email marketing</strong></td>
+        <td>Email campaigns, drip sequences, open/click tracking, unsubscribe</td>
+        <td><span class="badge b-refine">Refine</span> Frappe's native Email Campaign feature handles list-based email sends. Custom fields for open/click tracking pixel URLs. Unsubscribe handled via Frappe's built-in Email Unsubscribe list. Track bounce rate in Email Queue DocType.</td>
+        <td>Low</td>
+      </tr>
+      <tr>
+        <td><strong>Content calendar</strong></td>
+        <td>Editorial calendar, content planning, brand asset library, content approval workflow</td>
+        <td><span class="badge b-build">Build</span> Custom DocType: <code>Content Calendar Entry</code> (channel, scheduled date, content type, status, asset link). Custom DocType: <code>Brand Asset</code> (file attachment, asset type, tags, usage rights). Calendar view via Frappe's built-in Calendar View on a Date field.</td>
+        <td>Medium</td>
+      </tr>
+      <tr>
+        <td><strong>SEO &amp; SEM tracking</strong></td>
+        <td>Keyword tracking, organic traffic, ad spend tracking, Quality Score</td>
+        <td><span class="badge b-build">Build</span> Custom DocType: <code>SEO Report Entry</code> (date, keyword, position, impressions, clicks — imported weekly from Google Search Console API). Custom DocType: <code>Ad Spend Log</code> (source, campaign, date, spend, leads). Budget vs spend report.</td>
+        <td>Medium</td>
+      </tr>
+      <tr>
+        <td><strong>Campaign management</strong></td>
+        <td>Multi-channel campaign tracking, budget allocation, ROI calculation</td>
+        <td><span class="badge b-refine">Refine + Script</span> Frappe CRM's native Campaign DocType extended with: budget fields, multi-channel breakdown child table. Server Script on Campaign close: compute ROI = (Revenue attributed − Campaign Cost) / Campaign Cost. Campaign ROI script report.</td>
+        <td>Medium</td>
+      </tr>
+      <tr>
+        <td><strong>SMS &amp; Push notifications</strong></td>
+        <td>Transactional SMS, promotional SMS, push notifications</td>
+        <td><span class="badge b-integ">Integration</span> Frappe's native SMS integration (configure provider: Fast2SMS, Textlocal, etc.). Push notifications via GentooLeads WhatsApp (in-scope) or deferred to a later phase (requires mobile app).</td>
+        <td>Low</td>
+      </tr>
+      <tr>
+        <td><strong>Loyalty &amp; Referral</strong></td>
+        <td>Referral tracking, loyalty points, reward tiers</td>
+        <td><span class="badge b-build">Build</span> Custom DocTypes: <code>Referral Program</code>, <code>Loyalty Point Ledger</code>. Points earned on Sales Invoice submit (Server Script). Redemption via custom field on Sales Order → deducted from loyalty balance.</td>
+        <td>Medium</td>
+      </tr>
+      <tr>
+        <td><strong>Event management</strong></td>
+        <td>Webinar registration, trade show lead capture, event budget</td>
+        <td><span class="badge b-build">Build</span> Custom DocType: <code>Marketing Event</code> (type, date, budget, attendee list child table, leads generated). Web Form for external registration (Frappe-native portal form → creates Lead automatically).</td>
+        <td>Medium</td>
+      </tr>
+      <tr>
+        <td><strong>Marketing analytics</strong></td>
+        <td>Attribution dashboard, campaign comparison, funnel analysis, spend efficiency</td>
+        <td><span class="badge b-build">Build</span> Script Reports: Lead Source Attribution (leads → opportunities → won by source), Campaign Comparison (CPL, conversion, ROI), Marketing Funnel (stage-by-stage drop-off). Frappe Dashboard page for Marketing Head.</td>
+        <td>High</td>
+      </tr>
+      <tr>
+        <td><strong>Budget tracking</strong></td>
+        <td>Marketing budget allocation by channel, budget vs spend, forecast</td>
+        <td><span class="badge b-refine">Refine</span> Custom DocType: <code>Marketing Budget</code> (fiscal year, channel allocations child table). Budget vs Spend report pulling from <code>Ad Spend Log</code> + Email Campaign costs.</td>
+        <td>Low</td>
+      </tr>
+    </table>
+  </div>
+
+  <hr class="section">
+
+  <h2>Wave 1 — implementation sequence</h2>
+  <p>Order matters. Build in this sequence to avoid blocked dependencies:</p>
+
+  <div class="grid g2">
+    <div>
+      <h3>Sales sequence (~10–12 weeks)</h3>
+      <ol class="steps">
+        <li class="step"><div class="step-n">1</div><div class="step-c"><h4>Weeks 1–2: Core masters</h4><p>Customer DocType custom fields. Item master setup. Frappe CRM pipeline stage configuration. Assignment rules. Naming series.</p></div></li>
+        <li class="step"><div class="step-n">2</div><div class="step-c"><h4>Weeks 2–3: Lead management</h4><p>BANT fields on Lead. Duplicate detection Server Script. Meta/Google webhook receivers. Lead Source attribution. Frappe CRM UI walkthrough.</p></div></li>
+        <li class="step"><div class="step-n">3</div><div class="step-c"><h4>Weeks 3–4: Pipeline</h4><p>Opportunity stages config. Stakeholder &amp; Competitor child tables. Probability auto-calc Client Script. Stale deal alert scheduler.</p></div></li>
+        <li class="step"><div class="step-n">4</div><div class="step-c"><h4>Weeks 4–5: Transactional flow</h4><p>Quotation → Sales Order → Delivery Note → Sales Invoice end-to-end. Pricing rules. GST configuration. Print format.</p></div></li>
+        <li class="step"><div class="step-n">5</div><div class="step-c"><h4>Weeks 5–6: Targets &amp; Commission</h4><p>Sales Person target extension. Activity target aggregation job. Commission Rule DocType. Commission Entry on invoice submit.</p></div></li>
+        <li class="step"><div class="step-n">6</div><div class="step-c"><h4>Weeks 6–8: Dealer &amp; Channel</h4><p>Dealer Profile DocType. Field Force Activity DocType. Field Force mobile page (Frappe UI). Channel Partner portal. Scorecard job.</p></div></li>
+        <li class="step"><div class="step-n">7</div><div class="step-c"><h4>Weeks 8–10: Reports &amp; Dashboard</h4><p>Pipeline Health, Target vs Actual, Sales Forecast (weighted), Collections Aging. Sales dashboard page with KPI tiles.</p></div></li>
+        <li class="step"><div class="step-n">8</div><div class="step-c"><h4>Weeks 10–12: QA + gate</h4><p>End-to-end UAT walkthrough. CI passing. Permissions verified per role. Raghib sign-off. Wave 1 Sales closed.</p></div></li>
+      </ol>
+    </div>
+    <div>
+      <h3>Marketing sequence (~8–10 weeks, parallel)</h3>
+      <ol class="steps">
+        <li class="step"><div class="step-n">1</div><div class="step-c"><h4>Weeks 1–2: GentooLeads connector</h4><p><code>AIWS Marketing Settings</code> DocType (API key, sync interval). Campaign sync job. Lead ingestion from GL into Frappe Lead. Smoke test: one campaign end-to-end.</p></div></li>
+        <li class="step"><div class="step-n">2</div><div class="step-c"><h4>Weeks 2–3: Paid channel webhooks</h4><p>Meta Lead Ads webhook receiver. Google Ads UTM parser. Lead deduplication check against S-02 script. Source attribution fields.</p></div></li>
+        <li class="step"><div class="step-n">3</div><div class="step-c"><h4>Weeks 3–4: Email marketing</h4><p>Email Campaign configuration. Mailing list management. Open/click tracking custom fields. Unsubscribe flow. Bounce handling.</p></div></li>
+        <li class="step"><div class="step-n">4</div><div class="step-c"><h4>Weeks 4–5: Content &amp; Assets</h4><p>Content Calendar Entry DocType. Brand Asset DocType. Calendar view configuration. Content approval workflow.</p></div></li>
+        <li class="step"><div class="step-n">5</div><div class="step-c"><h4>Weeks 5–6: Campaign management</h4><p>Frappe CRM Campaign extension. Budget fields. Ad Spend Log DocType. SEO Report Entry DocType (GSC API import).</p></div></li>
+        <li class="step"><div class="step-n">6</div><div class="step-c"><h4>Weeks 6–8: Analytics</h4><p>Lead Source Attribution report. Campaign ROI report. Marketing Funnel report. Marketing Head dashboard page.</p></div></li>
+        <li class="step"><div class="step-n">7</div><div class="step-c"><h4>Weeks 8–10: QA + gate</h4><p>GentooLeads sync tested with real campaigns. Attribution verified. Raghib sign-off. Wave 1 Marketing closed.</p></div></li>
+      </ol>
+    </div>
+  </div>
+
+  <h2>Wave 1 gate — before starting Wave 2</h2>
+  <div class="card">
+    <div class="grid g2">
+      <ul class="chk">
+        <li>Lead → Opportunity → Quotation → SO → Invoice flow works on staging with real GST</li>
+        <li>Meta Lead Ad arrives → auto-assigned to rep → BANT filled → converted to Opportunity</li>
+        <li>Dealer Profile live → scorecard computing monthly</li>
+        <li>Sales Commission calculating on invoice submit</li>
+        <li>Sales Forecast report showing weighted pipeline</li>
+        <li>GentooLeads campaigns syncing into Frappe CRM</li>
+      </ul>
+      <ul class="chk">
+        <li>Content Calendar DocType working, assets linked</li>
+        <li>Campaign ROI report functional</li>
+        <li>All custom fields prefixed <code>scale_</code></li>
+        <li>All fixtures committed to git repos</li>
+        <li>CI green on <code>scale_sales</code> and <code>scale_sales</code></li>
+        <li>Fresh site install verified: <code>bench install-app scale_sales</code> requires zero manual steps</li>
+        <li>Raghib has reviewed and signed off on both modules</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout cs">
+    <p><strong>After Wave 1 is closed:</strong> Update <code>AIWS_ERP_MODULES_CONTEXT.md</code> progress tracker (§7), record decisions in <code>AIWS_CONTEXT.md</code> decisions log, and update the WIP context memory file. Then begin Wave 2 foundation work on <code>scale_supply</code>.</p>
+  </div>
+
+  <div class="page-nav">
+    <a class="prev" href="module-plan.html">← All 13 Modules</a>
+    <span></span>
+  </div>
+</main>
+</body>
+</html>

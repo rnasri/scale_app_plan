@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finance Module — Implementation Plan | AIWS ERP</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.pill-ootb    { background:#d1fae5; color:#065f46; }
+.pill-refine  { background:#dbeafe; color:#1e40af; }
+.pill-custom  { background:#fef3c7; color:#92400e; }
+.pill-ai      { background:#ede9fe; color:#5b21b6; }
+.pill-partial { background:#fce7f3; color:#9d174d; }
+.bp1 { background:#fee2e2; color:#991b1b; }
+.bp2 { background:#fef3c7; color:#78350f; }
+.bp3 { background:#f0f9ff; color:#075985; }
+.bpd { background:#f3f4f6; color:#6b7280; }
+.st-done { color:#10b981; font-weight:700; }
+.st-wip  { color:#f59e0b; font-weight:700; }
+.st-ns   { color:#9ca3af; }
+details.feat { border:1px solid #e5e7eb; border-radius:8px; margin-bottom:8px; }
+details.feat summary { cursor:pointer; padding:12px 16px; font-weight:600; font-size:.93rem; list-style:none; display:flex; align-items:center; gap:8px; }
+details.feat summary::-webkit-details-marker { display:none; }
+details.feat summary .feat-arrow { margin-left:auto; font-size:.8rem; color:#6b7280; transition:transform .2s; }
+details.feat[open] summary .feat-arrow { transform:rotate(90deg); }
+details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
+.task-card { border:1px solid #e5e7eb; border-radius:10px; padding:16px 20px; margin-bottom:14px; page-break-inside:avoid; }
+.task-card h4 { margin:0 0 6px; font-size:.97rem; }
+.task-card .task-meta { font-size:.8rem; color:#6b7280; margin-bottom:10px; }
+.task-card .task-steps { padding-left:18px; margin:6px 0 0; }
+.task-card .task-steps li { margin-bottom:5px; font-size:.88rem; line-height:1.5; }
+.task-card .task-note  { font-size:.82rem; background:#f8fafc; border-left:3px solid #6366f1; padding:6px 10px; margin-top:10px; border-radius:0 4px 4px 0; }
+.task-context { background:#f0f9ff; border:1px solid #bae6fd; border-radius:8px; padding:12px 14px; margin:10px 0 12px; font-size:.86rem; line-height:1.6; }
+.task-context p { margin:0 0 5px; }
+.task-context p:last-child { margin:0; }
+.ctx-label { font-weight:700; color:#0369a1; }
+.ctx-ref { display:inline-block; font-size:.78rem; background:#e0f2fe; color:#0369a1; border-radius:4px; padding:2px 8px; margin-top:4px; font-weight:600; }
+.task-header { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.task-id { font-weight:700; font-size:.8rem; background:#1e3a5f; color:#fff; padding:2px 8px; border-radius:4px; }
+.task-date { font-size:.78rem; color:#6b7280; }
+.task-assign { font-size:.78rem; background:#ede9fe; color:#5b21b6; padding:2px 8px; border-radius:4px; }
+.task-assign-u { font-size:.78rem; background:#1e3a5f; color:#fff; padding:2px 8px; border-radius:4px; }
+.task-assign-d { font-size:.78rem; background:#d1fae5; color:#065f46; padding:2px 8px; border-radius:4px; }
+.print-btn { background:#1e3a5f; color:#fff; border:none; padding:8px 20px; border-radius:6px; cursor:pointer; font-size:.85rem; margin-bottom:20px; }
+.print-btn:hover { background:#2d5580; }
+.week-label { background:#1e3a5f; color:#fff; padding:8px 16px; border-radius:6px; font-weight:700; font-size:.88rem; margin:24px 0 12px; }
+.app-phase-label { background:#065f46; color:#fff; padding:8px 16px; border-radius:6px; font-weight:700; font-size:.88rem; margin:24px 0 12px; }
+.prog-bar-wrap { background:#f3f4f6; border-radius:6px; height:8px; margin-top:4px; }
+.prog-bar { background:#10b981; border-radius:6px; height:8px; }
+.dev-guide-box { background:#f8fafc; border:1px solid #e5e7eb; border-radius:10px; padding:18px 20px; margin-bottom:16px; }
+.dev-guide-box h4 { margin:0 0 10px; font-size:.95rem; color:#1e3a5f; }
+.change-type-row { display:flex; gap:10px; margin-bottom:8px; align-items:flex-start; font-size:.87rem; }
+.change-type-badge { flex-shrink:0; font-weight:700; font-size:.75rem; padding:2px 8px; border-radius:4px; min-width:110px; text-align:center; }
+.ct-config  { background:#d1fae5; color:#065f46; }
+.ct-custom  { background:#fef3c7; color:#92400e; }
+.ct-python  { background:#ede9fe; color:#5b21b6; }
+.ct-fixture { background:#dbeafe; color:#1e40af; }
+@media print {
+  .sidebar, .breadcrumb, .page-header, .no-print, .page-nav, .print-btn { display:none !important; }
+  main { margin:0 !important; padding:16px 24px !important; max-width:none !important; }
+  .print-section { display:block !important; }
+  body { font-size:10.5pt; background:#fff !important; }
+  .task-card { border:1px solid #ccc; }
+  pre { background:#f4f4f4 !important; color:#111 !important; font-size:9pt; }
+  h1,h2,h3 { page-break-after:avoid; }
+  .task-card, details { page-break-inside:avoid; }
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="s-title">AIWS ERP</div>
+    <div class="s-sub">Implementation Master Plan</div>
+    <span class="s-tag">Claude / implementation</span>
+  </div>
+  <nav>
+    <div class="nav-group">Start Here</div>
+    <a class="nav-link" href="index.html">Program Overview</a>
+    <div class="nav-group">Foundation</div>
+    <a class="nav-link" href="frappe-verdict.html">Frappe Capability</a>
+    <a class="nav-link" href="architecture.html">System Architecture</a>
+    <div class="nav-group">Development Framework</div>
+    <a class="nav-link" href="customization-guide.html">Customization Guide</a>
+    <a class="nav-link" href="developer-guide.html">Developer Workflow</a>
+    <div class="nav-group">Implementation</div>
+    <a class="nav-link" href="module-plan.html">All 13 Modules</a>
+    <a class="nav-link" href="sprint-plan.html">Parallel Sprint Plan</a>
+    <a class="nav-link" href="wave-1.html">Sales &amp; Marketing Detail</a>
+    <div class="nav-group">Module Plans</div>
+    <a class="nav-link" href="sales-module.html">Sales Module Plan</a>
+    <a class="nav-link" href="hr-module.html">HR Module Plan</a>
+    <a class="nav-link" href="accounts-module.html">Accounts Module Plan</a>
+    <a class="nav-link active" href="finance-module.html">Finance Module Plan</a>
+    <a class="nav-link" href="pmo-module.html">PMO Module Plan</a>
+
+    <div class="nav-group">User Manual</div>
+    <a class="nav-link" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
+
+    <div class="nav-group">AI Strategy</div>
+    <a class="nav-link" href="ai-plan-strategy.html">AI Plan Strategy</a>
+
+    <div class="nav-group">Tracking</div>
+    <a class="nav-link" href="sales-tracker.html">Sales Tracker</a>
+    <a class="nav-link" href="sales-demo-showcase.html">Sales Showcase ✨</a>
+  </nav>
+  <div class="sidebar-foot">Pixaflip × SIL · AIWS ERP<br><a href="../../index.html">← AIWS Setup portal</a></div>
+</aside>
+
+<main>
+<div class="breadcrumb">AIWS ERP <span>›</span> Finance Module Implementation Plan</div>
+
+<!-- PAGE HEADER -->
+<div class="page-header no-print">
+  <h1>Finance Module — Implementation Plan</h1>
+  <p class="subtitle">16 features (14 Finance Analytics + 2 Client PRD) · <code>scale_finance</code> app · Module Lead: Uday · AI Head: Veeren · Sep 1 → Oct 10, 2026</p>
+</div>
+
+<button class="print-btn no-print" onclick="window.print()">Print / Save as PDF</button>
+
+<div class="summary-strip no-print">
+  <div class="s-stat"><div class="sv">16</div><div class="sl">Total Features</div></div>
+  <div class="s-stat"><div class="sv">6</div><div class="sl">Native OOTB</div></div>
+  <div class="s-stat"><div class="sv">3</div><div class="sl">Config + Extend</div></div>
+  <div class="s-stat"><div class="sv">7</div><div class="sl">Custom Build</div></div>
+  <div class="s-stat"><div class="sv">Oct 10</div><div class="sl">Wave 1 Target</div></div>
+</div>
+
+<!-- ═══════════════════════════════════
+     PRINTABLE SECTION
+═══════════════════════════════════ -->
+<div class="print-section">
+
+<!-- SECTION A: OVERVIEW -->
+<div style="border-bottom:3px solid #1e3a5f;padding-bottom:16px;margin-bottom:24px;">
+  <div style="font-size:10pt;color:#666;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">AIWS ERP · Pixaflip × SIL</div>
+  <div style="font-size:20pt;font-weight:900;color:#1e3a5f;letter-spacing:-.5px;">Finance Module — Developer Handover Pack</div>
+  <div style="font-size:10pt;color:#444;margin-top:6px;">Module Lead: <strong>Uday</strong> · AI Head: <strong>Veeren</strong> · Printed: July 2026</div>
+</div>
+
+<h2 style="margin-top:0;">Section A — Overview &amp; Scope</h2>
+
+<p>This document is the single authoritative reference for the AIWS <strong>Finance Analytics</strong> build — budgeting, cash flow, working capital, profitability analysis, and strategic finance (prefix FI). It covers the <strong>14 Finance Analytics features</strong> from the Excel Finance tab plus <strong>2 features identified in the client's Finance Management Module PRD</strong> (FI-15, FI-16). Together these 16 features define the scope of the <code>scale_finance</code> custom app for Wave 1 (Sep 1 – Oct 10, 2026).</p>
+
+<div style="background:#eff6ff;border:1px solid #93c5fd;border-radius:8px;padding:12px 14px;margin:14px 0;font-size:.86rem;">
+  <strong style="color:#1e3a5f;">Companion document — Accounts Foundation</strong>
+  <p style="margin:6px 0 0;color:#1e3a5f;">Core bookkeeping and statutory compliance (Chart of Accounts, AR/AP, Bank Reconciliation, GST, TDS/TCS, Fixed Assets, MIS Reports, and 15 other features) are scoped separately in <a href="accounts-module.html"><strong>accounts-module.html</strong></a>, under a dedicated <code>scale_accounts</code> app. Both apps are led by Uday; Accounts Foundation is scheduled first (Aug 1–29) since Finance Analytics depends on a working Chart of Accounts and Cost Centre tree. This split replaces an earlier version of this document that covered both scopes in one page — that version has been retired in favour of two focused plans.</p>
+</div>
+
+<p><strong>How to navigate to the Finance module:</strong> Launch the bench → open your Scale site → click the Scale app launcher → find <em>Scale Finance</em> in the left sidebar. This entry appears after T00 (app creation) and <code>bench migrate</code>.</p>
+
+<p><strong>App:</strong> <code>scale_finance</code> (Python package name, git folder name, and ERPNext app name — all the same). &nbsp;<strong>Platform:</strong> Frappe v15 + ERPNext v15 + Frappe Lending app (for FI-08 Loan Management). Depends on <code>scale_accounts</code> being installed first (Chart of Accounts, Cost Centre tree, GL).</p>
+
+<div style="background:#fffbeb;border:2px solid #fcd34d;border-radius:8px;padding:14px 16px;margin:16px 0;font-size:.86rem;">
+  <strong style="color:#92400e;">Client PRD Analysis — 2 additional features identified (Finance Management Module PRD, Jul 2026)</strong>
+  <p style="margin:8px 0 4px;color:#78350f;">The client Finance Management Module PRD contains 15 numbered feature sections plus a closing Executive Dashboard specification. 14 of the numbered sections align with the Excel Finance tab scope. The following <strong>2 items appear in the client PRD but are not in the original Excel scope.</strong></p>
+  <ul style="margin:6px 0 0 16px;padding:0;line-height:1.9;color:#78350f;">
+    <li><strong>FI-15 — Profit Leakage Detection</strong> — AI-driven continuous monitoring of financial transactions to identify hidden losses, revenue leakages, margin erosion, and operational inefficiencies (Wave 2 · AI Build). Monitors: Excessive Discounts, Unauthorised Write-offs, Margin Erosion by product/customer, Abnormal Expense Spikes, Revenue Recognition gaps.</li>
+    <li><strong>FI-16 — Executive Dashboard (CFO &amp; CXO View)</strong> — a single real-time cockpit combining 16 KPIs pulled from across every Finance and Accounts feature: Revenue vs Budget, EBITDA, Net Profit, Cash Position, Working Capital, AR/AP, Budget Utilisation, Cash Flow Forecast, Loan &amp; Liability Status, MSME Incentive Tracker, Product Profitability, Investment Performance, ROI by Initiative, Profit Leakage Alerts, AI Financial Risk Score, Top 10 AI Recommendations. The PRD gives this its own section, distinct from the per-feature reports each of FI-01 to FI-15 already produces. Phased: the 9 Wave-1-sourced KPIs ship with T10; the rest complete once Wave 2 AI builds and the Accounts module's own Executive Dashboard (AC-16) land.</li>
+  </ul>
+  <p style="margin:10px 0 0;color:#92400e;font-size:.82rem;"><strong>All 14 Excel Finance features (FI-01 to FI-14) are in Wave 1 scope.</strong> FI-15 is Wave 2, assigned to Veeren (AI Head) as task V03. FI-16 is phased — Wave 1 partial (T10), Wave 2 complete (V07).</p>
+</div>
+
+<div style="background:#fff1f2;border:1px solid #fca5a5;border-radius:8px;padding:12px 14px;margin:16px 0;font-size:.86rem;">
+  <strong style="color:#991b1b;">⚠ Note to AI Team</strong>
+  <p style="margin:6px 0 0;color:#7f1d1d;">Do not modify any upstream Frappe/ERPNext source files. All custom logic lives exclusively inside <code>apps/scale_finance/</code>. Hook paths must use the outer Python package name only — e.g. <code>scale_finance.msme_hooks.fn</code>, never <code>scale_finance.scale_finance.msme_hooks.fn</code>. The inner <code>scale_finance/scale_finance/</code> folder is the Frappe module for DocTypes and Workspaces, not for Python logic files.</p>
+</div>
+
+<table style="width:100%;border-collapse:collapse;font-size:.85rem;margin:16px 0;">
+  <tr style="background:#1e3a5f;color:#fff;">
+    <th style="padding:8px 12px;text-align:left;">Role</th>
+    <th style="padding:8px 12px;text-align:left;">Name</th>
+    <th style="padding:8px 12px;text-align:left;">Responsibilities</th>
+  </tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;"><strong>Finance &amp; Accounts Module Lead</strong></td><td style="padding:7px 12px;border:1px solid #ddd;"><strong style="color:#1e3a5f;">Uday</strong></td><td style="padding:7px 12px;border:1px solid #ddd;">Architecture decisions, Cost Centre tree, Budgeting, P&amp;L dimensional views, Variance &amp; Profit by Segment, Investment Register, custom DocType design, fixture exports, git commits, team coordination</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Developer2</td><td style="padding:7px 12px;border:1px solid #ddd;">Dev2 (TBD)</td><td style="padding:7px 12px;border:1px solid #ddd;">Cash Flow forward calendar, Working Capital dashboard, Frappe Lending, MSME flagging script</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">AI Head</td><td style="padding:7px 12px;border:1px solid #ddd;">Veeren</td><td style="padding:7px 12px;border:1px solid #ddd;">ai_utils.py, Finance NL Query assistant, Profit Leakage Detection engine (Wave 2), Financial Forecasting AI model (Wave 2), Budget Overrun prediction (Wave 2)</td></tr>
+</table>
+
+<!-- SECTION B: APP SCAFFOLD -->
+<h2>Section B — Creating the scale_finance App</h2>
+<p>One-time setup. Uday runs these commands on Day 1 of the Finance Analytics track (after Accounts Foundation is signed off) to create the <code>scale_finance</code> app, wire it up, and push the scaffold to git so Dev2 and Veeren can clone and start work.</p>
+
+<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 16px;margin:12px 0;font-size:.86rem;line-height:1.8;">
+  <strong style="color:#166534; display:block; margin-bottom:8px;">Step 1 — Create the app</strong>
+  <pre style="background:#0d1f35;color:#c8d8ea;padding:14px 18px;border-radius:6px;font-size:.82rem;margin:0;">bench new-app scale_finance</pre>
+  <p style="margin:8px 0 0;">When prompted, fill in:<br>
+  App Title: <strong>Scale Finance</strong> &nbsp;·&nbsp; Publisher: <strong>Pixaflip Technologies</strong> &nbsp;·&nbsp; Description: <strong>Finance Analytics Module for Scale ERP</strong> &nbsp;·&nbsp; Email: <strong>dev@pixaflip.com</strong> &nbsp;·&nbsp; License: <strong>MIT</strong><br>
+  Leave other prompts as default.</p>
+</div>
+
+<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 16px;margin:12px 0;font-size:.86rem;line-height:1.8;">
+  <strong style="color:#166534; display:block; margin-bottom:8px;">Step 2 — Add to apps.txt and install</strong>
+  <pre style="background:#0d1f35;color:#c8d8ea;padding:14px 18px;border-radius:6px;font-size:.82rem;margin:0;">echo "scale_finance" >> sites/apps.txt
+bench --site scale.localhost install-app scale_finance
+bench --site scale.localhost migrate</pre>
+  <p style="margin:8px 0 0;"><strong>Prerequisite:</strong> <code>scale_accounts</code> must already be installed — Finance Analytics reads Chart of Accounts, Cost Centre, and GL data that scale_accounts' Wave 1 work establishes.</p>
+</div>
+
+<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 16px;margin:12px 0;font-size:.86rem;line-height:1.8;">
+  <strong style="color:#166534; display:block; margin-bottom:8px;">Step 3 — Edit hooks.py</strong>
+  <pre style="background:#0d1f35;color:#c8d8ea;padding:14px 18px;border-radius:6px;font-size:.82rem;margin:0;">app_name        = "scale_finance"
+app_title       = "Scale Finance"
+app_publisher   = "Pixaflip Technologies"
+app_description = "Finance Analytics Module for Scale ERP"
+app_email       = "dev@pixaflip.com"
+app_license     = "MIT"
+app_version     = "0.0.1"
+
+required_apps = ["frappe", "erpnext", "scale_accounts"]
+
+fixtures = [
+    {"dt": "Custom Field",    "filters": [["module", "=", "Scale Finance"]]},
+    {"dt": "Property Setter", "filters": [["module", "=", "Scale Finance"]]},
+    {"dt": "Workflow",        "filters": [["document_type", "in",
+        ["Budget", "Investment Register"]]]},
+    {"dt": "Notification",   "filters": [["module", "=", "Scale Finance"]]},
+]
+
+doc_events = {
+    "Purchase Invoice": {
+        "before_submit": "scale_finance.msme_hooks.flag_msme_payable",
+    },
+    "Payment Entry": {
+        "on_submit": "scale_finance.cashflow_hooks.update_cashflow_position",
+    },
+    "Budget": {
+        "on_submit": "scale_finance.budget_hooks.on_budget_submit",
+    },
+}
+
+scheduler_events = {
+    "daily": [
+        "scale_finance.tasks.daily_msme_overdue_check",
+        "scale_finance.tasks.daily_loan_emi_alert",
+        "scale_finance.tasks.daily_cash_position_update",
+        "scale_finance.tasks.daily_budget_overrun_alert",
+    ],
+    "weekly": [
+        "scale_finance.tasks.weekly_budget_variance_summary",
+        "scale_finance.tasks.weekly_working_capital_refresh",
+        "scale_finance.tasks.weekly_investment_maturity_check",
+    ],
+}</pre>
+</div>
+
+<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 16px;margin:12px 0;font-size:.86rem;line-height:1.8;">
+  <strong style="color:#166534; display:block; margin-bottom:8px;">Step 4 — Create stub Python files</strong>
+  <pre style="background:#0d1f35;color:#c8d8ea;padding:14px 18px;border-radius:6px;font-size:.82rem;margin:0;"># From apps/scale_finance/scale_finance/
+touch msme_hooks.py cashflow_hooks.py budget_hooks.py tasks.py ai_utils.py</pre>
+  <p style="margin:8px 0 0;">Each stub needs at minimum: <code>def flag_msme_payable(doc, method=None): pass</code> and similar pass-through functions matching the hooks.py declarations.</p>
+</div>
+
+<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 16px;margin:12px 0;font-size:.86rem;line-height:1.8;">
+  <strong style="color:#166534; display:block; margin-bottom:8px;">Step 5 — Create the Workspace (sidebar entry)</strong>
+  <pre style="background:#0d1f35;color:#c8d8ea;padding:14px 18px;border-radius:6px;font-size:.82rem;margin:0;">mkdir -p apps/scale_finance/scale_finance/scale_finance/workspace/scale_finance</pre>
+  <p style="margin:8px 0 6px;">Create <code>scale_finance.json</code> in that folder. Set <code>"module": "Scale Finance"</code>, <code>"public": 1</code>, <code>"sequence_id": 4.0</code> (places it below Scale Accounts in the sidebar). Add shortcuts to: Budget, Cost Center, Cash Flow Statement, P&amp;L Statement. Add card groups: Budgeting · Cash Flow · Profitability · Strategic Finance. Run <code>bench --site &lt;site&gt; migrate</code>.</p>
+</div>
+
+<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 16px;margin:12px 0;font-size:.86rem;line-height:1.8;">
+  <strong style="color:#166534; display:block; margin-bottom:8px;">Step 6 — Push to git</strong>
+  <pre style="background:#0d1f35;color:#c8d8ea;padding:14px 18px;border-radius:6px;font-size:.82rem;margin:0;">git add apps/scale_finance/ sites/apps.txt
+git commit -m "feat(finance): scale_finance app scaffold — hooks, stubs, workspace sidebar"
+git push origin main</pre>
+  <p style="margin:8px 0 0;"><strong>What the team gets after git pull:</strong> Run <code>env/bin/pip install -e apps/scale_finance</code> → <code>bench --site &lt;site&gt; install-app scale_finance</code> → <code>bench --site &lt;site&gt; migrate</code> → Scale Finance appears in sidebar.</p>
+</div>
+
+<!-- SECTION C: DEVELOPER ACTIVITY GUIDE -->
+<h2>Section C — Developer Activity Guide</h2>
+
+<h3>C.1 — The Golden Rule: Which File Do You Touch?</h3>
+<table style="width:100%;border-collapse:collapse;font-size:.84rem;margin:12px 0 20px;">
+  <tr style="background:#1e3a5f;color:#fff;">
+    <th style="padding:8px 12px;text-align:left;">What you want to do</th>
+    <th style="padding:8px 12px;text-align:left;">Where to make the change</th>
+    <th style="padding:8px 12px;text-align:left;">bench migrate needed?</th>
+  </tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Create Cost Centres, Budgets</td><td style="padding:7px 12px;border:1px solid #ddd;">ERPNext UI only — no code</td><td style="padding:7px 12px;border:1px solid #ddd;">No</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Add a custom field to Supplier (e.g. MSME flag)</td><td style="padding:7px 12px;border:1px solid #ddd;">ERPNext UI (Customize Form) → export fixture</td><td style="padding:7px 12px;border:1px solid #ddd;">Yes (after import)</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Write MSME 43B(h) or cashflow logic on document events</td><td style="padding:7px 12px;border:1px solid #ddd;">Python file in <code>apps/scale_finance/scale_finance/</code> + declare in hooks.py doc_events</td><td style="padding:7px 12px;border:1px solid #ddd;">No (bench restart only)</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Write a scheduled job (daily EMI alert, weekly WC refresh)</td><td style="padding:7px 12px;border:1px solid #ddd;"><code>tasks.py</code> + declare in hooks.py scheduler_events</td><td style="padding:7px 12px;border:1px solid #ddd;">No (bench restart only)</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Build a Script Report (Cash Flow calendar, WC Dashboard)</td><td style="padding:7px 12px;border:1px solid #ddd;">ERPNext UI → Script Report → export fixture OR Python report file in app</td><td style="padding:7px 12px;border:1px solid #ddd;">No</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Create a new DocType (MSME Scheme, Investment Register, ROI Tracker)</td><td style="padding:7px 12px;border:1px solid #ddd;">ERPNext UI → Developer Mode → export as fixture JSON</td><td style="padding:7px 12px;border:1px solid #ddd;">Yes</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Set up a Workflow (Budget approval chain)</td><td style="padding:7px 12px;border:1px solid #ddd;">ERPNext UI → Workflow → add to fixtures list in hooks.py → export</td><td style="padding:7px 12px;border:1px solid #ddd;">No</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Add AI / LLM call (profit leakage scan, forecasting)</td><td style="padding:7px 12px;border:1px solid #ddd;">Python hook file calls <code>ai_utils.call_llm()</code></td><td style="padding:7px 12px;border:1px solid #ddd;">No (bench restart only)</td></tr>
+</table>
+
+<h3>C.2 — The Change-Test-Commit Cycle</h3>
+<ol style="margin:8px 0 16px 20px;font-size:.87rem;line-height:1.9;">
+  <li><strong>Make the change</strong> — in ERPNext UI or in a Python file.</li>
+  <li><strong>Test on your bench</strong> — submit a test transaction, verify the behaviour.</li>
+  <li><strong>Export fixtures</strong> (UI-made changes only): <code>bench --site &lt;site&gt; export-fixtures --app scale_finance</code></li>
+  <li><strong>Commit</strong>: <code>git add apps/scale_finance/</code> → <code>git commit -m "feat(finance): &lt;description&gt;"</code></li>
+  <li><strong>Push</strong>: <code>git push origin main</code></li>
+  <li><strong>Notify team</strong>: after pull, run <code>bench --site &lt;site&gt; migrate</code> to load DocType changes.</li>
+</ol>
+
+<h3>C.3 — How to Add a Custom Field (MSME flag on Supplier)</h3>
+<ol style="margin:8px 0 16px 20px;font-size:.87rem;line-height:1.9;">
+  <li>Go to: <strong>ERPNext → Customize Form → DocType = Supplier</strong></li>
+  <li>Click Add Row. Field Label: <code>MSME Registered</code> · Field Name: <code>scale_finance_msme_flag</code> · Type: Check · Module: <strong>Scale Finance</strong></li>
+  <li>Add another: Field Label: <code>MSME Registration Number</code> · Field Name: <code>scale_finance_msme_reg_no</code> · Type: Data · Module: <strong>Scale Finance</strong></li>
+  <li>Save. Run: <code>bench --site &lt;site&gt; export-fixtures --app scale_finance</code></li>
+  <li>Commit the <code>fixtures/custom_field.json</code> file.</li>
+</ol>
+
+<h3>C.4 — How to Write a Python Hook (MSME 43B(h) enforcement)</h3>
+<pre style="font-size:.82rem;">
+# apps/scale_finance/scale_finance/msme_hooks.py
+
+import frappe
+from frappe.utils import date_diff, today, add_days
+
+def flag_msme_payable(doc, method=None):
+    """Flag Purchase Invoice if MSME supplier payment extends beyond 45 days (Section 43B(h))."""
+    supplier = frappe.get_doc("Supplier", doc.supplier)
+    if not supplier.get("scale_finance_msme_flag"):
+        return
+    due_date = doc.due_date
+    if due_date and date_diff(due_date, doc.posting_date) &gt; 45:
+        doc.scale_finance_43b_risk_flag = 1
+        frappe.msgprint(
+            f"Section 43B(h) Alert: MSME supplier payment due beyond 45 days "
+            f"(due {due_date}). Risk of tax disallowance.",
+            alert=True, indicator="orange"
+        )
+</pre>
+<p style="font-size:.87rem;">Declare in hooks.py: <code>"Purchase Invoice": {"before_submit": "scale_finance.msme_hooks.flag_msme_payable"}</code>. After saving hooks.py, run <code>bench restart</code> — no migrate needed.</p>
+
+<h3>C.5 — Git Project Structure</h3>
+<pre style="font-size:.8rem;background:#1e3a5f;color:#c8d8ea;padding:14px 18px;border-radius:6px;">
+apps/scale_finance/
+├── scale_finance/                        <span style="color:#86efac;">← Python package (hooks + logic files here)</span>
+│   ├── hooks.py                           <span style="color:#86efac;">← Central wiring: doc_events, scheduler, fixtures</span>
+│   ├── msme_hooks.py                      <span style="color:#86efac;">← MSME Section 43B(h) flagging on Purchase Invoice</span>
+│   ├── cashflow_hooks.py                  <span style="color:#86efac;">← Cash position update on Payment Entry</span>
+│   ├── budget_hooks.py                    <span style="color:#86efac;">← Budget approval + overrun alerts</span>
+│   ├── tasks.py                           <span style="color:#86efac;">← Scheduled jobs (daily/weekly/monthly)</span>
+│   ├── ai_utils.py                        <span style="color:#86efac;">← LLM helper — call_llm(), leakage_scan()</span>
+│   ├── fixtures/                          <span style="color:#fbbf24;">← Auto-generated by export-fixtures</span>
+│   │   ├── custom_field.json
+│   │   ├── workflow.json
+│   │   └── notification.json
+│   └── scale_finance/                     <span style="color:#fca5a5;">← Frappe module folder (DocTypes + Workspace)</span>
+│       ├── doctype/
+│       │   ├── msme_scheme/               <span style="color:#fca5a5;">← Custom DocType for FI-09</span>
+│       │   ├── investment_register/       <span style="color:#fca5a5;">← Custom DocType for FI-10</span>
+│       │   └── roi_tracker/               <span style="color:#fca5a5;">← Custom DocType for FI-14</span>
+│       └── workspace/
+│           └── scale_finance/
+│               └── scale_finance.json     <span style="color:#fca5a5;">← Sidebar workspace definition</span>
+├── setup.py
+└── MANIFEST.in
+</pre>
+
+<!-- SECTION D: FEATURE COVERAGE MATRIX -->
+<h2>Section D — Feature Coverage Matrix</h2>
+
+<p style="font-size:.85rem;color:#444;margin-bottom:8px;"><strong>FI = Finance Analytics</strong> (budgeting, cash flow, profitability, strategic finance). See <a href="accounts-module.html">accounts-module.html</a> for the AC-prefixed Accounts Foundation matrix (core bookkeeping + statutory compliance).</p>
+
+<table style="width:100%;border-collapse:collapse;font-size:.82rem;margin:12px 0;">
+  <tr style="background:#1e3a5f;color:#fff;">
+    <th style="padding:8px 10px;text-align:left;">#</th>
+    <th style="padding:8px 10px;text-align:left;">Feature</th>
+    <th style="padding:8px 10px;text-align:left;">Priority</th>
+    <th style="padding:8px 10px;text-align:left;">Platform</th>
+    <th style="padding:8px 10px;text-align:left;">Classification</th>
+    <th style="padding:8px 10px;text-align:left;">Window</th>
+  </tr>
+  <tr style="background:#ede9fe;"><td colspan="6" style="padding:7px 10px;font-size:.78rem;font-weight:700;color:#5b21b6;border:1px solid #ddd8fe;">FINANCE ANALYTICS — FI-01 to FI-14 · Budgeting, FP&amp;A, Strategic Finance</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">FI-01</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Budgeting</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native ERPNext Budget DocType</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Sep 3–6</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">FI-02</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Financial Forecasting</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Custom Script + AI</td><td style="padding:7px 10px;border:1px solid #ddd;">Custom Build (Wave 2)</td><td style="padding:7px 10px;border:1px solid #ddd;">Wave 2</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">FI-03</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>P&amp;L Management</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native ERPNext</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Sep 15–17</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">FI-04</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Cash Flow Management</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp2">P2</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native + Custom Script Report</td><td style="padding:7px 10px;border:1px solid #ddd;">Extend + Script</td><td style="padding:7px 10px;border:1px solid #ddd;">Sep 8–10</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">FI-05</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Cost Centre Management</strong> <span style="font-size:.68rem;color:#6b7280;">(also AC-13)</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp2">P2</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native ERPNext</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Sep 1–2</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">FI-06</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Financial Reporting</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native ERPNext</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Sep 15–17</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">FI-07</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Working Capital Management</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp3">P3</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Custom Dashboard</td><td style="padding:7px 10px;border:1px solid #ddd;">Extend + Script</td><td style="padding:7px 10px;border:1px solid #ddd;">Sep 11–13</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">FI-08</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Loan &amp; Liability Tracking</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp2">P2</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Frappe Lending app</td><td style="padding:7px 10px;border:1px solid #ddd;">App Install + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Sep 22–26</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">FI-09</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>MSME Scheme Tracking</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp3">P3</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Custom DocType + Script</td><td style="padding:7px 10px;border:1px solid #ddd;">Custom Build</td><td style="padding:7px 10px;border:1px solid #ddd;">Sep 27–Oct 1</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">FI-10</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Investment Planning</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp3">P3</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Custom DocType</td><td style="padding:7px 10px;border:1px solid #ddd;">Custom Build</td><td style="padding:7px 10px;border:1px solid #ddd;">Oct 1–5</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">FI-11</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Profit by Product / Segment</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native Gross Profit report</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Sep 18–20</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">FI-12</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Variance Analysis</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp2">P2</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native Budget Variance report</td><td style="padding:7px 10px;border:1px solid #ddd;">OOTB + Config</td><td style="padding:7px 10px;border:1px solid #ddd;">Sep 18–20</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">FI-13</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Break-even Analysis</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp3">P3</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Custom Script Report</td><td style="padding:7px 10px;border:1px solid #ddd;">Custom Build (Wave 2)</td><td style="padding:7px 10px;border:1px solid #ddd;">Wave 2</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">FI-14</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>ROI Tracking</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp3">P3</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Custom DocType + Dashboard</td><td style="padding:7px 10px;border:1px solid #ddd;">Custom Build (Wave 2)</td><td style="padding:7px 10px;border:1px solid #ddd;">Wave 2</td></tr>
+  <!-- PRD DELTA -->
+  <tr style="background:#fffbeb;"><td colspan="6" style="padding:8px 10px;font-size:.78rem;font-weight:700;color:#92400e;border:1px solid #fcd34d;">CLIENT PRD ADDITIONS — FI-15, FI-16 · Identified from Finance Management Module PRD (Jul 2026)</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">FI-15</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Profit Leakage Detection</strong> <span style="background:#fef3c7;color:#92400e;font-size:.7rem;font-weight:700;padding:1px 5px;border-radius:3px;">New · Client PRD</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bpd">W2</span></td><td style="padding:7px 10px;border:1px solid #ddd;">AI Engine + Script</td><td style="padding:7px 10px;border:1px solid #ddd;">Custom Build (Wave 2)</td><td style="padding:7px 10px;border:1px solid #ddd;">Wave 2</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">FI-16</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Executive Dashboard (CFO &amp; CXO View)</strong> <span style="background:#fef3c7;color:#92400e;font-size:.7rem;font-weight:700;padding:1px 5px;border-radius:3px;">New · Client PRD</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Custom Workspace Dashboard</td><td style="padding:7px 10px;border:1px solid #ddd;">Custom Build (Phased: Wave 1 partial + Wave 2)</td><td style="padding:7px 10px;border:1px solid #ddd;">Oct 6–10 (partial) · Wave 2 (complete)</td></tr>
+</table>
+
+<!-- SECTION E: TEAM -->
+<h2>Section E — Team Assignments</h2>
+<table style="width:100%;border-collapse:collapse;font-size:.84rem;margin:12px 0;">
+  <tr style="background:#1e3a5f;color:#fff;">
+    <th style="padding:8px 12px;text-align:left;">Name</th><th style="padding:8px 12px;text-align:left;">Role</th><th style="padding:8px 12px;text-align:left;">Owns</th>
+  </tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;"><strong style="color:#1e3a5f;">Uday</strong></td><td style="padding:7px 12px;border:1px solid #ddd;">Finance &amp; Accounts Module Lead</td><td style="padding:7px 12px;border:1px solid #ddd;">App scaffold · Cost Centre tree · Budget setup · P&amp;L views · Variance &amp; Profit by Segment · Investment Register · fixture exports · git commits</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Dev2 (TBD)</td><td style="padding:7px 12px;border:1px solid #ddd;">Developer2</td><td style="padding:7px 12px;border:1px solid #ddd;">Cash Flow forward calendar · Working Capital dashboard · Frappe Lending · MSME flagging script</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">Veeren</td><td style="padding:7px 12px;border:1px solid #ddd;">AI Head</td><td style="padding:7px 12px;border:1px solid #ddd;">ai_utils.py wiring · Finance NL Query assistant · Profit Leakage Detection engine (Wave 2) · Financial Forecasting AI (Wave 2) · Budget Overrun AI prediction (Wave 2)</td></tr>
+</table>
+
+</div><!-- /print-section -->
+
+<!-- ═══════════════════════════════════
+     WEB-ONLY: FEATURE ACCORDIONS
+═══════════════════════════════════ -->
+<h2 class="no-print">Finance Analytics — Feature Breakdown</h2>
+<p class="no-print">Expand each feature to see what exists natively in ERPNext, what needs to be configured, and the lean implementation approach.</p>
+
+<h3 class="no-print">Phase 1 — Cost Centres &amp; Budgeting (FI-01, FI-05)</h3>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-ootb">OOTB</span> FI-05 · Cost Centre Management &amp; FI-01 · Budgeting <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:6px;padding:10px 12px;margin-bottom:10px;font-size:.84rem;">
+      <strong>⚠ Also scoped in Accounts module:</strong> FI-05 is the same underlying feature as <strong>AC-13 Cost Centre Accounting</strong> in <a href="accounts-module.html">accounts-module.html</a> (Section D). The Excel workbook lists Cost Centres in both the Accounts and Finance tabs since it's foundational to both bookkeeping and analytics. <strong>Build it once</strong> — Cost Centre is a core ERPNext master (not app-specific data), so whichever app builds the tree first, the other consumes it automatically without any code. This document assumes it is built here (T01), before Accounts module's own Wave 1 window closes, since P&amp;L and Budget dimensional reporting need it early. If Accounts module's team builds it first instead, skip the tree-creation step below and go straight to the Budgeting half.
+    </div>
+    <p><strong>Cost Centres — what already works:</strong> Native Cost Centre tree with parent-child hierarchy. Every transaction line item can be tagged to a Cost Centre. Financial Analytics report shows profitability per Cost Centre (Revenue vs Expense). Mandatory tagging can be enforced via Property Setter on journal entry fields.</p>
+    <p><strong>Cost Centre configuration:</strong></p>
+    <ul>
+      <li>Build Cost Centre tree: Company Root → Sales / Marketing / HR / Finance / Operations / Manufacturing / Projects / each Branch — match the org chart exactly</li>
+      <li>Make Cost Centre mandatory on expense transactions: Customize Form on Journal Entry and Purchase Invoice → set "Cost Centre" field as Reqd via Property Setter → export fixture</li>
+      <li>Assign default Cost Centre per Department in Department master — auto-fills on transactions</li>
+    </ul>
+    <p><strong>Budgeting — what already works:</strong> Native Budget DocType links to Cost Centre + Account with monthly distribution. System enforces Stop/Warn/Ignore breach actions on Purchase Order, Purchase Invoice, and Journal Entry. Budget Variance report compares budgeted vs actual per Cost Centre and period.</p>
+    <p><strong>Budget configuration:</strong></p>
+    <ul>
+      <li>Create Budget Distribution Template: allocate % per month (e.g. heavier Q4 for seasonal businesses)</li>
+      <li>Create annual budgets per Cost Centre × Account combination — this is a business task that Uday must coordinate with department heads</li>
+      <li>Set breach action: "Warn" for most cost centres (flag but allow), "Stop" for CapEx accounts (hard block over budget spending)</li>
+      <li>Configure Budget Approval Workflow: Budget Creator → Department Head → Finance Controller → CFO → MD</li>
+      <li>Test: raise a Purchase Order exceeding budget → verify warning appears → submit → verify GL shows overrun in variance report</li>
+    </ul>
+    <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:10px 12px;margin-top:10px;font-size:.84rem;">
+      <strong>Pre-work required:</strong> Annual budget figures by Cost Centre and GL account must be provided by department heads before T02. Block this task on data collection. Suggest Uday circulates a Budget Template Excel to each department head by Aug 25 for Sep 3 start.
+    </div>
+  </div>
+</details>
+
+<h3 class="no-print">Phase 2 — Cash Flow &amp; Working Capital (FI-04, FI-07)</h3>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-partial">Partial</span> FI-04 · Cash Flow Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What exists natively:</strong> Historical Cash Flow Statement (Operating/Investing/Financing) is a native ERPNext report — runs instantly from GL data. Bank balances and daily cash position are native (via Accounts module's Bank Reconciliation, AC-04). What does NOT exist: a forward-looking cash calendar (dues in vs dues out) or liquidity alerts.</p>
+    <p><strong>What to build (T03):</strong></p>
+    <ul>
+      <li>Custom Script Report: <strong>90-Day Cash Calendar</strong> — queries: open Sales Invoices (expected collections by due date), open Purchase Invoices (payments due), Loan EMI schedule (from FI-08), Payroll due dates, GST/TDS payment dates. Produces week-by-week projected cash position.</li>
+      <li>Daily cash position update hook: <code>daily_cash_position_update()</code> in tasks.py — fetches sum of all bank GL accounts → stores in a single-row Settings DocType for dashboard display</li>
+      <li>Alert: if projected cash drops below a configurable threshold within 7 days → email to CFO (Notification Rule)</li>
+      <li>Cash Calendar display: add as a Workspace Dashboard chart — bar chart by week (positive = net inflow, negative = net outflow)</li>
+      <li>AI integration point (Wave 2 — Veeren): feed historical collections data into LLM to predict actual collection probability per invoice (clients who pay late vs on-time pattern)</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-partial">Partial</span> FI-07 · Working Capital Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What exists natively:</strong> All underlying data exists — AR aging (DSO), AP aging (DPO), Stock Balance (Inventory Days) — but they live in separate reports. No unified Working Capital dashboard with metric dials.</p>
+    <p><strong>What to build (T04):</strong></p>
+    <ul>
+      <li>Custom Script Report: <strong>Working Capital Dashboard</strong> — calculates: DSO (Receivables ÷ Revenue × 30), DPO (Payables ÷ COGS × 30), Inventory Days (Stock Value ÷ COGS × 30), Cash Conversion Cycle (DSO + Inventory Days – DPO), Working Capital Ratio (Current Assets ÷ Current Liabilities)</li>
+      <li>Add trend lines: compare each metric month-on-month (last 6 periods)</li>
+      <li>Alert thresholds: if DSO &gt; 45 or CCC &gt; 60 → auto-email Finance Controller with the metric details</li>
+      <li>Add to Scale Finance Workspace as a number card section so Uday sees the WC metrics on login</li>
+    </ul>
+  </div>
+</details>
+
+<h3 class="no-print">Phase 3 — P&amp;L, Reporting, Variance, Segment Profit (FI-03, FI-06, FI-11, FI-12)</h3>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-ootb">OOTB</span> FI-03 · P&amp;L Management &amp; FI-06 · Financial Reporting <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Native P&amp;L report, Balance Sheet, Cash Flow Statement, Trial Balance, General Ledger, Bank Book, Outstanding Reports — all available the moment CoA is mapped and transactions are posted (Accounts module, AC-01). All reports support period filters, cost centre filters, and export to Excel/PDF. Accounting Dimensions allow segmented reporting by Project, Location, Branch, or any custom dimension.</p>
+    <p><strong>What to configure (T05):</strong></p>
+    <ul>
+      <li>Configure Accounting Dimensions: Add "Branch" and "Business Unit" as dimensions in Accounts Settings → these become filter options on all financial reports</li>
+      <li>Set up Comparative P&amp;L: verify Current vs Previous Year comparison works after first FY of data</li>
+      <li>Build Customer P&amp;L: use Financial Analytics filtered by Party = Customer (shows revenue + expenses attributable to that customer)</li>
+      <li>Configure Product-level P&amp;L: use Gross Profit report filtered by Item Group → gives revenue and COGS per product category</li>
+      <li>Pin most-used reports to Scale Finance Workspace as Quick Links</li>
+      <li>Test Budget vs Actual view: open P&amp;L → enable "Show Budget" toggle → verify against budgets created in T02</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-ootb">OOTB</span> FI-11 · Profit by Product / Segment &amp; FI-12 · Variance Analysis <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Profit by Segment — what already works:</strong> Native Gross Profit report calculates (Selling Price – Stock Valuation Rate) per Item/Item Group/Customer. Supports filtering by date range, Item Group, Customer Group. Drillable to source Sales Invoice.</p>
+    <p><strong>What to configure (T06):</strong></p>
+    <ul>
+      <li>Ensure stock valuation method is correct (FIFO or Moving Average — set at Item level) — wrong method gives wrong Gross Profit</li>
+      <li>Map Item Groups to match the client's product categories: run the Gross Profit report by Item Group → share with Uday for validation</li>
+      <li>For indirect cost allocation (attributing overheads to products): use Accounting Dimensions — tag overhead invoices to the same dimension as the product revenue, then use Financial Analytics to get a fully loaded P&amp;L per segment</li>
+      <li>Build Product Profitability dashboard: top 10 and bottom 10 items by Gross Margin % (Script Report)</li>
+    </ul>
+    <p><strong>Variance Analysis — what already works:</strong> Native Budget Variance Report compares Budget vs Actual per Cost Centre and account, monthly and cumulative. No custom build needed.</p>
+    <p><strong>What to configure:</strong></p>
+    <ul>
+      <li>Budget Variance Report: filter by Cost Centre → date range → compare to budget. Works as-is once T02 budgets are loaded.</li>
+      <li>Configure weekly Variance Summary email: <code>weekly_budget_variance_summary()</code> in tasks.py → runs every Monday → emails Cost Centres that are &gt;10% over budget</li>
+      <li>Enable Forecast vs Actual comparison once FI-02 forecasting is built (Wave 2)</li>
+    </ul>
+  </div>
+</details>
+
+<h3 class="no-print">Phase 4 — Loans, MSME, Investment (FI-08, FI-09, FI-10)</h3>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-refine">App Install</span> FI-08 · Loan &amp; Liability Tracking <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What exists natively (without Frappe Lending):</strong> Loans can be tracked as GL entries only — manual JE for receipt, interest accrual, and EMI. No EMI schedule, no outstanding balance tracking, no maturity alerts. Frappe Lending app provides full loan lifecycle.</p>
+    <p><strong>What to install and configure (T07):</strong></p>
+    <ul>
+      <li>Install Frappe Lending: <code>bench get-app lending</code> → <code>bench --site &lt;site&gt; install-app lending</code> → <code>bench migrate</code></li>
+      <li>Create Loan Types: Term Loan (reducing balance), OD/CC Account (revolving), Equipment Finance (fixed EMI)</li>
+      <li>For each active loan: create Loan document with principal, interest rate, disbursement date, tenure, EMI amount — system generates full amortisation schedule</li>
+      <li>Map loan GL accounts: Loan account → Balance Sheet Liability sub-head, Interest expense → P&amp;L Finance Costs sub-head</li>
+      <li>Configure daily EMI alert: <code>daily_loan_emi_alert()</code> in tasks.py → checks EMI due within 3 days → emails Finance team</li>
+      <li>Statutory Liabilities (GST, TDS, PF payable): these are tracked via the GL liability accounts created in the Accounts module (AC-01) — no custom DocType needed</li>
+      <li><strong>Delay Risk — High:</strong> Frappe Lending requires detailed loan data (sanction letters, disbursement dates, original schedules) from the client. Get all active loan schedules from Uday before T07.</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-custom">Custom</span> FI-09 · MSME Scheme Tracking <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What exists natively:</strong> Nothing — no ERP ships MSME scheme tracking. This is a high-value, India-specific custom build. Two distinct sub-features: (a) MSME supplier payment rule enforcement (Section 43B(h) — 45-day payment limit), and (b) Government scheme/subsidy tracking for the company itself.</p>
+    <p><strong>What to build (T08):</strong></p>
+    <ul>
+      <li><strong>Section 43B(h) enforcement:</strong> Custom fields on Supplier (scale_finance_msme_flag Check, scale_finance_msme_reg_no Data). Hook on Purchase Invoice before_submit: if MSME supplier and payment due &gt; 45 days, set risk flag and alert Finance team. Daily task: <code>daily_msme_overdue_check()</code> — checks all open MSME invoices past 45 days → escalation email to Finance Controller.</li>
+      <li>Script Report: <strong>MSME 43B(h) Overdue Register</strong> — lists all MSME supplier invoices overdue &gt; 45 days with supplier name, invoice amount, due date, overdue days — required for year-end tax reconciliation.</li>
+      <li><strong>MSME Scheme DocType:</strong> Fields: Scheme Name (Data), Scheme Type (Select: Subsidy / Tax Incentive / Export Incentive / Credit Guarantee / Skill Development), Eligibility Criteria (Long Text), Application Status (Select: Eligible / Applied / Approved / Received / Expired), Benefit Value (Currency), Application Date, Approval Date, Renewal Date, Required Documents (Table: document name, submitted checkbox). Add alerts via Notification on Renewal Date approaching 30 days.</li>
+      <li>AI task (Veeren Wave 2): prompt LLM with company profile (industry, turnover, employees, export %) → recommend applicable MSME schemes from a curated scheme database</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span class="pill pill-custom">Custom</span> FI-10 · Investment Planning <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What exists natively:</strong> Investments are tracked as GL entries under the Assets group. No maturity tracking, no renewal alerts, no ROI calculation, no portfolio view. Small, high-value custom DocType.</p>
+    <p><strong>What to build (T09):</strong></p>
+    <ul>
+      <li>Custom DocType: <strong>Investment Register</strong> — Fields: Investment Name (Data), Investment Type (Select: Fixed Deposit / Mutual Fund / Bonds / Equipment Finance / Business Expansion / Technology / Other), Institution (Data), Amount Invested (Currency), Date of Investment (Date), Maturity Date (Date), Expected Return % (Float), Expected Maturity Amount (Currency), Actual Return (Currency), Status (Select: Active / Matured / Withdrawn / Defaulted), GL Account (Link to Account), Risk Level (Select: Low / Medium / High), Notes (Text)</li>
+      <li>Weekly maturity alert: <code>weekly_investment_maturity_check()</code> in tasks.py → checks investments maturing within 30 days → emails Uday + CFO with details</li>
+      <li>Investment Portfolio Script Report: summary by type (FD vs MF vs Bonds), total corpus, maturity schedule for next 12 months, IRR calculation</li>
+      <li>Link to CapEx approval: for Plant/Machinery investments &gt; ₹10 lakh, require approval Workflow: Finance Lead → CFO → MD</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span style="background:#fef3c7;color:#92400e;font-size:.75rem;font-weight:700;padding:2px 6px;border-radius:4px;">Phased · Client PRD</span> FI-16 · Executive Dashboard (CFO &amp; CXO View) <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:6px;padding:10px 12px;margin-bottom:10px;font-size:.84rem;">
+      <strong>⚠ Also scoped in Accounts module:</strong> The Accounts Management Module PDR independently specifies its own <strong>AC-16 Executive Dashboard</strong> with an overlapping but not identical KPI list (15 accounting-centric KPIs vs this feature's 16 finance-centric KPIs — see <a href="accounts-module.html">accounts-module.html</a> Section D). Do not build two separate dashboards — Uday's team should decide one home (recommended: build the merged KPI set here in <code>scale_finance</code>, since it already depends on both apps' data, and have the Accounts workspace link to it) before starting T10.
+    </div>
+    <p><strong>Client PRD objective:</strong> A single real-time dashboard giving CFO/CXO leadership a consolidated view across every Finance feature, rather than navigating 15 separate reports. The PRD lists 16 specific KPIs: Revenue vs Budget, EBITDA, Net Profit, Cash Position, Working Capital, AR/AP, Budget Utilisation, Cash Flow Forecast, Loan &amp; Liability Status, MSME Incentive Tracker, Product Profitability, Investment Performance, ROI by Initiative, Profit Leakage Alerts, AI Financial Risk Score, Top 10 AI Recommendations.</p>
+    <p><strong>Phase 1 — Wave 1 (T10):</strong> 9 of the 16 KPIs are sourced from features already built in Wave 1 — build these as Number Card widgets on the Scale Finance workspace:</p>
+    <ul>
+      <li>Revenue vs Budget, Budget Utilisation — from FI-01 Budget records</li>
+      <li>EBITDA, Net Profit — from FI-03/FI-06 P&amp;L views</li>
+      <li>Cash Position, Cash Flow Forecast — from FI-04 cash flow hooks</li>
+      <li>Working Capital — from FI-07 dashboard</li>
+      <li>Loan &amp; Liability Status — from FI-08 Frappe Lending</li>
+      <li>MSME Incentive Tracker — from FI-09 MSME Scheme DocType</li>
+      <li>Product Profitability — from FI-11 Gross Profit report</li>
+      <li>Investment Performance — from FI-10 Investment Register</li>
+    </ul>
+    <p style="font-size:.85rem;color:#666;">AR/AP, Cash &amp; Bank Balance, GST/TDS status, Fixed Asset Value, Pending Journal Approvals, and Audit Exceptions are covered by the Accounts module's own AC-16 dashboard — see the note above on merging the two.</p>
+    <p><strong>Phase 2 — Wave 2 (V07):</strong> the remaining KPIs depend on Wave 2 AI builds and cannot be faked with static data — building them early would just show empty tiles:</p>
+    <ul>
+      <li>ROI by Initiative — depends on FI-14 ROI Tracker (Wave 2)</li>
+      <li>Profit Leakage Alerts — depends on FI-15 Profit Leakage engine (Wave 2)</li>
+      <li>AI Financial Risk Score — new AI synthesis task combining budget overrun risk (V05), MSME 43B(h) exposure, and cash flow gap risk into one score</li>
+      <li>Top 10 AI Recommendations — LLM summarises the single highest-priority action from each active AI feature (leakage alerts, forecast variance, overdue MSME payables, underperforming ROI initiatives) into a ranked list</li>
+    </ul>
+  </div>
+</details>
+
+<!-- WAVE 2 FEATURES -->
+<h2 class="no-print" style="margin-top:32px;border-top:2px solid #fcd34d;padding-top:16px;color:#92400e;">Wave 2 Features — Custom AI Builds (FI-02, FI-13, FI-14, FI-15, FI-16 Phase 2)</h2>
+<p class="no-print" style="font-size:.88rem;color:#78350f;background:#fffbeb;padding:10px 14px;border-radius:6px;border:1px solid #fcd34d;">These features require custom AI builds or complex Script Reports. They depend on Wave 1 data being stable (at least 3 months of clean transactions). Assigned to Veeren (AI) and Dev2 for Nov 2026+.</p>
+
+<details class="feat no-print">
+  <summary><span style="background:#fef3c7;color:#92400e;font-size:.75rem;font-weight:700;padding:2px 6px;border-radius:4px;">Wave 2</span> FI-02 · Financial Forecasting <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Client PRD objective:</strong> Predict future financial performance using historical data, seasonality, and AI. Forecast: Revenue, Expenses, Profit, Cash Flow, Working Capital, Collections, Payments, Inventory Value, EBITDA, Net Profit. Periods: Weekly, Monthly, Quarterly, Annual, Three-Year. Models: Manual, Statistical, AI Prediction, Scenario Planning (Best/Expected/Worst case).</p>
+    <p><strong>What ERPNext provides:</strong> Payment schedules and open order book are native data sources. Rolling forecast or scenario modeling does not exist natively.</p>
+    <p><strong>Wave 2 approach (Veeren):</strong></p>
+    <ul>
+      <li>Data foundation (build in Wave 1): ensure GL, AR/AP, Payroll, and Stock data are clean for 3+ months</li>
+      <li>Custom Script Report: <strong>Rolling Revenue Forecast</strong> — uses confirmed order book (open Sales Orders) + historical conversion rates + seasonal adjustment → projects next 90-day revenue</li>
+      <li>AI Forecasting engine: weekly batch job → gathers 12-month GL history → calls LLM/statistical model → generates Best/Expected/Worst case P&amp;L → stores in a <code>Forecast Entry</code> DocType → displays as chart in Finance workspace</li>
+      <li>Scenario Planning: allow Finance team to input assumptions (revenue growth %, cost increase %) → system recalculates projected P&amp;L and Cash Flow interactively</li>
+      <li><strong>Pre-work for Wave 2:</strong> Uday defines the KPIs and scenarios relevant to the business. Without this, the AI model has no objective to optimise for.</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span style="background:#fef3c7;color:#92400e;font-size:.75rem;font-weight:700;padding:2px 6px;border-radius:4px;">Wave 2</span> FI-13 · Break-even Analysis <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Client PRD objective:</strong> Calculate Fixed Costs, Variable Cost per Unit, Contribution Margin, Break-even Units/Revenue, Margin of Safety. Support by Product, Business Unit, Branch, Project. AI: recommend selling price adjustments, predict break-even timelines.</p>
+    <p><strong>What ERPNext provides:</strong> Gross Profit report gives Revenue and COGS per item. P&amp;L provides overhead totals. But fixed vs variable cost tagging does not exist — this must be configured first.</p>
+    <p><strong>Wave 2 approach:</strong></p>
+    <ul>
+      <li>Phase 1 — Cost tagging: add custom field <code>scale_finance_cost_nature</code> (Select: Fixed / Variable / Semi-variable) on Account DocType → Uday tags all expense GL accounts accordingly → export fixture</li>
+      <li>Phase 2 — Break-even Script Report: (Fixed Costs ÷ (Selling Price – Variable Cost per Unit)) per product. Pulls: fixed costs from GL filtered by fixed accounts, variable costs from COGS in Gross Profit report, selling price from Item master</li>
+      <li>Break-even Dashboard: SVG chart showing Revenue line vs Total Cost line, break-even point highlighted, margin of safety shaded</li>
+      <li>AI (Veeren Wave 2): simulate price change → recalculate break-even → recommend minimum viable price</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span style="background:#fef3c7;color:#92400e;font-size:.75rem;font-weight:700;padding:2px 6px;border-radius:4px;">Wave 2</span> FI-14 · ROI Tracking <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Client PRD objective:</strong> Track ROI for: Marketing Campaigns, Projects, CapEx, Machinery, Software, Employee Training, Business Expansion. Metrics: Investment Amount, Revenue Generated, Cost Savings, Net Benefit, ROI %, Payback Period. AI: predict expected ROI, benchmark across initiatives, recommend underperforming project termination.</p>
+    <p><strong>Wave 2 approach:</strong></p>
+    <ul>
+      <li>Custom DocType: <strong>ROI Tracker</strong> — Fields: Initiative Name, Category (Select: Marketing / CapEx / Technology / Training / Expansion / Other), Investment Amount, Start Date, Expected Returns Date, Revenue Generated (Currency, updated periodically), Cost Savings (Currency), Net Benefit (formula field), ROI % (formula), Payback Period (formula), Status (Active / Monitoring / Closed), Linked Asset / Project / Campaign</li>
+      <li>Link Marketing ROI to CRM Campaign DocType (from scale_sales) — pull actual revenue attributable to campaign</li>
+      <li>Link CapEx ROI to Fixed Asset (from Accounts module AC-10) — pull depreciation + associated revenue stream</li>
+      <li>ROI Dashboard Script Report: ranked list of all initiatives by ROI %, traffic-light status (green &gt;20%, amber 5–20%, red &lt;5%)</li>
+      <li>AI (Veeren Wave 2): weekly scan of underperforming initiatives (ROI &lt; threshold after 6 months) → LLM generates termination recommendation with rationale</li>
+    </ul>
+  </div>
+</details>
+
+<details class="feat no-print">
+  <summary><span style="background:#fef3c7;color:#92400e;font-size:.75rem;font-weight:700;padding:2px 6px;border-radius:4px;">Wave 2 · Client PRD</span> FI-15 · Profit Leakage Detection <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Client PRD objective:</strong> Use AI to continuously monitor financial transactions and operational processes to identify hidden losses, revenue leakages, margin erosion, and operational inefficiencies. Monitor: Excessive Discounts, Unauthorised Write-offs, Margin Erosion, Abnormal Expense Spikes, Revenue Recognition Gaps, Under-invoicing, Over-payment to suppliers.</p>
+    <p><strong>What ERPNext provides:</strong> All transaction data exists in GL, AR/AP, Sales/Purchase Invoices. What's missing is pattern recognition across those datasets — this is an AI task.</p>
+    <p><strong>Wave 2 approach (Veeren):</strong></p>
+    <ul>
+      <li>Daily scan function: <code>ai_leakage_scan()</code> in <code>ai_utils.py</code> — queries GL for last 24 hours of transactions → aggregates by vendor/customer/item → detects anomalies (discount % above threshold, unit price below floor, single vendor payment spike &gt; 2σ from mean)</li>
+      <li>Custom DocType: <strong>Profit Leakage Alert</strong> — Fields: Alert Date, Category (Excessive Discount / Margin Erosion / Expense Spike / Revenue Gap), Transaction Reference, Expected Amount, Actual Amount, Variance %, AI Explanation (Long Text generated by LLM), Status (New / Under Review / Resolved / False Positive)</li>
+      <li>Threshold config: store alert thresholds in a Settings DocType (e.g. discount alert if &gt; 15%, expense spike if &gt; 50% above 90-day average)</li>
+      <li>Weekly Leakage Report email to CFO: summary of all new alerts in the past week with estimated financial impact</li>
+      <li><strong>Pre-work for Wave 2:</strong> Uday defines acceptable thresholds per category. AI needs a baseline of 3+ months clean data before anomaly detection is meaningful.</li>
+    </ul>
+  </div>
+</details>
+
+<!-- ═══════════════════════════════════
+     TASK CARDS
+═══════════════════════════════════ -->
+<h2>Week-by-Week Task Breakdown</h2>
+<p class="no-print">This track starts once Accounts Foundation (accounts-module.html) is signed off — Finance Analytics depends on a working Chart of Accounts and Cost Centre tree.</p>
+
+<div class="app-phase-label">T00 — App Creation Phase (Day 1 of Finance track, Sep 1)</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T00</span>
+    <span class="task-assign-u">Uday</span>
+    <span class="task-date">Sep 1, 2026 · Day 1</span>
+  </div>
+  <h4>Create scale_finance app scaffold and push to git</h4>
+  <div class="task-meta">Feature: Foundation · Deliverable: scale_finance app installed + workspace sidebar visible + team can pull</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this task:</span> Every custom feature in Finance Analytics — MSME flagging, cash flow hooks, budget alerts, Investment Register — lives inside <code>scale_finance</code>. Without this app, config done in the ERPNext UI has nowhere safe to record custom logic, and nothing is version-controlled.</p>
+    <p><span class="ctx-label">In practice:</span> After T00, Dev2 and Veeren clone the repo and run three commands to get a working bench with the Finance app active and the Scale Finance sidebar visible. No manual setup steps for the team.</p>
+    <span class="ctx-ref">Requirement: Foundation · Section B of this document</span>
+  </div>
+  <ol class="task-steps">
+    <li>Confirm scale_accounts is installed and Wave 1 Accounts Foundation is signed off (see accounts-module.html)</li>
+    <li>Run <code>bench new-app scale_finance</code> — fill in details as per Section B Step 1</li>
+    <li>Add <code>scale_finance</code> to <code>sites/apps.txt</code></li>
+    <li>Run <code>bench --site scale.localhost install-app scale_finance</code></li>
+    <li>Edit <code>hooks.py</code> with the full content from Section B Step 3</li>
+    <li>Create stub files: <code>msme_hooks.py</code>, <code>cashflow_hooks.py</code>, <code>budget_hooks.py</code>, <code>tasks.py</code>, <code>ai_utils.py</code> — each with a single pass-through function</li>
+    <li>Create the Workspace JSON at <code>scale_finance/scale_finance/workspace/scale_finance/scale_finance.json</code></li>
+    <li>Run <code>bench --site scale.localhost migrate</code> — verify Scale Finance appears in sidebar</li>
+    <li>Commit: <code>git commit -m "feat(finance): scale_finance app scaffold — hooks, stubs, workspace sidebar"</code></li>
+    <li>Push: <code>git push origin main</code></li>
+  </ol>
+  <div class="task-note">Verify: Open <code>scale.localhost:8001</code> → Scale app → Scale Finance should appear in left sidebar below Scale Accounts, with shortcut tiles (Budget, Cost Center, Cash Flow Statement, P&amp;L Statement).</div>
+</div>
+
+<div class="week-label">Week 1 · Sep 1–8 · Cost Centres &amp; Budgeting</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T01</span>
+    <span class="task-assign-u">Uday</span>
+    <span class="task-date">Sep 1–2</span>
+  </div>
+  <h4>Build Cost Centre tree and enforce mandatory tagging</h4>
+  <div class="task-meta">Feature: FI-05 Cost Centre Management (also AC-13) · Deliverable: Cost Centre profitability view live for all departments/branches</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Note:</span> Check with Accounts module team first — if AC-13 was already built there, skip tree creation and just verify it's usable from Finance reports.</p>
+  </div>
+  <ol class="task-steps">
+    <li>Create Cost Centre tree matching org structure (parent-child hierarchy: company → division → department/branch)</li>
+    <li>Enforce mandatory Cost Centre tagging via Property Setter on Journal Entry / Sales Invoice / Purchase Invoice line items</li>
+    <li>Test Financial Analytics report — verify Revenue vs Expense shows correctly per Cost Centre</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T02</span>
+    <span class="task-assign-u">Uday</span>
+    <span class="task-date">Sep 3–6</span>
+  </div>
+  <h4>Configure Budgeting — Budget DocType, approval workflow, variance alerts</h4>
+  <div class="task-meta">Feature: FI-01 Budgeting · Deliverable: Annual budget loaded per Cost Centre; overrun alerts firing</div>
+  <ol class="task-steps">
+    <li>Create Budget records per Cost Centre and Account for FY2026–27 (Annual/Monthly distribution)</li>
+    <li>Set Budget Against = Cost Centre; Action if Annual/Monthly Budget Exceeded = Warn or Stop per account type</li>
+    <li>Wire <code>budget_hooks.on_budget_submit</code> in hooks.py — confirm doc_events entry from Section B is active</li>
+    <li>Add scheduled job <code>daily_budget_overrun_alert()</code> in tasks.py — checks actuals vs budget daily, alerts Cost Centre owner if &gt; 90% utilised</li>
+    <li>Test: post an expense that crosses 90% of a Cost Centre's monthly budget → verify alert fires</li>
+  </ol>
+</div>
+
+<div class="week-label">Week 2 · Sep 8–13 · Cash Flow &amp; Working Capital</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T03</span>
+    <span class="task-assign-d">Dev2</span>
+    <span class="task-date">Sep 8–10</span>
+  </div>
+  <h4>Build Cash Flow forward calendar and position hook</h4>
+  <div class="task-meta">Feature: FI-04 Cash Flow Management · Deliverable: Rolling cash position updates on every Payment Entry; forward calendar Script Report live</div>
+  <ol class="task-steps">
+    <li>Wire <code>cashflow_hooks.update_cashflow_position</code> on Payment Entry <code>on_submit</code> (confirm hooks.py entry from Section B)</li>
+    <li>Build Cash Flow Forward Calendar Script Report — projects expected inflows (open Sales Invoices by due date) and outflows (open Purchase Invoices, upcoming loan EMIs) over the next 90 days</li>
+    <li>Test: submit a Payment Entry → verify cash position dashboard updates immediately</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T04</span>
+    <span class="task-assign-d">Dev2</span>
+    <span class="task-date">Sep 11–13</span>
+  </div>
+  <h4>Build Working Capital dashboard</h4>
+  <div class="task-meta">Feature: FI-07 Working Capital Management · Deliverable: Working Capital ratio, DSO/DPO/DIO visible on Finance workspace</div>
+  <ol class="task-steps">
+    <li>Build Script Report: Working Capital = Current Assets − Current Liabilities, pulled from Balance Sheet groups</li>
+    <li>Calculate DSO (from AR aging), DPO (from AP aging), DIO (from Stock Ledger) — combine into one dashboard</li>
+    <li>Add weekly scheduled job <code>weekly_working_capital_refresh()</code> in tasks.py — recomputes and caches for fast dashboard load</li>
+  </ol>
+</div>
+
+<div class="week-label">Week 3 · Sep 15–20 · Profitability &amp; Reporting</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T05</span>
+    <span class="task-assign-u">Uday</span>
+    <span class="task-date">Sep 15–17</span>
+  </div>
+  <h4>Configure P&amp;L dimensional views and Financial Reporting</h4>
+  <div class="task-meta">Feature: FI-03 P&amp;L Management, FI-06 Financial Reporting · Deliverable: P&amp;L by branch/department; standard report pack accessible from workspace</div>
+  <ol class="task-steps">
+    <li>Configure P&amp;L report filters by Cost Centre and Project for dimensional slicing</li>
+    <li>Set up Financial Statement print formats: P&amp;L, Balance Sheet, Cash Flow Statement, Trial Balance — branded with company letterhead</li>
+    <li>Add report shortcuts to Scale Finance workspace: P&amp;L, Balance Sheet, Trial Balance, Cash Flow</li>
+    <li>Test: generate P&amp;L for a specific branch/Cost Centre → verify figures match manual filter in General Ledger</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T06</span>
+    <span class="task-assign-u">Uday</span>
+    <span class="task-date">Sep 18–20</span>
+  </div>
+  <h4>Configure Profit by Segment and Budget Variance Analysis reports</h4>
+  <div class="task-meta">Feature: FI-11 Profit by Product/Segment, FI-12 Variance Analysis · Deliverable: Profitability visible by product/branch/project; budget vs actual variance report live</div>
+  <ol class="task-steps">
+    <li>Configure Gross Profit report grouping by Item Group / Territory / Cost Centre for segment-level profitability</li>
+    <li>Configure native Budget Variance Report — filter by Cost Centre and Fiscal Year</li>
+    <li>Add both as shortcuts on Scale Finance workspace under a "Profitability" card group</li>
+  </ol>
+</div>
+
+<div class="week-label">Week 4 · Sep 22 – Oct 1 · Loans &amp; MSME Compliance</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T07</span>
+    <span class="task-assign-d">Dev2</span>
+    <span class="task-date">Sep 22–26</span>
+  </div>
+  <h4>Install Frappe Lending app — configure Loan &amp; Liability tracking</h4>
+  <div class="task-meta">Feature: FI-08 Loan &amp; Liability Tracking · Deliverable: Loan schedules, EMI tracking, daily overdue alerts live</div>
+  <ol class="task-steps">
+    <li>Install: <code>bench get-app lending</code> → <code>bench --site scale.localhost install-app lending</code></li>
+    <li>Configure Loan Types, interest rates, repayment schedules per existing company loans</li>
+    <li>Import existing loan/liability records with correct outstanding balances</li>
+    <li>Add scheduled job <code>daily_loan_emi_alert()</code> in tasks.py — flags EMIs due in next 3 days</li>
+    <li>Test: create a test loan → verify amortisation schedule and EMI Journal Entry generation</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T08</span>
+    <span class="task-assign-d">Dev2</span>
+    <span class="task-date">Sep 27 – Oct 1</span>
+  </div>
+  <h4>Build MSME Section 43B(h) enforcement and MSME Scheme Tracking DocType</h4>
+  <div class="task-meta">Feature: FI-09 MSME Scheme Tracking · Deliverable: MSME 43B(h) overdue register live; MSME Scheme DocType with renewal alerts</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this task:</span> Section 43B(h) is a statutory compliance risk — unpaid MSME supplier dues beyond 45 days can be disallowed as a tax deduction. No ERP ships this out of the box; it is India-specific and high-value to get right before year-end tax reconciliation.</p>
+    <span class="ctx-ref">Requirement: FI-09 MSME Scheme Tracking · Feature breakdown above</span>
+  </div>
+  <ol class="task-steps">
+    <li>Add custom fields on Supplier: <code>scale_finance_msme_flag</code> (Check), <code>scale_finance_msme_reg_no</code> (Data)</li>
+    <li>Write <code>msme_hooks.flag_msme_payable</code> — hook on Purchase Invoice <code>before_submit</code>, flags risk if MSME supplier payment due &gt; 45 days</li>
+    <li>Add scheduled job <code>daily_msme_overdue_check()</code> in tasks.py — escalation email to Finance Controller</li>
+    <li>Build Script Report: MSME 43B(h) Overdue Register</li>
+    <li>Create custom DocType: MSME Scheme (Scheme Name, Type, Eligibility, Application Status, Benefit Value, Renewal Date) with Notification on renewal approaching 30 days</li>
+    <li>Export fixtures for custom fields and DocType; commit</li>
+  </ol>
+</div>
+
+<div class="week-label">Week 5 · Oct 1–10 · Investment Planning &amp; Wave 1 Close-out</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T09</span>
+    <span class="task-assign-u">Uday</span>
+    <span class="task-date">Oct 1–5</span>
+  </div>
+  <h4>Build Investment Register DocType and maturity alerts</h4>
+  <div class="task-meta">Feature: FI-10 Investment Planning · Deliverable: Investment portfolio tracked with maturity alerts and CapEx approval workflow</div>
+  <ol class="task-steps">
+    <li>Create custom DocType: Investment Register (Investment Type, Institution, Amount, Maturity Date, Expected Return %, Status, GL Account, Risk Level)</li>
+    <li>Add weekly scheduled job <code>weekly_investment_maturity_check()</code> in tasks.py — emails Uday + CFO on investments maturing within 30 days</li>
+    <li>Build Investment Portfolio Script Report — summary by type, total corpus, 12-month maturity schedule</li>
+    <li>Set up Workflow for CapEx investments &gt; ₹10 lakh: Finance Lead → CFO → MD approval</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T10</span>
+    <span class="task-assign-u">Uday</span>
+    <span class="task-assign-d">Dev2</span>
+    <span class="task-date">Oct 6–10</span>
+  </div>
+  <h4>Build Executive Dashboard (CFO &amp; CXO View) — Phase 1</h4>
+  <div class="task-meta">Feature: FI-16 Executive Dashboard (Client PRD addition) · Deliverable: Live workspace dashboard with 9 of 16 PRD-specified KPIs</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this task:</span> The client PRD asks for one consolidated CFO/CXO cockpit rather than 15 separate reports. Before starting, confirm with Uday whether this is the merged home for both FI-16 and Accounts module's AC-16 (see the accordion note above) or whether Accounts is building its own. 9 of the 16 requested KPIs are already available from Wave 1 features built this quarter — this task wires them into a single live Workspace view. The remaining KPIs need Wave 2 AI builds (see V07).</p>
+    <span class="ctx-ref">Requirement: FI-16 Executive Dashboard (CFO &amp; CXO View) · see accordion above for full KPI-to-feature mapping</span>
+  </div>
+  <ol class="task-steps">
+    <li>Build Number Card widgets on Scale Finance workspace: Revenue vs Budget, Budget Utilisation (from FI-01)</li>
+    <li>Add: EBITDA, Net Profit (from FI-03/FI-06 P&amp;L views)</li>
+    <li>Add: Cash Position, Cash Flow Forecast (from FI-04), Working Capital (from FI-07)</li>
+    <li>Add: Loan &amp; Liability Status (from FI-08), MSME Incentive Tracker (from FI-09), Investment Performance (from FI-10), Product Profitability (from FI-11)</li>
+    <li>Arrange as a single CFO/CXO landing page — pin as default workspace view for Finance Controller and above roles</li>
+    <li>Leave placeholder tiles for ROI by Initiative, Profit Leakage Alerts, AI Financial Risk Score, and Top 10 AI Recommendations — labelled "Available Wave 2" rather than left blank</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">R01</span>
+    <span class="task-assign-u">Uday</span>
+    <span class="task-date">Oct 10</span>
+  </div>
+  <h4>Final Wave 1 fixture export and git tag</h4>
+  <div class="task-meta">Feature: All Wave 1 Finance features (FI-01, FI-03 to FI-12, FI-16 Phase 1) · Deliverable: Wave 1 scope fully version-controlled</div>
+  <ol class="task-steps">
+    <li>Run full fixture export: <code>bench --site scale.localhost export-fixtures --app scale_finance</code></li>
+    <li>Verify a clean clone + install + migrate reproduces the entire Wave 1 configuration with no manual steps</li>
+    <li>Commit and tag: <code>git tag scale_finance-wave1-complete</code></li>
+    <li>Push: <code>git push origin main --tags</code></li>
+  </ol>
+  <div class="task-note">Wave 2 (FI-02 Financial Forecasting, FI-13 Break-even Analysis, FI-14 ROI Tracking, FI-15 Profit Leakage Detection, FI-16 Phase 2) begins once 3+ months of clean Wave 1 data exists — see Wave 2 accordions above.</div>
+</div>
+
+<!-- AI TRACK -->
+<h2>AI Track (Veeren)</h2>
+<p class="no-print">Veeren runs parallel to the developer track from Day 1 of the Finance Analytics window. V01–V02 wire up AI foundations and the Finance NL Query assistant alongside Wave 1 config work. V03–V06 are Wave 2 builds that depend on 3+ months of clean Wave 1 transaction data.</p>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">V01</span>
+    <span class="task-assign">Veeren</span>
+    <span class="task-date">Sep 1</span>
+  </div>
+  <h4>Review scale_finance app — wire OpenAI key — test ai_utils.call_llm()</h4>
+  <div class="task-meta">Feature: AI Foundation · Deliverable: LLM API call works from scale_finance context</div>
+  <ol class="task-steps">
+    <li>Pull latest from main after Uday pushes T00</li>
+    <li>Open <code>apps/scale_finance/scale_finance/ai_utils.py</code> — implement <code>call_llm(prompt, model="gpt-4o-mini")</code></li>
+    <li>Set OpenAI key: <code>bench --site scale.localhost set-config openai_api_key "sk-..."</code></li>
+    <li>Test from bench console: <code>bench --site scale.localhost console</code> → <code>from scale_finance.ai_utils import call_llm; print(call_llm("Hello"))</code></li>
+  </ol>
+  <div class="task-note">Never commit the OpenAI key — it lives in site_config.json (gitignored). Read via <code>frappe.conf.get("openai_api_key")</code>.</div>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">V02</span>
+    <span class="task-assign">Veeren</span>
+    <span class="task-date">Sep 1 → Sep 20 (4 phases)</span>
+  </div>
+  <h4>NL Query Assistant — Finance Intelligence (start Day 1 with schema mapping)</h4>
+  <div class="task-meta">Feature: AI Foundation · Deliverable: "What's our outstanding receivables from Customer X?" answered in plain English</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why start Day 1:</span> Schema mapping (which Finance DocTypes hold which data) can be written before any code is ready and is the most time-consuming part of a safe NL Query engine. Starting Day 1 means the rest of the build moves faster later.</p>
+    <span class="ctx-ref">Pattern: same approach as scale_hr's HR Intelligence assistant</span>
+  </div>
+  <ol class="task-steps">
+    <li>V02-A (Sep 1): Write Finance schema document — map queryable DocTypes: GL Entry, Sales Invoice, Purchase Invoice, Payment Entry, Budget, Journal Entry, Asset. 20 test question-answer pairs</li>
+    <li>V02-B (Sep 10): Build <code>api/finance_query.py</code> whitelisted endpoint — LLM translates NL question to <code>frappe.get_list()</code> call — safe execute — format answer</li>
+    <li>V02-C (Sep 15): Build Frappe Page "Finance Intelligence" — chat UI wired to endpoint</li>
+    <li>V02-D (Sep 20): Finance Query Log DocType, error handling, 18/20 test accuracy target</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">V03</span>
+    <span class="task-assign">Veeren</span>
+    <span class="task-date">Wave 2</span>
+  </div>
+  <h4>Profit Leakage Detection engine (FI-15)</h4>
+  <div class="task-meta">Feature: FI-15 Profit Leakage Detection (Client PRD addition) · Deliverable: Weekly anomaly report to CFO</div>
+  <ol class="task-steps">
+    <li>Build <code>ai_leakage_scan()</code> in ai_utils.py — daily GL scan for discount/margin/expense anomalies</li>
+    <li>Create Profit Leakage Alert DocType and threshold Settings DocType (get thresholds from Uday)</li>
+    <li>Wire weekly Leakage Report email to CFO</li>
+  </ol>
+  <div class="task-note">See full spec in the FI-15 accordion above. Requires 3+ months of clean Wave 1 GL data before anomaly detection is meaningful.</div>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">V04</span>
+    <span class="task-assign">Veeren</span>
+    <span class="task-date">Wave 2</span>
+  </div>
+  <h4>Financial Forecasting AI model (FI-02)</h4>
+  <div class="task-meta">Feature: FI-02 Financial Forecasting · Deliverable: Rolling Best/Expected/Worst-case P&amp;L forecast</div>
+  <ol class="task-steps">
+    <li>Build Rolling Revenue Forecast Script Report from open order book + historical conversion rates</li>
+    <li>Weekly batch job: gather 12-month GL history → LLM/statistical model → Forecast Entry DocType → chart in workspace</li>
+    <li>Build interactive Scenario Planning inputs (revenue growth %, cost increase %)</li>
+  </ol>
+  <div class="task-note">Pre-work: Uday defines the KPIs and scenarios relevant to the business before this task starts.</div>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">V05</span>
+    <span class="task-assign">Veeren</span>
+    <span class="task-date">Wave 2</span>
+  </div>
+  <h4>Budget Overrun AI Prediction</h4>
+  <div class="task-meta">Feature: FI-01 Budgeting (AI extension) · Deliverable: Early-warning prediction of Cost Centres likely to overrun before month-end</div>
+  <ol class="task-steps">
+    <li>Extend <code>daily_budget_overrun_alert()</code> (T02) with a predictive layer: LLM projects month-end spend from current burn rate + seasonality</li>
+    <li>Flag Cost Centres predicted to exceed budget before the 90% threshold is actually crossed</li>
+    <li>Add rationale text to the alert email explaining the prediction basis</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">V06</span>
+    <span class="task-assign">Veeren</span>
+    <span class="task-date">Wave 2</span>
+  </div>
+  <h4>Break-even and ROI AI recommendations (FI-13, FI-14)</h4>
+  <div class="task-meta">Feature: FI-13 Break-even Analysis, FI-14 ROI Tracking · Deliverable: Price/termination recommendations with rationale</div>
+  <ol class="task-steps">
+    <li>Break-even: simulate price change → recalculate break-even → recommend minimum viable price</li>
+    <li>ROI: weekly scan of initiatives with ROI below threshold after 6 months → LLM-generated termination recommendation</li>
+  </ol>
+  <div class="task-note">Depends on Phase 1 cost tagging (T01/T02) and ROI Tracker DocType (a Wave 2 build alongside T09) being in place first.</div>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">V07</span>
+    <span class="task-assign">Veeren</span>
+    <span class="task-date">Wave 2</span>
+  </div>
+  <h4>Executive Dashboard (CFO &amp; CXO View) — Phase 2</h4>
+  <div class="task-meta">Feature: FI-16 Executive Dashboard (Client PRD addition) · Deliverable: All remaining PRD-specified KPIs live, replacing the Wave 2 placeholder tiles from T10</div>
+  <ol class="task-steps">
+    <li>Wire ROI by Initiative tile to the FI-14 ROI Tracker (V06)</li>
+    <li>Wire Profit Leakage Alerts tile to the FI-15 engine (V03)</li>
+    <li>Build AI Financial Risk Score — combine Budget Overrun risk (V05), MSME 43B(h) exposure (FI-09), and Cash Flow gap risk (FI-04) into a single 0–100 score with LLM-written rationale</li>
+    <li>Build Top 10 AI Recommendations tile — LLM ranks the single highest-priority action from each active AI signal (leakage alerts, forecast variance, overdue MSME payables, underperforming ROI initiatives) into one list</li>
+  </ol>
+  <div class="task-note">This is the last Finance AI task — it depends on V03, V04, V05, and V06 all being live first.</div>
+</div>
+
+<!-- PROGRESS TRACKER -->
+<h2>Progress Tracker</h2>
+<div class="tbl-wrap">
+<table>
+  <tr>
+    <th>Feature ID</th><th>Feature</th><th>Priority</th><th>Status</th><th>Assigned Tasks</th>
+  </tr>
+  <tr style="background:#ede9fe;"><td colspan="5" style="padding:7px 10px;font-size:.78rem;font-weight:700;color:#5b21b6;border:1px solid #ddd8fe;">FINANCE ANALYTICS — FI-01 to FI-14</td></tr>
+  <tr><td>FI-01</td><td>Budgeting</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T02, V05</td></tr>
+  <tr><td>FI-02</td><td>Financial Forecasting</td><td><span class="pill bpd">W2</span></td><td><span class="st-ns">◯ Wave 2</span></td><td>V04</td></tr>
+  <tr><td>FI-03</td><td>P&amp;L Management</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T05</td></tr>
+  <tr><td>FI-04</td><td>Cash Flow Management</td><td><span class="pill bp2">P2</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T03</td></tr>
+  <tr><td>FI-05</td><td>Cost Centre Management <span style="font-size:.68rem;color:#6b7280;">(also AC-13)</span></td><td><span class="pill bp2">P2</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T01</td></tr>
+  <tr><td>FI-06</td><td>Financial Reporting</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T05</td></tr>
+  <tr><td>FI-07</td><td>Working Capital Management</td><td><span class="pill bp3">P3</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T04</td></tr>
+  <tr><td>FI-08</td><td>Loan &amp; Liability Tracking</td><td><span class="pill bp2">P2</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T07</td></tr>
+  <tr><td>FI-09</td><td>MSME Scheme Tracking</td><td><span class="pill bp3">P3</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T08</td></tr>
+  <tr><td>FI-10</td><td>Investment Planning</td><td><span class="pill bp3">P3</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T09</td></tr>
+  <tr><td>FI-11</td><td>Profit by Product / Segment</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T06</td></tr>
+  <tr><td>FI-12</td><td>Variance Analysis</td><td><span class="pill bp2">P2</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T06</td></tr>
+  <tr><td>FI-13</td><td>Break-even Analysis</td><td><span class="pill bpd">W2</span></td><td><span class="st-ns">◯ Wave 2</span></td><td>V06</td></tr>
+  <tr><td>FI-14</td><td>ROI Tracking</td><td><span class="pill bpd">W2</span></td><td><span class="st-ns">◯ Wave 2</span></td><td>V06</td></tr>
+  <tr style="background:#fffbeb;"><td colspan="5" style="padding:7px 10px;font-size:.78rem;font-weight:700;color:#92400e;border:1px solid #fcd34d;">CLIENT PRD ADDITIONS — FI-15, FI-16</td></tr>
+  <tr><td>FI-15</td><td>Profit Leakage Detection <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">New PRD</span></td><td><span class="pill bpd">W2</span></td><td><span class="st-ns">◯ Wave 2</span></td><td>V03</td></tr>
+  <tr><td>FI-16</td><td>Executive Dashboard (CFO &amp; CXO View) <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">New PRD · also AC-16</span></td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T10, V07</td></tr>
+</table>
+</div>
+
+<div class="page-nav no-print">
+  <a class="prev" href="accounts-module.html">← Accounts Module Plan</a>
+  <a class="next" href="module-plan.html">All 13 Modules →</a>
+</div>
+
+</main>
+</body>
+</html>

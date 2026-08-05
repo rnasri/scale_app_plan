@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PMO Module — Implementation Plan | AIWS ERP</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.pill { display:inline-block; padding:2px 9px; border-radius:5px; font-size:.72rem; font-weight:700; }
+.pill-ootb    { background:#d1fae5; color:#065f46; }
+.pill-refine  { background:#dbeafe; color:#1e40af; }
+.pill-custom  { background:#fef3c7; color:#92400e; }
+.pill-ai      { background:#ede9fe; color:#5b21b6; }
+.pill-partial { background:#fce7f3; color:#9d174d; }
+.pill-gap     { background:#fee2e2; color:#991b1b; }
+.bp1 { background:#fee2e2; color:#991b1b; }
+.bp2 { background:#fef3c7; color:#78350f; }
+.bp3 { background:#f0f9ff; color:#075985; }
+.bpd { background:#f3f4f6; color:#6b7280; }
+.bpn { background:#ede9fe; color:#5b21b6; }
+.st-done { color:#10b981; font-weight:700; }
+.st-wip  { color:#f59e0b; font-weight:700; }
+.st-ns   { color:#9ca3af; }
+details.feat { border:1px solid #e5e7eb; border-radius:8px; margin-bottom:8px; }
+details.feat summary { cursor:pointer; padding:12px 16px; font-weight:600; font-size:.93rem; list-style:none; display:flex; align-items:center; gap:8px; }
+details.feat summary::-webkit-details-marker { display:none; }
+details.feat summary .feat-arrow { margin-left:auto; font-size:.8rem; color:#6b7280; transition:transform .2s; }
+details.feat[open] summary .feat-arrow { transform:rotate(90deg); }
+details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
+.task-card { border:1px solid #e5e7eb; border-radius:10px; padding:16px 20px; margin-bottom:14px; page-break-inside:avoid; }
+.task-card h4 { margin:0 0 6px; font-size:.97rem; }
+.task-card .task-meta { font-size:.8rem; color:#6b7280; margin-bottom:10px; }
+.task-card .task-steps { padding-left:18px; margin:6px 0 0; }
+.task-card .task-steps li { margin-bottom:5px; font-size:.88rem; line-height:1.5; }
+.task-card .task-note  { font-size:.82rem; background:#f8fafc; border-left:3px solid #6366f1; padding:6px 10px; margin-top:10px; border-radius:0 4px 4px 0; }
+.task-context { background:#f0f9ff; border:1px solid #bae6fd; border-radius:8px; padding:12px 14px; margin:10px 0 12px; font-size:.86rem; line-height:1.6; }
+.task-context p { margin:0 0 5px; }
+.task-context p:last-child { margin:0; }
+.ctx-label { font-weight:700; color:#0369a1; }
+.ctx-ref { display:inline-block; font-size:.78rem; background:#e0f2fe; color:#0369a1; border-radius:4px; padding:2px 8px; margin-top:4px; font-weight:600; }
+.task-header { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.task-id { font-weight:700; font-size:.8rem; background:#1e3a5f; color:#fff; padding:2px 8px; border-radius:4px; }
+.task-date { font-size:.78rem; color:#6b7280; }
+.task-assign { font-size:.78rem; background:#ede9fe; color:#5b21b6; padding:2px 8px; border-radius:4px; }
+.print-btn { background:#1e3a5f; color:#fff; border:none; padding:8px 20px; border-radius:6px; cursor:pointer; font-size:.85rem; margin-bottom:20px; }
+.print-btn:hover { background:#2d5580; }
+.week-label { background:#1e3a5f; color:#fff; padding:8px 16px; border-radius:6px; font-weight:700; font-size:.88rem; margin:24px 0 12px; }
+.phase-sub { color:#1e3a5f; font-weight:700; font-size:.82rem; margin:16px 0 8px; padding-bottom:4px; border-bottom:2px solid #e5e7eb; }
+.pace-box { background:#fef2f2; border:2px solid #fca5a5; border-radius:10px; padding:16px 20px; margin:20px 0; }
+.pace-box h4 { color:#991b1b; margin:0 0 8px; font-size:.95rem; }
+.gap-box { background:#fef2f2; border:2px solid #fca5a5; border-radius:10px; padding:16px 20px; margin:16px 0; }
+.gap-box h4 { color:#991b1b; margin:0 0 8px; font-size:.95rem; }
+.owner-map td, .owner-map th { font-size:.82rem; }
+@media print {
+  .sidebar, .breadcrumb, .page-header, .no-print, .page-nav, .print-btn { display:none !important; }
+  main { margin:0 !important; padding:16px 24px !important; max-width:none !important; }
+  .print-section { display:block !important; }
+  body { font-size:10.5pt; background:#fff !important; }
+  .task-card { border:1px solid #ccc; }
+  pre { background:#f4f4f4 !important; color:#111 !important; font-size:9pt; }
+  h1,h2,h3 { page-break-after:avoid; }
+  .task-card, details { page-break-inside:avoid; }
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="s-title">AIWS ERP</div>
+    <div class="s-sub">Implementation Master Plan</div>
+    <span class="s-tag">Claude / implementation</span>
+  </div>
+  <nav>
+    <div class="nav-group">Start Here</div>
+    <a class="nav-link" href="index.html">Program Overview</a>
+    <div class="nav-group">Foundation</div>
+    <a class="nav-link" href="frappe-verdict.html">Frappe Capability</a>
+    <a class="nav-link" href="architecture.html">System Architecture</a>
+    <div class="nav-group">Development Framework</div>
+    <a class="nav-link" href="customization-guide.html">Customization Guide</a>
+    <a class="nav-link" href="developer-guide.html">Developer Workflow</a>
+    <div class="nav-group">Implementation</div>
+    <a class="nav-link" href="module-plan.html">All 13 Modules</a>
+    <a class="nav-link" href="sprint-plan.html">Parallel Sprint Plan</a>
+    <a class="nav-link" href="wave-1.html">Sales &amp; Marketing Detail</a>
+    <div class="nav-group">Module Plans</div>
+    <a class="nav-link" href="sales-module.html">Sales Module Plan</a>
+    <a class="nav-link" href="hr-module.html">HR Module Plan</a>
+    <a class="nav-link" href="accounts-module.html">Accounts Module Plan</a>
+    <a class="nav-link" href="finance-module.html">Finance Module Plan</a>
+    <a class="nav-link active" href="pmo-module.html">PMO Module Plan</a>
+
+    <div class="nav-group">User Manual</div>
+    <a class="nav-link" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
+
+    <div class="nav-group">AI Strategy</div>
+    <a class="nav-link" href="ai-plan-strategy.html">AI Plan Strategy</a>
+
+    <div class="nav-group">Tracking</div>
+    <a class="nav-link" href="sales-tracker.html">Sales Tracker</a>
+    <a class="nav-link" href="sales-demo-showcase.html">Sales Showcase ✨</a>
+  </nav>
+  <div class="sidebar-foot">Pixaflip × SIL · AIWS ERP<br><a href="../../index.html">← AIWS Setup portal</a></div>
+</aside>
+
+<main>
+<div class="breadcrumb">AIWS ERP <span>›</span> PMO Module Implementation Plan</div>
+
+<div class="page-header no-print">
+  <h1>PMO Module — Implementation Plan</h1>
+  <p class="subtitle">20 features (13 from Excel PMO tab + 7 gap-identified additions) · app <code>scale_project_management</code> · Module Lead &amp; Developer: Raghib · AI Head: Veeren · Aug 5 → Aug 25, 2026 (3-week sprint)</p>
+</div>
+
+<button class="print-btn no-print" onclick="window.print()">Print / Save as PDF</button>
+
+<div class="summary-strip no-print">
+  <div class="s-stat"><div class="sv">20</div><div class="sl">PMO Features</div></div>
+  <div class="s-stat"><div class="sv">13</div><div class="sl">From Excel PMO Tab</div></div>
+  <div class="s-stat"><div class="sv">7</div><div class="sl">Gap-Identified Additions</div></div>
+  <div class="s-stat"><div class="sv">3</div><div class="sl">Weeks — Aggressive</div></div>
+  <div class="s-stat"><div class="sv">Aug 25</div><div class="sl">Target Complete</div></div>
+</div>
+
+<!-- ═══════════════════════════════════
+     PRINTABLE SECTION
+═══════════════════════════════════ -->
+<div class="print-section">
+
+<div style="border-bottom:3px solid #1e3a5f;padding-bottom:16px;margin-bottom:24px;">
+  <div style="font-size:10pt;color:#666;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">AIWS ERP · Pixaflip × SIL</div>
+  <div style="font-size:20pt;font-weight:900;color:#1e3a5f;letter-spacing:-.5px;">PMO Module — Developer Handover Pack</div>
+  <div style="font-size:10pt;color:#444;margin-top:6px;">Module Lead &amp; Developer: <strong>Raghib</strong> · AI Head: <strong>Veeren</strong> · Aug 5 → Aug 25, 2026</div>
+</div>
+
+<h2 style="margin-top:0;">Section A — Overview &amp; Scope</h2>
+
+<p>This document is the single authoritative reference for the AIWS <strong>Project Management Office (PMO)</strong> module build — project planning, budgeting, resourcing, tasks, milestones, risk, change control, timesheets, billing, and the AI layer that turns raw execution data into delay/budget/resource foresight. It reconciles two source documents that <strong>do not describe the same scope</strong> (see the fidelity note directly below) into one build list of <strong>20 features</strong>.</p>
+
+<div class="gap-box">
+  <h4>⚠ Fidelity check: the PRD and the Excel tab scope different things</h4>
+  <p style="margin:0 0 8px;font-size:.87rem;">Per the standing rule to verify against source documents directly rather than trust a skim: the 17-page <code>Project Management Module.pdf</code> and the Excel workbook's <strong>"Project Management Office"</strong> tab were read in full this session, independently, and cross-checked term by term. They overlap on roughly half their content and diverge meaningfully on the other half:</p>
+  <ul style="margin:0 0 8px 18px;padding:0;font-size:.86rem;line-height:1.8;">
+    <li>The <strong>PDF</strong> is a 10-section functional PRD (Planning, Budget, Resource, Task, Milestone, Risk, Timesheet, + 3 dedicated AI sections: Delay Prediction, Resource Optimization, Budget Forecasting) plus a closing Executive Dashboard spec. It is ERP-agnostic — it never mentions Frappe or ERPNext.</li>
+    <li>The <strong>Excel tab</strong> is the business's own Frappe-feasibility-scored build list — 14 numbered rows (one was a flagged duplicate, discarded per Decision 1 below), each already annotated with what's native, what's custom, and a standard flow. This is the same tab format used for Sales/Accounts/Finance and is the authoritative "what to build" list per project convention.</li>
+    <li><strong>The two lists are not the same 13–14 things phrased differently.</strong> The Excel tab covers onboarding (Project/Consultant/Client), Calendar, Task, Timesheet, Invoicing, a Cockpit Dashboard, Gantt, Risk, Change Management, Impact Report, and Library — largely operational/administrative PMO functions. The PDF's <strong>Resource Management</strong> section (§3 — a full chapter: employee/consultant/contractor/machine/vehicle/tool allocation, utilization %, capacity, skill matching, resource booking/transfer/replacement) has <strong>no corresponding Excel row at all</strong> — the closest the Excel tab gets is a "weekly availability planner" buried inside Consultant Onboarding. Likewise the PDF's full multi-category <strong>Budget Management</strong> chapter (§2 — 7 cost categories, a 4-level approval chain, budget-vs-actual-vs-forecast tracking) is only thinly represented in Excel row 1.0 as "role-based manday &amp; cost budgets." And the PDF's three dedicated <strong>AI chapters</strong> (§8–10) aren't scoped as distinct Excel rows at all — Excel just flags "AI Enablement: Yes" generically on every row.</li>
+  </ul>
+  <p style="margin:0;font-size:.87rem;"><strong>This page does not silently pick one source over the other.</strong> All 13 Excel-tab features are in scope as PMO-01 to PMO-13. The PDF-only gaps that a modern PMO platform genuinely needs — and that ERPNext does not cover natively — are added as PMO-14 to PMO-20 below, clearly labeled as recommended additions rather than business-confirmed scope, per the instruction to flag exactly this kind of gap.</p>
+</div>
+
+<div style="background:#f0fdf4;border:2px solid #bbf7d0;border-radius:8px;padding:14px 16px;margin:16px 0;font-size:.86rem;">
+  <strong style="color:#166534;">✓ Decision 1 (confirmed 5 Aug 2026) — Excel row 4.0 discarded</strong>
+  <p style="margin:8px 0 0;color:#14532d;">Excel row 5 ("4.0 Project Onboarding") duplicated row 2's title verbatim, and the source Excel's own Description cell flagged it as unclear — <em>"Appears twice... business to confirm."</em> Raghib confirmed: discard. The row 4.0 slot is not built and is not one of the 13 Excel-derived features (PMO-01 to PMO-13 already excluded it from the count).</p>
+</div>
+
+<div style="background:#f0fdf4;border:2px solid #bbf7d0;border-radius:8px;padding:14px 16px;margin:16px 0;font-size:.86rem;">
+  <strong style="color:#166534;">✓ Decision 2 (confirmed 5 Aug 2026) — new dedicated app, scale_project_management</strong>
+  <p style="margin:8px 0 0;color:#14532d;">PMO splits into its own <code>scale_project_management</code> app, the same way Accounts and Finance split from one combined plan into <code>scale_accounts</code> + <code>scale_finance</code>. <strong>Vandana leads HR only</strong> — <a href="hr-module.html">hr-module.html</a>'s "HR &amp; PMO Module" wording has been corrected to "HR Module" (Section A team table, Section B app description, Section E team table all updated). <strong>Raghib is PMO's Module Lead <em>and</em> sole developer</strong> — no second developer on this track yet; see Section E below for what happens if that changes.</p>
+</div>
+
+<div style="background:#f0fdf4;border:2px solid #bbf7d0;border-radius:8px;padding:14px 16px;margin:16px 0;font-size:.86rem;">
+  <strong style="color:#166534;">✓ Decision 3 (confirmed 5 Aug 2026) — starts today, 3-week target</strong>
+  <p style="margin:8px 0 0;color:#14532d;">PMO code work starts <strong>5 Aug 2026</strong>, running alongside Raghib's existing Sales &amp; Marketing track, targeting a wrap by <strong>25 Aug 2026</strong> (3 calendar weeks) for the dev-side build (T00–T17, R01) and the AI Track's first 6 tasks (V00–V05). This is a genuinely aggressive pace solo — see the pace-risk callout right before the Week 1 task cards below for the three likeliest slip points, including 4 AI tasks (V06–V09) that realistically extend past Aug 25.</p>
+</div>
+
+<div style="background:#fff1f2;border:1px solid #fca5a5;border-radius:8px;padding:12px 14px;margin:16px 0;font-size:.86rem;">
+  <strong style="color:#991b1b;">⚠ Note to AI Team (Veeren)</strong>
+  <p style="margin:6px 0 0;color:#7f1d1d;">This module's AI Track (below) is written in the <strong>FAC-aware format</strong> from your <code>SCALE_AI_DEV_BRIDGE.md</code> — file ownership map, gated vs. ungated changes, propose-and-wait for schema gaps — rather than the older ad-hoc style used in the Sales/HR AI tracks (those predate your document). See <a href="ai-plan-strategy.html">ai-plan-strategy.html</a> for the full reconciliation between our original AI plan and your Bridge doc, including two open conflicts (task-ID collision risk, NL Query delivery surface) that also apply here.</p>
+</div>
+
+<table style="width:100%;border-collapse:collapse;font-size:.85rem;margin:16px 0;">
+  <tr style="background:#1e3a5f;color:#fff;">
+    <th style="padding:8px 12px;text-align:left;">Role</th>
+    <th style="padding:8px 12px;text-align:left;">Name</th>
+    <th style="padding:8px 12px;text-align:left;">Responsibilities</th>
+  </tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;"><strong>PMO Module Lead &amp; Developer</strong></td><td style="padding:7px 12px;border:1px solid #ddd;"><strong style="color:#166534;">Raghib</strong></td><td style="padding:7px 12px;border:1px solid #ddd;">Architecture decisions, custom DocType design, approval workflows, all coding, fixture exports, git commits — Aug 5 → Aug 25, running alongside the existing Sales &amp; Marketing track</td></tr>
+  <tr><td style="padding:7px 12px;border:1px solid #ddd;">AI Head</td><td style="padding:7px 12px;border:1px solid #ddd;">Veeren</td><td style="padding:7px 12px;border:1px solid #ddd;">FAC tools for delay prediction, resource optimization, budget forecasting, risk prediction, NL query for PMO data</td></tr>
+</table>
+
+<!-- SECTION B -->
+<h2>Section B — Creating the scale_project_management App</h2>
+<p>One-time setup, per Decision 2 above. Same pattern as every other Scale module app (<code>scale_sales</code>, <code>scale_hr</code>, <code>scale_accounts</code>, <code>scale_finance</code>).</p>
+
+<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 16px;margin:12px 0;font-size:.86rem;line-height:1.8;">
+  <strong style="color:#166534; display:block; margin-bottom:8px;">Step 1 — Create the app</strong>
+  <pre style="background:#0d1f35;color:#c8d8ea;padding:14px 18px;border-radius:6px;font-size:.82rem;margin:0;">bench new-app scale_project_management</pre>
+  <p style="margin:8px 0 0;">App Title: <strong>Scale Project Management</strong> &nbsp;·&nbsp; Publisher: <strong>Pixaflip Technologies</strong> &nbsp;·&nbsp; Description: <strong>Project Management Office module for Scale ERP</strong> &nbsp;·&nbsp; License: <strong>MIT</strong></p>
+</div>
+
+<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 16px;margin:12px 0;font-size:.86rem;line-height:1.8;">
+  <strong style="color:#166534; display:block; margin-bottom:8px;">Step 2 — Register and install</strong>
+  <pre style="background:#0d1f35;color:#c8d8ea;padding:14px 18px;border-radius:6px;font-size:.82rem;margin:0;">echo "scale_project_management" >> sites/apps.txt
+bench --site scale.localhost install-app scale_project_management
+bench --site scale.localhost migrate</pre>
+  <p style="margin:8px 0 0;"><code>scale_project_management</code> depends on native <strong>Projects</strong> (ERPNext core, already installed) — no other app dependency at install time. It will later declare <code>frappe_assistant_core</code> in <code>required_apps</code> the moment Veeren's first FAC tool lands (see AI Track).</p>
+</div>
+
+<h2>Section C — Developer Activity Guide</h2>
+<p style="font-size:.87rem;">Same never-fork rule as every other module: zero edits inside <code>apps/erpnext/</code>. All PMO logic lives in <code>apps/scale_project_management/scale_project_management/</code> (the outer package — not the doubled-up inner <code>scale_project_management/scale_project_management/scale_project_management/</code> module folder, which is DocTypes/Workspace only).</p>
+
+<div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;padding:16px 18px;margin-bottom:16px;font-size:.85rem;">
+  <strong style="color:#1e3a5f;display:block;margin-bottom:8px;">File layout</strong>
+  <pre style="background:#0d1f35;color:#c8d8ea;padding:14px 18px;border-radius:6px;font-size:.8rem;margin:0;overflow-x:auto;">apps/scale_project_management/
+└── scale_project_management/
+    ├── hooks.py                    ← doc_events, scheduler_events, required_apps
+    ├── project_hooks.py            ← Project/Task doc_events (budget, risk triggers)
+    ├── timesheet_hooks.py          ← manday guardrail, billing wizard triggers
+    ├── ai_utils.py                 ← delay/resource/budget/risk prediction logic
+    ├── fac_tools.py                ← FAC-callable AI tools (Veeren, ungated)
+    ├── tasks.py                    ← scheduled jobs (dev-gated per Bridge doc)
+    ├── demo_setup.py               ← idempotent setup, T## comment blocks
+    └── scale_project_management/                  ← Frappe module: DocTypes, Workspace, Reports
+        ├── doctype/
+        │   ├── project_risk/
+        │   ├── mitigation_plan/
+        │   ├── project_change_request/
+        │   ├── consultant_profile/
+        │   ├── resource_allocation/
+        │   └── ...
+        └── workspace/scale_project_management/</pre>
+</div>
+
+<!-- SECTION D -->
+<h2>Section D — Feature Coverage Matrix</h2>
+<div class="tbl-wrap">
+  <table style="width:100%;border-collapse:collapse;font-size:.83rem;">
+  <tr style="background:#1e3a5f;color:#fff;"><td style="padding:7px 10px;font-weight:700;">ID</td><td style="padding:7px 10px;font-weight:700;">Feature</td><td style="padding:7px 10px;font-weight:700;">Priority</td><td style="padding:7px 10px;font-weight:700;">Frappe Support</td><td style="padding:7px 10px;font-weight:700;">Build Type</td></tr>
+  <tr style="background:#e0f2fe;"><td colspan="5" style="padding:7px 10px;font-size:.78rem;font-weight:700;color:#0369a1;border:1px solid #bae6fd;">FROM EXCEL PMO TAB — PMO-01 to PMO-13 · Business-Scoped, All P1</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">PMO-01</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Project Onboarding</strong> <span style="font-size:.68rem;color:#6b7280;">(Excel 1.0)</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native + Custom</td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill pill-partial">Partial</span></td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">PMO-02</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Consultant Onboarding</strong> <span style="font-size:.68rem;color:#6b7280;">(Excel 2.0)</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">None native</td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill pill-custom">Custom App</span></td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">PMO-03</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Client Onboarding</strong> <span style="font-size:.68rem;color:#6b7280;">(Excel 3.0)</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native + Custom</td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill pill-partial">Partial</span></td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">PMO-04</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Calendar Management</strong> <span style="font-size:.68rem;color:#6b7280;">(Excel 5.0)</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native ERPNext</td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill pill-ootb">OOTB + Config</span></td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">PMO-05</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Task Management</strong> <span style="font-size:.68rem;color:#6b7280;">(Excel 6.0)</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native ERPNext</td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill pill-ootb">OOTB + Config</span></td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">PMO-06</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Timesheet / Log Sheet Management</strong> <span style="font-size:.68rem;color:#6b7280;">(Excel 7.0)</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native ERPNext</td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill pill-ootb">OOTB + Script</span></td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">PMO-07</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Invoicing / Expense</strong> <span style="font-size:.68rem;color:#6b7280;">(Excel 8.0)</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native ERPNext</td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill pill-ootb">OOTB + Custom Tool</span></td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">PMO-08</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>PMO Cockpit Dashboard</strong> <span style="font-size:.68rem;color:#6b7280;">(Excel 9.0)</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Partial — see fidelity note</td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill pill-custom">Custom Dashboard</span></td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">PMO-09</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Project Gantt Chart</strong> <span style="font-size:.68rem;color:#6b7280;">(Excel 10.0)</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native + Custom</td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill pill-partial">Partial</span></td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">PMO-10</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Risk Management</strong> <span style="font-size:.68rem;color:#6b7280;">(Excel 11.0)</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">None native</td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill pill-custom">Custom App</span></td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">PMO-11</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Change Management</strong> <span style="font-size:.68rem;color:#6b7280;">(Excel 12.0)</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">None native</td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill pill-custom">Custom App</span></td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">PMO-12</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Project Impact Report</strong> <span style="font-size:.68rem;color:#6b7280;">(Excel 13.0)</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">None native</td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill pill-custom">Custom App</span></td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">PMO-13</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Library Management</strong> <span style="font-size:.68rem;color:#6b7280;">(Excel 14.0)</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bp1">P1</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Native + Custom</td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill pill-partial">Partial</span></td></tr>
+  <tr style="background:#fef2f2;"><td colspan="5" style="padding:7px 10px;font-size:.78rem;font-weight:700;color:#991b1b;border:1px solid #fca5a5;">GAP-IDENTIFIED ADDITIONS — PMO-14 to PMO-20 · From PDF, Not in Excel · Recommended, Not Yet Business-Confirmed</td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">PMO-14</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Resource Management</strong> <span class="pill pill-gap" style="font-size:.65rem;">Biggest gap</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bpn">Recommended</span></td><td style="padding:7px 10px;border:1px solid #ddd;">None native</td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill pill-custom">Custom App</span></td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">PMO-15</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Project Budget Management</strong> <span style="font-size:.68rem;color:#6b7280;">(full PDF §2 scope)</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bpn">Recommended</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Single field only</td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill pill-custom">Custom Build</span></td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">PMO-16</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Milestone Management</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bpn">Recommended</span></td><td style="padding:7px 10px;border:1px solid #ddd;">Task.is_milestone flag only</td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill pill-partial">Partial</span></td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">PMO-17</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>AI Project Delay Prediction</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bpn">Recommended</span></td><td style="padding:7px 10px;border:1px solid #ddd;">None native</td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill pill-ai">AI Build</span></td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">PMO-18</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>AI Resource Optimization</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bpn">Recommended</span></td><td style="padding:7px 10px;border:1px solid #ddd;">None native</td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill pill-ai">AI Build</span></td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">PMO-19</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>AI Budget Forecasting</strong></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bpn">Recommended</span></td><td style="padding:7px 10px;border:1px solid #ddd;">None native</td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill pill-ai">AI Build</span></td></tr>
+  <tr><td style="padding:7px 10px;border:1px solid #ddd;">PMO-20</td><td style="padding:7px 10px;border:1px solid #ddd;"><strong>Executive Dashboard (CXO &amp; PMO View)</strong> <span style="font-size:.68rem;color:#6b7280;">extends PMO-08</span></td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill bpn">Recommended</span></td><td style="padding:7px 10px;border:1px solid #ddd;">None native</td><td style="padding:7px 10px;border:1px solid #ddd;"><span class="pill pill-custom">Custom Dashboard</span></td></tr>
+  </table>
+</div>
+
+<h2>Section E — Team Assignments</h2>
+<p style="font-size:.87rem;">Single-lead module — no split needed at current scope. Raghib owns all 20 features; Veeren owns the AI Track in parallel once schema for each feature is confirmed live. If PMO grows beyond one person's bandwidth once Sales/Marketing frees up, PMO-14 (Resource Management) and PMO-15 (Budget Management) are the two largest builds and the natural place to bring in a second developer.</p>
+
+</div> <!-- end print-section -->
+
+<!-- ═══════════════════════════════════
+     FEATURE BREAKDOWN
+═══════════════════════════════════ -->
+<h2 class="no-print">PMO Feature Breakdown</h2>
+
+<h3 class="no-print">Group 1 — Onboarding (PMO-01, 02, 03)</h3>
+
+<details class="feat">
+  <summary><span class="pill pill-partial">Partial</span> PMO-01 · Project Onboarding <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> <code>Project</code> and <code>Project Template</code> are native ERPNext DocTypes — a template with a predefined task hierarchy can be instantiated into a new project, auto-generating tasks. Confirmed directly against the ERPNext source: <code>Project</code> has <code>project_name</code>, <code>status</code>, <code>project_type</code>, <code>expected_start_date</code>/<code>end_date</code>, <code>priority</code>, <code>department</code>, <code>customer</code>, <code>estimated_costing</code>, and a <code>users</code> child table for team assignment — all native.</p>
+    <p><strong>What we need to build:</strong> A <strong>Kickoff Checklist</strong> child table on Project. Role-based manday &amp; cost budget fields per project role (feeds PMO-15). A <strong>PMO Director sign-off workflow</strong> (Draft → Kickoff Pending → PMO Approved → Active) — native ERPNext has no such initiation gate; Project.status is a plain Select field, not a workflow. A Project Initiation PDF print format.</p>
+    <p style="font-size:.85rem;color:#666;"><strong>Fields the PDF asks for that Project doesn't natively have:</strong> Project Code (separate from name), Sponsor, Contract Value, Success Criteria, Scope, Objectives — straightforward Custom Fields, no schema conflict. Add a <strong>Methodology</strong> Select field (Waterfall/Agile/Hybrid/Scrum/Kanban per the PDF) — a plain field, not a workflow engine change; native Kanban/Gantt views already exist regardless of which value is picked.</p>
+    <p style="font-size:.85rem;color:#666;"><strong>WBS, Phases, Deliverables — addressed via existing structures, not new DocTypes:</strong> the PDF asks for Work Breakdown Structure, Project Phases, and Deliverables as first-class Planning concepts. WBS and Phases are achievable with native Task's <code>parent_task</code>/<code>is_group</code> tree — a Phase is just a group-Task one level under the Project — so no new DocType is needed, only a convention (documented in the developer guide) that top-level group Tasks represent Phases. <strong>Deliverables has no equivalent anywhere</strong> — Project has no Deliverables field or child table today. Add a <code>Deliverables</code> child table on Project (Title, Due Date, Owner, Status) — this also directly feeds PMO-16 Milestone Management, which needs Deliverables at the milestone level too.</p>
+    <p style="font-size:.85rem;color:#666;"><strong>Reports (PDF §1):</strong> Project Status Dashboard and Project Health Report roll into PMO-08/PMO-20's dashboards — build once there, don't duplicate. Project Timeline is PMO-09's Gantt. <strong>Project Portfolio</strong> and <strong>Resource Requirement Report</strong> have no home yet — Portfolio ties to the Program/Portfolio gap below (not building the grouping, but a simple "all active projects, one table" report is cheap and worth building here); Resource Requirement Report is a T11 (Resource Management) deliverable — cross-referenced there.</p>
+    <p style="font-size:.85rem;color:#666;"><strong>Not native and not in scope here:</strong> the PDF's Program and Portfolio concepts (grouping multiple Projects under a Program, Programs under a Portfolio) have zero ERPNext equivalent — verified, no such DocType exists anywhere in <code>erpnext</code>. Excel doesn't ask for this either. Not building the grouping hierarchy now; flagged as an open question in Section A if the business later wants project hierarchies above the single-Project level.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-custom">Custom App</span> PMO-02 · Consultant Onboarding <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Native <code>Supplier</code> and <code>Employee</code> DocTypes exist but neither fits: Supplier has no skills/rate-card/availability concept, and Employee assumes a payroll relationship a consultant may not have.</p>
+    <p><strong>What we need to build:</strong> Custom DocTypes — <code>Consultant Profile</code>, <code>Consultant Skill Tag</code>, <code>BGV Compliance Checklist</code>, <code>Consultant Rate Card</code>, <code>Weekly Availability Planner</code>. An external Web Form portal for self-service signup (invitation link → profile/skills/bank details → NDA/BGV doc upload → rate card → weekly availability → PMO review/approval). An availability-matching dashboard for resource allocators — this dashboard is the natural first surface for PMO-14 Resource Management once that exists.</p>
+    <div class="task-note">Excel flags this row's Delay Risk as <strong>High</strong> and reclassified it mid-scoping — its own note reads: "the full requirement... is a custom app on the native HR/user base, not a light refinement." Budget build time accordingly; this is not a config task.</div>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-partial">Partial</span> PMO-03 · Client Onboarding <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> <code>Customer</code>, <code>Contact</code>, <code>Address</code>, and Portal User accounts are all native — a client can already log into the Frappe web portal and see linked Projects, Tasks, Invoices.</p>
+    <p><strong>What we need to build:</strong> A "Client Kickoff Pack" portal page — onboarding guide, document upload/download repository, project team escalation contact matrix. Automated welcome email trigger with portal credentials.</p>
+  </div>
+</details>
+
+<h3 class="no-print">Group 2 — Planning &amp; Scheduling (PMO-04, 05, 09, 16)</h3>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> PMO-04 · Calendar Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Native <code>Event</code> DocType and Calendar View on Task/Project — confirmed. Task due dates and Project milestone dates overlay onto per-user calendars automatically; Google/Outlook sync is a native Frappe integration point.</p>
+    <p><strong>What we need to build:</strong> Configure a default PMO shared calendar view, map due/milestone dates into the calendar layer, wire up Google/Microsoft 365 sync if the client wants it, set event reminder notifications.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> PMO-05 · Task Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Confirmed directly against the ERPNext schema — <code>Task</code> has <code>parent_task</code> + <code>is_group</code> for subtasking, a <code>Task Depends On</code> child table for dependencies, <code>priority</code>, <code>task_weight</code>, <code>status</code> (Select: matches the PDF's Not Started/In Progress/On Hold/Under Review/Completed/Cancelled almost exactly), <code>exp_start_date</code>/<code>exp_end_date</code>, <code>progress</code> (%), and an <code>is_milestone</code> checkbox. Kanban Board is a native Frappe desk DocType, not project-specific — works out of the box on Task.</p>
+    <p><strong>What we need to build:</strong> Configure custom status stages if the client's exact wording differs from native. Notification triggers on assignment and overdue. Email comment threading (native, just needs enabling). Default Kanban column configuration for the PMO team.</p>
+    <p style="font-size:.85rem;color:#666;"><strong>Two fields the PDF asks for that are missing, caught on re-check:</strong> a <strong>Checklist</strong> child table on Task itself — the PDF explicitly lists Checklists alongside Dependencies/Priority/Attachments as a Task Management requirement, distinct from PMO-01's Project-level kickoff checklist, and nothing today gives an individual task its own sub-checklist. And a <strong>Risk Level</strong> Select field directly on Task (Low/Medium/High) — lighter-weight than the full Project Risk Register (PMO-10), for flagging an individual task as risky without opening a formal Risk record.</p>
+    <p style="font-size:.85rem;color:#666;"><strong>Reports (PDF §4):</strong> Task Dashboard, Pending Tasks, Overdue Tasks, Productivity Report — none of these are named native reports; build as 4 small Script Reports filtering Task by status/due date, plus one aggregating completed-vs-assigned per user for Productivity Report.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-partial">Partial</span> PMO-09 · Project Gantt Chart <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Confirmed — <code>frappe-gantt</code> is vendored directly in the Frappe core (<code>frappe/frappe/desk/gantt.py</code> + the frappe-gantt JS library), giving a native Gantt view on Task/Project with drag-to-reschedule and dependency arrows out of the box.</p>
+    <p><strong>What we need to build:</strong> <strong>Critical path highlighting</strong> — a calculation engine identifying zero-float tasks, rendered in red. <strong>Baseline comparison</strong> — snapshot original schedule dates at project launch, render ghost baseline bars under the current timeline for comparison. Neither exists in native frappe-gantt; both are wrapper extensions on top of the existing JS library, not a replacement of it.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-partial">Partial</span> PMO-16 · Milestone Management <span class="pill pill-gap" style="font-size:.65rem;">Gap-identified</span> <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Why this is here even though it's not an Excel row:</strong> The PDF gives Milestone Management its own full chapter (§5) — Milestone Name, Planned Date, Actual Date, Deliverables, Dependencies, Approval Required, and a Completed/Delayed/Upcoming status view with its own dashboard and variance report. Task does have an <code>is_milestone</code> checkbox natively, confirmed in the schema — but that's a flag on a Task, not a first-class trackable entity with its own dashboard, approval gate, or variance reporting.</p>
+    <p><strong>Recommendation:</strong> Don't build a separate Milestone DocType — that would fragment data away from Task, which already carries dependencies and dates. Instead build a <strong>Milestone Dashboard</strong> that filters <code>Task</code> where <code>is_milestone = 1</code>, adds the missing <code>approval_required</code> and <code>deliverables</code> (child table, reusing PMO-01's Deliverables structure) custom fields and an approval action, and produces the Completed/Delayed/Upcoming view and variance report the PDF asks for — all as a thin custom layer over the existing Task data, not a new source of truth.</p>
+    <p style="font-size:.85rem;color:#666;"><strong>Reports (PDF §5):</strong> Milestone Dashboard and Milestone Variance are this feature's own deliverables (above). <strong>Timeline Report</strong> is a third, separate ask — a flat chronological list of all milestones across active projects, distinct from the Gantt (PMO-09, which is per-project) and the Dashboard (which is status-grouped, not date-ordered).</p>
+  </div>
+</details>
+
+<h3 class="no-print">Group 3 — Time, Billing &amp; Budget (PMO-06, 07, 15)</h3>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> PMO-06 · Timesheet / Log Sheet Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Confirmed against schema — <code>Timesheet</code> + <code>Timesheet Detail</code> natively carry <code>project</code>, <code>task</code>, <code>activity_type</code>, <code>hours</code>, <code>billing_hours</code>, <code>is_billable</code>, <code>costing_rate</code>/<code>billing_rate</code>, and the parent Timesheet has a submit-for-approval workflow (Draft → Submitted) plus rolls up into <code>total_billable_amount</code> and links onward to Sales Invoice and Payroll. This matches the PDF §7 and Excel 7.0 requirement almost exactly out of the box.</p>
+    <p><strong>What we need to build:</strong> Configure Activity Types (Development, Design, PMO, Consulting, etc.). A <strong>manday guardrail script</strong> — warn or block when cumulative timesheet hours exceed a role's allocated manday budget (depends on PMO-15's budget fields existing first). 8-hour-to-1-manday conversion logic. Mobile-optimized timesheet web form. Weekly auto-reminder for missing timesheets. An <strong>Overtime</strong> custom field on Timesheet Detail — not native, confirmed against schema, the PDF asks for it as a distinct tracked value alongside Hours Worked and Billable/Non-Billable. Native <code>description</code> (Small Text) on Timesheet Detail already covers the PDF's "Remarks" ask — no new field needed there, just document the mapping so it isn't rebuilt by accident.</p>
+    <p style="font-size:.85rem;color:#666;"><strong>Approval workflow gap:</strong> the PDF asks managers to Review / Approve / Reject / Request Changes. Native Timesheet only has a binary Draft → Submitted state (plus Cancel) — there's no native Reject or Request-Changes action that sends a timesheet back to the employee with a reason. If the client needs the fuller 4-action flow, that's a small Workflow DocType on top of Timesheet's status field, not a native capability — flagging so it isn't assumed to already work.</p>
+    <p style="font-size:.85rem;color:#666;"><strong>Reports (PDF §7):</strong> Timesheet Dashboard, Billable Hours, Utilization Report, Productivity Analysis — Billable Hours and Utilization overlap with PMO-08's Cockpit Dashboard (build once, surface in both); Timesheet Dashboard and Productivity Analysis are this feature's own Script Reports.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> PMO-07 · Invoicing / Expense <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Sales Invoice generated directly from approved billable Timesheets is native. Expense Claim with receipt upload, linked to a Project cost center, is native. Multi-currency invoicing is native.</p>
+    <p><strong>What we need to build:</strong> Project Cost Center mapping configuration. A custom <strong>Monthly Billing Wizard</strong> page — filters approved unbilled timesheets + project expenses by date/client, generates draft Sales Invoices in bulk (this is a UX convenience layer over native functionality, not new schema). Payment gateway link (Razorpay/Stripe) in the invoice email template, if the client wants online payment.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-custom">Custom Build</span> PMO-15 · Project Budget Management <span class="pill pill-gap" style="font-size:.65rem;">Gap-identified</span> <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Why this needs its own feature entry:</strong> Verified directly against the Project schema — <code>Project</code> has exactly one budget-related field, <code>estimated_costing</code> (a single Currency field). The PDF's Budget Management chapter (§2) asks for budgets broken out across <strong>7 categories</strong> (Labor, Materials, Procurement, Contractors, Travel, Equipment, Misc), tracked across <strong>8 states</strong> (Planned, Approved, Actual, Committed, Remaining, Utilization %, Cost Variance, Forecast Cost), integrated with Purchase/Finance/Accounts, and gated by a <strong>4-level approval chain</strong> (Project Manager → Department Head → Finance → Management). Excel row 1.0 mentions only "role-based manday &amp; cost budget fields" as a sub-bullet of Project Onboarding — nowhere near this scope.</p>
+    <p><strong>Recommendation:</strong> Build a proper <code>Project Budget</code> custom DocType (one per Project, category breakdown as a child table), an approval Workflow matching the 4-level chain, and Budget vs Actual / Cost Variance / Forecast Cost as script reports pulling from Timesheet costing amounts (PMO-06) and Purchase/Expense data. This is one of the two largest custom builds in the module alongside PMO-14 — size accordingly, and don't let it get absorbed as an afterthought inside PMO-01's kickoff checklist.</p>
+    <p style="font-size:.85rem;color:#666;"><strong>Integration named explicitly, per the PDF:</strong> Purchase (native Purchase Order/Invoice against the Project Cost Center), <strong>Finance module</strong> (<code>scale_finance</code> — this Budget DocType's Actual/Committed figures are exactly the kind of project-level cost data Finance's own budgeting/forecasting features would want to read; coordinate the field names with Uday's track rather than inventing a parallel structure), and <strong>Accounts module</strong> (<code>scale_accounts</code> — GL postings from approved Purchase/Expense against the Project Cost Center are the ultimate source of truth for "Actual"). Not building cross-app code now, but naming the integration point so it isn't silently missed when both apps exist.</p>
+    <p style="font-size:.85rem;color:#666;"><strong>Reports:</strong> Cost Variance and Forecast Cost Dashboard named above; add <strong>Budget Utilization</strong> as its own report (Utilization % is tracked as a field per the PDF's 8-state list, but wasn't originally called out as needing its own report view — a manager wants a one-screen "which projects are over 90% of budget" view, not just a per-project field).</p>
+  </div>
+</details>
+
+<h3 class="no-print">Group 4 — Governance (PMO-10, 11)</h3>
+
+<details class="feat">
+  <summary><span class="pill pill-custom">Custom App</span> PMO-10 · Risk Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Nothing — confirmed, no Risk-related DocType exists anywhere in <code>erpnext</code> or <code>hrms</code>.</p>
+    <p><strong>What we need to build:</strong> <code>Project Risk</code> and <code>Mitigation Plan</code> custom DocTypes — Category (Financial/Technical/Operational/Vendor/Resource/Regulatory/Schedule/Quality — 8 categories per the PDF, more granular than the Excel's generic "financial/technical/operational"), Probability (1–5), Impact (1–5), auto-calculated Risk Score (Probability × Impact) and Severity. A 5×5 Risk Matrix Heatmap view. Automated stakeholder notification when a risk crosses a Critical threshold.</p>
+    <p style="font-size:.85rem;color:#666;"><strong>Reports (PDF §6):</strong> Risk Register and Risk Heat Map are native views over the DocType above. <strong>High Risk Projects</strong> — a cross-project rollup (which Projects currently have any open Critical/High severity risk) — and <strong>Mitigation Status</strong> — tracking Mitigation Plan completion across all open risks — are two additional reports beyond the originally-scoped Project Risk Summary; both are cheap script reports once the base DocTypes exist.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-custom">Custom App</span> PMO-11 · Change Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Nothing — confirmed, no native Change Request concept for projects.</p>
+    <p><strong>What we need to build:</strong> <code>Project Change Request</code> DocType — scope changes, additional tasks. An Impact Calculator server script estimating extra cost (role rates × additional mandays — depends on PMO-15's rate data). Client e-approval via the web portal. <strong>Budget versioning</strong> on Project — lock the original budget, create a Baseline v2 on approval, so Original vs. Approved-CRs vs. Revised Budget are all analyzable side by side. This directly depends on PMO-15 existing first — sequence it after.</p>
+  </div>
+</details>
+
+<h3 class="no-print">Group 5 — Insight &amp; Reporting (PMO-08, 12, 20)</h3>
+
+<details class="feat">
+  <summary><span class="pill pill-custom">Custom Dashboard</span> PMO-08 · PMO Cockpit Dashboard <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <div class="gap-box" style="margin:0 0 12px;">
+      <h4 style="font-size:.85rem;">⚠ Terminology gap found during fidelity check</h4>
+      <p style="margin:0;font-size:.85rem;">Excel row 9.0 states: <em>"Native 'Project Profitability' report exists (verified)."</em> This was checked directly against the ERPNext source this session — <strong>there is no report named "Project Profitability."</strong> The actual native reports under Projects are <code>project_summary</code>, <code>project_billing_summary</code>, <code>daily_timesheet_summary</code>, <code>delayed_tasks_summary</code>, and <code>employee_billing_summary</code>; a genuine profitability P&amp;L report exists but it's named <strong>Profitability Analysis</strong> and lives under Accounts (dimension-based — by Cost Center or Project as a filter dimension, not a dedicated Project report). This is the same kind of naming-fidelity gap found during the Accounts module's own PDF cross-check (AC-02/AC-09) — the underlying data is there and reachable, but "Project Profitability" as a named native report does not exist; it needs to be either the Profitability Analysis report reused with a Project filter, or purpose-built as part of this dashboard.</p>
+    </div>
+    <p><strong>What already works:</strong> The underlying data — Timesheets carry costing/billing amounts, Expense Claims link to Project cost centers, Sales Invoices capture revenue. It just isn't assembled into one dashboard yet.</p>
+    <p><strong>What we need to build:</strong> A custom PMO Cockpit using Frappe Dashboard Charts + Number Cards: (1) Manday Utilization Chart — Planned vs Actual vs Billed mandays, (2) Profitability Matrix — realized revenue vs. consultant cost rates, reusing/extending Profitability Analysis rather than assuming a report that doesn't exist, (3) Missing-Logsheet Tracker — flags users whose submitted hours fall under an expected weekly threshold.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-custom">Custom App</span> PMO-12 · Project Impact Report <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Nothing — confirmed, no native impact-report or NPS engine.</p>
+    <p><strong>What we need to build:</strong> A <code>Project Stakeholder Survey</code> DocType (NPS rating 1–10 + qualitative feedback), a custom Script Report aggregating Onboarding Goals vs. Delivered Outcomes / Realized Risks (from PMO-10) / Financial Efficiency (from PMO-15) / NPS Score, an executive-ready PDF print format, and an automated NPS email trigger on project completion.</p>
+    <div class="task-note">The Excel row itself flags: <em>"Business definition of 'impact' still requested."</em> This is a genuine open item from the source document, not something we're introducing — confirm with the business what "impact" concretely means before building the report's scoring logic, not just its layout.</div>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-custom">Custom Dashboard</span> PMO-20 · Executive Dashboard (CXO &amp; PMO View) <span class="pill pill-gap" style="font-size:.65rem;">Gap-identified</span> <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>⚠ Also related to PMO-08:</strong> The PDF's closing Executive Dashboard section is portfolio-wide and CXO-audience — <strong>17 KPIs</strong> total (recounted directly against the PDF, corrected from an earlier miscount of 16): Total Active Projects, Projects by Status, Projects by Business Unit, On-Time Delivery %, Budget vs Actual, Project Profitability, Resource Utilization, Task Completion %, Milestone Achievement, High-Risk Projects, Delayed Projects, Timesheet Compliance, <strong>Customer Satisfaction Score</strong>, AI Project Health Score, <strong>Budget Forecast Accuracy</strong>, <strong>Resource Capacity Forecast</strong>, Top AI Recommendations — whereas PMO-08's Cockpit is operational/PMO-team-audience (per-project manday and billing detail). Same pattern as AC-16/FI-16 in the Accounts/Finance split: <strong>build the data layer once</strong>, surface it in two dashboards with two audiences. Not an Excel row at all — added here because a modern PMO platform's single most-referenced screen by leadership is exactly this, and the PDF treats it as important enough to close the entire document with.</p>
+    <p><strong>What we need to build:</strong> A second Frappe Dashboard Workspace, CXO-facing, aggregating: delivery metrics (from PMO-01/05/16 — Task Completion %, Milestone Achievement, On-Time Delivery %), financial metrics (from PMO-15 — Budget vs Actual, Project Profitability, Budget Forecast Accuracy from V02), resource metrics (from PMO-14 — Resource Utilization, Resource Capacity Forecast from V03), risk metrics (from PMO-10 — High-Risk Projects, Delayed Projects), <strong>Customer Satisfaction Score</strong> (cross-reference: this is PMO-12's NPS score, not a new metric — surface it here rather than rebuild it), Timesheet Compliance (from PMO-06), and the 3 AI scores (PMO-17/18/19, combined via V05) into one "AI Project Health Score" and a "Top AI Recommendations" feed.</p>
+  </div>
+</details>
+
+<h3 class="no-print">Group 6 — Resourcing (PMO-14)</h3>
+
+<details class="feat" open>
+  <summary><span class="pill pill-custom">Custom App</span> PMO-14 · Resource Management <span class="pill pill-gap" style="font-size:.65rem;">Biggest gap</span> <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <div class="gap-box" style="margin:0 0 12px;">
+      <h4 style="font-size:.85rem;">⚠ This is the single largest gap between what a modern PMO needs and what's currently scoped</h4>
+      <p style="margin:0;font-size:.85rem;">The PDF gives Resource Management a full chapter (§3): manage Employees, Consultants, Contractors, Machines, Vehicles, Tools, Equipment as a unified resourceable pool; track Availability, Skills, Certifications, Workload, Capacity, Leave Calendar, Utilization %, Billable Hours, Cost Rate; support Resource Allocation, Booking, Transfer, and Replacement; AI Features for best-fit recommendation, shortage prediction, over-allocation detection, workload balancing, and future demand forecasting (this last set feeds directly into PMO-18). <strong>None of this exists as an Excel row.</strong> The nearest thing — Consultant Onboarding's "Weekly Availability Planner" — only covers consultants, only covers availability, and is scoped as an onboarding sub-feature, not an allocation/optimization engine. Verified against the schema: there is no Resource Booking, Capacity Planning, or resource-allocation DocType anywhere in <code>erpnext</code> or <code>hrms</code>.</p>
+    </div>
+    <p><strong>Why this matters for a "modern day PMO":</strong> Without this, the PMO Cockpit (PMO-08) can show billed hours and the Gantt (PMO-09) can show task dates, but nobody can answer "who is over-allocated next month" or "do we have the right skills bench for the next 3 projects" — which is the core operational question a PMO exists to answer. This is not a nice-to-have; it's the connective tissue between Task Management, Timesheet, and the AI Resource Optimization chapter the PDF explicitly asks for.</p>
+    <p><strong>Recommendation — what to build:</strong> A <code>Resource</code> concept spanning Employee/Consultant/Machine/Vehicle/Tool/Equipment (either a single polymorphic-ish DocType with a Type select, or a thin wrapper linking to each existing master — Employee and Consultant Profile already exist, Machine/Vehicle/Tool/Equipment need new lightweight masters). Track <strong>Certifications</strong> as a child table on Resource (Certification Name, Issuing Body, Expiry Date) — distinct from Consultant Profile's Skill Tags, and not addressed anywhere else. Pull <strong>Leave Calendar</strong> from native HRMS Leave Application rather than duplicating it — a resource's availability calculation should subtract approved leave automatically, not maintain a second leave record. A <code>Resource Allocation</code> DocType — links a Resource to a Project/Task for a date range with allocated %, feeding a Utilization Dashboard, and supporting <strong>Multi-project Scheduling</strong> (viewing one resource's allocation across every active project at once, not just per-project). <code>Resource Booking</code>, <code>Resource Transfer</code>, and <code>Resource Replacement</code> as workflow actions on Allocation, not separate DocTypes.</p>
+    <p style="font-size:.85rem;color:#666;"><strong>Reports:</strong> Resource Allocation, Utilization Dashboard, Capacity Report, Skill Availability (originally scoped) plus 3 more named explicitly in the PDF — <strong>Resource Cost Report</strong> (cost rate × allocated time, rolled up by resource and by project), <strong>Utilization Heat Map</strong> (a visual grid, not just the Utilization Dashboard's numbers), and a consolidated <strong>Resource Optimization Dashboard</strong> tying the above together — this last one is the natural home for V03's AI recommendations once that AI task exists.</p>
+    <p style="font-size:.85rem;color:#666;"><strong>Sequencing:</strong> Build after PMO-02 (Consultant Onboarding) since Consultant Profile is one of the resource types this pools together, and before PMO-18 (AI Resource Optimization), which needs this schema to exist before Veeren's team can build against it — see the AI Track's propose-and-wait example below.</p>
+  </div>
+</details>
+
+<h3 class="no-print">Group 7 — Knowledge (PMO-13)</h3>
+
+<details class="feat">
+  <summary><span class="pill pill-partial">Partial</span> PMO-13 · Library Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Native <code>File</code> DocType with cloud attachment storage — confirmed, files attach to any Project or Task natively.</p>
+    <p><strong>What we need to build:</strong> Extend File with custom fields — Project Tag, Industry Tag, Technology Tag, Is Confidential. User Permission hooks so confidential project files are only visible to assigned team members (native permission engine, custom rule). A "Project Library" Workspace page with tag multi-filtering and a full-text search bar over indexed documents.</p>
+  </div>
+</details>
+
+<!-- ═══════════════════════════════════
+     TASK CARDS
+═══════════════════════════════════ -->
+<h2>Task Breakdown</h2>
+<p class="no-print" style="font-size:.87rem;color:#6b7280;">Aug 5 → Aug 25, 2026 — 3 calendar weeks, solo. Sequence reflects real dependencies (e.g. T11 Resource Management before V03 AI Resource Optimization) as well as the calendar.</p>
+
+<div class="pace-box no-print">
+  <h4>⚠ This pace is genuinely aggressive — three likely slip points</h4>
+  <p style="margin:0 0 8px;font-size:.86rem;">20 features (13 business-scoped + 7 gap-identified) in 3 weeks, solo, is a fast pace by this program's own track record — HR took Vandana 8+ weeks for 23 features with a second developer; Accounts took Uday ~5 weeks for 16. The AI Track is honestly worse: after a full re-check against the PDF (see the task-note on each V01–V03 card and the 3 new V07–V09 tasks below), it grew from 6 tasks to <strong>10</strong> — V00–V05 fit inside the 3-week window on the schedule below; <strong>V06–V09 are explicitly marked "Stretch" and are not expected to land by Aug 25.</strong> Flagging honestly rather than presenting this as comfortably achievable:</p>
+  <ul style="margin:0 0 8px 18px;padding:0;font-size:.86rem;line-height:1.8;">
+    <li><strong>T02 Consultant Onboarding (Week 1)</strong> — Excel's own note flags this row "High" delay risk and a genuine custom app, not a light refinement. If Week 1 is slipping, this is the first candidate to trim to a minimal version (skip the Web Form self-service portal, keep just the DocTypes) and finish properly in a Week 4 buffer.</li>
+    <li><strong>T10 + T11 back-to-back (Week 2)</strong> — Project Budget Management and Resource Management are the two largest custom builds in the whole module, landing in the same week. If Week 2 is slipping, T11 is the one to protect — V03 (AI Resource Optimization) and the Executive Dashboard both hard-depend on it, while T10 has fewer downstream AI dependents.</li>
+    <li><strong>V06–V09 (AI Track, throughout)</strong> — NL Query, Planning AI, Task/Milestone AI, and Timesheet AI are real, PDF-scoped capabilities, not padding, but there's no realistic path to all 10 AI tasks landing solo-and-parallel in 3 weeks. Veeren's team should treat V00–V05 as the actual 3-week AI commitment and plan V06–V09 as their own follow-on sprint, not silently drop them.</li>
+  </ul>
+  <p style="margin:0;font-size:.86rem;">If either dev-side task slips, the recommended fallback is a short, explicit Week 4 buffer rather than silently compressing the remaining weeks — same principle as how AC-16 was phased into Wave 1 partial + Wave 2 in the Accounts module rather than forced into an unrealistic single window.</p>
+</div>
+
+<div class="week-label">Week 1 · Aug 5–11 · Scaffold, Onboarding, Planning &amp; Scheduling</div>
+<div class="phase-sub">App Scaffold</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id" style="background:#0891b2;">T00</span>
+    <strong>Create scale_project_management App + Register + Install</strong>
+    <span class="task-assign">Raghib</span>
+    <span class="task-date">Wed Aug 5</span>
+  </div>
+  <div class="task-meta">Deliverable: scale_project_management installed and visible in the app launcher sidebar</div>
+  <ol class="task-steps">
+    <li>Run <code>bench new-app scale_project_management</code> per Section B above.</li>
+    <li>Add to <code>sites/apps.txt</code>, install on <code>scale.localhost</code>, migrate.</li>
+    <li>Create the Scale Project Management Workspace with shortcuts to Project, Task, Timesheet (native) plus placeholders for the custom DocTypes to come.</li>
+    <li>Push scaffold to git on a new <code>feature/project-management-foundation</code> branch, matching the convention every other module app used.</li>
+  </ol>
+</div>
+
+<div class="phase-sub">Onboarding — PMO-01, 02, 03</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T01</span>
+    <strong>Project Onboarding — Kickoff Checklist + Budget Fields + PMO Director Sign-Off</strong>
+    <span class="task-assign">Raghib</span>
+      <span class="task-date">Wed Aug 5</span>
+  </div>
+  <div class="task-meta">Feature: PMO-01 | Deliverable: New Project can't go Active without a completed checklist and PMO Director approval</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> Today a Project can be created and marked Active with nothing more than a name and dates — there's no gate ensuring a kickoff actually happened, no visibility into planned manday/cost budget by role, and no PMO-level sign-off before work starts.</p>
+    <p><span class="ctx-label">In practice:</span> Add a Kickoff Checklist child table to Project (custom items, checkbox + notes each). Add role-based budget fields (a child table: Role, Planned Mandays, Cost Rate, Planned Cost). Build a Workflow on Project: Draft → Kickoff Pending → PMO Approved → Active, with the PMO Director role as the approval step. Create a Project Initiation PDF print format for the signed record.</p>
+  </div>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T02</span>
+    <strong>Consultant Onboarding Portal</strong>
+    <span class="task-assign">Raghib</span>
+      <span class="task-date">Thu–Fri Aug 6–7</span>
+  </div>
+  <div class="task-meta">Feature: PMO-02 | Deliverable: A consultant can self-register via a link and PMO can approve/activate them</div>
+  <ol class="task-steps">
+    <li>Create DocTypes: <code>Consultant Profile</code>, <code>Consultant Skill Tag</code>, <code>BGV Compliance Checklist</code>, <code>Consultant Rate Card</code>, <code>Weekly Availability Planner</code>.</li>
+    <li>Build a Web Form for self-service signup — profile, skill tags, bank details, NDA/BGV upload, rate card, weekly availability.</li>
+    <li>Build a PMO review/approval action that activates the consultant for project allocation.</li>
+    <li>Build the availability-matching dashboard — this becomes the seed for PMO-14's Resource Management once that exists.</li>
+  </ol>
+  <div class="task-note">Excel flags this as High delay risk and a genuine custom app, not a light refinement — treat it as its own mini-project, not a quick add-on to onboarding.</div>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T03</span>
+    <strong>Client Onboarding — Kickoff Pack + Escalation Matrix</strong>
+    <span class="task-assign">Raghib</span>
+      <span class="task-date">Sat Aug 8</span>
+  </div>
+  <div class="task-meta">Feature: PMO-03 | Deliverable: A newly onboarded client sees a kickoff pack in their portal on first login</div>
+  <ol class="task-steps">
+    <li>Extend the native client Web Portal with a "Client Kickoff Pack" page — onboarding guide, document repository, escalation contact matrix.</li>
+    <li>Set up automated welcome email with portal credentials, triggered on Portal User activation.</li>
+  </ol>
+</div>
+
+<div class="phase-sub">Planning &amp; Scheduling — PMO-04, 05, 09, 16</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T04</span>
+    <strong>Calendar Management Configuration</strong>
+    <span class="task-assign">Raghib</span>
+      <span class="task-date">Mon Aug 10</span>
+  </div>
+  <div class="task-meta">Feature: PMO-04 | Deliverable: Shared PMO calendar showing all project events and task due dates</div>
+  <ol class="task-steps">
+    <li>Configure the default PMO shared calendar view.</li>
+    <li>Map Task due dates and Project milestones onto the calendar layer.</li>
+    <li>Configure Google/Microsoft 365 sync if requested by the client.</li>
+    <li>Set up event participant reminder notifications.</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T05</span>
+    <strong>Task Management Configuration</strong>
+    <span class="task-assign">Raghib</span>
+      <span class="task-date">Mon Aug 10</span>
+  </div>
+  <div class="task-meta">Feature: PMO-05 | Deliverable: PMO team's default Kanban view + overdue/assignment notifications live</div>
+  <ol class="task-steps">
+    <li>Confirm/adjust Task status stages to match client wording if needed (native Select field, low risk).</li>
+    <li>Set up notification triggers on task assignment and overdue tasks.</li>
+    <li>Enable email comment threading.</li>
+    <li>Configure default Kanban Board columns for the PMO team.</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T06</span>
+    <strong>Milestone Dashboard</strong>
+    <span class="task-assign">Raghib</span>
+      <span class="task-date">Tue Aug 11</span>
+  </div>
+  <div class="task-meta">Feature: PMO-16 (gap-identified) | Deliverable: Milestone Dashboard with Completed/Delayed/Upcoming views + variance report</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> Task.is_milestone exists natively but there's no dedicated view, approval gate, or variance report for milestones specifically — a PM has to hunt through the full task list to find them.</p>
+    <p><span class="ctx-label">In practice:</span> Add an <code>approval_required</code> custom field to Task (used only when is_milestone=1). Build a dashboard filtering Task where is_milestone=1, grouped Completed/Delayed/Upcoming. Build a Milestone Variance report (planned date vs actual/current date).</p>
+  </div>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T07</span>
+    <strong>Gantt Enhancement — Critical Path + Baseline Comparison</strong>
+    <span class="task-assign">Raghib</span>
+      <span class="task-date">Tue Aug 11</span>
+  </div>
+  <div class="task-meta">Feature: PMO-09 | Deliverable: Gantt view shows critical-path tasks in red and a ghost baseline bar under each task</div>
+  <ol class="task-steps">
+    <li>Extend the native frappe-gantt wrapper with a critical-path calculation engine (zero-float tasks highlighted red).</li>
+    <li>Add a baseline snapshot feature — save original schedule dates at project launch, render ghost bars for comparison against current dates.</li>
+  </ol>
+</div>
+
+<div class="week-label">Week 2 · Aug 12–18 · Time, Billing, Budget &amp; Resourcing</div>
+<div class="phase-sub">Time, Billing &amp; Budget — PMO-06, 07, 15</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T08</span>
+    <strong>Timesheet Configuration + Manday Guardrails</strong>
+    <span class="task-assign">Raghib</span>
+      <span class="task-date">Wed Aug 12</span>
+  </div>
+  <div class="task-meta">Feature: PMO-06 | Deliverable: A warning fires when a consultant's logged hours exceed their allocated manday budget</div>
+  <ol class="task-steps">
+    <li>Configure Activity Types (Development, Design, PMO, Consulting).</li>
+    <li>Write a validation script on Timesheet Detail: compare cumulative hours against T01's role-based manday budget, warn or block on breach.</li>
+    <li>Configure the 8-hour-to-1-manday conversion constant.</li>
+    <li>Optimize the mobile timesheet web form.</li>
+    <li>Set up a weekly auto-reminder for missing timesheets.</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T09</span>
+    <strong>Monthly Billing Wizard</strong>
+    <span class="task-assign">Raghib</span>
+      <span class="task-date">Wed Aug 12</span>
+  </div>
+  <div class="task-meta">Feature: PMO-07 | Deliverable: One-click bulk draft Sales Invoice generation from approved timesheets + expenses</div>
+  <ol class="task-steps">
+    <li>Configure Project Cost Center mapping.</li>
+    <li>Build a custom "Monthly Billing Wizard" page — filter approved unbilled timesheets + billable expenses by date/client, generate draft Sales Invoices in bulk.</li>
+    <li>Integrate a payment gateway link into the invoice email template, if required.</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T10</span>
+    <strong>Project Budget Management — Categories + 4-Level Approval</strong>
+    <span class="task-assign">Raghib</span>
+      <span class="task-date">Thu–Fri Aug 13–14</span>
+  </div>
+  <div class="task-meta">Feature: PMO-15 (gap-identified) | Deliverable: A budget request routes PM → Dept Head → Finance → Management and locks on final approval</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> Project.estimated_costing is a single number today — no category breakdown, no approval trail, no variance tracking. This closes the gap between what Excel scoped (a thin manday-budget mention) and what the PDF's full Budget Management chapter actually asks for.</p>
+    <p><span class="ctx-label">In practice:</span> Build a <code>Project Budget</code> DocType — one per Project, a child table for the 7 categories (Labor/Materials/Procurement/Contractors/Travel/Equipment/Misc), each row carrying Planned/Approved/Actual/Committed/Remaining. Build the 4-level approval Workflow (PM → Dept Head → Finance → Management). Build Budget vs Actual and Cost Variance script reports, pulling Actual from Timesheet costing (PMO-06) and Purchase/Expense data.</p>
+  </div>
+  <div class="task-note">This is one of the two largest custom builds in the module (with T11). Sequence before T13 Change Management, which depends on this schema to version budgets.</div>
+</div>
+
+<div class="phase-sub" style="color:#991b1b;">Resourcing — PMO-14 — Biggest Build</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id" style="background:#991b1b;">T11</span>
+    <strong>Resource Management — Allocation, Booking, Transfer, Replacement</strong>
+    <span class="task-assign">Raghib</span>
+      <span class="task-date">Mon–Tue Aug 17–18</span>
+  </div>
+  <div class="task-meta">Feature: PMO-14 (gap-identified — biggest gap) | Deliverable: A utilization dashboard answering "who is over/under-allocated right now"</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What we're trying to achieve:</span> Nothing today unifies Employees, Consultants, Contractors, Machines, Vehicles, Tools, and Equipment into one resourceable, bookable pool — this is the connective tissue a PMO needs between Task Management and the AI Resource Optimization chapter, and it's currently missing from both source documents' explicit scope (see the gap note in Section A).</p>
+    <p><span class="ctx-label">In practice:</span> Define lightweight master DocTypes for resource types that don't already have one (Machine, Vehicle, Tool, Equipment — Employee and Consultant Profile from T02 already exist). Build a <code>Resource Allocation</code> DocType linking a resource to a Project/Task for a date range with an allocated %. Build Resource Booking / Transfer / Replacement as workflow actions on Allocation. Build the Utilization Dashboard, Capacity Report, and Skill Availability report.</p>
+  </div>
+  <div class="task-note">Build after T02 (Consultant Profile is one of the pooled resource types) and before V03 in the AI Track (AI Resource Optimization needs this schema to exist first — see the propose-and-wait example there).</div>
+</div>
+
+<div class="week-label">Week 3 · Aug 19–25 · Governance, Insight, Knowledge, Fixtures</div>
+<div class="phase-sub">Governance — PMO-10, 11</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T12</span>
+    <strong>Risk Register + Heatmap</strong>
+    <span class="task-assign">Raghib</span>
+      <span class="task-date">Wed Aug 19</span>
+  </div>
+  <div class="task-meta">Feature: PMO-10 | Deliverable: Risk Score auto-calculates and Critical risks alert stakeholders automatically</div>
+  <ol class="task-steps">
+    <li>Create <code>Project Risk</code> and <code>Mitigation Plan</code> DocTypes — Category (8 values per PDF), Probability (1–5), Impact (1–5), Owner, Contingency Plan, Status.</li>
+    <li>Build the auto-calculation script: Risk Score = Probability × Impact, mapped to Severity (Low/Medium/High/Critical).</li>
+    <li>Build a 5×5 Risk Matrix Heatmap view.</li>
+    <li>Add automated notification triggers for Critical-severity risks.</li>
+    <li>Build a Project Risk Summary report.</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T13</span>
+    <strong>Change Request + Impact Calculator + Budget Versioning</strong>
+    <span class="task-assign">Raghib</span>
+      <span class="task-date">Wed Aug 19</span>
+  </div>
+  <div class="task-meta">Feature: PMO-11 | Deliverable: An approved CR creates a new budget baseline without losing the original</div>
+  <ol class="task-steps">
+    <li>Create <code>Project Change Request</code> DocType — scope changes, additional tasks.</li>
+    <li>Build the Impact Calculator server script — extra cost = role rates × additional mandays, reading from T10's budget rate data.</li>
+    <li>Add a client e-approval component on the web portal.</li>
+    <li>Implement budget versioning on Project — lock the original, create Baseline v2 on approval.</li>
+  </ol>
+  <div class="task-note">Depends on T10 (Project Budget Management) existing first — the Impact Calculator and versioning both read/write that schema.</div>
+</div>
+
+<div class="phase-sub">Insight &amp; Reporting — PMO-08, 12, 20</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T14</span>
+    <strong>PMO Cockpit Dashboard</strong>
+    <span class="task-assign">Raghib</span>
+      <span class="task-date">Thu Aug 20</span>
+  </div>
+  <div class="task-meta">Feature: PMO-08 | Deliverable: Manday Utilization, Profitability Matrix, and Missing-Logsheet Tracker live on one dashboard</div>
+  <ol class="task-steps">
+    <li>Build the Manday Utilization Chart — Planned vs Actual vs Billed, from Timesheet data.</li>
+    <li>Build the Profitability Matrix — reuse/extend the native <strong>Profitability Analysis</strong> report filtered by Project (not a nonexistent "Project Profitability" report — see the fidelity note on PMO-08 above).</li>
+    <li>Build the Missing-Logsheet Tracker — flags users under their expected weekly hour threshold.</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T15</span>
+    <strong>Project Impact Report + NPS Survey</strong>
+    <span class="task-assign">Raghib</span>
+      <span class="task-date">Fri Aug 21</span>
+  </div>
+  <div class="task-meta">Feature: PMO-12 | Deliverable: Executive PDF combining delivery, risk, financial, and NPS data at project close</div>
+  <ol class="task-steps">
+    <li>Create <code>Project Stakeholder Survey</code> DocType (NPS 1–10 + qualitative feedback).</li>
+    <li>Build a Script Report: Onboarding Goals vs Delivered Outcomes, Realized Risks (from T12), Financial Efficiency (from T10), NPS Score.</li>
+    <li>Build an executive-ready PDF print format.</li>
+    <li>Add an automated NPS email trigger on project completion.</li>
+  </ol>
+  <div class="task-note">Excel's own note: "Business definition of 'impact' still requested." Confirm the scoring definition with Raghib before building the report's logic, not just its layout.</div>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T16</span>
+    <strong>Executive Dashboard (CXO &amp; PMO View)</strong>
+    <span class="task-assign">Raghib</span>
+      <span class="task-date">Mon Aug 24</span>
+  </div>
+  <div class="task-meta">Feature: PMO-20 (gap-identified) | Deliverable: One portfolio-wide dashboard for leadership, distinct from the operational PMO-08 Cockpit</div>
+  <ol class="task-steps">
+    <li>Build a second, CXO-facing Dashboard Workspace.</li>
+    <li>Aggregate delivery (T01/T05/T06), financial (T10), resource (T11), and risk (T12) metrics.</li>
+    <li>Wire in the 3 AI scores (V01/V02/V03 below) as a combined "AI Project Health Score" and "Top AI Recommendations" feed.</li>
+  </ol>
+</div>
+
+<div class="phase-sub">Knowledge — PMO-13</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id">T17</span>
+    <strong>Project Library — Tags, Confidentiality, Search</strong>
+    <span class="task-assign">Raghib</span>
+      <span class="task-date">Mon Aug 24</span>
+  </div>
+  <div class="task-meta">Feature: PMO-13 | Deliverable: Confidential client files are only visible to assigned team members, and searchable by tag</div>
+  <ol class="task-steps">
+    <li>Extend File with custom fields: Project Tag, Industry Tag, Technology Tag, Is Confidential.</li>
+    <li>Implement User Permission hooks restricting confidential files to assigned team members.</li>
+    <li>Build a "Project Library" Workspace page with tag multi-filtering and full-text search.</li>
+  </ol>
+</div>
+
+<div class="task-card" style="border-color:#7c3aed;background:#faf5ff;">
+  <div class="task-header">
+    <span class="task-id" style="background:#7c3aed;">R01</span>
+    <strong>Export Custom Field &amp; DocType Fixtures</strong>
+    <span class="task-assign">Raghib</span>
+      <span class="task-date">Tue Aug 25</span>
+  </div>
+  <div class="task-meta">Deliverable: All PMO schema changes committed as fixtures, installable on any site via migrate</div>
+  <ol class="task-steps">
+    <li>Run <code>bench --site scale.localhost export-fixtures --app scale_project_management</code> once T01–T17's Custom Fields, Property Setters, and Workflows are stable.</li>
+    <li>Commit the exported fixture JSON so a fresh <code>bench migrate</code> reproduces the full schema on any teammate's site.</li>
+  </ol>
+</div>
+
+<!-- ═══════════════════════════════════
+     AI TRACK — BRIDGE-ALIGNED
+═══════════════════════════════════ -->
+<h2>AI Track (Veeren) — FAC-Aligned</h2>
+<p class="no-print">10 tasks (V00–V09). Written in the format from <code>SCALE_AI_DEV_BRIDGE.md</code> rather than the older ad-hoc AI-task style used in Sales/HR — see <a href="ai-plan-strategy.html" class="xref-link" style="color:var(--blue);font-weight:600;">ai-plan-strategy.html</a> for the full reconciliation. The ownership map below is adopted directly from the Bridge doc, adapted from <code>scale_sales</code> to <code>scale_project_management</code>. V01–V03 were expanded and V07–V09 added after a full re-check against the source PDF found real gaps — see the task-note on each affected card.</p>
+
+<div class="tbl-wrap owner-map">
+  <table style="width:100%;border-collapse:collapse;">
+    <tr style="background:#1e3a5f;color:#fff;"><td style="padding:6px 10px;font-weight:700;">Path</td><td style="padding:6px 10px;font-weight:700;">Owner</td><td style="padding:6px 10px;font-weight:700;">Gate?</td></tr>
+    <tr><td style="padding:6px 10px;border:1px solid #ddd;"><code>scale_project_management/scale_project_management/ai_utils.py</code></td><td style="padding:6px 10px;border:1px solid #ddd;">AI team</td><td style="padding:6px 10px;border:1px solid #ddd;">No — direct commit</td></tr>
+    <tr><td style="padding:6px 10px;border:1px solid #ddd;"><code>scale_project_management/scale_project_management/fac_tools.py</code> (new)</td><td style="padding:6px 10px;border:1px solid #ddd;">AI team</td><td style="padding:6px 10px;border:1px solid #ddd;">No — direct commit</td></tr>
+    <tr><td style="padding:6px 10px;border:1px solid #ddd;"><code>hooks.py</code> — <code>assistant_tools</code>, <code>scheduler_events</code> keys only</td><td style="padding:6px 10px;border:1px solid #ddd;">AI writes, Dev flagged</td><td style="padding:6px 10px;border:1px solid #ddd;">No, but dev lead CC'd on PR</td></tr>
+    <tr><td style="padding:6px 10px;border:1px solid #ddd;"><code>hooks.py</code> — <code>required_apps</code>, <code>doctype_js</code>, <code>doc_events</code>, <code>fixtures</code></td><td style="padding:6px 10px;border:1px solid #ddd;">Dev team (Raghib)</td><td style="padding:6px 10px;border:1px solid #ddd;"><strong>Yes</strong></td></tr>
+    <tr><td style="padding:6px 10px;border:1px solid #ddd;"><code>tasks.py</code></td><td style="padding:6px 10px;border:1px solid #ddd;">Dev team (AI proposes)</td><td style="padding:6px 10px;border:1px solid #ddd;"><strong>Yes</strong></td></tr>
+    <tr><td style="padding:6px 10px;border:1px solid #ddd;">Any DocType JSON</td><td style="padding:6px 10px;border:1px solid #ddd;">Dev team</td><td style="padding:6px 10px;border:1px solid #ddd;"><strong>Yes</strong></td></tr>
+    <tr><td style="padding:6px 10px;border:1px solid #ddd;"><code>project_hooks.py</code>, <code>timesheet_hooks.py</code></td><td style="padding:6px 10px;border:1px solid #ddd;">Dev team</td><td style="padding:6px 10px;border:1px solid #ddd;"><strong>Yes</strong> — AI's functions get called from here, never edited in here</td></tr>
+  </table>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id" style="background:#d97706;">V00</span>
+    <strong>FAC Setup for scale_project_management</strong>
+    <span class="task-assign" style="background:#fef3c7;color:#d97706;">Veeren</span>
+      <span class="task-date">Wed Aug 5 (parallel w/ T00)</span>
+  </div>
+  <div class="task-meta">Deliverable: ai_utils.py + fac_tools.py scaffolded, frappe_assistant_core registered</div>
+  <ol class="task-steps">
+    <li>Follow the same setup TODOs the Bridge doc specified for <code>scale_sales</code> — commit the FAC vendor-app registration, add <code>frappe_assistant_core</code> to <code>required_apps</code> once the first tool lands, add PMO's paths to the repo <code>CODEOWNERS</code> file.</li>
+    <li>Scaffold <code>ai_utils.py</code> with <code>call_llm()</code>, reusing the same pattern already proven in <code>scale_sales</code>/<code>scale_hr</code>.</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id" style="background:#d97706;">V01</span>
+    <strong>AI Project Delay Prediction</strong>
+    <span class="task-assign" style="background:#fef3c7;color:#d97706;">Veeren</span>
+      <span class="task-date">Mon Aug 12</span>
+  </div>
+  <div class="task-meta">Feature: PMO-17 | Deliverable: Delay Probability, Delay Reason, Estimated Delay, Critical Activities on every active Project</div>
+  <ol class="task-steps">
+    <li>Wrap in <code>ai_utils.predict_delay(project)</code>: analyze task completion %, resource availability (once T11 exists), historical performance, dependency chains, vendor/material/approval delays already captured on Task/Project.</li>
+    <li>Rule-based first pass — same philosophy proven in <code>scale_sales</code>' Win Probability: plain thresholds on real fields before any LLM call. Generate Delay Probability, Delay Reason, Estimated Delay, Critical Activities.</li>
+    <li><strong>Early warning alerts</strong> — a scheduled job (not just an on-demand score) that notifies the PM when Delay Probability crosses a threshold, not only when someone happens to open the Project.</li>
+    <li><strong>Critical path monitoring</strong> — read T07's critical-path calculation (Gantt zero-float tasks) as a direct input to Delay Probability, not a separate unconnected feature.</li>
+    <li><strong>Corrective action recommendations</strong> — alongside the score, generate a short LLM-written suggestion (e.g. "reassign Task X" or "escalate vendor delay on Task Y"), not just a number.</li>
+    <li><strong>Client impact prediction</strong> — a plain-English line estimating how a predicted delay affects the client-visible delivery date, for use in client-facing status updates.</li>
+    <li>Wrap as a FAC tool (<code>fac_tools.py</code>) — <code>GetProjectDelayRiskTool(BaseTool)</code> — for AI-client-callable access, per the Bridge doc pattern.</li>
+    <li>Feed into T16's Executive Dashboard AI Project Health Score.</li>
+  </ol>
+  <div class="task-note">The last 4 sub-bullets (early warning, critical path input, corrective actions, client impact) were missing from the original task scope — added after a full re-check against PDF §8's "AI Features" list, which names all 5 of Early Warning/Delay Prediction/Critical Path Monitoring/Corrective Actions/Client Impact explicitly, not just the delay score itself.</div>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id" style="background:#d97706;">V02</span>
+    <strong>AI Budget Forecasting</strong>
+    <span class="task-assign" style="background:#fef3c7;color:#d97706;">Veeren</span>
+      <span class="task-date">Thu Aug 14 (after T10)</span>
+  </div>
+  <div class="task-meta">Feature: PMO-19 | Deliverable: Forecast Final Cost, Revenue, Profitability, Cash Requirement on each Project, Best/Expected/Worst Case scenarios</div>
+  <ol class="task-steps">
+    <li>Wrap in <code>ai_utils.forecast_budget(project)</code>: read Project Budget (T10) planned/actual/committed data.</li>
+    <li>Forecast all 6 values the PDF names, not just final cost: <strong>Project Cost, Revenue, Profitability, Cash Requirement, Procurement Cost, Resource Cost</strong> — the last two read from T09 (Invoicing) and T11 (Resource Management) respectively.</li>
+    <li>Generate Best/Expected/Worst case scenarios (already scoped) — extend with genuine <strong>scenario simulation</strong> (what-if: "if Task X slips 2 weeks, what happens to cost") rather than 3 fixed static bands.</li>
+    <li>Identify cost leakages (already scoped) and add <strong>recommend corrective financial actions</strong> — a short LLM-written suggestion alongside the flag, same pattern as V01's corrective actions.</li>
+    <li><strong>Estimate project profitability at completion</strong> — a distinct forward-looking number from current Profitability (which is as-of-today), feeding PMO-20's Executive Dashboard.</li>
+    <li><strong>Alert management to budget risks before they occur</strong> — a scheduled job, same pattern as V01's early warning alerts, not just a passive number on the Project form.</li>
+    <li>Register as a FAC tool once T10's schema is stable — this is a hard dependency, not a soft one.</li>
+  </ol>
+  <div class="task-note">If T10 isn't done yet when this work starts: this is the exact "propose + wait" scenario from the Bridge doc's own worked example — flag the missing budget schema in the PR description rather than building against fields that don't exist, and pick it up on the next sync once T10 lands. Steps 2–6 above were added after a full re-check against PDF §10 — the original scope only covered "forecast final cost" and "3 scenario cases," missing 5 of the PDF's 7 named AI Features and 5 of its 6 named forecast outputs.</div>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id" style="background:#d97706;">V03</span>
+    <strong>AI Resource Optimization</strong>
+    <span class="task-assign" style="background:#fef3c7;color:#d97706;">Veeren</span>
+      <span class="task-date">Wed Aug 19 (after T11)</span>
+  </div>
+  <div class="task-meta">Feature: PMO-18 | Deliverable: Best-fit resource recommendation, shortage prediction, over-allocation and burnout detection, demand forecast</div>
+  <ol class="task-steps">
+    <li>Wrap in <code>ai_utils.recommend_allocation(project, role)</code>: match skill tags + availability + current workload from T11's Resource Allocation data — this is "recommend skill-based assignments" and "recommend best-fit resources" together, the PDF's first 2 AI Features.</li>
+    <li>Detect over-allocation (sum of a resource's allocated % across active projects exceeds 100) and burnout risk signals (sustained high utilization + overtime patterns from Timesheet).</li>
+    <li><strong>Predict resource shortages</strong> — a distinct, separate signal from over-allocation: given the pipeline of upcoming Projects (from T01) and their role-based budgets, flag roles/skills where near-term demand exceeds the current resource pool.</li>
+    <li><strong>Suggest workload balancing</strong> — when one resource is over-allocated and another with matching skills is under-allocated, propose the rebalance explicitly, not just flag the imbalance.</li>
+    <li><strong>Forecast future resource demand</strong> — project-level manday budgets (T01/T10) rolled forward across the whole pipeline, to answer "do we need to hire/onboard more consultants next quarter."</li>
+    <li>Register as a FAC tool once T11 exists.</li>
+  </ol>
+  <div class="task-note">Depends entirely on T11 (Resource Management) — the single largest schema dependency in this AI track. Do not start before T11's Resource Allocation DocType is live. Steps 3–5 above were added after a full re-check against PDF §9 — the original scope covered 2 of the PDF's 6 named AI Features (best-fit + over-allocation), missing shortage prediction, workload balancing, and demand forecasting entirely.</div>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id" style="background:#d97706;">V04</span>
+    <strong>AI Risk Prediction</strong>
+    <span class="task-assign" style="background:#fef3c7;color:#d97706;">Veeren</span>
+      <span class="task-date">Thu Aug 20 (after T12)</span>
+  </div>
+  <div class="task-meta">Feature: ties to PMO-10 | Deliverable: Predicted risks surfaced before a PM manually logs them</div>
+  <ol class="task-steps">
+    <li>Wrap in <code>ai_utils.predict_risks(project)</code>: detect recurring issue patterns across the Risk Register (T12), estimate financial impact, prioritize by severity, recommend mitigation strategies.</li>
+    <li>Register as a FAC tool once T12 exists.</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id" style="background:#d97706;">V05</span>
+    <strong>AI Project Health Score</strong>
+    <span class="task-assign" style="background:#fef3c7;color:#d97706;">Veeren</span>
+      <span class="task-date">Mon Aug 24</span>
+  </div>
+  <div class="task-meta">Deliverable: One combined score feeding the Executive Dashboard's headline metric</div>
+  <ol class="task-steps">
+    <li>Combine V01 (delay), V02 (budget), V03 (resource), V04 (risk) into a single weighted health score per Project.</li>
+    <li>Surface as the "AI Project Health Score" and "Top AI Recommendations" feed on T16's Executive Dashboard.</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id" style="background:#d97706;">V06</span>
+    <strong>NL Query Assistant for PMO Data</strong>
+    <span class="task-assign" style="background:#fef3c7;color:#d97706;">Veeren</span>
+      <span class="task-date">Stretch — likely past Aug 25</span>
+  </div>
+  <div class="task-meta">Deliverable: "Which projects are over budget?" answered in plain English</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Delivery surface — same open question as Sales:</span> <a href="ai-plan-strategy.html" class="xref-link" style="color:var(--blue);font-weight:600;">ai-plan-strategy.html</a> flags an unresolved conflict for <code>scale_sales</code>'s NL Query chatbot — is it a hand-built in-app chat widget, or a FAC tool invoked through an external AI client? That same question applies here and isn't answered yet. Don't build the UI layer for this until Veeren confirms which model applies — the schema/query-safety work underneath (steps 1–2 below) is useful either way.</p>
+  </div>
+  <ol class="task-steps">
+    <li>Write a schema document covering queryable PMO DocTypes: Project, Task, Timesheet, Project Risk, Project Budget, Resource Allocation.</li>
+    <li>Build the safe query-translation layer (LLM → validated <code>frappe.get_list()</code> call → formatted answer), reusing the exact pattern already proven in <code>scale_sales.api.ai_query</code>.</li>
+    <li>Delivery surface: pending confirmation per the note above.</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id" style="background:#d97706;">V07</span>
+    <strong>AI Project Planning Assistant</strong>
+    <span class="task-assign" style="background:#fef3c7;color:#d97706;">Veeren</span>
+    <span class="task-date">Stretch — likely past Aug 25</span>
+  </div>
+  <div class="task-meta">Feature: ties to PMO-01 | Deliverable: New-project setup gets AI-suggested plan, duration, and milestone structure</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this exists as its own task:</span> PDF §1 (Project Planning) has a full "AI Features" list — Recommend project plans based on historical projects, Estimate project duration, Identify missing activities, Suggest project templates, Predict project complexity, Recommend milestone structure, Identify critical path automatically — that had zero representation anywhere in the original AI Track. Found on a full re-check against the PDF, not part of the original scope.</p>
+  </div>
+  <ol class="task-steps">
+    <li>Wrap in <code>ai_utils.suggest_project_plan(project_type, similar_projects)</code>: given a new Project's type/scope, look at historical Projects of the same type, recommend a Project Template (which one, or suggest a new task structure if none fits), estimate duration, and flag commonly-missing activities.</li>
+    <li>Predict project complexity — a simple score (Low/Medium/High) based on team size, duration, budget, historical variance of similar projects — feeds T01's kickoff process as a heads-up for the PMO Director sign-off.</li>
+    <li>Recommend a milestone structure for the new Project, feeding PMO-16.</li>
+    <li>"Identify critical path automatically" here means suggesting one at project setup, before any tasks have real dates — distinct from T07's Gantt critical-path calculation, which runs on a live, populated schedule.</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id" style="background:#d97706;">V08</span>
+    <strong>AI Task &amp; Milestone Intelligence</strong>
+    <span class="task-assign" style="background:#fef3c7;color:#d97706;">Veeren</span>
+    <span class="task-date">Stretch — likely past Aug 25</span>
+  </div>
+  <div class="task-meta">Feature: ties to PMO-05, PMO-16 | Deliverable: Task-level delay/bottleneck signals, distinct from V01's project-level ones</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this exists as its own task:</span> PDF §4 (Task Management) and §5 (Milestone Management) each have their own "AI Features" lists, entirely separate from V01's project-level delay prediction. Task Management: predict delayed tasks, recommend task priorities, detect bottlenecks, suggest workload redistribution, estimate task completion. Milestone Management: predict milestone delays, identify milestone dependencies, recommend schedule adjustments. Neither was represented anywhere in the original scope.</p>
+  </div>
+  <ol class="task-steps">
+    <li>Wrap in <code>ai_utils.predict_task_delay(task)</code>: per-task version of V01's logic, operating on individual Task records rather than whole Projects — a Project can look healthy in aggregate while one Task is quietly slipping.</li>
+    <li>Detect bottlenecks — tasks with many downstream dependents that are themselves behind schedule, using the same Task Depends On data T07's Gantt reads.</li>
+    <li>Recommend task priorities and suggest workload redistribution — reads T11's Resource Allocation once it exists, same dependency shape as V03.</li>
+    <li>Estimate task completion date, distinct from the Task's own <code>exp_end_date</code> — an AI-adjusted estimate based on actual progress velocity.</li>
+    <li>Milestone-specific: predict milestone delays, identify milestone dependencies, recommend schedule adjustments — read PMO-16's Milestone Dashboard (Task where is_milestone=1) as the data source, don't build a second milestone data model.</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id" style="background:#d97706;">V09</span>
+    <strong>AI Timesheet Intelligence</strong>
+    <span class="task-assign" style="background:#fef3c7;color:#d97706;">Veeren</span>
+    <span class="task-date">Stretch — likely past Aug 25</span>
+  </div>
+  <div class="task-meta">Feature: ties to PMO-06 | Deliverable: Flags on suspicious timesheet entries and idle resources</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this exists as its own task:</span> PDF §7 (Timesheet Management) AI Features — detect inaccurate timesheets, predict effort overruns, recommend productivity improvements, identify idle resources — had zero representation anywhere in the original AI Track.</p>
+  </div>
+  <ol class="task-steps">
+    <li>Detect inaccurate timesheets — simple rule-based checks first (implausible hour totals, hours logged against a Task after its due date, duplicate entries), not an LLM judgment call.</li>
+    <li>Predict effort overruns — compare logged hours-to-date against planned hours (Task.expected_time) and flag before the task is actually late.</li>
+    <li>Identify idle resources — a resource with zero or near-zero logged hours over a rolling window despite active Resource Allocations (T11) — feeds directly into V03's resource optimization signals, don't duplicate the detection logic.</li>
+    <li>Recommend productivity improvements — lowest priority of the four; a short LLM-written note only once the rule-based signals above are live and generating real flags to reason over.</li>
+  </ol>
+</div>
+
+<!-- PROGRESS TRACKER -->
+<hr class="section no-print">
+<h2 class="no-print">Progress Tracker</h2>
+<div class="tbl-wrap no-print">
+  <table>
+    <tr><th>ID</th><th>Feature</th><th>Priority</th><th>Status</th><th>Notes</th></tr>
+    <tr><td>PMO-01</td><td>Project Onboarding</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>Native Project/Template exist; checklist, budget fields, sign-off workflow to build</td></tr>
+    <tr><td>PMO-02</td><td>Consultant Onboarding</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>High delay risk per Excel — full custom app</td></tr>
+    <tr><td>PMO-03</td><td>Client Onboarding</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>Native Customer/Portal exist; kickoff pack to build</td></tr>
+    <tr><td>PMO-04</td><td>Calendar Management</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>Native — config only</td></tr>
+    <tr><td>PMO-05</td><td>Task Management</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>Native — config only</td></tr>
+    <tr><td>PMO-06</td><td>Timesheet / Log Sheet Management</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>Native — manday guardrail script needed</td></tr>
+    <tr><td>PMO-07</td><td>Invoicing / Expense</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>Native — billing wizard tool needed</td></tr>
+    <tr><td>PMO-08</td><td>PMO Cockpit Dashboard</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>"Project Profitability" report claim corrected — see fidelity note</td></tr>
+    <tr><td>PMO-09</td><td>Project Gantt Chart</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>Native drag-reschedule confirmed; critical path + baseline to build</td></tr>
+    <tr><td>PMO-10</td><td>Risk Management</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>Fully custom — no native equivalent</td></tr>
+    <tr><td>PMO-11</td><td>Change Management</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>Fully custom — depends on PMO-15</td></tr>
+    <tr><td>PMO-12</td><td>Project Impact Report</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>Business definition of "impact" still open per Excel's own note</td></tr>
+    <tr><td>PMO-13</td><td>Library Management</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>Native File exists; tagging/confidentiality/search to build</td></tr>
+    <tr style="background:#fef2f2;"><td>PMO-14</td><td>Resource Management</td><td><span class="pill bpn">Recommended</span></td><td><span class="st-ns">◯ Not Started</span></td><td>Biggest gap-identified addition — no Excel row, no native equivalent</td></tr>
+    <tr style="background:#fef2f2;"><td>PMO-15</td><td>Project Budget Management</td><td><span class="pill bpn">Recommended</span></td><td><span class="st-ns">◯ Not Started</span></td><td>Excel scope is thin (1 sub-bullet); PDF's full scope is much larger</td></tr>
+    <tr style="background:#fef2f2;"><td>PMO-16</td><td>Milestone Management</td><td><span class="pill bpn">Recommended</span></td><td><span class="st-ns">◯ Not Started</span></td><td>Task.is_milestone exists; dashboard layer to build</td></tr>
+    <tr style="background:#fef2f2;"><td>PMO-17</td><td>AI Project Delay Prediction</td><td><span class="pill bpn">Recommended</span></td><td><span class="st-ns">◯ Not Started</span></td><td>AI Track V01</td></tr>
+    <tr style="background:#fef2f2;"><td>PMO-18</td><td>AI Resource Optimization</td><td><span class="pill bpn">Recommended</span></td><td><span class="st-ns">◯ Not Started</span></td><td>AI Track V03 — depends on PMO-14</td></tr>
+    <tr style="background:#fef2f2;"><td>PMO-19</td><td>AI Budget Forecasting</td><td><span class="pill bpn">Recommended</span></td><td><span class="st-ns">◯ Not Started</span></td><td>AI Track V02 — depends on PMO-15</td></tr>
+    <tr style="background:#fef2f2;"><td>PMO-20</td><td>Executive Dashboard (CXO &amp; PMO View)</td><td><span class="pill bpn">Recommended</span></td><td><span class="st-ns">◯ Not Started</span></td><td>Extends PMO-08 — different audience, same underlying data</td></tr>
+  </table>
+</div>
+
+<div class="callout cs no-print" style="margin-top:20px;">
+  <p><strong>All three open decisions resolved 5 Aug 2026</strong> (see Section A): Excel row 4.0's duplicate discarded, <code>scale_project_management</code> confirmed as a new dedicated app with Raghib as both lead and sole developer, and the build starts today — targeting 25 Aug 2026 for T00–T17/R01 and AI Track V00–V05. Nothing blocks T00 anymore. The one thing still worth watching is pace — see the risk callout right before the Week 1 task cards for the three likeliest slip points, including AI Track V06–V09 which are expected to extend past the 3-week window.</p>
+</div>
+
+<div class="page-nav">
+  <a class="prev" href="finance-module.html">← Finance Module Plan</a>
+  <a class="next" href="ai-plan-strategy.html">AI Plan Strategy →</a>
+</div>
+
+</main>
+</body>
+</html>

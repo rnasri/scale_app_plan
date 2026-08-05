@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIWS ERP — Implementation Master Plan</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.site-tile { display:block; padding:16px 18px; border-radius:var(--r); border:1px solid var(--border); background:var(--surface); box-shadow:var(--sh); text-decoration:none; color:inherit; transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
+.site-tile:hover { transform:translateY(-2px); box-shadow:var(--sh-md); border-color:var(--border-md); }
+.site-tile .st-head { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:5px; }
+.site-tile h4 { font-size:13.5px; margin:0; color:var(--text-1); }
+.site-tile p { font-size:12px; color:var(--text-3); margin:0; line-height:1.5; }
+.site-tile .st-arrow { font-size:13px; color:var(--text-4); flex-shrink:0; }
+.site-tile:hover .st-arrow { color:var(--blue); }
+.site-tile.featured { border-top:3px solid var(--purple); background:linear-gradient(135deg, #faf5ff 0%, #eff6ff 100%); }
+.site-tile.featured h4 { font-size:14.5px; }
+.dash-group-label { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; color:var(--text-4); margin:22px 0 10px; }
+.dash-group-label:first-child { margin-top:0; }
+.manual-hero { display:block; text-decoration:none; color:inherit; border-radius:var(--r-lg); padding:28px 32px; margin:16px 0 24px; background:linear-gradient(135deg, #065f46 0%, #059669 55%, #10b981 100%); box-shadow:0 8px 24px rgba(5,150,105,.25); transition:transform .15s ease, box-shadow .15s ease; }
+.manual-hero:hover { transform:translateY(-2px); box-shadow:0 12px 32px rgba(5,150,105,.32); }
+.manual-hero .mh-eyebrow { font-size:11.5px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:rgba(255,255,255,.8); margin-bottom:8px; }
+.manual-hero h3 { color:#fff; font-size:22px; margin:0 0 10px; }
+.manual-hero p { color:rgba(255,255,255,.92); font-size:14px; line-height:1.65; max-width:800px; margin:0 0 16px; }
+.manual-hero .mh-cta { display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:30px; font-size:13.5px; font-weight:700; background:#fff; color:#065f46; }
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="s-title">AIWS ERP</div>
+    <div class="s-sub">Implementation Master Plan</div>
+    <span class="s-tag">Claude / implementation</span>
+  </div>
+  <nav>
+    <div class="nav-group">Start Here</div>
+    <a class="nav-link active" href="index.html">Program Overview</a>
+
+    <div class="nav-group">Foundation</div>
+    <a class="nav-link" href="frappe-verdict.html">Frappe Capability</a>
+    <a class="nav-link" href="architecture.html">System Architecture</a>
+
+    <div class="nav-group">Development Framework</div>
+    <a class="nav-link" href="customization-guide.html">Customization Guide</a>
+    <a class="nav-link" href="developer-guide.html">Developer Workflow</a>
+
+    <div class="nav-group">Implementation</div>
+    <a class="nav-link" href="module-plan.html">All 13 Modules</a>
+    <a class="nav-link" href="sprint-plan.html">Parallel Sprint Plan</a>
+    <a class="nav-link" href="wave-1.html">Sales &amp; Marketing Detail</a>
+
+    <div class="nav-group">Module Plans</div>
+    <a class="nav-link" href="sales-module.html">Sales Module Plan</a>
+    <a class="nav-link" href="hr-module.html">HR Module Plan</a>
+    <a class="nav-link" href="accounts-module.html">Accounts Module Plan</a>
+    <a class="nav-link" href="finance-module.html">Finance Module Plan</a>
+    <a class="nav-link" href="pmo-module.html">PMO Module Plan</a>
+
+    <div class="nav-group">User Manual</div>
+    <a class="nav-link" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
+
+    <div class="nav-group">AI Strategy</div>
+    <a class="nav-link" href="ai-plan-strategy.html">AI Plan Strategy</a>
+
+    <div class="nav-group">Tracking</div>
+    <a class="nav-link" href="sales-tracker.html">Sales Tracker</a>
+    <a class="nav-link" href="sales-demo-showcase.html">Sales Showcase ✨</a>
+  </nav>
+  <div class="sidebar-foot">
+    Pixaflip × SIL · AIWS ERP<br>
+    <a href="../../index.html">← AIWS Setup portal</a>
+  </div>
+</aside>
+
+<main>
+  <div class="breadcrumb">AIWS ERP <span>›</span> Implementation Plan</div>
+
+  <div class="page-header">
+    <h1>AIWS ERP — Implementation Master Plan</h1>
+    <p class="subtitle">A fresh, ground-up blueprint for building a commercial, multi-tenant, distributable ERP on Frappe/ERPNext — all 13 modules, 4 delivery waves.</p>
+  </div>
+
+  <div class="summary-strip">
+    <div class="s-stat"><div class="sv">13</div><div class="sl">ERP Modules</div></div>
+    <div class="s-stat"><div class="sv">4</div><div class="sl">Build Waves</div></div>
+    <div class="s-stat"><div class="sv">~70%</div><div class="sl">OOTB Frappe Coverage</div></div>
+    <div class="s-stat"><div class="sv">~30%</div><div class="sl">Custom Work Needed</div></div>
+    <div class="s-stat"><div class="sv">5+</div><div class="sl">Custom App Packages</div></div>
+  </div>
+
+  <h2>Site map — all pages at a glance</h2>
+  <p style="margin-bottom:4px;">Every page in this implementation site, one line each. Click any tile to jump straight there.</p>
+
+  <a class="manual-hero" href="erp-flow-manual.html">
+    <div class="mh-eyebrow">📘 Start here — ERP Flow &amp; Operations Manual</div>
+    <h3>How an organization actually starts using this system</h3>
+    <p>Significance, prerequisites, what data goes in first, the default ERPNext page-by-page flow with real navigation steps, and exactly where our customization layers on top — module by module, for Sales, CRM (with a real architecture flag on Frappe CRM vs. native), HR, Accounts, Finance, Projects, Buying, and Manufacturing. Written for business users, not developers.</p>
+    <span class="mh-cta">Open the manual →</span>
+  </a>
+
+  <div class="dash-group-label">Featured — live &amp; actively updated</div>
+  <div class="grid g3">
+    <a class="site-tile featured" href="sales-demo-showcase.html">
+      <div class="st-head"><h4>✨ Sales Showcase</h4><span class="st-arrow">→</span></div>
+      <p>Business-facing, 26-slide walkthrough of every live Sales feature — the natural sales journey, the requirement behind each step, direct links into the running feature.</p>
+    </a>
+    <a class="site-tile featured" href="sales-tracker.html">
+      <div class="st-head"><h4>Sales Tracker</h4><span class="st-arrow">→</span></div>
+      <p>Live git-submission log for <code>scale_sales</code> — what's merged, what shipped differently than planned, and what's still open (T14, T18–T20, the discount-rule conflict).</p>
+    </a>
+    <a class="site-tile featured" href="sprint-plan.html">
+      <div class="st-head"><h4>Parallel Sprint Plan</h4><span class="st-arrow">→</span></div>
+      <p>Day-by-day delivery schedule across all three Wave 1 tracks — Raghib, Uday, Vandana — start dates, gates, feature counts.</p>
+    </a>
+  </div>
+
+  <div class="dash-group-label">Foundation</div>
+  <div class="grid g2">
+    <a class="site-tile" href="frappe-verdict.html">
+      <div class="st-head"><h4>Frappe Capability</h4><span class="st-arrow">→</span></div>
+      <p>The OOTB-coverage verdict for all 13 modules — what Frappe/ERPNext gives free, what needs building, module by module.</p>
+    </a>
+    <a class="site-tile" href="architecture.html">
+      <div class="st-head"><h4>System Architecture</h4><span class="st-arrow">→</span></div>
+      <p>Custom-app structure, multi-tenant model, and where every module's code lives — one app per team, never-fork rule.</p>
+    </a>
+  </div>
+
+  <div class="dash-group-label">Development framework</div>
+  <div class="grid g3">
+    <a class="site-tile" href="customization-guide.html">
+      <div class="st-head"><h4>Customization Guide</h4><span class="st-arrow">→</span></div>
+      <p>The 5-level decision framework every developer uses daily — config vs. code, when to extend vs. build from scratch.</p>
+    </a>
+    <a class="site-tile" href="developer-guide.html">
+      <div class="st-head"><h4>Developer Workflow</h4><span class="st-arrow">→</span></div>
+      <p>Local bench setup, Git branching conventions, PR process, and testing expectations for anyone joining the team.</p>
+    </a>
+    <a class="site-tile" href="frappe-extension-guide.html">
+      <div class="st-head"><h4>Frappe Extension Guide</h4><span class="st-arrow">→</span></div>
+      <p>Deeper technical patterns for hooks, custom DocTypes, and fixtures — the how-to behind the Customization Guide's levels.</p>
+    </a>
+  </div>
+
+  <div class="dash-group-label">Implementation</div>
+  <div class="grid g2">
+    <a class="site-tile" href="module-plan.html">
+      <div class="st-head"><h4>All 13 Modules</h4><span class="st-arrow">→</span></div>
+      <p>The full module list, cross-module dependencies, and data-flow picture — the map before you zoom into any one track.</p>
+    </a>
+    <a class="site-tile" href="wave-1.html">
+      <div class="st-head"><h4>Sales &amp; Marketing Detail</h4><span class="st-arrow">→</span></div>
+      <p>Feature-by-feature implementation notes for Raghib's Wave 1 track, ahead of the dedicated Sales Module Plan.</p>
+    </a>
+  </div>
+
+  <div class="dash-group-label">Module plans</div>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit, minmax(210px, 1fr));">
+    <a class="site-tile" href="sales-module.html">
+      <div class="st-head"><h4>Sales Module Plan</h4><span class="st-arrow">→</span></div>
+      <p>Click-by-click task cards T01–T20 for <code>scale_sales</code>, plus a printable developer handover PDF.</p>
+    </a>
+    <a class="site-tile" href="hr-module.html">
+      <div class="st-head"><h4>HR Module Plan</h4><span class="st-arrow">→</span></div>
+      <p>23 HR features mapped to <code>scale_hr</code> task cards — Vandana's track. PMO now has its own dedicated plan.</p>
+    </a>
+    <a class="site-tile" href="accounts-module.html">
+      <div class="st-head"><h4>Accounts Module Plan</h4><span class="st-arrow">→</span></div>
+      <p>16 Accounts features (CoA, GL, GST, Audit Trail, and more) for <code>scale_accounts</code> — Uday's track, first app.</p>
+    </a>
+    <a class="site-tile" href="finance-module.html">
+      <div class="st-head"><h4>Finance Module Plan</h4><span class="st-arrow">→</span></div>
+      <p>16 Finance Analytics features (Budgeting, Forecasting, P&amp;L, Cash Flow) for <code>scale_finance</code>, depends on Accounts.</p>
+    </a>
+    <a class="site-tile" href="pmo-module.html">
+      <div class="st-head"><h4>PMO Module Plan</h4><span class="st-arrow">→</span></div>
+      <p>20 features (13 from Excel + 7 gap-identified) for <code>scale_project_management</code> — Raghib's track, solo, Aug 5 → Aug 25 (3-week sprint).</p>
+    </a>
+    <a class="site-tile" href="ai-plan-strategy.html" style="border-top:3px solid var(--amber);">
+      <div class="st-head"><h4>🤖 AI Plan Strategy</h4><span class="st-arrow">→</span></div>
+      <p>Our AI task plan (V01–V08) vs. Veeren's AI⇄Dev Bridge doc — alignment, adopted process, and 1 open conflict to resolve.</p>
+    </a>
+  </div>
+
+  <h2>What this plan is — and what it isn't</h2>
+  <p>This is a clean-slate implementation blueprint produced by Claude Code for the Pixaflip × SIL engineering team. It is specific, technical, and opinionated. It answers the questions every developer and product lead needs before writing a single line of code:</p>
+  <ul>
+    <li><strong>Can Frappe/ERPNext actually support our 13-module plan at commercial scale?</strong></li>
+    <li><strong>How do we structure the codebase so multiple developers can work in parallel without stepping on each other?</strong></li>
+    <li><strong>When do we use Frappe OOTB, when do we extend it, and when do we build from scratch?</strong></li>
+    <li><strong>In exactly what order do we build, and what are the dependencies?</strong></li>
+  </ul>
+  <p>This plan is not a restatement of the AIWS Setup portal. It picks up where requirements end and engineering begins.</p>
+
+  <div class="callout ci">
+    <p><strong>Scope note:</strong> This plan covers the ERP build only. The AIWS Intelligent Bridge (strategy alignment layer) is deferred by design — seams are kept open in the architecture but no Bridge code is built in this program. The ERP must be independently usable and sellable on its own.</p>
+  </div>
+
+  <h2>The Frappe verdict — at a glance</h2>
+  <div class="grid g4">
+    <div class="vc yes">
+      <div class="vl">Multi-tenancy</div>
+      <div class="vv">Native ✓</div>
+      <div class="vn">Site-per-client on a shared bench. Proven at scale. No extra infrastructure needed for the basic model.</div>
+    </div>
+    <div class="vc yes">
+      <div class="vl">Commercial Distribution</div>
+      <div class="vv">Fully Supported ✓</div>
+      <div class="vn">Custom apps are pip packages. Customers install on any bench. GPL SaaS exception allows proprietary apps on top.</div>
+    </div>
+    <div class="vc partial">
+      <div class="vl">13-Module Coverage</div>
+      <div class="vv">~70% OOTB</div>
+      <div class="vn">Sales, Accounts, Purchase, Stores near-complete. Marketing, Service, Logistics have significant gaps requiring builds.</div>
+    </div>
+    <div class="vc yes">
+      <div class="vl">Multi-developer Ready</div>
+      <div class="vv">Yes, by design ✓</div>
+      <div class="vn">One app per module team. Git-native. No central bottleneck. Clear API boundaries between modules.</div>
+    </div>
+  </div>
+
+  <h2>Three non-negotiable principles</h2>
+  <div class="grid g3">
+    <div class="card">
+      <h3>1 — Never fork. Always extend.</h3>
+      <p>Zero modifications to Frappe, ERPNext, Frappe CRM, or Frappe HR source code. All customizations live in <strong>upgrade-safe custom apps</strong> using hooks, custom DocTypes, and fixtures.</p>
+      <p class="muted">A fork turns every upstream upgrade into a painful manual merge. Custom apps ride on top and survive upgrades cleanly.</p>
+    </div>
+    <div class="card">
+      <h3>2 — Configuration before code.</h3>
+      <p>Before writing a single line of Python or JS, ask: can this be done with Custom Fields, Property Setters, Workflows, or Roles? Write code only when configuration is exhausted.</p>
+      <p class="muted">Config-level changes require no deployments, no tests, and no release cycles. They're also reversible.</p>
+    </div>
+    <div class="card">
+      <h3>3 — One module, one owner, one app.</h3>
+      <p>Each business module maps to a custom Frappe app with a named team owner. Cross-module data flows through <strong>documented REST APIs or DocType links</strong>, never shared DB queries.</p>
+      <p class="muted">This prevents merge conflicts, enables different team speeds, and makes the product modular for customers.</p>
+    </div>
+  </div>
+
+  <h2>Build waves — the delivery sequence</h2>
+
+  <div class="callout ci" style="margin-bottom:16px;">
+    <p><strong>Wave 1 is three parallel tracks — not a single sequential track.</strong> Raghib (Sales + Marketing), Uday (Finance + Accounts), and Vandana (HR + PMO) all start on the same day. No track is more important or more foundational than another. The three tracks converge into Wave 2 when leads become available after their Wave 1 modules are done.</p>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <tr>
+        <th>Wave</th><th>Tracks / Modules</th><th>Leads</th><th>Custom Apps</th><th>Start → End</th><th>Gate to next</th>
+      </tr>
+      <tr>
+        <td><strong>F0 — Foundation</strong></td>
+        <td>Bench, multi-tenant setup, CI/CD, <code>scale_core</code></td>
+        <td>All leads</td>
+        <td><code>scale_core</code></td>
+        <td>Before Jul 24</td>
+        <td>Bench running · first site up · CI green · all devs onboarded</td>
+      </tr>
+      <tr style="background:var(--bg-2)">
+        <td rowspan="3"><strong>Wave 1 — 3 Parallel Tracks</strong><br><span style="font-size:11px;color:var(--text-3);font-weight:400">All start Jul 24 simultaneously</span></td>
+        <td>🔵 <strong>Sales</strong> · <strong>Marketing</strong></td>
+        <td><strong>Raghib</strong></td>
+        <td><code>scale_sales</code> · <code>scale_sales</code></td>
+        <td>Jul 24 → Nov 13</td>
+        <td rowspan="3" style="vertical-align:middle">All P1 items across all three tracks complete</td>
+      </tr>
+      <tr style="background:var(--bg-2)">
+        <td>🟢 <strong>Finance</strong> · <strong>Accounts</strong></td>
+        <td><strong>Uday</strong></td>
+        <td><code>scale_accounts</code></td>
+        <td>Jul 24 → Sep 2</td>
+      </tr>
+      <tr style="background:var(--bg-2)">
+        <td>🟣 <strong>HR</strong> · <strong>PMO</strong></td>
+        <td><strong>Vandana</strong></td>
+        <td><code>scale_hr</code> · <code>scale_hr</code></td>
+        <td>Jul 24 → Sep 26</td>
+      </tr>
+      <tr>
+        <td><strong>Wave 2 — Operations</strong></td>
+        <td>Service, Production, Purchase, Stores</td>
+        <td>TBD (Uday + Vandana free from Sep)</td>
+        <td><code>scale_supply</code></td>
+        <td>Oct → Feb</td>
+        <td>Full ops cycle: order → production → delivery → service ticket</td>
+      </tr>
+      <tr>
+        <td><strong>Wave 3 — Logistics</strong></td>
+        <td>Logistics</td>
+        <td>TBD</td>
+        <td><code>scale_supply</code></td>
+        <td>After Wave 2</td>
+        <td>Route optimization live · POD captured · courier tracking linked</td>
+      </tr>
+      <tr>
+        <td><strong>Wave 4 — Intelligence</strong></td>
+        <td>Dashboards, Survey, SaaS hardening</td>
+        <td>TBD</td>
+        <td><code>scale_bi</code></td>
+        <td>After Wave 3</td>
+        <td>Cross-module KPI dashboards live · SaaS packaging complete</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="callout cw">
+    <p><strong>Foundation (F0) is not optional.</strong> The bench, multi-tenant site provisioning, CI/CD pipeline, and <code>scale_core</code> app must be running before any module work begins. Skipping or rushing F0 creates compounding technical debt. Treat it as its own delivery milestone.</p>
+  </div>
+
+  <h2>How to use this site</h2>
+  <div class="grid g3">
+    <div class="card">
+      <h3 style="color:#1d4ed8">🔵 Raghib — Sales &amp; Marketing</h3>
+      <ol>
+        <li><a href="sprint-plan.html">Parallel Sprint Plan</a> — your track: Jul 24 → Nov 13, all feature dates.</li>
+        <li><a href="frappe-verdict.html">Frappe Capability</a> — Sales 72% OOTB, Marketing 38% OOTB.</li>
+        <li><a href="wave-1.html">Sales &amp; Marketing Detail</a> — feature-by-feature implementation notes.</li>
+        <li><a href="module-plan.html">All 13 Modules</a> — full dependency picture.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3 style="color:#15803d">🟢 Uday — Finance &amp; Accounts</h3>
+      <ol>
+        <li><a href="sprint-plan.html">Parallel Sprint Plan</a> — your track: Jul 24 → Sep 2, 30 features.</li>
+        <li><a href="frappe-verdict.html">Frappe Capability</a> — Accounts 90% OOTB, Finance 68% OOTB.</li>
+        <li><a href="customization-guide.html">Customization Guide</a> + <a href="frappe-extension-guide.html">Extension Guide</a> — Finance examples at all 5 levels.</li>
+        <li><a href="module-plan.html">All 13 Modules</a> — cross-track dependencies (CoA gates PMO billing).</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3 style="color:#7c3aed">🟣 Vandana — HR &amp; PMO</h3>
+      <ol>
+        <li><a href="sprint-plan.html">Parallel Sprint Plan</a> — your track: Jul 24 → Sep 26, 37 features.</li>
+        <li><a href="frappe-verdict.html">Frappe Capability</a> — HR 74% OOTB, PMO 58% OOTB.</li>
+        <li><a href="customization-guide.html">Customization Guide</a> — override patterns for HRMS &amp; Projects.</li>
+        <li><a href="module-plan.html">All 13 Modules</a> — note Payroll dependency on Accounts CoA.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h3>Any developer joining the team</h3>
+    <ol style="columns:2;gap:32px">
+      <li><a href="architecture.html">System Architecture</a> — app structure, where your module lives.</li>
+      <li><a href="customization-guide.html">Customization Guide</a> — the decision framework you'll use every day.</li>
+      <li><a href="developer-guide.html">Developer Workflow</a> — local setup, Git conventions, PR process, testing.</li>
+      <li><a href="sprint-plan.html">Sprint Plan</a> — find which track you're on and what's due when.</li>
+    </ol>
+  </div>
+
+  <h2>What Frappe/ERPNext gets us immediately</h2>
+  <p>Before any custom work, a fresh ERPNext v15 install provides:</p>
+  <div class="grid g3">
+    <div class="card">
+      <h4>Data model</h4>
+      <ul>
+        <li>Customer, Supplier, Item masters</li>
+        <li>Lead, Opportunity, Quotation, Sales Order, Delivery Note, Sales Invoice</li>
+        <li>Purchase Order, GRN, Purchase Invoice</li>
+        <li>Stock Ledger, Warehouse, Batch, Serial No</li>
+        <li>Chart of Accounts, Journal Entries, Payment Entries</li>
+        <li>Employee, Leave, Attendance, Payroll</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Infrastructure</h4>
+      <ul>
+        <li>Role-based permission engine</li>
+        <li>REST API auto-generated for every DocType</li>
+        <li>Webhook engine (outbound)</li>
+        <li>Background job queue (Redis/RQ)</li>
+        <li>Email integration (SMTP + POP3)</li>
+        <li>Notification engine (email, SMS, WhatsApp hooks)</li>
+        <li>Print format builder</li>
+        <li>Report builder (Query, Script)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Platform</h4>
+      <ul>
+        <li>Multi-tenant (site per client, shared bench)</li>
+        <li>Audit trail on every document</li>
+        <li>Workflow engine (approval chains)</li>
+        <li>Versioning on all DocTypes</li>
+        <li>Portal (customer/supplier self-service)</li>
+        <li>Full-text search</li>
+        <li>File attachments (local or S3)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <span></span>
+    <a class="next" href="frappe-verdict.html">Frappe Capability Assessment →</a>
+  </div>
+</main>
+</body>
+</html>

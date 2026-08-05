@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frappe Capability — AIWS ERP</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="s-title">AIWS ERP</div>
+    <div class="s-sub">Implementation Master Plan</div>
+    <span class="s-tag">Claude / implementation</span>
+  </div>
+  <nav>
+    <div class="nav-group">Start Here</div>
+    <a class="nav-link" href="index.html">Program Overview</a>
+    <div class="nav-group">Foundation</div>
+    <a class="nav-link active" href="frappe-verdict.html">Frappe Capability</a>
+    <a class="nav-link" href="architecture.html">System Architecture</a>
+    <div class="nav-group">Development Framework</div>
+    <a class="nav-link" href="customization-guide.html">Customization Guide</a>
+    <a class="nav-link" href="developer-guide.html">Developer Workflow</a>
+    <div class="nav-group">Implementation</div>
+    <a class="nav-link" href="module-plan.html">All 13 Modules</a>
+    <a class="nav-link" href="sprint-plan.html">Parallel Sprint Plan</a>
+    <a class="nav-link" href="wave-1.html">Sales &amp; Marketing Detail</a>
+
+    <div class="nav-group">Module Plans</div>
+    <a class="nav-link" href="sales-module.html">Sales Module Plan</a>
+    <a class="nav-link" href="hr-module.html">HR Module Plan</a>
+    <a class="nav-link" href="accounts-module.html">Accounts Module Plan</a>
+    <a class="nav-link" href="finance-module.html">Finance Module Plan</a>
+    <a class="nav-link" href="pmo-module.html">PMO Module Plan</a>
+
+    <div class="nav-group">User Manual</div>
+    <a class="nav-link" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
+
+    <div class="nav-group">AI Strategy</div>
+    <a class="nav-link" href="ai-plan-strategy.html">AI Plan Strategy</a>
+
+    <div class="nav-group">Tracking</div>
+    <a class="nav-link" href="sales-tracker.html">Sales Tracker</a>
+    <a class="nav-link" href="sales-demo-showcase.html">Sales Showcase ✨</a>
+  </nav>
+  <div class="sidebar-foot">Pixaflip × SIL · AIWS ERP<br><a href="../../index.html">← AIWS Setup portal</a></div>
+</aside>
+
+<main>
+  <div class="breadcrumb">AIWS ERP <span>›</span> <a href="index.html">Plan</a> <span>›</span> Frappe Capability</div>
+  <div class="page-header">
+    <h1>Frappe / ERPNext Capability Assessment</h1>
+    <p class="subtitle">What the Frappe ecosystem gives us out-of-the-box, what needs extension, and what must be built — per module.</p>
+  </div>
+
+  <h2>The 5 Frappe concepts every developer must know</h2>
+  <div class="grid g2">
+    <div class="card">
+      <h3>DocType</h3>
+      <p>The fundamental Frappe building block. A DocType is simultaneously a <strong>database table definition</strong>, a <strong>web form</strong>, and a <strong>REST endpoint</strong>. Define a DocType and Frappe creates the DB table, generates CRUD APIs, and renders the form — automatically.</p>
+      <p>There are two kinds relevant to us: <strong>Standard DocTypes</strong> (from ERPNext core, never modify) and <strong>Custom DocTypes</strong> (our additions, live in custom apps).</p>
+    </div>
+    <div class="card">
+      <h3>App &amp; Bench &amp; Site</h3>
+      <p><strong>Bench</strong> = the server installation (Python env + apps + config). <strong>App</strong> = a Python package installed on the bench (ERPNext is one app; our custom modules are separate apps). <strong>Site</strong> = one tenant — has its own MariaDB database, its own config, and can have a subset of apps installed.</p>
+      <p>One bench can host hundreds of sites. All sites share the same app code but are completely isolated in data.</p>
+    </div>
+    <div class="card">
+      <h3>Hooks</h3>
+      <p>The integration contract between apps. Hooks (in <code>hooks.py</code>) let your custom app intercept Frappe framework events without touching any core code: <code>doc_events</code> (DocType lifecycle), <code>scheduler_events</code> (cron jobs), <code>on_login</code>, <code>after_install</code>, etc.</p>
+      <p>Hooks are how you extend ERPNext without forking it. This is the correct pattern — always.</p>
+    </div>
+    <div class="card">
+      <h3>Fixtures</h3>
+      <p>JSON exports of configuration (Custom Fields, Property Setters, Roles, Workflows, Print Formats, etc.) that live inside your app and are auto-imported on install. Fixtures make your configuration <strong>reproducible and version-controlled</strong> — the only way to manage config in a team.</p>
+      <p>Running <code>bench export-fixtures</code> captures current config. Running <code>bench --site mysite install-app myapp</code> restores it.</p>
+    </div>
+    <div class="card">
+      <h3>Patches</h3>
+      <p>Python scripts that run once per site during an upgrade to migrate data or repair state. Example: renaming a field, backfilling a new column, or migrating old records to a new DocType. Patches are tracked in <code>patches.txt</code> — Frappe ensures each patch runs exactly once per site.</p>
+      <p>Never write ad-hoc migration scripts. Always use patches.</p>
+    </div>
+    <div class="card">
+      <h3>Frappe UI vs. Frappe Desk</h3>
+      <p><strong>Frappe Desk</strong> (the existing ERPNext UI) is a mature, full-featured interface that auto-generates list views, form views, and dashboards from DocTypes. <strong>Frappe UI</strong> is a newer Vue.js component library for building custom pages.</p>
+      <p>For the ERP, Frappe Desk gives us 90% of the UI for free. Use Frappe UI only for truly custom screens (e.g., a mobile technician app, a client portal page).</p>
+    </div>
+  </div>
+
+  <hr class="section">
+
+  <h2>Per-module coverage table</h2>
+  <p>Coverage % is an honest estimate of what ERPNext/Frappe v15 delivers without any customization against our specific requirements. <strong>Refine</strong> = config + light extension. <strong>Build</strong> = new Custom DocTypes, controllers, integrations.</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <tr>
+        <th>#</th><th>Module</th><th>Wave</th><th>Lead</th><th>Primary Frappe App</th><th>OOTB %</th><th>Classification</th><th>Key Gaps (what to build)</th>
+      </tr>
+      <tr class="row-p1">
+        <td>1</td>
+        <td><strong>Sales</strong></td>
+        <td><span class="badge b-w1">Wave 1</span></td>
+        <td><strong>Raghib</strong></td>
+        <td>ERPNext Selling + Frappe CRM</td>
+        <td class="td-center"><strong>72%</strong></td>
+        <td><span class="badge b-refine">Refine</span> <span class="badge b-build">+ Build</span></td>
+        <td>Field Force management app, Dealer scorecard, Channel Partner portal, Sales Commission calculator, advanced Follow-up automation</td>
+      </tr>
+      <tr class="row-p1">
+        <td>2</td>
+        <td><strong>Marketing</strong></td>
+        <td><span class="badge b-w1">Wave 1</span></td>
+        <td><strong>Raghib</strong></td>
+        <td>Frappe CRM + GentooLeads (in-house)</td>
+        <td class="td-center"><strong>38%</strong></td>
+        <td><span class="badge b-integ">Integration</span> <span class="badge b-build">+ Build</span></td>
+        <td>GentooLeads connector (WhatsApp/IG/FB), Content Calendar DocType, Brand Assets Library, SEO/SEM tracking, Campaign ROI analytics</td>
+      </tr>
+      <tr class="row-p1">
+        <td>3</td>
+        <td><strong>PMO</strong></td>
+        <td><span class="badge b-w1">Wave 1</span></td>
+        <td><strong>Vandana</strong></td>
+        <td>ERPNext Projects</td>
+        <td class="td-center"><strong>58%</strong></td>
+        <td><span class="badge b-refine">Refine</span> <span class="badge b-build">+ Build</span></td>
+        <td>Consultant Onboarding DocType, Logsheet management, Risk &amp; Change management DocTypes, Project Impact Report, Library Management</td>
+      </tr>
+      <tr class="row-p1">
+        <td>4</td>
+        <td><strong>Service</strong></td>
+        <td><span class="badge b-w2">Wave 2</span></td>
+        <td>TBD</td>
+        <td>ERPNext Support (HD) + custom</td>
+        <td class="td-center"><strong>52%</strong></td>
+        <td><span class="badge b-refine">Refine</span> <span class="badge b-build">+ Build</span></td>
+        <td>AMC Management DocType, Field Service scheduling (technician dispatch), Spare Parts by service contract, mobile Technician app (Frappe UI)</td>
+      </tr>
+      <tr class="row-p2">
+        <td>5</td>
+        <td><strong>Production</strong></td>
+        <td><span class="badge b-w2">Wave 2</span></td>
+        <td>TBD</td>
+        <td>ERPNext Manufacturing</td>
+        <td class="td-center"><strong>83%</strong></td>
+        <td><span class="badge b-ootb">OOTB</span> <span class="badge b-refine">+ Refine</span></td>
+        <td>Granular Downtime Tracking DocType, Shift-wise OEE reporting; rest is standard ERPNext Manufacturing</td>
+      </tr>
+      <tr class="row-p2">
+        <td>6</td>
+        <td><strong>Purchase</strong></td>
+        <td><span class="badge b-w2">Wave 2</span></td>
+        <td>TBD</td>
+        <td>ERPNext Buying</td>
+        <td class="td-center"><strong>88%</strong></td>
+        <td><span class="badge b-ootb">OOTB</span> <span class="badge b-refine">+ Refine</span></td>
+        <td>RFQ comparison matrix UI, Vendor Portal pages (Frappe UI); rest is native ERPNext Buying</td>
+      </tr>
+      <tr class="row-p2">
+        <td>7</td>
+        <td><strong>Stores</strong></td>
+        <td><span class="badge b-w2">Wave 2</span></td>
+        <td>TBD</td>
+        <td>ERPNext Stock</td>
+        <td class="td-center"><strong>85%</strong></td>
+        <td><span class="badge b-ootb">OOTB</span> <span class="badge b-refine">+ Refine</span></td>
+        <td>Auto slow-moving stock alert scheduler, improved cycle-count UI; barcode scanning via Frappe's built-in barcode field</td>
+      </tr>
+      <tr class="row-p2">
+        <td>8</td>
+        <td><strong>Accounts</strong></td>
+        <td><span class="badge b-w1">Wave 1</span></td>
+        <td><strong>Uday</strong></td>
+        <td>ERPNext Accounts</td>
+        <td class="td-center"><strong>90%</strong></td>
+        <td><span class="badge b-ootb">OOTB</span> <span class="badge b-refine">+ Refine</span></td>
+        <td>E-invoicing requires India Compliance app (free, official); TDS/TCS native. Practically no custom build needed.</td>
+      </tr>
+      <tr class="row-p2">
+        <td>9</td>
+        <td><strong>Finance</strong></td>
+        <td><span class="badge b-w1">Wave 1</span></td>
+        <td><strong>Uday</strong></td>
+        <td>ERPNext Accounts + Script Reports</td>
+        <td class="td-center"><strong>68%</strong></td>
+        <td><span class="badge b-refine">Refine</span> <span class="badge b-build">+ Build</span></td>
+        <td>Budget forecasting engine (Script Report), Working Capital dashboard, MSME scheme tracking DocType, ROI-by-product report</td>
+      </tr>
+      <tr class="row-p3">
+        <td>10</td>
+        <td><strong>Human Resources</strong></td>
+        <td><span class="badge b-w1">Wave 1</span></td>
+        <td><strong>Vandana</strong></td>
+        <td>Frappe HR</td>
+        <td class="td-center"><strong>74%</strong></td>
+        <td><span class="badge b-ootb">OOTB</span> <span class="badge b-refine">+ Refine</span> <span class="badge b-build">+ Build</span></td>
+        <td>360 Feedback DocType, Skills Matrix, Performance appraisal extension, DPDP consent tracking (critical for EMS integration)</td>
+      </tr>
+      <tr class="row-p3">
+        <td>11</td>
+        <td><strong>Logistics</strong></td>
+        <td><span class="badge b-w3">Wave 3</span></td>
+        <td>TBD</td>
+        <td>ERPNext Stock + Custom app</td>
+        <td class="td-center"><strong>42%</strong></td>
+        <td><span class="badge b-refine">Refine</span> <span class="badge b-build">+ Build heavy</span></td>
+        <td>Fleet Management DocTypes (Vehicle, Trip, Fuel), Route Optimisation (Google Directions API), Driver mobile app (Frappe UI), Courier API connectors, e-Way Bill (India Compliance)</td>
+      </tr>
+      <tr class="row-p3">
+        <td>12</td>
+        <td><strong>Dashboards &amp; BI</strong></td>
+        <td><span class="badge b-w4">Wave 4</span></td>
+        <td>TBD</td>
+        <td>Apache Superset + ERPNext Dashboards</td>
+        <td class="td-center"><strong>62%</strong></td>
+        <td><span class="badge b-refine">Refine</span> <span class="badge b-build">+ Build</span></td>
+        <td>Superset embed setup, cross-module KPI mart (ETL into analytics DB), role-based dashboard provisioning per client, custom Frappe dashboard pages</td>
+      </tr>
+      <tr>
+        <td>13</td>
+        <td><strong>Survey</strong></td>
+        <td><span class="badge b-w4">Wave 4</span></td>
+        <td>TBD</td>
+        <td>Frappe (Web Form)</td>
+        <td class="td-center"><strong>20%</strong></td>
+        <td><span class="badge b-build">Build</span></td>
+        <td>Survey DocType with response analytics, conditional logic, embedding. Scope TBD by business team (Open Question).</td>
+      </tr>
+    </table>
+  </div>
+
+  <hr class="section">
+
+  <h2>The three-tier classification in practice</h2>
+  <div class="grid g3">
+    <div class="card">
+      <h3><span class="badge b-ootb">OOTB</span>&nbsp; Use as-is</h3>
+      <p>Feature exists in ERPNext/Frappe exactly as needed. Your job: <strong>configure and enable it</strong>. Enable the module, set permissions, configure workflows, write print formats.</p>
+      <p><strong>Examples:</strong> Chart of Accounts, Purchase Order workflow, Leave policy, Stock valuation methods, GST tax templates.</p>
+      <p class="muted">No app code required. All config goes into fixtures.</p>
+    </div>
+    <div class="card">
+      <h3><span class="badge b-refine">Refine</span>&nbsp; Extend it</h3>
+      <p>Feature exists but needs adjustment: extra fields, changed validation, additional child tables, UI tweaks, custom reports. Your job: <strong>add on top</strong> via Custom Fields, Property Setters, Server/Client Scripts.</p>
+      <p><strong>Examples:</strong> Adding BANT fields to Lead DocType, adding a Dealer Scorecard child table to Customer, extending Sales Person targets with activity metrics.</p>
+      <p class="muted">Custom app required; fixtures for fields + scripts for logic.</p>
+    </div>
+    <div class="card">
+      <h3><span class="badge b-build">Build</span>&nbsp; Create new</h3>
+      <p>No Frappe equivalent, or the gap is too large to patch. Your job: <strong>build a new Custom DocType</strong> with its own controller, UI, and APIs inside your custom app.</p>
+      <p><strong>Examples:</strong> AMC Management, Field Service Dispatch, Content Calendar, Fleet Management, Channel Partner Portal, Dealer Scorecard, Route Optimization engine.</p>
+      <p class="muted">Full Frappe app development: DocType + controller + client script + fixtures.</p>
+    </div>
+  </div>
+
+  <hr class="section">
+
+  <h2>Known Frappe limitations — plan around these</h2>
+  <div class="tbl-wrap">
+    <table>
+      <tr><th>Limitation</th><th>Impact on AIWS</th><th>Mitigation</th></tr>
+      <tr>
+        <td><strong>MariaDB only</strong> for app-layer data</td>
+        <td>All ERP data in MariaDB. PostgreSQL not supported by Frappe ORM.</td>
+        <td>Use PostgreSQL only for the separate control-plane service. ERP data stays in MariaDB — this is fine for ERP workloads.</td>
+      </tr>
+      <tr>
+        <td><strong>Frappe Desk UI</strong> is functional but dated</td>
+        <td>End-user experience may feel like a classic ERP (not a modern SaaS app) without customization.</td>
+        <td>Use Frappe Workspaces + role-based dashboards to simplify the UX. Build truly custom pages (mobile apps, client portals) with Frappe UI (Vue.js) where needed.</td>
+      </tr>
+      <tr>
+        <td><strong>Background jobs via Redis/RQ</strong></td>
+        <td>RQ is reliable for ERP-scale async work but is not Kafka-class message streaming.</td>
+        <td>RQ is perfectly adequate for ERP event processing. The future Bridge will use a proper event backbone; the ERP just writes to an outbox table.</td>
+      </tr>
+      <tr>
+        <td><strong>Performance ceiling</strong> under very high concurrent users</td>
+        <td>Frappe is Python-based; at 500+ concurrent users per site, it needs careful tuning.</td>
+        <td>Use Redis caching aggressively, set up Gunicorn workers correctly, and separate Tier B (dedicated) sites for large enterprise clients.</td>
+      </tr>
+      <tr>
+        <td><strong>GPL licensing</strong></td>
+        <td>ERPNext is GPL v3. Frappe Framework is MIT.</td>
+        <td>The GPL SaaS exception (AGPL does not apply here) means you can run GPL software as a service without open-sourcing your code. Legal review required before commercial launch (Open Question #8).</td>
+      </tr>
+      <tr>
+        <td><strong>Frappe CRM is a separate app</strong></td>
+        <td>Frappe CRM (modern Vue-based) is distinct from ERPNext CRM (classic). They share the same DB but have different interfaces.</td>
+        <td>Use <strong>Frappe CRM</strong> as the primary sales/pipeline UI. ERPNext Selling handles the transactional flow (Quotation → Order → Invoice). Both installed on the same site.</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="callout cs">
+    <p><strong>Bottom line:</strong> Frappe/ERPNext is a well-chosen foundation for this project. The ~70% OOTB coverage is excellent for a general-purpose ERP; the 30% gap is exactly the right kind of gap — feature-specific business logic that should be custom anyway. No red flags requiring a platform rethink.</p>
+  </div>
+
+  <div class="page-nav">
+    <a class="prev" href="index.html">← Program Overview</a>
+    <a class="next" href="architecture.html">System Architecture →</a>
+  </div>
+</main>
+</body>
+</html>

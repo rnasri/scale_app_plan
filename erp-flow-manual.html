@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ERP Flow &amp; Operations Manual | AIWS ERP</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.xref-link { color:var(--blue); font-weight:600; text-decoration:none; }
+.xref-link:hover { text-decoration:underline; }
+.status-badge { display:inline-flex; align-items:center; gap:6px; padding:4px 12px; border-radius:20px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.4px; white-space:nowrap; }
+.s-live    { background:var(--green-bg); color:var(--green); border:1px solid var(--green-bdr); }
+.s-progress{ background:var(--amber-bg); color:var(--amber); border:1px solid var(--amber-bdr); }
+.s-early   { background:#fef3c7; color:#92400e; border:1px solid #fde68a; }
+.s-planned { background:#f9fafb; color:#6b7280; border:1px solid #e5e7eb; }
+.s-flag    { background:var(--red-bg); color:var(--red); border:1px solid var(--red-bdr); }
+.module-hero { border:1px solid var(--border); border-radius:var(--r-lg); padding:24px 28px; margin:32px 0 20px; box-shadow:var(--sh); background:var(--surface); scroll-margin-top:20px; }
+.module-hero h2 { margin:0 0 4px; }
+.module-meta { font-size:12.5px; color:var(--text-3); margin-bottom:14px; }
+.sec-label { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; color:var(--text-4); margin:18px 0 8px; }
+.sec-label:first-of-type { margin-top:4px; }
+.setup-list { counter-reset:setup; list-style:none; margin:0; padding:0; display:grid; gap:6px; }
+.setup-list li { counter-increment:setup; font-size:13.5px; padding-left:30px; position:relative; line-height:1.55; }
+.setup-list li::before { content:counter(setup); position:absolute; left:0; top:0; width:20px; height:20px; border-radius:50%; background:var(--navy); color:#fff; font-size:10.5px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+.usecase-card { border:1px solid var(--border); border-radius:var(--r); padding:14px 16px; margin-bottom:10px; background:var(--surface-2); }
+.usecase-card h4 { margin:0 0 6px; font-size:13.5px; color:var(--navy); }
+.usecase-card p { margin:0 0 4px; font-size:13px; line-height:1.6; }
+.uc-label { font-weight:700; color:var(--text-2); }
+.diff-box { background:#eff6ff; border:1px solid #bfdbfe; border-radius:var(--r); padding:14px 16px; margin:10px 0; }
+.diff-box h4 { margin:0 0 6px; font-size:13px; color:#1e40af; }
+.diff-box p { margin:0; font-size:13px; line-height:1.65; color:#1e3a5f; }
+.ext-box { background:#f5f3ff; border:1px solid var(--purple-bdr); border-radius:var(--r); padding:14px 16px; margin:10px 0; }
+.ext-box h4 { margin:0 0 6px; font-size:13px; color:var(--purple); }
+.ext-box p, .ext-box ul { margin:0; font-size:13px; line-height:1.65; color:#4c1d95; }
+.ext-box ul { padding-left:18px; }
+.golden-step { display:flex; gap:14px; align-items:flex-start; padding:12px 0; border-bottom:1px solid var(--border); }
+.golden-step:last-child { border-bottom:none; }
+.golden-num { flex-shrink:0; width:28px; height:28px; border-radius:50%; background:var(--navy); color:#fff; font-size:12.5px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+.golden-step h4 { margin:0 0 3px; font-size:13.5px; }
+.golden-step p { margin:0; font-size:12.5px; color:var(--text-3); line-height:1.55; }
+.toc-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; margin:16px 0 8px; }
+.toc-item { display:flex; align-items:center; gap:10px; padding:10px 14px; border:1px solid var(--border); border-radius:var(--r); background:var(--surface); text-decoration:none; color:var(--text-1); font-size:13px; font-weight:600; transition:border-color .15s; }
+.toc-item:hover { border-color:var(--blue); }
+.toc-num { flex-shrink:0; width:22px; height:22px; border-radius:5px; background:var(--surface-2); color:var(--text-3); font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+
+/* ── Page-flow walkthrough: native ERPNext steps + our additions threaded in ── */
+.flow-block { border:1px solid var(--border); border-radius:var(--r-lg); padding:18px 20px 8px; margin:10px 0 16px; background:var(--surface); }
+.flow-block-label { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; color:#1d4ed8; margin-bottom:2px; }
+.flow-block-sub { font-size:12px; color:var(--text-3); margin-bottom:14px; }
+.flow-step { display:flex; gap:14px; padding:12px 0; border-bottom:1px dashed var(--border); }
+.flow-step:last-child { border-bottom:none; padding-bottom:4px; }
+.flow-num { flex-shrink:0; width:26px; height:26px; border-radius:50%; background:#2563eb; color:#fff; font-size:11.5px; font-weight:800; display:flex; align-items:center; justify-content:center; margin-top:1px; }
+.flow-nav { font-weight:700; font-size:13.5px; color:var(--text-1); margin-bottom:3px; }
+.flow-nav code { font-size:12px; }
+.flow-detail { font-size:13px; color:var(--text-3); line-height:1.6; margin-bottom:6px; }
+.flow-addon { background:#faf5ff; border-left:3px solid var(--purple); border-radius:0 6px 6px 0; padding:8px 12px; margin-top:6px; font-size:12.5px; line-height:1.6; color:#4c1d95; }
+.flow-addon .addon-tag { display:inline-block; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.4px; color:var(--purple); background:var(--purple-bg); border-radius:4px; padding:1px 7px; margin-right:6px; }
+.flow-addon.planned { background:#fffbeb; border-left-color:var(--amber); color:#78350f; }
+.flow-addon.planned .addon-tag { color:var(--amber); background:var(--amber-bg); }
+.flow-native-only { text-align:center; font-size:12px; color:var(--text-4); padding:10px 0 2px; font-style:italic; }
+
+/* ── Concept differentiation call-outs — "these sound alike but aren't" ── */
+.concept-box { background:var(--cyan-bg); border:1px solid #a5f3fc; border-radius:var(--r); padding:14px 16px; margin:12px 0; }
+.concept-box h4 { margin:0 0 8px; font-size:13px; color:var(--cyan); display:flex; align-items:center; gap:6px; }
+.concept-box p { margin:0 0 6px; font-size:13px; line-height:1.65; color:#164e63; }
+.concept-box p:last-child { margin-bottom:0; }
+.concept-row { display:flex; gap:10px; align-items:flex-start; margin:6px 0; font-size:12.5px; line-height:1.55; }
+.concept-term { flex-shrink:0; min-width:150px; font-weight:800; color:#0e7490; background:#fff; border:1px solid #a5f3fc; border-radius:5px; padding:3px 9px; text-align:center; }
+.concept-term-desc { color:#164e63; padding-top:3px; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="s-title">AIWS ERP</div>
+    <div class="s-sub">Implementation Master Plan</div>
+    <span class="s-tag">Claude / implementation</span>
+  </div>
+  <nav>
+    <div class="nav-group">Start Here</div>
+    <a class="nav-link" href="index.html">Program Overview</a>
+
+    <div class="nav-group">Foundation</div>
+    <a class="nav-link" href="frappe-verdict.html">Frappe Capability</a>
+    <a class="nav-link" href="architecture.html">System Architecture</a>
+
+    <div class="nav-group">Development Framework</div>
+    <a class="nav-link" href="customization-guide.html">Customization Guide</a>
+    <a class="nav-link" href="developer-guide.html">Developer Workflow</a>
+
+    <div class="nav-group">Implementation</div>
+    <a class="nav-link" href="module-plan.html">All 13 Modules</a>
+    <a class="nav-link" href="sprint-plan.html">Parallel Sprint Plan</a>
+    <a class="nav-link" href="wave-1.html">Sales &amp; Marketing Detail</a>
+
+    <div class="nav-group">Module Plans</div>
+    <a class="nav-link" href="sales-module.html">Sales Module Plan</a>
+    <a class="nav-link" href="hr-module.html">HR Module Plan</a>
+    <a class="nav-link" href="accounts-module.html">Accounts Module Plan</a>
+    <a class="nav-link" href="finance-module.html">Finance Module Plan</a>
+    <a class="nav-link" href="pmo-module.html">PMO Module Plan</a>
+
+    <div class="nav-group">User Manual</div>
+    <a class="nav-link active" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
+
+    <div class="nav-group">AI Strategy</div>
+    <a class="nav-link" href="ai-plan-strategy.html">AI Plan Strategy</a>
+
+    <div class="nav-group">Tracking</div>
+    <a class="nav-link" href="sales-tracker.html">Sales Tracker</a>
+    <a class="nav-link" href="sales-demo-showcase.html">Sales Showcase ✨</a>
+  </nav>
+  <div class="sidebar-foot">Pixaflip × SIL · AIWS ERP<br><a href="../../index.html">← AIWS Setup portal</a></div>
+</aside>
+
+<main>
+<div class="breadcrumb">AIWS ERP <span>›</span> ERP Flow &amp; Operations Manual</div>
+
+<div class="page-header">
+  <h1>ERP Flow &amp; Operations Manual</h1>
+  <p class="subtitle">How an organization actually starts using this system, module by module — significance, prerequisites, what data goes in first, the core use cases, how it differs from vanilla ERPNext, and what we need from the client to get started. Written for business users and implementation leads, not developers — for the code-level build plan behind any module, follow the cross-links to its dedicated plan page.</p>
+</div>
+
+<div class="summary-strip">
+  <div class="s-stat"><div class="sv">8</div><div class="sl">Modules Covered</div></div>
+  <div class="s-stat"><div class="sv">1</div><div class="sl">Live — Sales</div></div>
+  <div class="s-stat"><div class="sv">3</div><div class="sl">In Progress / Early</div></div>
+  <div class="s-stat"><div class="sv">3</div><div class="sl">Not Yet Started</div></div>
+  <div class="s-stat"><div class="sv">1</div><div class="sl">Architecture Flag — CRM</div></div>
+</div>
+
+<div class="callout ci">
+  <p><strong>How to read the status badges:</strong> <span class="status-badge s-live">● Live</span> real code, merged, verified working end-to-end &nbsp;·&nbsp; <span class="status-badge s-progress">● In Progress</span> app scaffolded, hooks wired, feature build underway &nbsp;·&nbsp; <span class="status-badge s-early">● Early / Phase 0</span> app installed with seed/demo data, no custom DocTypes yet &nbsp;·&nbsp; <span class="status-badge s-planned">● Planned</span> scoped but not started &nbsp;·&nbsp; <span class="status-badge s-flag">● Architecture Flag</span> a real discrepancy between the original plan and what's actually built. These reflect the state of the local bench and git history as of 5 Aug 2026 — verified directly against code, not copied from planning docs, so this page won't silently drift out of date the way a purely aspirational manual would.</p>
+</div>
+
+<h2>Quick Jump</h2>
+<div class="toc-grid">
+  <a class="toc-item" href="#golden-path"><span class="toc-num">0</span> The Golden Path</a>
+  <a class="toc-item" href="#sales"><span class="toc-num">1</span> Sales</a>
+  <a class="toc-item" href="#crm"><span class="toc-num">2</span> CRM</a>
+  <a class="toc-item" href="#hr"><span class="toc-num">3</span> HR</a>
+  <a class="toc-item" href="#accounts"><span class="toc-num">4</span> Accounts</a>
+  <a class="toc-item" href="#finance"><span class="toc-num">5</span> Finance</a>
+  <a class="toc-item" href="#projects"><span class="toc-num">6</span> Projects (PMO)</a>
+  <a class="toc-item" href="#buying"><span class="toc-num">7</span> Buying</a>
+  <a class="toc-item" href="#manufacturing"><span class="toc-num">8</span> Manufacturing</a>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     0 — GOLDEN PATH
+═══════════════════════════════════════════ -->
+<div class="module-hero" id="golden-path">
+  <h2>0 · The Golden Path — What Must Exist Before Anything Else</h2>
+  <p class="module-meta">Universal prerequisites, shared by every module below. Skipping or reordering these causes downstream modules to silently fail or produce wrong numbers — do this once, correctly, before any module-specific setup begins.</p>
+
+  <div class="callout cw" style="margin-bottom:16px;">
+    <p><strong>Why this section exists:</strong> Every module page below lists its own prerequisites, but several of those prerequisites are shared across the whole system — Company, Chart of Accounts, core masters. Setting these up separately, once per module, risks inconsistency (two different Territory trees, two different Item naming conventions). Do the Golden Path exactly once, at the very start of implementation, before touching any module-specific checklist.</p>
+  </div>
+
+  <div class="golden-step">
+    <div class="golden-num">1</div>
+    <div><h4>Company</h4><p>The legal entity record — name, abbreviation, default currency, country. This single record drives the default Chart of Accounts template, fiscal year defaults, and every subsequent transaction's company field. Get this right first; changing it later is disruptive.</p></div>
+  </div>
+  <div class="golden-step">
+    <div class="golden-num">2</div>
+    <div><h4>Fiscal Year</h4><p>The accounting period definition. Required before any transaction (Sales Invoice, Purchase Invoice, Journal Entry, Payroll run) can be created — native ERPNext blocks posting outside a defined fiscal year.</p></div>
+  </div>
+  <div class="golden-step">
+    <div class="golden-num">3</div>
+    <div><h4>Chart of Accounts</h4><p>Either accept ERPNext's standard template (auto-created with Company) or import the client's existing CoA. Gates every financial posting across Sales, Purchase, Payroll, and Projects — nothing "counts" financially until it can post to a real GL account. See <a href="#accounts">§4 Accounts</a> for the full build.</p></div>
+  </div>
+  <div class="golden-step">
+    <div class="golden-num">4</div>
+    <div><h4>Warehouse</h4><p>At least one default warehouse, even for service-only businesses — Item records need one for stock tracking, and Sales/Purchase of any stock item requires it. Multiple warehouses if the client has physical locations.</p></div>
+  </div>
+  <div class="golden-step">
+    <div class="golden-num">5</div>
+    <div><h4>UOM (Unit of Measure)</h4><p>Nos, Kg, Hour, Box, etc. — native defaults cover most cases; add client-specific units (e.g. "Manday," used heavily by Projects) before Item creation.</p></div>
+  </div>
+  <div class="golden-step">
+    <div class="golden-num">6</div>
+    <div><h4>Item &amp; Item Group</h4><p>Every product or service the company sells or buys. Needed before a Quotation, Sales Order, Purchase Order, or BOM can reference anything. For services-only businesses, Items are still required (as non-stock Items) — Sales and Purchase transactions cannot exist without at least one Item line.</p></div>
+  </div>
+  <div class="golden-step">
+    <div class="golden-num">7</div>
+    <div><h4>Territory, Customer Group, Supplier Group</h4><p>The classification trees Customer and Supplier records hang off. Build the Territory tree to match the client's actual sales regions — Sales's auto-assignment logic depends directly on this being correct from day one (see <a href="#sales">§1 Sales</a>).</p></div>
+  </div>
+  <div class="golden-step">
+    <div class="golden-num">8</div>
+    <div><h4>Price Lists (Selling &amp; Buying)</h4><p>Needed before Quotation or Purchase Order pricing works. At minimum one Standard Selling and one Standard Buying price list.</p></div>
+  </div>
+  <div class="golden-step">
+    <div class="golden-num">9</div>
+    <div><h4>Tax Templates (via India Compliance)</h4><p>GST rates, HSN/SAC codes. Needed before any Invoice with tax can be created correctly. India Compliance is a Level 1 adopt app install, not custom code — see <a href="accounts-module.html">accounts-module.html</a>.</p></div>
+  </div>
+  <div class="golden-step">
+    <div class="golden-num">10</div>
+    <div><h4>Cost Center</h4><p>Shared foundation for Accounts, Finance, and Projects budget tracking. Built once (whichever team gets there first per the AC-13/FI-05 cross-reference convention — see <a href="accounts-module.html">accounts-module.html</a>) and consumed everywhere else with zero extra code.</p></div>
+  </div>
+  <div class="golden-step">
+    <div class="golden-num">11</div>
+    <div><h4>Department &amp; Employee master (via HR)</h4><p>Needed before Timesheet, Payroll, Sales Person-to-User mapping, and Projects' Resource Allocation. This is the one Golden Path item most dependent on the client providing real external data — see <a href="#hr">§3 HR</a>.</p></div>
+  </div>
+
+  <div class="concept-box" style="margin-top:16px;">
+    <h4>🔍 Understand the difference — Cost Center vs. Department vs. Territory</h4>
+    <p>Three separate classification trees, easy to conflate because they all look like "org structure," but each drives a different module and answers a different question:</p>
+    <div class="concept-row"><div class="concept-term">Cost Center</div><div class="concept-term-desc"><strong>Financial dimension.</strong> Where does the money get attributed on the GL? Used by Accounts (every transaction), Finance (budget/variance), and Projects (budget tracking). Lives in the Accounting module.</div></div>
+    <div class="concept-row"><div class="concept-term">Department</div><div class="concept-term-desc"><strong>HR org structure.</strong> Who reports to whom, for approval routing and headcount. Used by HR (Employee, Leave approval) and Task (Department field). Not a financial dimension by itself.</div></div>
+    <div class="concept-row"><div class="concept-term">Territory</div><div class="concept-term-desc"><strong>Sales geography.</strong> Which region does this Customer/Lead belong to, for auto-assignment and regional reporting. Used almost exclusively by Sales — Customer, Lead, Sales Order all carry it.</div></div>
+    <p style="margin-top:8px;">A single real-world "region" or "team" often needs entries in <strong>all three</strong> trees, separately, because each one is consumed by a different module's logic — building only one and assuming the others inherit it is a common setup mistake.</p>
+  </div>
+
+  <div class="concept-box">
+    <h4>🔍 Understand the difference — Customer vs. Contact vs. Address</h4>
+    <p>Three separate native DocTypes that together answer "who do we sell to and where" — used identically by Sales (Customer) and Buying (the same pattern, but Supplier):</p>
+    <div class="concept-row"><div class="concept-term">Customer</div><div class="concept-term-desc">The <strong>company/account</strong> record — what gets invoiced, what carries the price list, credit limit, tax settings. One Customer can have many Contacts and many Addresses linked to it.</div></div>
+    <div class="concept-row"><div class="concept-term">Contact</div><div class="concept-term-desc">An individual <strong>person</strong> at that company — name, email, phone, designation. A new user often expects "Customer" to mean "the person I email," but that's actually Contact.</div></div>
+    <div class="concept-row"><div class="concept-term">Address</div><div class="concept-term-desc">A physical <strong>location</strong> — billing address, shipping address, office address. One Customer can have several (e.g. billing HQ vs. a delivery site), each independently linked.</div></div>
+  </div>
+
+  <div class="callout cs" style="margin-top:16px;">
+    <p><strong>After the Golden Path is done, the branches are independent:</strong> Sales needs Customer + Item + Price List + Territory. Purchase needs Supplier + Item + Price List. HR needs Department + Designation + Holiday List + Employee. Accounts needs CoA + Fiscal Year + Cost Center (largely the Golden Path itself). Finance needs Accounts substantially live first — it has no independent data source of its own. Projects needs Customer (client-facing work) + Employee (resourcing) + Cost Center (budget) + ideally a Sales Order as the commercial anchor. Manufacturing needs Item + BOM + Warehouse + Work Station. Each module section below states its own branch-specific prerequisites in full.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     1 — SALES
+═══════════════════════════════════════════ -->
+<div class="module-hero" id="sales">
+  <span class="status-badge s-live">● Live — merged, PR #7, 3 Aug 2026</span>
+  <h2>1 · Sales</h2>
+  <p class="module-meta">App: <code>scale_sales</code> · Full detail: <a href="sales-module.html">sales-module.html</a> · Live tracking: <a href="sales-tracker.html">sales-tracker.html</a></p>
+
+  <div class="sec-label">Significance</div>
+  <p style="font-size:13.5px;">The revenue engine — Lead → Opportunity → Quotation → Sales Order → Delivery → Invoice → Collection. This is the literal core transactional loop of any commercial organization; almost everything else in the system either feeds this loop (HR provides the sales team, Accounts records the resulting revenue) or is fed by it (Finance analyzes the resulting cash flow, Projects executes what Sales sold).</p>
+
+  <div class="sec-label">Prerequisites</div>
+  <p style="font-size:13.5px;">Golden Path items 6–9 (Item, Territory, Customer Group, Price List, Tax Templates) must exist first. No dependency on HR, Accounts, or Projects to start capturing Leads — Sales can begin generating pipeline before any other module is live, which is why it was built first.</p>
+
+  <div class="sec-label">Initial Setup Checklist</div>
+  <ol class="setup-list">
+    <li><strong>Territory tree</strong> — build to match the client's actual sales regions. This system ships with 4 zones (North/South/East/West India) as a working example; auto-assignment Assignment Rules route new Leads by Territory, so getting this tree right on day one matters more here than almost anywhere else in the system.</li>
+    <li><strong>Lead Source master values</strong> — 10 custom sources beyond ERPNext's defaults (Website, Referral, Cold Call, Trade Show, etc. — tailor to the client's actual channels).</li>
+    <li><strong>Customer Group hierarchy</strong> — Dealer / Distributor / Direct Customer, or whatever the client's actual segmentation is.</li>
+    <li><strong>Sales Person hierarchy + Price Lists</strong> — who reports to whom, and what each tier is authorized to quote.</li>
+    <li><strong>Pipeline Stages</strong> — 10 stages configured on Opportunity's Sales Stage master.</li>
+    <li><strong>Assignment Rules</strong> — one per zone, mapping Territory to the responsible Sales Person; the system auto-creates 4 placeholder reps so this works out of the box on any fresh site, but real names should replace these before go-live.</li>
+  </ol>
+
+  <div class="sec-label">The Page Flow — Default ERPNext, With Our Additions Threaded In</div>
+  <p style="font-size:13px;color:var(--text-3);margin-bottom:6px;">Every numbered step below is <strong>100% native ERPNext</strong> — this exact click path works on a completely stock install with zero customization, and is what any ERPNext-trained user already knows. The purple call-outs are what <code>scale_sales</code> adds <strong>at that exact step</strong>, on top of the native screen — not a replacement of it. This is the real answer to "what's default vs. what did we build": read the numbered steps alone for default ERPNext; read the whole block for what actually happens on this site today.</p>
+
+  <div class="flow-block">
+    <div class="flow-block-label">Default flow — Lead to Cash</div>
+    <div class="flow-block-sub">Navigate via the Awesomebar (top search) or Selling workspace in the left sidebar.</div>
+
+    <div class="flow-step">
+      <div class="flow-num">1</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Go to <code>Selling → Lead → New Lead</code></div>
+        <div class="flow-detail">Fill Lead Name, Company Name, Email, Mobile, Source, Territory. Click <strong>Save</strong>. Native ERPNext creates the record with status "Lead."</div>
+        <div class="flow-addon">
+          <span class="addon-tag">+ scale_sales</span>
+          BANT fields (Budget, Authority, Need, Timeline) and UTM fields appear on the same form. On Save: duplicate detection runs automatically, an AI Lead Score (0–100) and Lead Priority (Hot/Warm/Cold) are computed and shown, and — if Territory matches a configured zone — the Lead auto-assigns to the right rep via an Assignment Rule, with no manual routing step.
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">2</div>
+      <div style="flex:1;">
+        <div class="flow-nav">On the Lead, click <code>Create →</code> and pick from Customer / Opportunity / Quotation / Prospect</div>
+        <div class="flow-detail">Native ERPNext's Lead form offers 4 different things you can spawn from the same Lead. They are not steps of one sequence — they're 4 different purposes. See the box below before picking one.</div>
+
+        <div class="concept-box">
+          <h4>🔍 Understand the difference — Customer, Opportunity, Quotation, Prospect</h4>
+          <div class="concept-row"><div class="concept-term">Customer</div><div class="concept-term-desc">Converts the Lead into a proper <code>Customer</code> master record — name, addresses, contacts, price list, tax settings. <strong>Required before anything can ever be invoiced</strong> against this party; a Lead itself can't be quoted, ordered, or billed. Think "this is now a real account," independent of whether any deal has closed.</div></div>
+          <div class="concept-row"><div class="concept-term">Opportunity</div><div class="concept-term-desc">Creates one specific tracked deal — Sales Stage, Probability %, expected Items/value, Expected Closing Date — linked back to this Lead. One Lead can spawn <strong>multiple</strong> Opportunities over time (they buy once, come back a year later for something else — that's a second Opportunity, same Lead/Customer).</div></div>
+          <div class="concept-row"><div class="concept-term">Quotation</div><div class="concept-term-desc">A formal priced proposal — Item rows, rates, taxes, terms. <strong>You can create this directly from the Lead, skipping Opportunity entirely</strong> — Quotation's "Quotation To" field accepts Lead or Customer. The "proper" pipeline is Lead → Opportunity → Quotation, but the system doesn't force it; jump straight to a quote for simple deals.</div></div>
+          <div class="concept-row"><div class="concept-term">Prospect</div><div class="concept-term-desc">An <em>account-level</em> record (Company Name, Industry, Territory, Annual Revenue, No. of Employees) for B2B account-based selling — groups multiple Leads/Contacts under one target organization, so several people at the same company roll up under one view. Only appears in the menu while this Lead isn't already linked to a Prospect.</div></div>
+          <p style="margin-top:10px;"><strong>⚠ Naming collision to know about:</strong> <code>scale_sales</code> also uses the word "Prospect" — but only as one value inside the <strong>Customer Status</strong> picklist (Active / Inactive / <strong>Prospect</strong> / At Risk / Churned) and the Customer Group list. That's a status label on a Customer, completely unrelated to the native <code>Prospect</code> DocType described above. Verified directly in code — the native Prospect record type isn't used anywhere in this build. Don't confuse "a Customer marked status = Prospect" with "a native Prospect account record."</p>
+        </div>
+
+        <div class="flow-addon">
+          <span class="addon-tag">+ scale_sales</span>
+          The Customer form's "More Information" section gains 4 fields — Annual Turnover, Competitor Products Used, Account Classification (A/B/C/Key/Strategic), Customer Status (Active/At Risk/Churned). On the Opportunity, Stakeholder and Competitor child tables appear (Contacts tab); Win Probability and Next Best Action auto-recalculate on save — both rule-based on real fields today, not an LLM call.
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">3</div>
+      <div style="flex:1;">
+        <div class="flow-nav">On the Opportunity, click <code>Create → Quotation</code></div>
+        <div class="flow-detail">Add Item rows (Item Code, Qty, Rate), taxes, terms. Click <strong>Save</strong>, then <strong>Submit</strong>. Native buttons are Draft → Submit → Cancel.</div>
+        <div class="flow-addon">
+          <span class="addon-tag">+ scale_sales</span>
+          If a discount % is entered, the native Submit button is replaced by a Workflow state pill (Draft → Pending Manager Approval → Pending VP Approval → Approved). <strong>⚠ The exact discount threshold that triggers each stage is an open, unresolved conflict</strong> — the original spec said &gt;10% Manager-only, the signed-off Excel says &gt;10% Manager / &gt;20% VP, what actually shipped is ≤20% Manager / &gt;20% VP. See <a href="sales-tracker.html">sales-tracker.html</a> — needs a decision.
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">4</div>
+      <div style="flex:1;">
+        <div class="flow-nav">On the Quotation, click <code>Create → Sales Order</code></div>
+        <div class="flow-detail">Confirm Items, quantities, delivery date. <strong>Save</strong>, then <strong>Submit</strong>.</div>
+        <div class="flow-native-only">No scale_sales addition at this step — pure native ERPNext.</div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">5</div>
+      <div style="flex:1;">
+        <div class="flow-nav">On the Sales Order, click <code>Create → Delivery Note</code> (stock items) and/or <code>Create → Sales Invoice</code></div>
+        <div class="flow-detail">Delivery Note confirms items shipped and updates the Stock Ledger on Submit. Sales Invoice posts to the General Ledger on Submit and can be created directly from the Sales Order for service-only lines.</div>
+        <div class="flow-addon">
+          <span class="addon-tag">+ scale_sales</span>
+          On the Sales Invoice, More Info tab gains Collection Status and Promise-to-Pay Date — both auto-set on Submit and on payment. AR ageing buckets (30/60/90/120 days) are live and reflect this data.
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">6</div>
+      <div style="flex:1;">
+        <div class="flow-nav">On the Sales Invoice, click <code>Create → Payment</code></div>
+        <div class="flow-detail">Records the Payment Entry against the invoice, reconciling the outstanding amount. Native, no customization.</div>
+        <div class="flow-addon">
+          <span class="addon-tag">+ scale_sales</span>
+          For overdue invoices instead of a payment: open <strong>Dunning Type</strong> (Collections card on the Scale Sales workspace) to see the 3 templates (T-7 reminder, T-0 due alert, T+15 formal notice) — selected and sent manually today; automatic scheduled escalation is scoped (T19) but not yet built.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="flow-block-label">Not part of the native chain — additional screens scale_sales adds</div>
+    <div class="flow-step">
+      <div class="flow-num">+</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Scale Sales workspace → <code>Field Visit</code> shortcut → New</div>
+        <div class="flow-detail" style="color:#4c1d95;">Log a visit against a Customer with GPS check-in/check-out, captured via a mobile-optimized web form. No native ERPNext equivalent — this is a wholly new DocType, not an extension of an existing screen.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">+</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Scale Sales workspace → <code>Sales Command Center</code></div>
+        <div class="flow-detail" style="color:#4c1d95;">A live KPI dashboard page — Total Leads, Hot Leads, Pipeline Value, Pending Collections, Field Visits. The first screen a sales manager should open each morning.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ext-box">
+    <h4>What we need from the client</h4>
+    <ul>
+      <li>Existing customer master data — name, GSTIN, address, any turnover/classification data available, for migration</li>
+      <li>Territory / region definitions actually used by their sales team today (not assumed — confirm against the real org)</li>
+      <li>Existing price lists or rate cards</li>
+      <li>Their actual Lead source channels (website, referral, trade show, cold outreach, etc.) — the 10 shipped values are a starting template, not a fixed list</li>
+      <li>Sales team org chart, for accurate Territory-to-rep Assignment Rule mapping (replacing the 4 placeholder reps)</li>
+      <li>Their actual discount-approval policy — directly resolves the open T08 conflict above</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     2 — CRM
+═══════════════════════════════════════════ -->
+<div class="module-hero" id="crm">
+  <span class="status-badge s-flag">● Architecture Flag — installed but not the operative system</span>
+  <h2>2 · CRM</h2>
+  <p class="module-meta">App installed: <code>crm</code> (Frappe CRM v1.79.1, pinned) · Full detail: <a href="sales-module.html">sales-module.html</a> Section A "Platform decision"</p>
+
+  <div class="callout cd">
+    <p><strong>Read this before assuming "CRM" means the separate Frappe CRM app.</strong> The original architecture plan (documented in <a href="frappe-verdict.html">frappe-verdict.html</a> and <a href="architecture.html">architecture.html</a>) intended a specific split: <strong>Frappe CRM</strong> — a separate, modern, Vue-based app — would own Lead/Opportunity/Pipeline management, while native ERPNext Selling would take over from Quotation onward. That plan is installed on the bench (<code>crm</code> is in <code>sites/apps.txt</code>) but <strong>is not what actually got built.</strong> Verified directly in <code>scale_sales/hooks.py</code>'s <code>doc_events</code>: the live system hooks into ERPNext's <em>native</em> <code>Lead</code> and <code>Opportunity</code> DocTypes — not Frappe CRM's separate <code>CRM Lead</code> / <code>CRM Deal</code> schema. <code>scale_sales/TESTING.md</code> confirms this on the ground — it instructs testers to open <code>/app/lead</code> (native ERPNext), never the separate CRM app.</p>
+  </div>
+
+  <div class="sec-label">What this means in practice</div>
+  <p style="font-size:13.5px;">There is no separate CRM setup checklist in this manual, because the real, live pipeline system is exactly what's described in <a href="#sales">§1 Sales</a> above — native Lead → Opportunity, extended by <code>scale_sales</code>. "CRM" and "the Sales pipeline" are the same system today. Frappe CRM sits installed and idle, not wired to anything <code>scale_sales</code> does.</p>
+
+  <div class="sec-label">Why this happened, and whether it's a problem</div>
+  <p style="font-size:13.5px;">This isn't a bug — both the native-ERPNext build and the originally-planned Frappe-CRM build are legitimate architectures, and native ERPNext was faster to extend given <code>scale_sales</code>'s heavy customization needs (BANT fields, territory automation, AI scoring) — those are simpler to bolt onto a DocType the team already controls fully than to bridge into a separate app's own schema. The Sales Module Plan already tracks the same underlying discrepancy under a different name — <strong>T20 "Naming Alignment"</strong> flags that Sales Stage was built on ERPNext's Opportunity stage master, not Frappe CRM's Deal Stage, for the identical reason.</p>
+
+  <div class="sec-label">If you open Frappe CRM instead — what you'd see, and why it's a dead end today</div>
+  <p style="font-size:13px;color:var(--text-3);margin-bottom:6px;">Frappe CRM is a genuinely separate app with its own URL and its own native page flow. Documenting it here so nobody mistakes it for a second, alternative way into the same data — it isn't; it's a disconnected island on this site today.</p>
+  <div class="flow-block">
+    <div class="flow-block-label">Frappe CRM's own native flow (installed, but not wired to scale_sales)</div>
+    <div class="flow-step">
+      <div class="flow-num">1</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Open the separate Frappe CRM URL (its own app, not <code>/app/...</code>) → <code>Leads</code> → <code>+ Create</code></div>
+        <div class="flow-detail">Creates a <code>CRM Lead</code> record — a completely different DocType from native ERPNext's <code>Lead</code>, with its own fields and its own Kanban board.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">2</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Convert to <code>CRM Deal</code>, drag across its own Kanban pipeline</div>
+        <div class="flow-detail">Native Frappe CRM's own Deal Stage settings — visually similar to Opportunity's Sales Stage, but a completely separate master list, on a completely separate DocType.</div>
+
+        <div class="concept-box">
+          <h4>🔍 Understand the difference — Sales Stage vs. Deal Stage</h4>
+          <div class="concept-row"><div class="concept-term">Sales Stage</div><div class="concept-term-desc">Native ERPNext's Opportunity field — <strong>what's actually live</strong> on this site (§1 Sales, step 2). 10 stages configured for this build.</div></div>
+          <div class="concept-row"><div class="concept-term">Deal Stage</div><div class="concept-term-desc">Frappe CRM's own separate setting — on a record type nothing here reads or writes to. If someone hands you a pipeline-stage report and the stage names don't match what you see in §1, this is almost certainly why.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-native-only">⚠ Neither of these records is visible anywhere in the Sales flow described in §1 — no BANT fields, no AI scoring, no territory auto-assignment, no Win Probability. This is genuinely a different, disconnected system with the same DB but no data bridge between the two Lead concepts.</div>
+  </div>
+
+  <div class="diff-box">
+    <h4>Decision needed, not yet made</h4>
+    <p>If the business wants Frappe CRM's modern Kanban interface as the actual day-to-day sales UI, that requires either (a) building a real data bridge syncing native Lead/Opportunity into Frappe CRM's Lead/Deal records, or (b) migrating <code>scale_sales</code>'s hooks and custom fields onto Frappe CRM's DocTypes instead of ERPNext's — a genuine rebuild, not a config toggle. Until that decision is made, train users on the native ERPNext Lead/Opportunity screens described in §1, not on Frappe CRM's UI.</p>
+  </div>
+
+  <div class="ext-box">
+    <h4>What we need from the client</h4>
+    <ul>
+      <li>None specific to this section — see §1 Sales for the actual data requirements, since that's the live system</li>
+      <li>If Frappe CRM's UI is genuinely wanted, that's a scoping conversation, not a data-collection one — flag to Raghib before assuming it's in scope</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     3 — HR
+═══════════════════════════════════════════ -->
+<div class="module-hero" id="hr">
+  <span class="status-badge s-progress">● In Progress — app scaffolded, hooks wired, no custom DocTypes yet</span>
+  <h2>3 · HR</h2>
+  <p class="module-meta">App: <code>scale_hr</code> · Full detail: <a href="hr-module.html">hr-module.html</a> · Lead: Vandana · Target: Sep 24, 2026</p>
+
+  <div class="sec-label">Significance</div>
+  <p style="font-size:13.5px;">Manages the people side — hiring, attendance, leave, payroll, performance, exit. Every other module's "who did what" traces back to an Employee record here: Sales Person maps to a User/Employee, Projects' Resource Allocation reads Employee availability, Timesheet approval routes through the HR reporting structure.</p>
+
+  <div class="sec-label">Prerequisites</div>
+  <p style="font-size:13.5px;">Golden Path items 1, 10, 11 — Company, Department, Employee master itself is what this module builds out, but Holiday List and Designation must exist before the first real Employee record is created.</p>
+
+  <div class="sec-label">Initial Setup Checklist</div>
+  <ol class="setup-list">
+    <li><strong>Holiday List</strong> — per location/year, needed before Attendance and Leave calculations work correctly.</li>
+    <li><strong>Department tree</strong> — matching the client's real org structure.</li>
+    <li><strong>Designation master</strong> — job titles/grades.</li>
+    <li><strong>Employee master data import</strong> — the single most critical external-data dependency in this whole manual; every other module depends transitively on Employee existing. See below.</li>
+    <li><strong>Leave Type + Leave Policy</strong> — annual/sick/casual leave rules per the client's actual policy.</li>
+    <li><strong>Salary Structure</strong> — required before Payroll can run.</li>
+  </ol>
+
+  <div class="sec-label">The Page Flow — Default Frappe HRMS, With Our Additions Threaded In</div>
+  <p style="font-size:13px;color:var(--text-3);margin-bottom:6px;">As of 5 Aug 2026, <code>scale_hr</code> has its app scaffold and doc-event/scheduler hooks wired but zero custom DocTypes built yet — so the purple call-outs below describe <strong>what will layer on</strong>, not what's live today. Every numbered step is native Frappe HRMS, usable right now with zero customization.</p>
+
+  <div class="flow-block">
+    <div class="flow-block-label">Default flow — Hire to Payslip</div>
+    <div class="flow-step">
+      <div class="flow-num">1</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Go to <code>HR → Recruitment → Job Opening → New</code></div>
+        <div class="flow-detail">Define the role, then <code>Job Applicant → New</code> for each candidate. <strong>Save</strong>.</div>
+        <div class="flow-addon planned"><span class="addon-tag">Planned · scale_hr</span> AI candidate scoring reads the applicant against the Job Opening requirements and writes a fit score — not built yet.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">2</div>
+      <div style="flex:1;">
+        <div class="flow-nav">On the Job Applicant, click <code>Create → Employee Onboarding</code>, then finalize the <code>Employee</code> record</div>
+        <div class="flow-detail">Fill DOJ, Department, Designation, Salary Structure link. <strong>Save</strong>.</div>
+
+        <div class="concept-box">
+          <h4>🔍 Understand the difference — Employee vs. User</h4>
+          <p>The single most common confusion point in the whole system, because both records can share the same name and email.</p>
+          <div class="concept-row"><div class="concept-term">Employee</div><div class="concept-term-desc">The <strong>HR record</strong> — designation, department, salary structure, leave balance, reporting manager. This is what Payroll, Leave, and Appraisal all operate on.</div></div>
+          <div class="concept-row"><div class="concept-term">User</div><div class="concept-term-desc">The <strong>login/system account</strong> — what someone actually signs into the site with, and what permissions/roles attach to. A Customer or Supplier portal contact is also a "User" but is <strong>never</strong> an Employee.</div></div>
+          <p>The two are linked via the <code>user_id</code> field on Employee (verified directly in the schema) — but they're separate records with separate lifecycles: creating an Employee does <strong>not</strong> automatically create a login User, and a User existing doesn't mean an Employee record exists for them. This matters directly for Sales Person-to-rep mapping and Projects' Resource Allocation, both of which need to resolve "which Employee does this User correspond to."</p>
+        </div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">3</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Go to <code>HR → Attendance → Leave Application / Attendance → New</code></div>
+        <div class="flow-detail">Employees or managers log leave/attendance against the Employee record and Holiday List.</div>
+
+        <div class="concept-box">
+          <h4>🔍 Understand the difference — Leave Application vs. Attendance</h4>
+          <div class="concept-row"><div class="concept-term">Leave Application</div><div class="concept-term-desc">A <strong>request</strong> — "I want to be off on these dates," submitted for manager approval, checked against remaining Leave Type balance.</div></div>
+          <div class="concept-row"><div class="concept-term">Attendance</div><div class="concept-term-desc">The <strong>actual daily record</strong> — Present / Absent / On Leave / Work From Home, one row per employee per day. This is what Payroll actually reads to calculate pay.</div></div>
+          <p>These aren't independent — approving a Leave Application <strong>automatically creates or updates</strong> the matching Attendance records for those dates (verified directly in the HRMS source: <code>Leave Application.update_attendance()</code>). Cancelling the Leave Application removes them again. You don't need to separately mark Attendance for approved leave days — the system does it for you.</p>
+        </div>
+
+        <div class="flow-addon planned"><span class="addon-tag">Planned · scale_hr</span> Geo Attendance, Face Recognition check-in, and a Work From Home mode extend this same screen — none built yet.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">4</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Go to <code>HR → Payroll → Salary Structure Assignment</code>, then run <code>Payroll Entry</code></div>
+        <div class="flow-detail">Generates Salary Slips for the payroll period, posts to Accounts' GL on Submit.</div>
+
+        <div class="concept-box">
+          <h4>🔍 Understand the difference — three ways money moves relative to an Employee</h4>
+          <div class="concept-row"><div class="concept-term">Salary Slip</div><div class="concept-term-desc"><strong>Periodic payroll</strong> — the recurring, scheduled payment for time worked, generated from Salary Structure.</div></div>
+          <div class="concept-row"><div class="concept-term">Employee Advance</div><div class="concept-term-desc"><strong>Money given upfront</strong> — a cash float before spending happens (e.g. before a business trip), separate from payroll.</div></div>
+          <div class="concept-row"><div class="concept-term">Expense Claim</div><div class="concept-term-desc"><strong>Reimbursement after spending</strong> — an employee submits actual receipts, gets paid back, and it can settle against an existing Employee Advance if one was taken.</div></div>
+          <p>These three are also exactly the mechanism behind Accounts' Petty Cash handling — see <a href="#accounts">§4 Accounts</a>, which has no dedicated "Petty Cash" screen at all; it's this same Advance + Claim pair.</p>
+        </div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">5</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Go to <code>HR → Performance → Appraisal Cycle → Appraisal → New</code></div>
+        <div class="flow-detail">Score KRAs per the cycle (Monthly/Quarterly/Annual).</div>
+        <div class="flow-addon planned"><span class="addon-tag">Planned · scale_hr</span> AI-suggested coaching notes reading the actual KRA scores — not built yet.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">6</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Go to <code>HR → Exit → Employee Separation → New</code></div>
+        <div class="flow-detail">Native full exit workflow.</div>
+        <div class="flow-addon planned"><span class="addon-tag">Planned · scale_hr</span> Skill-gap reporting on Training Result, Grievance logging, and Travel+Claims (split from one combined native feature) all extend adjacent screens — none built yet.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="diff-box">
+    <h4>How this differs from default Frappe HRMS</h4>
+    <p>Frappe HRMS natively gives all of the above at a basic, functional level — this is the module with the highest native OOTB coverage after Accounts. <code>scale_hr</code>'s job is the AI layer (candidate scoring, retention risk flags, appraisal coaching notes) plus India-specific compliance depth — PF, ESI, PT, LWF (Labour Welfare Fund), Gratuity, and Labour Registers aren't native — and workflow refinements. As of today, only the scaffolding for that layer exists — the actual custom DocTypes and AI hooks are still being built, so every native step above works exactly as described, unmodified.</p>
+  </div>
+
+  <div class="ext-box">
+    <h4>What we need from the client</h4>
+    <ul>
+      <li>Full employee master — name, DOB, DOJ, designation, department, salary structure, PF/ESI numbers, bank details</li>
+      <li>Leave balances carried over from any prior system</li>
+      <li>Holiday calendar per location</li>
+      <li>Existing salary structures / CTC breakdowns</li>
+      <li>Statutory registration numbers — PF/ESI/PT establishment codes</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     4 — ACCOUNTS
+═══════════════════════════════════════════ -->
+<div class="module-hero" id="accounts">
+  <span class="status-badge s-early">● Early / Phase 0 — install + seed hooks live, demo data seeded, no custom DocTypes</span>
+  <h2>4 · Accounts</h2>
+  <p class="module-meta">App: <code>scale_account</code> · Full detail: <a href="accounts-module.html">accounts-module.html</a> · Lead: Uday · Target: Sep 5, 2026</p>
+
+  <div class="sec-label">Significance</div>
+  <p style="font-size:13.5px;">The single source of financial truth. Every Sales Invoice, Purchase Invoice, Payroll run, and Expense Claim ultimately posts here — nothing else in the system "counts" financially until it hits the General Ledger.</p>
+
+  <div class="sec-label">Prerequisites</div>
+  <p style="font-size:13.5px;">Company and Fiscal Year (Golden Path 1–2) — this module largely <em>is</em> the Chart of Accounts / GL foundation the Golden Path describes, so its own prerequisite is minimal, but it must be substantially configured <strong>before</strong> Sales, Purchase, or Payroll can post real transactions correctly in production (they'll accept transactions without it in a dev/demo site, but the postings won't be financially meaningful).</p>
+
+  <div class="sec-label">Initial Setup Checklist</div>
+  <ol class="setup-list">
+    <li><strong>Chart of Accounts</strong> — native template or import the client's existing CoA.</li>
+    <li><strong>Fiscal Year</strong> — if not already done in the Golden Path.</li>
+    <li><strong>Cost Center tree</strong> — shared with Finance and Projects; build once.</li>
+    <li><strong>Bank Account(s)</strong> — linked to GL accounts for reconciliation.</li>
+    <li><strong>Tax templates</strong> — via India Compliance app.</li>
+    <li><strong>Opening balances</strong> — a Journal Entry capturing the client's actual starting financial position. Critical external-data dependency — see below.</li>
+  </ol>
+
+  <div class="sec-label">The Page Flow — Default ERPNext Accounting, With Our Additions Threaded In</div>
+  <p style="font-size:13px;color:var(--text-3);margin-bottom:6px;">This is the <strong>most native module in the whole build</strong> — confirmed directly against the local bench: <code>scale_account</code> has zero custom DocTypes. Nearly every step below is stock ERPNext with no addition at all.</p>
+
+  <div class="flow-block">
+    <div class="flow-block-label">Default flow — Setup to Statement</div>
+    <div class="flow-step">
+      <div class="flow-num">1</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Go to <code>Accounting → Chart of Accounts</code></div>
+        <div class="flow-detail">Accept the standard template auto-created with Company, or edit/import the client's own CoA tree.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">2</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Go to <code>Accounting → Journal Entry → New</code> to post opening balances</div>
+        <div class="flow-detail">One Journal Entry capturing the client's actual starting financial position. <strong>Save</strong>, then <strong>Submit</strong>.</div>
+
+        <div class="concept-box">
+          <h4>🔍 Understand the difference — Journal Entry vs. Payment Entry</h4>
+          <div class="concept-row"><div class="concept-term">Payment Entry</div><div class="concept-term-desc">Purpose-built for money moving <strong>against a specific reference</strong> — settling a Sales Invoice, Purchase Invoice, or Employee Advance. The default choice whenever an actual invoice/claim exists to pay against.</div></div>
+          <div class="concept-row"><div class="concept-term">Journal Entry</div><div class="concept-term-desc">General-purpose double-entry for <strong>everything else</strong> — opening balances, accruals, provisions, inter-account transfers, adjustments with no invoice behind them.</div></div>
+          <p>Rule of thumb: if you're paying/receiving against a document that already exists in the system, use Payment Entry. If you're recording something that has no such document, use Journal Entry.</p>
+        </div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">3</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Nothing to click — the General Ledger updates automatically</div>
+        <div class="flow-detail">Every submitted Sales Invoice, Purchase Invoice, Payment Entry, Salary Slip, and Journal Entry across every module posts its own GL entries. This is the one step in the whole manual with literally no navigation — it just happens.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">4</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Go to <code>Accounting → Bank Reconciliation Tool</code></div>
+        <div class="flow-detail">Match bank statement lines against Payment Entries. Native, install India Compliance separately for GST return filing and E-Invoicing (IRN/QR) — same app, one-time install, no custom code.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">5</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Go to <code>Accounting → Financial Statements → Balance Sheet / Profit and Loss</code></div>
+        <div class="flow-detail">Native reports, filterable by Company/Fiscal Year/Cost Center.</div>
+        <div class="flow-addon">
+          <span class="addon-tag">+ scale_account</span>
+          A handful of MIS script reports and a consolidated Executive Dashboard (CFO/CXO view) sit alongside these native statements — the only genuinely custom-built pieces in this module.
+        </div>
+
+        <div class="concept-box">
+          <h4>🔍 Watch for this — "Petty Cash" has no dedicated screen</h4>
+          <p>Someone looking for a "Petty Cash" menu item won't find one — there isn't one, by design. It's handled through <strong>Employee Advance</strong> (disbursing cash to a custodian) + <strong>Expense Claim</strong> (recording what it was spent on), the exact same pair described in <a href="#hr">§3 HR</a>. Route petty cash questions to those two screens, not a search for something called "Petty Cash."</p>
+        </div>
+
+        <div class="concept-box">
+          <h4>🔍 Watch for this — "Project Profitability" is not a real native report name</h4>
+          <p>If a spec or a teammate mentions a native "Project Profitability" report, be skeptical — checked directly against the ERPNext source and confirmed no report exists by that exact name. What does exist: <strong>Profitability Analysis</strong>, an Accounts-level report filterable by Cost Center or Project as a dimension, plus <code>project_summary</code> and <code>project_billing_summary</code> under the Projects module. This exact naming gap was caught once already during the Projects module's own PDF fidelity check — see <a href="pmo-module.html">pmo-module.html</a>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="diff-box">
+    <h4>How this differs from default ERPNext Accounting</h4>
+    <p>The "custom" work here is thin by design: install India Compliance for GST/E-Invoicing, configure the CoA and Cost Centers correctly, and build the MIS reports + Executive Dashboard above. Every other screen — Chart of Accounts, Journal Entry, GL, Bank Reconciliation, Balance Sheet, P&amp;L — is exactly what anyone trained on vanilla ERPNext Accounting already knows, unmodified.</p>
+  </div>
+
+  <div class="ext-box">
+    <h4>What we need from the client</h4>
+    <ul>
+      <li>Opening trial balance / opening GL balances</li>
+      <li>Existing Chart of Accounts, if migrating from another system</li>
+      <li>GSTIN and full statutory registration details</li>
+      <li>Bank account details for reconciliation</li>
+      <li>Existing Fixed Asset register, if any</li>
+      <li>Historical AR/AP ageing, if migrating mid-year rather than at a fiscal year boundary</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     5 — FINANCE
+═══════════════════════════════════════════ -->
+<div class="module-hero" id="finance">
+  <span class="status-badge s-early">● Early / Phase 0 — install + seed hooks live, depends on Accounts</span>
+  <h2>5 · Finance</h2>
+  <p class="module-meta">App: <code>scale_finance</code> · Full detail: <a href="finance-module.html">finance-module.html</a> · Lead: Uday · Target: Oct 10, 2026</p>
+
+  <div class="sec-label">Significance</div>
+  <p style="font-size:13.5px;">Turns Accounts' raw bookkeeping into forward-looking management insight — budgeting, forecasting, working capital, profitability analysis. This is the CFO's toolkit, distinct from Accounts' bookkeeper toolkit — Accounts answers "what happened," Finance answers "what's likely to happen and is it healthy."</p>
+
+  <div class="sec-label">Prerequisites</div>
+  <p style="font-size:13.5px;"><strong>scale_account must be substantially live first.</strong> Finance has no independent data source — it reads Cost Centre, GL, and transaction data that Accounts produces. This isn't a soft dependency: Finance's reports are meaningless without real Accounts data flowing. Sequencing in this program: Accounts Aug 1–Sep 5, Finance Sep 1–Oct 10 (a deliberate 2-week overlap, not a hard gate, but real report data only starts meaning something once Accounts has real postings).</p>
+
+  <div class="sec-label">Initial Setup Checklist</div>
+  <ol class="setup-list">
+    <li>Everything in §4 Accounts' checklist, done first.</li>
+    <li><strong>Budget records</strong> — per department/cost-centre for the fiscal year.</li>
+    <li><strong>Cost Centre allocation percentages</strong> — if doing segment-wise profit analysis.</li>
+  </ol>
+
+  <div class="sec-label">The Page Flow — Default ERPNext, With Our Additions Threaded In</div>
+  <div class="flow-block">
+    <div class="flow-block-label">Default flow — Budget to Variance</div>
+    <div class="flow-step">
+      <div class="flow-num">1</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Go to <code>Accounting → Budget → New</code></div>
+        <div class="flow-detail">Set a Budget against a Cost Center for the Fiscal Year, per Account. Native action-on-exceed options (Stop/Warn/Ignore) enforce it automatically when actual spend posts.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">2</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Go to <code>Accounting → Financial Statements → Cash Flow Statement</code></div>
+        <div class="flow-detail">Native, auto-generated from GL entries.</div>
+        <div class="flow-addon">
+          <span class="addon-tag">+ scale_finance</span>
+          Working Capital ratios, Cash Requirement forecasting, and MSME-specific 45-day payment compliance reporting sit alongside this native statement — none of these exist as native ERPNext reports.
+        </div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">3</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Go to <code>Accounting → Financial Statements → Profit and Loss Statement</code>, filter by Cost Center</div>
+        <div class="flow-detail">Native — can already be sliced by Cost Center/Project as a dimension.</div>
+        <div class="flow-addon">
+          <span class="addon-tag">+ scale_finance</span>
+          Budget-vs-Actual variance analysis, Profit by Segment, Break-even, ROI, and Profit Leakage detection are all custom script reports built on top of this same underlying GL data — none are native.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="diff-box">
+    <h4>How this differs from default ERPNext</h4>
+    <p>ERPNext natively provides decent P&amp;L, Balance Sheet, and Cash Flow statements out of the box, plus native Budget enforcement against Cost Centers. <code>scale_finance</code>'s job is the analytical layer on top — budget-vs-actual variance, working capital ratios, segment profitability, MSME-specific compliance reporting, loan/liability tracking, investment tracking — none of which ERPNext gives as dedicated reports natively. Shares its Cost Centre foundation and Executive Dashboard with Accounts (AC-13/AC-16) — build once, consume in both.</p>
+  </div>
+
+  <div class="ext-box">
+    <h4>What we need from the client</h4>
+    <ul>
+      <li>Budget figures per department/cost-centre for the fiscal year</li>
+      <li>Existing loan/liability schedule, if any</li>
+      <li>MSME vendor classification data (for the 45-day payment compliance rule)</li>
+      <li>Historical financials, if a trend/variance baseline is needed for a mid-year migration</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     6 — PROJECTS (PMO)
+═══════════════════════════════════════════ -->
+<div class="module-hero" id="projects">
+  <span class="status-badge s-planned">● Not Started — begins 5 Aug 2026</span>
+  <h2>6 · Projects (PMO)</h2>
+  <p class="module-meta">App: <code>scale_project_management</code> · Full detail: <a href="pmo-module.html">pmo-module.html</a> · Lead &amp; Developer: Raghib · Target: 25 Aug 2026 (3-week sprint, aggressive)</p>
+
+  <div class="sec-label">Significance</div>
+  <p style="font-size:13.5px;">For project-based or services businesses, this is the delivery engine — turns a sold Sales Order into tracked execution: tasks, timesheets, budget burn, risk, client billing. Where Sales answers "what did we sell," Projects answers "are we actually delivering it on time and on budget."</p>
+
+  <div class="sec-label">Prerequisites</div>
+  <p style="font-size:13.5px;">Customer (from Sales, for client-facing projects), Employee (from HR, for resource allocation), Cost Centre (from Accounts, for budget tracking). Ideally a Sales Order or signed Contract Value as the commercial anchor a Project ties back to — a Project without a linked deal is possible but loses the natural handoff from Sales.</p>
+
+  <div class="sec-label">Initial Setup Checklist</div>
+  <ol class="setup-list">
+    <li><strong>Project Template</strong> — a predefined task hierarchy for repeatable project types.</li>
+    <li><strong>Department / Territory</strong> — if projects are scoped regionally.</li>
+    <li><strong>Consultant Profile data</strong> — if the org uses non-employee resources (skills, rate card, availability).</li>
+    <li><strong>Activity Types</strong> — for Timesheet categorization (Development, Design, PMO, Consulting, etc.).</li>
+    <li><strong>Manday budget conventions</strong> — the 8-hour-to-1-manday conversion, and role-based cost rates.</li>
+  </ol>
+
+  <div class="sec-label">The Page Flow — Default ERPNext Projects, With Our Additions Threaded In</div>
+  <p style="font-size:13px;color:var(--text-3);margin-bottom:6px;">Build starts today (5 Aug) — every purple call-out below is planned, not yet live. 13 features from the Excel PMO tab plus 7 gap-identified additions found during a full PDF cross-check (see <a href="pmo-module.html">pmo-module.html</a>). This is, after Sales, the module with the largest volume of genuinely new custom build.</p>
+
+  <div class="flow-block">
+    <div class="flow-block-label">Default flow — Project to Invoice</div>
+    <div class="flow-step">
+      <div class="flow-num">1</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Go to <code>Projects → Project → New</code> (or <code>New from Template</code>)</div>
+        <div class="flow-detail">Set Project Name, Customer, Expected Start/End Date, Estimated Cost. <strong>Save.</strong> Native Project Template auto-generates the task tree if used.</div>
+        <div class="flow-addon planned"><span class="addon-tag">Planned</span> A Kickoff Checklist child table, role-based manday/cost budget fields, and a PMO Director sign-off workflow (Draft → Kickoff Pending → PMO Approved → Active) gate this same form before it goes Active.</div>
+
+        <div class="concept-box">
+          <h4>🔍 Watch for this — "Estimated Cost" is one number, not a budget system</h4>
+          <p>The native Project form has exactly one budget-related field: <code>estimated_costing</code>, a single Currency value. It's easy to see that field and assume budgeting is handled — it isn't. The planned <strong>Project Budget</strong> DocType (7 cost categories, 4-level approval chain) is a separate, much larger build that doesn't exist yet — see <a href="pmo-module.html">pmo-module.html</a> PMO-15.</p>
+        </div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">2</div>
+      <div style="flex:1;">
+        <div class="flow-nav">On the Project, click <code>Tasks → New Task</code> (repeat per task), or switch to <code>Gantt / Kanban</code> view</div>
+        <div class="flow-detail">Set parent/subtask, dependencies, priority, due dates. Native Gantt supports drag-to-reschedule; native Kanban Board works out of the box.</div>
+        <div class="flow-addon planned"><span class="addon-tag">Planned</span> A Checklist child table and Risk Level field on each Task; critical-path highlighting and baseline-snapshot comparison layered onto the same Gantt view; a Milestone Dashboard filtering Tasks flagged <code>is_milestone</code>.</div>
+
+        <div class="concept-box">
+          <h4>🔍 Understand the difference — a "milestone" flag vs. a Milestone system, and Task Risk vs. the Risk Register</h4>
+          <div class="concept-row"><div class="concept-term">is_milestone</div><div class="concept-term-desc">A plain checkbox that already exists natively on Task — flags it as significant, nothing more. There is no dedicated Milestone dashboard, approval gate, or variance report today; that's a planned thin layer <em>reading</em> Tasks with this flag set, not a new source of truth.</div></div>
+          <div class="concept-row"><div class="concept-term">Task Risk Level</div><div class="concept-term-desc">Planned as a lightweight Select field (Low/Medium/High) directly on Task — for flagging one task as risky without formal process.</div></div>
+          <div class="concept-row"><div class="concept-term">Project Risk Register</div><div class="concept-term-desc">A full, separate DocType (Category, Probability, Impact, Owner, Mitigation Plan) with its own heatmap — for formally tracked, project-level risks. Heavier weight, different purpose from the Task-level flag above.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">3</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Go to <code>Projects → Timesheet → New</code>, linked to the Project/Task</div>
+        <div class="flow-detail">Log Hours, Activity Type, Billable flag. <strong>Save</strong>, <strong>Submit</strong> for manager approval.</div>
+        <div class="flow-addon planned"><span class="addon-tag">Planned</span> A manday-guardrail script warns/blocks when logged hours exceed the role's allocated budget from step 1.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">4</div>
+      <div style="flex:1;">
+        <div class="flow-nav">From the Timesheet, click <code>Create → Sales Invoice</code></div>
+        <div class="flow-detail">Native — pulls approved billable hours directly onto the invoice.</div>
+        <div class="flow-addon planned"><span class="addon-tag">Planned</span> A Monthly Billing Wizard page bulk-generates draft invoices across many projects/clients at once instead of one Timesheet at a time.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="flow-block-label">Not part of the native chain — new screens planned for this build</div>
+    <div class="flow-step">
+      <div class="flow-num">+</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Planned: <code>Project Budget</code> — multi-category (Labor/Materials/Procurement/Contractors/Travel/Equipment/Misc), 4-level approval (PM → Dept Head → Finance → Management)</div>
+        <div class="flow-detail" style="color:#78350f;">No native equivalent — Project has one single "Estimated Cost" field today. The single largest gap between the original Excel scope and what the client PRD actually asks for.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">+</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Planned: <code>Resource Allocation</code> — pooling Employees, Consultants, Contractors, Machines, Vehicles, Tools, Equipment</div>
+        <div class="flow-detail" style="color:#78350f;"><strong>The biggest gap-identified addition in the whole module</strong> — no native Resource Booking/Capacity Planning DocType exists anywhere in ERPNext, confirmed against the schema. Had zero representation in the original Excel scope.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">+</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Planned: <code>Project Risk</code> + <code>Mitigation Plan</code>, <code>Project Change Request</code></div>
+        <div class="flow-detail" style="color:#78350f;">8-category Probability×Impact heatmap; Change Request with an impact calculator and budget versioning. No native equivalent for either.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">+</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Planned: PMO Cockpit Dashboard, Project Impact Report + NPS, Executive Dashboard (17 KPIs), Library Management, full AI layer</div>
+        <div class="flow-detail" style="color:#78350f;">Delay Prediction, Resource Optimization, Budget Forecasting, Risk Prediction, plus Planning/Task/Timesheet intelligence added after the PDF re-check.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="diff-box">
+    <h4>How this differs from default ERPNext Projects</h4>
+    <p>Default ERPNext Projects gives a solid foundation — Project, Task, Timesheet, native Gantt, Kanban — confirmed directly against the schema. But it has <strong>no Risk Register, no Change Management, no cross-type Resource Booking/Capacity Planning, no multi-category Budget with an approval chain, no NPS/Impact Report, and no AI layer at all.</strong> Every one of those is a genuine custom build, not a config task — and none of it exists yet.</p>
+  </div>
+
+  <div class="ext-box">
+    <h4>What we need from the client</h4>
+    <ul>
+      <li>Existing project templates or methodology documentation, if any</li>
+      <li>Consultant roster — name, skills, rate card, availability — if the org uses external consultants</li>
+      <li>Any existing risk register or change-request log format already in use</li>
+      <li>Historical project data, so the AI Planning Assistant has something real to learn "similar past projects" from</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     7 — BUYING
+═══════════════════════════════════════════ -->
+<div class="module-hero" id="buying">
+  <span class="status-badge s-planned">● Not Started — Wave 2, lead TBD</span>
+  <h2>7 · Buying (Purchase)</h2>
+  <p class="module-meta">Planned app: <code>scale_supply</code> · No dedicated plan page yet — see <a href="module-plan.html">module-plan.html</a> for the wave sequencing</p>
+
+  <div class="sec-label">Significance</div>
+  <p style="font-size:13.5px;">The inbound counterpart to Sales — Supplier → Request for Quotation → Purchase Order → Goods Receipt → Purchase Invoice → Payment. The source of Cost of Goods for anything the company buys, whether raw materials for Manufacturing or general procurement.</p>
+
+  <div class="sec-label">Prerequisites</div>
+  <p style="font-size:13.5px;">Golden Path items 4–8 — Item, Item Group, UOM, Warehouse, Supplier Group, Price List (Buying), Tax Templates.</p>
+
+  <div class="sec-label">Initial Setup Checklist</div>
+  <ol class="setup-list">
+    <li><strong>Supplier Group hierarchy</strong></li>
+    <li><strong>Warehouse tree</strong> — if not already done in the Golden Path</li>
+    <li><strong>Default Buying Price List</strong></li>
+    <li><strong>Purchase Taxes and Charges Template</strong></li>
+  </ol>
+
+  <div class="sec-label">The Page Flow — 100% Default ERPNext, Nothing Custom Yet</div>
+  <div class="flow-block">
+    <div class="flow-block-label">Default flow — Supplier to Payment</div>
+    <div class="flow-step">
+      <div class="flow-num">1</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Go to <code>Buying → Supplier → New</code></div>
+        <div class="flow-detail">Set Supplier Name, Supplier Group, Country, GSTIN. <strong>Save.</strong></div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">2</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Go to <code>Buying → Request for Quotation → New</code> (optional), or directly <code>Purchase Order → New</code></div>
+        <div class="flow-detail">RFQ lets you send the same item list to multiple Suppliers and compare Supplier Quotations before committing. For repeat/known suppliers, skip straight to Purchase Order.</div>
+
+        <div class="concept-box">
+          <h4>🔍 Understand the difference — RFQ vs. Supplier Quotation vs. Purchase Order</h4>
+          <p>Three separate documents in sequence, the classic point of confusion for anyone new to ERPNext Buying:</p>
+          <div class="concept-row"><div class="concept-term">RFQ</div><div class="concept-term-desc"><strong>Your ask.</strong> "Request for Quotation" — sent to one or more Suppliers, asking them to quote on a specific item list. No commitment yet.</div></div>
+          <div class="concept-row"><div class="concept-term">Supplier Quotation</div><div class="concept-term-desc"><strong>Their answer.</strong> Each Supplier's response to the RFQ — their price, lead time, terms. Compare multiple side by side via the native Supplier Quotation Comparison report.</div></div>
+          <div class="concept-row"><div class="concept-term">Purchase Order</div><div class="concept-term-desc"><strong>Your commitment.</strong> The actual binding order, created from the winning Supplier Quotation (or directly, skipping the first two entirely for known suppliers).</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">3</div>
+      <div style="flex:1;">
+        <div class="flow-nav">On the Purchase Order, add Item rows, Qty, Rate, delivery date. <strong>Save</strong>, then <strong>Submit</strong></div>
+        <div class="flow-detail">Sends the commitment to the Supplier (email/print out natively supported).</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">4</div>
+      <div style="flex:1;">
+        <div class="flow-nav">When goods arrive, from the PO click <code>Create → Purchase Receipt</code></div>
+        <div class="flow-detail">Confirms quantity actually received, updates the Stock Ledger on Submit.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">5</div>
+      <div style="flex:1;">
+        <div class="flow-nav">From the Purchase Receipt (or PO directly), click <code>Create → Purchase Invoice</code></div>
+        <div class="flow-detail">Native 3-way matching checks PO/Receipt/Invoice quantities and rates line up. Posts to GL on Submit.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">6</div>
+      <div style="flex:1;">
+        <div class="flow-nav">From the Purchase Invoice, click <code>Create → Payment</code></div>
+        <div class="flow-detail">Records the Payment Entry to the Supplier, reconciling the outstanding amount.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout cw">
+    <p><strong>Honest scope statement:</strong> this module hasn't been through the same PDF + Excel-tab + ERPNext-gap review that Sales, Accounts, Finance, and Projects have each received — so unlike those sections, there's no purple "our addition" call-out anywhere in the flow above. Every step is vanilla ERPNext Buying. A dedicated scope review, following the same methodology used for every other module, should happen before Wave 2 starts.</p>
+  </div>
+
+  <div class="ext-box">
+    <h4>What we need from the client</h4>
+    <ul>
+      <li>Existing supplier master data</li>
+      <li>Historical purchase price agreements</li>
+      <li>Existing approval hierarchy for POs above certain values</li>
+      <li>Any existing 3-way-match policy</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     8 — MANUFACTURING
+═══════════════════════════════════════════ -->
+<div class="module-hero" id="manufacturing">
+  <span class="status-badge s-planned">● Not Started — Wave 2, lead TBD</span>
+  <h2>8 · Manufacturing (Production)</h2>
+  <p class="module-meta">Planned app: <code>scale_supply</code> · No dedicated plan page yet — see <a href="module-plan.html">module-plan.html</a> for the wave sequencing</p>
+
+  <div class="sec-label">Significance</div>
+  <p style="font-size:13.5px;">For any organization that makes rather than only resells — converts raw materials into finished goods via BOM-driven Work Orders. The physical execution layer behind a Sales Order that requires production rather than a stock pick.</p>
+
+  <div class="sec-label">Prerequisites</div>
+  <p style="font-size:13.5px;">Item (both raw materials and finished goods), BOM, Warehouse, Work Station, Operation master, Routing.</p>
+
+  <div class="sec-label">Initial Setup Checklist</div>
+  <ol class="setup-list">
+    <li><strong>Item masters</strong> — both raw materials and finished goods</li>
+    <li><strong>Bill of Materials (BOM)</strong> — per finished good</li>
+    <li><strong>Work Station + Operation definitions</strong></li>
+    <li><strong>Warehouse stages</strong> — WIP, stores, finished goods</li>
+  </ol>
+
+  <div class="sec-label">The Page Flow — 100% Default ERPNext, Nothing Custom Yet</div>
+  <div class="flow-block">
+    <div class="flow-block-label">Default flow — BOM to Finished Good</div>
+    <div class="flow-step">
+      <div class="flow-num">1</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Go to <code>Manufacturing → Bill of Materials → New</code></div>
+        <div class="flow-detail">Select the finished-good Item, add raw-material Item rows with quantities, set the default Warehouse. <strong>Save</strong>, then <strong>Submit</strong>.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">2</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Go to <code>Manufacturing → Production Plan → New</code></div>
+        <div class="flow-detail">Pull in Sales Orders or a manual forecast quantity; the Plan calculates raw-material requirements against current stock.</div>
+
+        <div class="concept-box">
+          <h4>🔍 Understand the difference — BOM, Production Plan, Work Order, Job Card</h4>
+          <p>Four documents at four different levels of abstraction — easy to conflate because they all sound like "the production paperwork":</p>
+          <div class="concept-row"><div class="concept-term">BOM</div><div class="concept-term-desc"><strong>The recipe.</strong> A definition — "to make 1 unit of Finished Good X, you need these raw materials in these quantities." Doesn't represent any actual production run.</div></div>
+          <div class="concept-row"><div class="concept-term">Production Plan</div><div class="concept-term-desc"><strong>The demand aggregation.</strong> "We need to make N units of X by date Y" — pulled from Sales Orders or forecast, calculates net material requirements against current stock.</div></div>
+          <div class="concept-row"><div class="concept-term">Work Order</div><div class="concept-term-desc"><strong>One specific batch to produce</strong> — released from the Production Plan, references one BOM, one quantity.</div></div>
+          <div class="concept-row"><div class="concept-term">Job Card</div><div class="concept-term-desc"><strong>Shop-floor execution</strong> — one per Operation on the Work Order, where actual time/quantity gets logged as work happens.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">3</div>
+      <div style="flex:1;">
+        <div class="flow-nav">From the Production Plan, click <code>Create → Work Order</code></div>
+        <div class="flow-detail">One Work Order per BOM/quantity to produce. <strong>Save</strong>, then <strong>Submit</strong> to release it to the shop floor.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">4</div>
+      <div style="flex:1;">
+        <div class="flow-nav">On the Work Order, Job Cards are auto-created per Operation — go to <code>Manufacturing → Job Card</code></div>
+        <div class="flow-detail">Shop-floor staff start/complete each Job Card as work happens; time and quantity are logged here.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">5</div>
+      <div style="flex:1;">
+        <div class="flow-nav">From the Work Order, click <code>Create → Stock Entry</code> (Material Transfer for Manufacture, then Manufacture)</div>
+        <div class="flow-detail">Issues raw materials from stores to WIP, then receives the finished good into the Finished Goods warehouse on completion.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout cw">
+    <p><strong>Honest scope statement:</strong> same caveat as Buying — this module hasn't been through AIWS's own gap-analysis process yet. Every step above is vanilla ERPNext Manufacturing, pending a dedicated scope review before Wave 2 starts.</p>
+  </div>
+
+  <div class="ext-box">
+    <h4>What we need from the client</h4>
+    <ul>
+      <li>BOM structures for existing products</li>
+      <li>Routing / operation time standards</li>
+      <li>Existing shop-floor process documentation</li>
+      <li>Machine / work-station capacity data — this also feeds forward into Projects' Resource Management if machines are shared across Projects and Production</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     CROSS-REFERENCE
+═══════════════════════════════════════════ -->
+<h2>Cross-Reference — Business Manual vs. Developer Plan</h2>
+<p style="font-size:13.5px;color:var(--text-3);margin-bottom:14px;">This page answers "how does an organization start using this module." For "how does a developer build it," follow the links below.</p>
+<div class="tbl-wrap">
+  <table>
+    <tr><th>Module</th><th>Status</th><th>This Manual</th><th>Developer Plan</th></tr>
+    <tr><td>Sales</td><td><span class="status-badge s-live">Live</span></td><td><a href="#sales" class="xref-link">§1</a></td><td><a href="sales-module.html" class="xref-link">sales-module.html</a></td></tr>
+    <tr><td>CRM</td><td><span class="status-badge s-flag">Flag</span></td><td><a href="#crm" class="xref-link">§2</a></td><td><a href="sales-module.html" class="xref-link">sales-module.html</a> (same system)</td></tr>
+    <tr><td>HR</td><td><span class="status-badge s-progress">In Progress</span></td><td><a href="#hr" class="xref-link">§3</a></td><td><a href="hr-module.html" class="xref-link">hr-module.html</a></td></tr>
+    <tr><td>Accounts</td><td><span class="status-badge s-early">Early</span></td><td><a href="#accounts" class="xref-link">§4</a></td><td><a href="accounts-module.html" class="xref-link">accounts-module.html</a></td></tr>
+    <tr><td>Finance</td><td><span class="status-badge s-early">Early</span></td><td><a href="#finance" class="xref-link">§5</a></td><td><a href="finance-module.html" class="xref-link">finance-module.html</a></td></tr>
+    <tr><td>Projects (PMO)</td><td><span class="status-badge s-planned">Starts today</span></td><td><a href="#projects" class="xref-link">§6</a></td><td><a href="pmo-module.html" class="xref-link">pmo-module.html</a></td></tr>
+    <tr><td>Buying</td><td><span class="status-badge s-planned">Not started</span></td><td><a href="#buying" class="xref-link">§7</a></td><td>— not yet scoped</td></tr>
+    <tr><td>Manufacturing</td><td><span class="status-badge s-planned">Not started</span></td><td><a href="#manufacturing" class="xref-link">§8</a></td><td>— not yet scoped</td></tr>
+  </table>
+</div>
+
+<div class="page-nav">
+  <a class="prev" href="index.html">← Program Overview</a>
+  <a class="next" href="pmo-module.html">PMO Module Plan →</a>
+</div>
+
+</main>
+</body>
+</html>

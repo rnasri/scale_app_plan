@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIWS ERP — Frappe Extension Developer Guide</title>
+<style>
+/* ── Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:    #1a2f4a;
+  --blue:    #1d4ed8;
+  --green:   #166534;
+  --amber:   #92400e;
+  --red:     #991b1b;
+  --purple:  #5b21b6;
+  --gray:    #374151;
+  --light:   #f8fafc;
+  --border:  #d1d5db;
+  --code-bg: #f1f5f9;
+}
+
+html { font-size: 14px; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Georgia, sans-serif;
+  color: #111827;
+  line-height: 1.7;
+  background: #fff;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 48px;
+}
+
+/* ── Cover ── */
+.cover {
+  border-bottom: 3px solid var(--navy);
+  padding-bottom: 32px;
+  margin-bottom: 40px;
+}
+.cover-tag {
+  display: inline-block;
+  background: var(--navy);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 3px;
+  margin-bottom: 16px;
+}
+.cover h1 {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--navy);
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+.cover .subtitle {
+  font-size: 15px;
+  color: #4b5563;
+  margin-bottom: 20px;
+}
+.cover-meta {
+  display: flex;
+  gap: 24px;
+  font-size: 12px;
+  color: #6b7280;
+}
+.cover-meta span { display: flex; align-items: center; gap: 5px; }
+
+/* ── Typography ── */
+h2 {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--navy);
+  margin-top: 44px;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--border);
+}
+h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-top: 22px;
+  margin-bottom: 8px;
+}
+h4 {
+  font-size: 12px;
+  font-weight: 700;
+  color: #4b5563;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-top: 14px;
+  margin-bottom: 6px;
+}
+p { margin-bottom: 12px; color: #374151; }
+p:last-child { margin-bottom: 0; }
+ul, ol { margin: 0 0 12px 20px; color: #374151; }
+li { margin-bottom: 4px; }
+strong { color: #111827; font-weight: 600; }
+code {
+  font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
+  font-size: 0.85em;
+  background: var(--code-bg);
+  color: var(--navy);
+  padding: 1px 5px;
+  border-radius: 3px;
+  border: 1px solid #e2e8f0;
+}
+
+/* ── Section number ── */
+.section-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px; height: 28px;
+  background: var(--navy);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 800;
+  margin-right: 8px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+/* ── Info box ── */
+.box {
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin-bottom: 18px;
+  border-left: 4px solid;
+}
+.box p { margin: 0; font-size: 13.5px; }
+.box-key  { background: #eff6ff; border-color: var(--blue);   }
+.box-key p { color: #1e3a8a; }
+.box-warn { background: #fffbeb; border-color: #d97706; }
+.box-warn p { color: var(--amber); }
+.box-good { background: #f0fdf4; border-color: #16a34a; }
+.box-good p { color: var(--green); }
+.box-bad  { background: #fef2f2; border-color: #dc2626; }
+.box-bad p { color: var(--red); }
+
+/* ── Code block ── */
+.code-header {
+  background: #e2e8f0;
+  border: 1px solid var(--border);
+  border-bottom: none;
+  padding: 5px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #4b5563;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 5px 5px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.code-header .lang-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #94a3b8;
+  display: inline-block;
+}
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 0 0 5px 5px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  font-size: 12.5px;
+  font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
+  line-height: 1.6;
+  margin-bottom: 16px;
+  color: #1e293b;
+}
+pre code { background: none; border: none; padding: 0; color: inherit; }
+.cm  { color: #64748b; font-style: italic; }   /* comment */
+.kw  { color: #7c3aed; font-weight: 600; }      /* keyword */
+.st  { color: #166534; }                         /* string */
+.fn  { color: #0369a1; }                         /* function */
+.cl  { color: #b45309; font-weight: 600; }       /* class */
+.nu  { color: #dc2626; }                         /* number */
+
+/* ── Example block ── */
+.example {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 24px;
+  page-break-inside: avoid;
+}
+.example-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+}
+.example-header.lv1 { background: #f0fdf4; }
+.example-header.lv2 { background: #eff6ff; }
+.example-header.lv3 { background: #fffbeb; }
+.example-header.lv4 { background: #fdf4ff; }
+.lvbadge {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+  border: 1px solid;
+}
+.lv1 .lvbadge { background: #dcfce7; color: var(--green); border-color: #86efac; }
+.lv2 .lvbadge { background: #dbeafe; color: var(--blue);  border-color: #93c5fd; }
+.lv3 .lvbadge { background: #fef9c3; color: var(--amber); border-color: #fde047; }
+.lv4 .lvbadge { background: #f3e8ff; color: var(--purple);border-color: #d8b4fe; }
+.example-header .ex-title { font-weight: 700; font-size: 14px; color: #111827; }
+.example-header .ex-sub   { font-size: 12px; color: #6b7280; margin-top: 1px; }
+.example-body { padding: 18px 20px; }
+.example-body h4:first-child { margin-top: 0; }
+
+/* ── Two col ── */
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.two-wide { display: grid; grid-template-columns: 2fr 3fr; gap: 16px; margin-bottom: 16px; }
+
+/* ── Comparison ── */
+.compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+.compare-col { padding: 14px 16px; }
+.compare-col:first-child { border-right: 1px solid var(--border); background: #fef2f2; }
+.compare-col:last-child  { background: #f0fdf4; }
+.compare-col h4 { margin-top: 0; font-size: 12px; }
+.compare-col h4.bad  { color: var(--red); }
+.compare-col h4.good { color: var(--green); }
+.compare-col ul { margin-bottom: 0; font-size: 12.5px; }
+
+/* ── Table ── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-bottom: 18px;
+}
+th {
+  background: var(--navy);
+  color: #fff;
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+td { padding: 8px 12px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:nth-child(even) td { background: #f9fafb; }
+table { border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+
+/* ── Steps ── */
+.step-list { list-style: none; margin: 0; padding: 0; }
+.step-list li { display: flex; gap: 12px; margin-bottom: 12px; font-size: 13.5px; }
+.step-n {
+  width: 22px; height: 22px; min-width: 22px;
+  background: var(--navy); color: #fff;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700;
+  margin-top: 2px;
+}
+.step-c strong { display: block; margin-bottom: 2px; color: #111827; }
+.step-c span   { color: #6b7280; font-size: 13px; }
+
+/* ── Check / Anti ── */
+.chk, .anti { list-style: none; margin: 0 0 12px; padding: 0; }
+.chk li, .anti li { display: flex; gap: 8px; margin-bottom: 5px; font-size: 13px; color: #374151; }
+.chk li::before  { content: "✓"; color: #16a34a; font-weight: 700; flex-shrink: 0; }
+.anti li::before { content: "✗"; color: #dc2626; font-weight: 700; flex-shrink: 0; }
+
+/* ── Diagram ── */
+.diagram { margin: 16px 0; text-align: center; }
+
+/* ── Print styles ── */
+@media print {
+  body { padding: 0; max-width: 100%; font-size: 13px; }
+  .cover { padding-bottom: 24px; margin-bottom: 32px; }
+  h2 { margin-top: 32px; page-break-after: avoid; }
+  h3 { page-break-after: avoid; }
+  .example { page-break-inside: avoid; }
+  .no-print { display: none !important; }
+  pre { white-space: pre-wrap; word-break: break-all; }
+  .two, .two-wide, .compare { grid-template-columns: 1fr; }
+  .compare-col:first-child { border-right: none; border-bottom: 1px solid var(--border); }
+  a { color: inherit; text-decoration: none; }
+}
+
+@page {
+  size: A4;
+  margin: 2.2cm 2.5cm 2.5cm 2.5cm;
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ COVER ═══════════ -->
+<div class="cover">
+  <div class="cover-tag">AIWS ERP · Developer Reference</div>
+  <h1>Frappe Extension Guide:<br>How to Build Without Breaking</h1>
+  <p class="subtitle">The correct way to extend ERPNext, Frappe CRM, and Frappe HR — using the Accounts &amp; Finance module as a worked example across all customization levels.</p>
+  <div class="cover-meta">
+    <span>Version 1.0 · July 2026</span>
+    <span>Pixaflip Technologies × SIL</span>
+    <span>For internal developer distribution</span>
+  </div>
+</div>
+
+
+<!-- ═══════════ SECTION 1 ═══════════ -->
+<h2><span class="section-num">1</span>The Single Most Important Concept</h2>
+
+<div class="box box-key">
+  <p><strong>You never copy or modify Frappe/ERPNext/CRM source code. You install your custom app alongside them on the same server. Both apps share the same database. Your app only contains the differences — the extensions and additions.</strong></p>
+</div>
+
+<p>This is the question every new developer asks: <em>"If I create a new app, how does it get all the existing Frappe features?"</em> The answer is: it doesn't need to — because both apps are installed on the same server at the same time.</p>
+
+<h3>How apps coexist on a Frappe bench</h3>
+
+<div class="diagram">
+<svg viewBox="0 0 680 300" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,sans-serif">
+  <!-- Bench container -->
+  <rect x="10" y="10" width="660" height="280" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="340" y="34" font-size="12" font-weight="700" fill="#64748b" text-anchor="middle" text-transform="uppercase" letter-spacing="1">ONE BENCH — ONE SERVER</text>
+
+  <!-- Site -->
+  <rect x="30" y="48" width="620" height="228" rx="8" fill="#fff" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="340" y="70" font-size="11" font-weight="700" fill="#94a3b8" text-anchor="middle">SITE: client.aiws.com  ·  one MariaDB database  ·  all apps share it</text>
+
+  <!-- Apps row -->
+  <rect x="46"  y="82" width="112" height="60" rx="6" fill="#e0e7ff" stroke="#a5b4fc"/>
+  <text x="102" y="108" font-size="11" font-weight="700" fill="#3730a3" text-anchor="middle">frappe</text>
+  <text x="102" y="124" font-size="10" fill="#4338ca" text-anchor="middle">framework</text>
+  <text x="102" y="136" font-size="9" fill="#6366f1" text-anchor="middle">(never touch)</text>
+
+  <rect x="168" y="82" width="112" height="60" rx="6" fill="#dbeafe" stroke="#93c5fd"/>
+  <text x="224" y="108" font-size="11" font-weight="700" fill="#1e3a8a" text-anchor="middle">erpnext</text>
+  <text x="224" y="124" font-size="10" fill="#1d4ed8" text-anchor="middle">Accounts, Selling</text>
+  <text x="224" y="136" font-size="9" fill="#2563eb" text-anchor="middle">(never touch)</text>
+
+  <rect x="290" y="82" width="112" height="60" rx="6" fill="#dbeafe" stroke="#93c5fd"/>
+  <text x="346" y="108" font-size="11" font-weight="700" fill="#1e3a8a" text-anchor="middle">crm</text>
+  <text x="346" y="124" font-size="10" fill="#1d4ed8" text-anchor="middle">Lead, Pipeline</text>
+  <text x="346" y="136" font-size="9" fill="#2563eb" text-anchor="middle">(never touch)</text>
+
+  <rect x="412" y="82" width="112" height="60" rx="6" fill="#dbeafe" stroke="#93c5fd"/>
+  <text x="468" y="108" font-size="11" font-weight="700" fill="#1e3a8a" text-anchor="middle">hrms</text>
+  <text x="468" y="124" font-size="10" fill="#1d4ed8" text-anchor="middle">Employee, Leave</text>
+  <text x="468" y="136" font-size="9" fill="#2563eb" text-anchor="middle">(never touch)</text>
+
+  <!-- YOUR apps -->
+  <rect x="46"  y="162" width="152" height="60" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
+  <text x="122" y="188" font-size="11" font-weight="700" fill="#166534" text-anchor="middle">scale_core</text>
+  <text x="122" y="204" font-size="10" fill="#15803d" text-anchor="middle">Theme, SSO, Audit</text>
+  <text x="122" y="216" font-size="9" fill="#16a34a" text-anchor="middle">← YOUR APP</text>
+
+  <rect x="210" y="162" width="152" height="60" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
+  <text x="286" y="188" font-size="11" font-weight="700" fill="#166534" text-anchor="middle">scale_accounts</text>
+  <text x="286" y="204" font-size="10" fill="#15803d" text-anchor="middle">Extensions to Accounts</text>
+  <text x="286" y="216" font-size="9" fill="#16a34a" text-anchor="middle">← YOUR APP</text>
+
+  <rect x="374" y="162" width="152" height="60" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
+  <text x="450" y="188" font-size="11" font-weight="700" fill="#166534" text-anchor="middle">scale_sales</text>
+  <text x="450" y="204" font-size="10" fill="#15803d" text-anchor="middle">Extensions to CRM</text>
+  <text x="450" y="216" font-size="9" fill="#16a34a" text-anchor="middle">← YOUR APP</text>
+
+  <!-- Shared DB label -->
+  <rect x="46" y="236" width="590" height="30" rx="5" fill="#f1f5f9" stroke="#cbd5e1"/>
+  <text x="341" y="256" font-size="11" fill="#64748b" text-anchor="middle">Shared MariaDB database — all apps read &amp; write the same tables  ·  no data copying needed</text>
+</svg>
+</div>
+
+<h3>What this means in practice</h3>
+
+<div class="compare">
+  <div class="compare-col">
+    <h4 class="bad">✗ What you might think you need to do</h4>
+    <ul>
+      <li>Copy ERPNext's <code>accounts/</code> folder into your app</li>
+      <li>Fork the erpnext repo and edit <code>payment_entry.py</code></li>
+      <li>Duplicate the Sales Invoice DocType definition</li>
+      <li>Maintain your own branch of ERPNext for AIWS</li>
+    </ul>
+  </div>
+  <div class="compare-col">
+    <h4 class="good">✓ What you actually do</h4>
+    <ul>
+      <li>Install both ERPNext and your app on the same bench</li>
+      <li>Add Custom Fields to ERPNext's DocTypes via fixtures</li>
+      <li>Hook into ERPNext's events via <code>hooks.py</code></li>
+      <li>Override classes by inheriting from ERPNext's originals</li>
+    </ul>
+  </div>
+</div>
+
+<div class="box box-warn">
+  <p><strong>The fork trap:</strong> Forking ERPNext to add a field means every future ERPNext upgrade becomes a painful manual merge. Within 6 months, you're running a version of ERPNext that nobody else uses, with no security patches and no community support. Custom apps eliminate this entirely.</p>
+</div>
+
+
+<!-- ═══════════ SECTION 2 ═══════════ -->
+<h2><span class="section-num">2</span>The 5 Extension Levels — Quick Reference</h2>
+
+<p>Every feature request maps to one of these levels. Always start from Level 0 and only escalate when that level runs out of capability.</p>
+
+<table>
+  <tr>
+    <th>Level</th>
+    <th>Name</th>
+    <th>Tools used</th>
+    <th>When to use</th>
+    <th>Upgrade risk</th>
+  </tr>
+  <tr>
+    <td><strong>0</strong></td>
+    <td>Configure</td>
+    <td>Roles, Workflows, Notifications, Print Formats, Workspaces</td>
+    <td>Feature works exactly as-is in ERPNext</td>
+    <td>None</td>
+  </tr>
+  <tr>
+    <td><strong>1</strong></td>
+    <td>Custom Fields &amp; Property Setters</td>
+    <td>Custom Field fixture, Property Setter fixture</td>
+    <td>Right DocType exists but needs extra fields</td>
+    <td>Very low</td>
+  </tr>
+  <tr>
+    <td><strong>2</strong></td>
+    <td>Server &amp; Client Scripts</td>
+    <td><code>doc_events</code> in hooks.py, Server Script, Client Script</td>
+    <td>Needs business logic on existing DocType events</td>
+    <td>Low</td>
+  </tr>
+  <tr>
+    <td><strong>3</strong></td>
+    <td>Custom DocType or Override Class</td>
+    <td>New DocType JSON + Python controller, <code>override_doctype_class</code></td>
+    <td>New entity needed, or existing class behaviour must change</td>
+    <td>Medium — test on every ERPNext upgrade</td>
+  </tr>
+  <tr>
+    <td><strong>4</strong></td>
+    <td>Custom Pages, APIs, Background Jobs</td>
+    <td>Frappe UI pages, <code>@frappe.whitelist()</code>, scheduler events</td>
+    <td>External portal, heavy async processing, third-party integration</td>
+    <td>Medium</td>
+  </tr>
+</table>
+
+
+<!-- ═══════════ SECTION 3 ═══════════ -->
+<h2><span class="section-num">3</span>Worked Examples — Accounts &amp; Finance Module</h2>
+
+<p>The Accounts module is nearly 90% covered by ERPNext out-of-the-box. These 5 examples use realistic AIWS Finance requirements to show exactly what each extension level looks like in practice — from a two-line fixture to a full custom DocType with a scheduler.</p>
+
+
+<!-- ── EXAMPLE A ── -->
+<div class="example">
+  <div class="example-header lv1">
+    <span class="lvbadge">Level 1 — Custom Fields</span>
+    <div>
+      <div class="ex-title">Example A: Budget Revision Tracking</div>
+      <div class="ex-sub">Adding fields to ERPNext's existing Budget DocType — no code, no fork</div>
+    </div>
+  </div>
+  <div class="example-body">
+    <h4>Business requirement</h4>
+    <p>Finance controllers need to track how many times a budget has been revised and who approved the final version. ERPNext's Budget DocType has none of these fields.</p>
+
+    <h4>ERPNext provides</h4>
+    <p>The <code>Budget</code> DocType with: Company, Cost Centre, Fiscal Year, Budget Against, and monthly amount rows. Solid foundation — but missing revision history.</p>
+
+    <h4>What we build in <code>scale_accounts</code></h4>
+    <p>Two Custom Fields added to the existing Budget DocType, stored as fixture JSON in our app:</p>
+
+    <div class="code-header"><span class="lang-dot"></span>scale_accounts/fixtures/custom_field/budget_extensions.json</div>
+    <pre><code>[
+  {
+    <span class="st">"doctype"</span>: <span class="st">"Custom Field"</span>,
+    <span class="st">"dt"</span>: <span class="st">"Budget"</span>,                       <span class="cm">← ERPNext's Budget DocType</span>
+    <span class="st">"fieldname"</span>: <span class="st">"scale_revision_no"</span>,
+    <span class="st">"fieldtype"</span>: <span class="st">"Int"</span>,
+    <span class="st">"label"</span>: <span class="st">"Revision No."</span>,
+    <span class="st">"default"</span>: <span class="st">"0"</span>,
+    <span class="st">"read_only"</span>: <span class="nu">1</span>,
+    <span class="st">"insert_after"</span>: <span class="st">"fiscal_year"</span>,
+    <span class="st">"module"</span>: <span class="st">"AIWS Finance"</span>
+  },
+  {
+    <span class="st">"doctype"</span>: <span class="st">"Custom Field"</span>,
+    <span class="st">"dt"</span>: <span class="st">"Budget"</span>,
+    <span class="st">"fieldname"</span>: <span class="st">"scale_approved_by"</span>,
+    <span class="st">"fieldtype"</span>: <span class="st">"Link"</span>,
+    <span class="st">"options"</span>: <span class="st">"User"</span>,
+    <span class="st">"label"</span>: <span class="st">"Approved By"</span>,
+    <span class="st">"insert_after"</span>: <span class="st">"scale_revision_no"</span>,
+    <span class="st">"module"</span>: <span class="st">"AIWS Finance"</span>
+  }
+]</code></pre>
+
+    <div class="code-header"><span class="lang-dot"></span>scale_accounts/hooks.py — register fixture for auto-import</div>
+    <pre><code>fixtures = [
+    {<span class="st">"dt"</span>: <span class="st">"Custom Field"</span>, <span class="st">"filters"</span>: [[<span class="st">"module"</span>, <span class="st">"="</span>, <span class="st">"AIWS Finance"</span>]]},
+]
+<span class="cm"># When `bench install-app scale_accounts` runs, these fields appear on Budget automatically.</span></code></pre>
+
+    <div class="box box-good">
+      <p><strong>Result:</strong> ERPNext's Budget form now shows "Revision No." and "Approved By" as if they were always there. When ERPNext releases v17, <code>bench update</code> runs, and these fields survive untouched because they live in our app, not in ERPNext's source.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── EXAMPLE B ── -->
+<div class="example">
+  <div class="example-header lv2">
+    <span class="lvbadge">Level 2 — Server Script / Hook</span>
+    <div>
+      <div class="ex-title">Example B: Auto Gross Margin on Sales Invoice Submit</div>
+      <div class="ex-sub">Hooking into ERPNext's Sales Invoice lifecycle to inject business logic</div>
+    </div>
+  </div>
+  <div class="example-body">
+    <h4>Business requirement</h4>
+    <p>When a Sales Invoice is submitted, automatically compute the gross margin % (selling price − cost price / selling price) per line item and store it — for use in profitability reports without any manual entry.</p>
+
+    <h4>ERPNext provides</h4>
+    <p>The <code>Sales Invoice</code> DocType with Item rows containing <code>rate</code> (selling price) and <code>valuation_rate</code> (cost, from stock). No margin calculation exists.</p>
+
+    <h4>Step 1 — Add the storage field (Level 1 first)</h4>
+
+    <div class="code-header"><span class="lang-dot"></span>Custom Field on Sales Invoice Item</div>
+    <pre><code>{
+  <span class="st">"dt"</span>: <span class="st">"Sales Invoice Item"</span>,        <span class="cm">← child table of Sales Invoice</span>
+  <span class="st">"fieldname"</span>: <span class="st">"scale_gross_margin_pct"</span>,
+  <span class="st">"fieldtype"</span>: <span class="st">"Percent"</span>,
+  <span class="st">"label"</span>: <span class="st">"Gross Margin %"</span>,
+  <span class="st">"read_only"</span>: <span class="nu">1</span>,
+  <span class="st">"in_list_view"</span>: <span class="nu">1</span>
+}</code></pre>
+
+    <h4>Step 2 — Hook into on_submit to compute it</h4>
+
+    <div class="code-header"><span class="lang-dot"></span>scale_accounts/hooks.py</div>
+    <pre><code>doc_events = {
+    <span class="st">"Sales Invoice"</span>: {
+        <span class="st">"on_submit"</span>: <span class="st">"scale_accounts.finance.sales_invoice.compute_margins"</span>
+    }
+}
+<span class="cm"># Frappe calls our function automatically after every Sales Invoice submit.</span>
+<span class="cm"># We did not touch ERPNext's sales_invoice.py at all.</span></code></pre>
+
+    <div class="code-header"><span class="lang-dot"></span>scale_accounts/finance/sales_invoice.py</div>
+    <pre><code><span class="kw">import</span> frappe
+
+<span class="kw">def</span> <span class="fn">compute_margins</span>(doc, method):
+    <span class="cm">"""Called by Frappe after Sales Invoice is submitted."""</span>
+    updated = <span class="kw">False</span>
+    <span class="kw">for</span> item <span class="kw">in</span> doc.items:
+        <span class="kw">if</span> item.rate <span class="kw">and</span> item.valuation_rate:
+            margin = ((item.rate - item.valuation_rate) / item.rate) * <span class="nu">100</span>
+            frappe.db.set_value(
+                <span class="st">"Sales Invoice Item"</span>,
+                item.name,
+                <span class="st">"scale_gross_margin_pct"</span>,
+                round(margin, <span class="nu">2</span>)
+            )
+            updated = <span class="kw">True</span>
+    <span class="kw">if</span> updated:
+        frappe.db.commit()</code></pre>
+
+    <div class="box box-key">
+      <p><strong>Key insight:</strong> The function signature <code>(doc, method)</code> is Frappe's convention for hook callbacks. <code>doc</code> is the full Sales Invoice object — all its fields and child rows are available. We never imported anything from ERPNext. Frappe passed the document to us automatically.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── EXAMPLE C ── -->
+<div class="example">
+  <div class="example-header lv3">
+    <span class="lvbadge">Level 3 — Override Class</span>
+    <div>
+      <div class="ex-title">Example C: Payment Entry — TDS Auto-Deduction</div>
+      <div class="ex-sub">Extending ERPNext's Payment Entry Python class by inheriting from it</div>
+    </div>
+  </div>
+  <div class="example-body">
+    <h4>Business requirement</h4>
+    <p>When posting a vendor payment above ₹30,000, the system must automatically calculate TDS (Tax Deducted at Source) at the applicable rate, store the TDS amount, and block submission if the TDS entry hasn't been acknowledged.</p>
+
+    <h4>Why not a Server Script?</h4>
+    <p>A Server Script can add validation but cannot reliably modify ERPNext's own <code>validate()</code> logic mid-stream or access internal ERPNext helper methods needed for TDS calculations. We need to override the class itself.</p>
+
+    <h4>Step 1 — Tell Frappe to use our class instead</h4>
+
+    <div class="code-header"><span class="lang-dot"></span>scale_accounts/hooks.py</div>
+    <pre><code>override_doctype_class = {
+    <span class="st">"Payment Entry"</span>: <span class="st">"scale_accounts.overrides.payment_entry.ScalePaymentEntry"</span>
+}
+<span class="cm"># Frappe will instantiate OUR class whenever a Payment Entry is created/saved.</span>
+<span class="cm"># ERPNext's original class still exists — we inherit from it.</span></code></pre>
+
+    <h4>Step 2 — Write the override, inheriting everything</h4>
+
+    <div class="code-header"><span class="lang-dot"></span>scale_accounts/overrides/payment_entry.py</div>
+    <pre><code><span class="kw">import</span> frappe
+<span class="kw">from</span> erpnext.accounts.doctype.payment_entry.payment_entry <span class="kw">import</span> PaymentEntry
+
+<span class="kw">class</span> <span class="cl">ScalePaymentEntry</span>(PaymentEntry):
+    <span class="cm">"""
+    Extends ERPNext's PaymentEntry.
+    All of ERPNext's logic is inherited — we only ADD to it.
+    """</span>
+
+    <span class="kw">def</span> <span class="fn">validate</span>(self):
+        <span class="kw">super</span>().validate()         <span class="cm"># ← run ERPNext's full validate first</span>
+        self._scale_compute_tds()   <span class="cm"># ← then add our logic</span>
+
+    <span class="kw">def</span> <span class="fn">_scale_compute_tds</span>(self):
+        <span class="kw">if</span> self.payment_type != <span class="st">"Pay"</span>:
+            <span class="kw">return</span>                     <span class="cm"># only on outgoing payments</span>
+
+        tds_rate = self._get_tds_rate(self.party)
+        <span class="kw">if not</span> tds_rate <span class="kw">or</span> self.paid_amount &lt; <span class="nu">30000</span>:
+            <span class="kw">return</span>
+
+        tds_amount = round(self.paid_amount * tds_rate / <span class="nu">100</span>, <span class="nu">2</span>)
+        self.scale_tds_amount  = tds_amount
+        self.scale_tds_rate_pct = tds_rate
+
+        <span class="kw">if not</span> self.scale_tds_acknowledged:
+            frappe.throw(
+                f<span class="st">"TDS of ₹{tds_amount:,.2f} ({tds_rate}%) applies to this payment. "</span>
+                <span class="st">"Check 'TDS Acknowledged' to proceed."</span>
+            )
+
+    <span class="kw">def</span> <span class="fn">_get_tds_rate</span>(self, supplier):
+        <span class="kw">return</span> frappe.db.get_value(
+            <span class="st">"Supplier"</span>, supplier, <span class="st">"scale_tds_rate"</span>
+        ) <span class="kw">or</span> <span class="nu">0</span></code></pre>
+
+    <div class="box box-good">
+      <p><strong>The <code>super().validate()</code> line is critical.</strong> It runs ERPNext's full, complex Payment Entry validation — currency checks, account type checks, GL impact previews. We get all of that for free. Our 20 lines of code sit on top of hundreds of lines of ERPNext logic we never had to write.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── EXAMPLE D ── -->
+<div class="example">
+  <div class="example-header lv3">
+    <span class="lvbadge">Level 3 — New Custom DocType</span>
+    <div>
+      <div class="ex-title">Example D: MSME Compliance Tracker</div>
+      <div class="ex-sub">Building a brand-new entity that links to ERPNext's Supplier — no equivalent exists in ERPNext</div>
+    </div>
+  </div>
+  <div class="example-body">
+    <h4>Business requirement</h4>
+    <p>Indian MSME regulations require payments to MSME vendors within 45 days of invoice date. The Finance team needs a tracker that: records MSME registrations, monitors outstanding invoices, flags breaches, and generates a compliance report.</p>
+
+    <h4>ERPNext provides</h4>
+    <p>Supplier DocType (name, GSTIN, payment terms). Accounts Payable aging report. <em>No MSME-specific tracking whatsoever.</em> This is a full Level 3 build.</p>
+
+    <h4>DocType definition (abbreviated)</h4>
+
+    <div class="code-header"><span class="lang-dot"></span>scale_accounts/doctype/scale_msme_tracker/scale_msme_tracker.json (key fields)</div>
+    <pre><code>{
+  <span class="st">"name"</span>: <span class="st">"AIWS MSME Tracker"</span>,
+  <span class="st">"module"</span>: <span class="st">"AIWS Finance"</span>,
+  <span class="st">"is_submittable"</span>: <span class="nu">1</span>,
+  <span class="st">"fields"</span>: [
+    { <span class="st">"fieldname"</span>: <span class="st">"supplier"</span>,       <span class="st">"fieldtype"</span>: <span class="st">"Link"</span>, <span class="st">"options"</span>: <span class="st">"Supplier"</span>, <span class="st">"reqd"</span>: <span class="nu">1</span> },
+    { <span class="st">"fieldname"</span>: <span class="st">"udyam_number"</span>,    <span class="st">"fieldtype"</span>: <span class="st">"Data"</span>,  <span class="st">"label"</span>: <span class="st">"Udyam Reg. No."</span> },
+    { <span class="st">"fieldname"</span>: <span class="st">"msme_category"</span>,   <span class="st">"fieldtype"</span>: <span class="st">"Select"</span>,<span class="st">"options"</span>: <span class="st">"Micro\nSmall\nMedium"</span> },
+    { <span class="st">"fieldname"</span>: <span class="st">"valid_until"</span>,      <span class="st">"fieldtype"</span>: <span class="st">"Date"</span> },
+    { <span class="st">"fieldname"</span>: <span class="st">"payment_due_days"</span>, <span class="st">"fieldtype"</span>: <span class="st">"Int"</span>, <span class="st">"default"</span>: <span class="st">"45"</span> },
+    { <span class="st">"fieldname"</span>: <span class="st">"invoices_section"</span>, <span class="st">"fieldtype"</span>: <span class="st">"Section Break"</span> },
+    { <span class="st">"fieldname"</span>: <span class="st">"pending_invoices"</span>, <span class="st">"fieldtype"</span>: <span class="st">"Table"</span>,
+      <span class="st">"options"</span>: <span class="st">"AIWS MSME Invoice"</span> }   <span class="cm">← child table DocType</span>
+  ]
+}</code></pre>
+
+    <h4>Python controller with scheduler</h4>
+
+    <div class="code-header"><span class="lang-dot"></span>scale_accounts/doctype/scale_msme_tracker/scale_msme_tracker.py</div>
+    <pre><code><span class="kw">import</span> frappe
+<span class="kw">from</span> frappe.model.document <span class="kw">import</span> Document
+<span class="kw">from</span> frappe.utils <span class="kw">import</span> today, date_diff
+
+<span class="kw">class</span> <span class="cl">AiwsMsmeTracker</span>(Document):
+
+    <span class="kw">def</span> <span class="fn">validate</span>(self):
+        <span class="kw">if not</span> self.udyam_number:
+            frappe.throw(<span class="st">"Udyam Registration Number is required for MSME tracking."</span>)
+
+    <span class="kw">def</span> <span class="fn">on_submit</span>(self):
+        <span class="cm"># Mark supplier as MSME in Supplier master</span>
+        frappe.db.set_value(<span class="st">"Supplier"</span>, self.supplier, <span class="st">"scale_is_msme"</span>, <span class="nu">1</span>)
+        frappe.db.set_value(<span class="st">"Supplier"</span>, self.supplier, <span class="st">"scale_msme_tracker"</span>, self.name)
+
+
+<span class="cm"># ── Scheduled job — runs daily ──────────────────────────────</span>
+
+<span class="kw">def</span> <span class="fn">check_msme_breaches</span>():
+    <span class="cm">"""Called by Frappe scheduler daily. Flags near-breach MSME invoices."""</span>
+    trackers = frappe.get_all(<span class="st">"AIWS MSME Tracker"</span>, filters={<span class="st">"docstatus"</span>: <span class="nu">1</span>})
+
+    <span class="kw">for</span> t <span class="kw">in</span> trackers:
+        doc = frappe.get_doc(<span class="st">"AIWS MSME Tracker"</span>, t.name)
+        <span class="cm"># pull outstanding purchase invoices for this supplier</span>
+        invoices = frappe.db.sql(<span class="st">"""
+            SELECT name, posting_date, outstanding_amount
+            FROM   `tabPurchase Invoice`
+            WHERE  supplier = %(sup)s
+            AND    docstatus = 1
+            AND    outstanding_amount > 0
+        """</span>, {<span class="st">"sup"</span>: doc.supplier}, as_dict=<span class="kw">True</span>)
+
+        <span class="kw">for</span> inv <span class="kw">in</span> invoices:
+            days_elapsed = date_diff(today(), inv.posting_date)
+            days_left    = doc.payment_due_days - days_elapsed
+            <span class="kw">if</span> days_left &lt;= <span class="nu">7</span>:     <span class="cm"># alert when 7 or fewer days remain</span>
+                frappe.sendmail(
+                    recipients=[frappe.db.get_single_value(<span class="st">"AIWS Finance Settings"</span>, <span class="st">"finance_controller_email"</span>)],
+                    subject=f<span class="st">"MSME Alert: {inv.name} due in {days_left} days"</span>,
+                    message=f<span class="st">"Supplier: {doc.supplier} | Amount: ₹{inv.outstanding_amount:,.0f}"</span>
+                )</code></pre>
+
+    <div class="code-header"><span class="lang-dot"></span>scale_accounts/hooks.py — register the daily job</div>
+    <pre><code>scheduler_events = {
+    <span class="st">"daily"</span>: [<span class="st">"scale_accounts.doctype.scale_msme_tracker.scale_msme_tracker.check_msme_breaches"</span>]
+}</code></pre>
+  </div>
+</div>
+
+
+<!-- ── EXAMPLE E ── -->
+<div class="example">
+  <div class="example-header lv4">
+    <span class="lvbadge">Level 4 — Script Report</span>
+    <div>
+      <div class="ex-title">Example E: Working Capital Report</div>
+      <div class="ex-sub">A custom analytical report reading ERPNext's GL Entries and Balance Sheet data</div>
+    </div>
+  </div>
+  <div class="example-body">
+    <h4>Business requirement</h4>
+    <p>The Finance Controller needs a monthly working capital analysis: Current Assets, Current Liabilities, Net Working Capital, and Days Payable Outstanding — with a 12-month trend. ERPNext has a Balance Sheet but no working capital calculation.</p>
+
+    <h4>ERPNext provides</h4>
+    <p>GL Entry table (<code>tabGL Entry</code>), Account master with <code>account_type</code> and <code>root_type</code>. All the raw data — we just need to query it intelligently.</p>
+
+    <div class="code-header"><span class="lang-dot"></span>scale_accounts/report/scale_working_capital/scale_working_capital.py</div>
+    <pre><code><span class="kw">import</span> frappe
+<span class="kw">from</span> frappe.utils <span class="kw">import</span> getdate, add_months
+
+<span class="kw">def</span> <span class="fn">execute</span>(filters=<span class="kw">None</span>):
+    columns = _get_columns()
+    data    = _get_data(filters)
+    <span class="kw">return</span> columns, data
+
+<span class="kw">def</span> <span class="fn">_get_columns</span>():
+    <span class="kw">return</span> [
+        {<span class="st">"label"</span>: <span class="st">"Period"</span>,               <span class="st">"fieldtype"</span>: <span class="st">"Data"</span>,     <span class="st">"width"</span>: <span class="nu">120</span>},
+        {<span class="st">"label"</span>: <span class="st">"Current Assets (₹)"</span>,     <span class="st">"fieldtype"</span>: <span class="st">"Currency"</span>, <span class="st">"width"</span>: <span class="nu">160</span>},
+        {<span class="st">"label"</span>: <span class="st">"Current Liabilities (₹)"</span>, <span class="st">"fieldtype"</span>: <span class="st">"Currency"</span>, <span class="st">"width"</span>: <span class="nu">160</span>},
+        {<span class="st">"label"</span>: <span class="st">"Net Working Capital (₹)"</span>, <span class="st">"fieldtype"</span>: <span class="st">"Currency"</span>, <span class="st">"width"</span>: <span class="nu">160</span>},
+        {<span class="st">"label"</span>: <span class="st">"DPO (days)"</span>,              <span class="st">"fieldtype"</span>: <span class="st">"Int"</span>,      <span class="st">"width"</span>: <span class="nu">100</span>},
+    ]
+
+<span class="kw">def</span> <span class="fn">_get_data</span>(filters):
+    company  = filters.get(<span class="st">"company"</span>)
+    end_date = getdate(filters.get(<span class="st">"to_date"</span>))
+    rows = []
+
+    <span class="kw">for</span> i <span class="kw">in</span> range(<span class="nu">12</span>):                      <span class="cm"># 12-month trend</span>
+        period_end   = add_months(end_date, -i)
+        period_label = period_end.strftime(<span class="st">"%b %Y"</span>)
+
+        current_assets = _get_balance(company, <span class="st">"Asset"</span>,     <span class="st">"Current Asset"</span>,     period_end)
+        current_liab   = _get_balance(company, <span class="st">"Liability"</span>, <span class="st">"Current Liability"</span>, period_end)
+        net_wc         = current_assets - current_liab
+        dpo            = _get_dpo(company, period_end)
+
+        rows.append([period_label, current_assets, current_liab, net_wc, dpo])
+
+    <span class="kw">return</span> rows
+
+<span class="kw">def</span> <span class="fn">_get_balance</span>(company, root_type, account_type, as_of_date):
+    <span class="cm"># Query GL Entry — ERPNext's core accounting table</span>
+    result = frappe.db.sql(<span class="st">"""
+        SELECT COALESCE(SUM(gle.debit - gle.credit), 0) AS balance
+        FROM   `tabGL Entry` gle
+        JOIN   `tabAccount` acc ON acc.name = gle.account
+        WHERE  gle.company     = %(company)s
+        AND    acc.root_type   = %(root_type)s
+        AND    acc.account_type = %(account_type)s
+        AND    gle.posting_date &lt;= %(as_of_date)s
+        AND    gle.is_cancelled = 0
+    """</span>, {
+        <span class="st">"company"</span>: company, <span class="st">"root_type"</span>: root_type,
+        <span class="st">"account_type"</span>: account_type, <span class="st">"as_of_date"</span>: as_of_date
+    })
+    <span class="kw">return</span> abs(result[<span class="nu">0</span>][<span class="nu">0</span>]) <span class="kw">if</span> result <span class="kw">else</span> <span class="nu">0</span></code></pre>
+
+    <div class="box box-key">
+      <p><strong>We read ERPNext's tables directly</strong> (<code>tabGL Entry</code>, <code>tabAccount</code>) but write nothing to them. This is the safe pattern for Script Reports — read from ERPNext's data, produce your own analytical output. The report appears in Frappe's standard report list and is accessible to the right roles.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════ SECTION 4 ═══════════ -->
+<h2><span class="section-num">4</span>Anti-Patterns — What NOT to Do</h2>
+
+<div class="two">
+  <div>
+    <h3>Never do these</h3>
+    <ul class="anti">
+      <li>Edit any file inside <code>apps/frappe/</code>, <code>apps/erpnext/</code>, <code>apps/crm/</code>, or <code>apps/hrms/</code></li>
+      <li>Run <code>git commit</code> inside an ERPNext/Frappe app directory</li>
+      <li>Write raw <code>UPDATE</code> SQL directly against ERP tables — use <code>frappe.db.set_value()</code> or <code>doc.save()</code></li>
+      <li>Import between two AIWS apps: <code>from scale_sales import ...</code> inside <code>scale_accounts</code></li>
+      <li>Use <code>frappe.flags.ignore_permissions = True</code> without a documented reason in a comment above it</li>
+      <li>Store API keys, passwords, or tokens in Python source files — use a Password field on a Settings DocType</li>
+      <li>Skip writing tests because "it's just a small script"</li>
+      <li>Make manual config changes on a live site without also adding them to fixtures in your app</li>
+    </ul>
+  </div>
+  <div>
+    <h3>The upgrade contract</h3>
+    <p>Before any ERPNext or Frappe version upgrade:</p>
+    <ol class="step-list">
+      <li class="step-list"><div class="step-n">1</div><div class="step-c"><strong>Clone production to a test bench</strong><span>Never test upgrades on production</span></div></li>
+      <li class="step-list"><div class="step-n">2</div><div class="step-c"><strong>Run <code>bench update</code> on the clone</strong><span>Check for migration errors</span></div></li>
+      <li class="step-list"><div class="step-n">3</div><div class="step-c"><strong>Run the full AIWS test suite</strong><span><code>bench run-tests --app scale_accounts</code></span></div></li>
+      <li class="step-list"><div class="step-n">4</div><div class="step-c"><strong>Specifically test all override classes</strong><span>These are most likely to break if ERPNext's internal method signatures change</span></div></li>
+      <li class="step-list"><div class="step-n">5</div><div class="step-c"><strong>Fix any breakages in your app — never in ERPNext</strong><span>If ERPNext's API changed, update your override to match the new signature</span></div></li>
+    </ol>
+  </div>
+</div>
+
+
+<!-- ═══════════ SECTION 5 ═══════════ -->
+<h2><span class="section-num">5</span>Decision Reference — Which Level for This Feature?</h2>
+
+<table>
+  <tr><th>Ask yourself</th><th>Answer</th><th>Level to use</th></tr>
+  <tr>
+    <td>Does ERPNext handle this exactly, with no changes?</td>
+    <td>Yes</td>
+    <td><strong>Level 0</strong> — configure roles/workflows/print formats. Export as fixtures.</td>
+  </tr>
+  <tr>
+    <td>Does the right DocType exist, but it's missing 1–5 fields?</td>
+    <td>Yes</td>
+    <td><strong>Level 1</strong> — Custom Fields in fixture JSON. Use <code>scale_</code> prefix on all fieldnames.</td>
+  </tr>
+  <tr>
+    <td>Do I need to run business logic when a document is saved/submitted/cancelled?</td>
+    <td>Yes</td>
+    <td><strong>Level 2</strong> — Server Script via <code>doc_events</code> in hooks.py. Write unit tests.</td>
+  </tr>
+  <tr>
+    <td>Do I need to change the behaviour of an existing DocType's Python class?</td>
+    <td>Yes</td>
+    <td><strong>Level 3a</strong> — Override the class. Import original, inherit, call <code>super()</code> first.</td>
+  </tr>
+  <tr>
+    <td>Do I need a completely new form/entity that doesn't exist in ERPNext?</td>
+    <td>Yes</td>
+    <td><strong>Level 3b</strong> — New Custom DocType with Python controller. Link to existing DocTypes via Link fields.</td>
+  </tr>
+  <tr>
+    <td>Do I need an external-facing page, mobile interface, or third-party integration?</td>
+    <td>Yes</td>
+    <td><strong>Level 4</strong> — Custom page (Frappe UI), whitelisted API, or background job + integration connector.</td>
+  </tr>
+  <tr>
+    <td>Am I about to modify ERPNext source to add a feature?</td>
+    <td>—</td>
+    <td><strong>Stop.</strong> There is always a correct way to do it from your custom app. Ask your team lead.</td>
+  </tr>
+</table>
+
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<div style="margin-top: 48px; padding-top: 20px; border-top: 2px solid #e5e7eb; display: flex; justify-content: space-between; font-size: 12px; color: #9ca3af;">
+  <span>AIWS ERP — Developer Reference · Pixaflip Technologies × SIL</span>
+  <span>Internal use only · v1.0 · July 2026</span>
+</div>
+
+</body>
+</html>
