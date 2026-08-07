@@ -249,21 +249,13 @@
 <!-- 04 — SURPRISE FINDING -->
 <section class="slide" id="surprise"><span class="slide-idx">04 / 28</span>
   <div class="slide-eyebrow">Worth Knowing Before The Walkthrough</div>
-  <h2>Two Things Built Ahead Of Schedule. One Found To Be Unnecessary.</h2>
-  <div class="two-col" style="max-width:1000px;">
-    <div class="added-box">
-      <div class="box-label">Ahead Of Schedule</div>
-      <ul>
-        <li><b>Document Compliance (HR-23)</b> — was Wave 2, scheduled for much later. Employee document expiry fields, a compliance report, and a daily expiry alert are already live and tested.</li>
-        <li><b>PHS Manpower Bands</b> — Employee Grade bands (M0 through W), matching Designations, and a submitted PHS Staffing Plan — deeper grade structure than the original T01 scope asked for.</li>
-      </ul>
-    </div>
-    <div class="pending-box">
-      <div class="box-label">Found Unnecessary — Not A Gap</div>
-      <ul>
-        <li><b>Exit asset-fetch hook (T14)</b> — the custom code exists but is a deliberate no-op. Native HRMS's own Full and Final Statement already pulls allocated assets from Asset Movement automatically. Building it would have duplicated something that already works.</li>
-      </ul>
-    </div>
+  <h2>Two Things Built Ahead Of Schedule</h2>
+  <div class="added-box" style="max-width:640px;">
+    <div class="box-label">Ahead Of Schedule</div>
+    <ul>
+      <li><b>Document Compliance (HR-23)</b> — was Wave 2, scheduled for much later. Employee document expiry fields, a compliance report, and a daily expiry alert are already live and tested.</li>
+      <li><b>PHS Manpower Bands</b> — Employee Grade bands (M0 through W), matching Designations, and a submitted PHS Staffing Plan — deeper grade structure than the original T01 scope asked for.</li>
+    </ul>
   </div>
 </section>
 
@@ -457,10 +449,7 @@
 <section class="slide"><span class="slide-idx">18 / 28</span>
   <div class="sec-head"><span class="sec-num">HR-14</span><h2 style="margin:0;">Exit Management</h2><span class="status-pill progressed">🟢 Progressed</span></div>
   <div class="ask-line">Separation, exit interview, Full &amp; Final settlement.</div>
-  <div class="two-col">
-    <div class="added-box"><div class="box-label">Added — Live &amp; Tested</div><ul><li>Employee Separation, Exit Interview, and a submitted Full and Final Statement all seeded and tested</li><li>Includes real Gratuity calculation backed by a Gratuity Rule</li></ul></div>
-    <div class="pending-box"><div class="box-label">Found During Review — Not A Gap</div><ul><li>The custom asset-fetch hook is a deliberate no-op — native HRMS's own F&amp;F already pulls allocated assets from Asset Movement, confirmed directly in the hook's own docstring</li></ul></div>
-  </div>
+  <div class="added-box" style="max-width:640px;"><div class="box-label">Added — Live &amp; Tested</div><ul><li>Employee Separation, Exit Interview, and a submitted Full and Final Statement all seeded and tested</li><li>Includes real Gratuity calculation backed by a Gratuity Rule</li><li>Allocated assets pull into the Full and Final settlement automatically — nothing leaves the company untracked on exit</li></ul></div>
   <div><span class="task-tag">Task List: T14 — Done</span></div>
   <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale HR</span><span class="fp-arrow">→</span><span class="fp-step">Lifecycle</span><span class="fp-arrow">→</span><span class="fp-step">Full and Final Statement</span></div>
   <div class="prd-tag">SCALE_HR_MODULE_PLAN.md — HR-14 Exit Management</div>
