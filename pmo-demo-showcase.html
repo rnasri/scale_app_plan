@@ -200,9 +200,9 @@
   <div class="slide-eyebrow">Excel + PDF Alignment</div>
   <h2>20 Features. Here's Where We Stand — Honestly.</h2>
   <div class="big-nums">
-    <div class="big-num c-green"><div class="n">7</div><div class="l">Progressed</div></div>
+    <div class="big-num c-green"><div class="n">8</div><div class="l">Progressed</div></div>
     <div class="big-num c-amber"><div class="n">0</div><div class="l">Initiated</div></div>
-    <div class="big-num c-grey"><div class="n">13</div><div class="l">Planned</div></div>
+    <div class="big-num c-grey"><div class="n">12</div><div class="l">Planned</div></div>
     <div class="big-num c-navy"><div class="n">20</div><div class="l">Total PMO Features</div></div>
   </div>
   <div class="legend-row">
@@ -219,7 +219,7 @@
 <!-- 03 — TASK LIST HIGHLIGHT -->
 <section class="slide"><span class="slide-idx">03 / 27</span>
   <div class="slide-eyebrow">From Your Task List</div>
-  <h2>T00–T07 Done. 10 Tasks + R01 Next — All Sequenced.</h2>
+  <h2>T00–T08 Done. 9 Tasks + R01 Next — All Sequenced.</h2>
   <p class="lede">Your team's own task list (T00–T17, R01). One box down, none skipped, none reordered without a reason on the plan page.</p>
   <div class="task-grid">
     <div class="task-chip added"><span class="tid">T00</span><span class="ttitle">App scaffold, install, Workspace</span><span class="tmark">✅</span></div>
@@ -230,7 +230,7 @@
     <div class="task-chip added"><span class="tid">T05</span><span class="ttitle">Task Management config</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">T06</span><span class="ttitle">Milestone Dashboard</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">T07</span><span class="ttitle">Gantt — critical path + baseline</span><span class="tmark">✅</span></div>
-    <div class="task-chip pending"><span class="tid">T08</span><span class="ttitle">Timesheet + manday guardrails</span><span class="tmark">⏳</span></div>
+    <div class="task-chip added"><span class="tid">T08</span><span class="ttitle">Timesheet + manday guardrails</span><span class="tmark">✅</span></div>
     <div class="task-chip pending"><span class="tid">T09</span><span class="ttitle">Monthly Billing Wizard</span><span class="tmark">⏳</span></div>
     <div class="task-chip pending"><span class="tid">T10</span><span class="ttitle">Project Budget — categories + approval</span><span class="tmark">⏳</span></div>
     <div class="task-chip pending"><span class="tid">T11</span><span class="ttitle">Resource Management (biggest build)</span><span class="tmark">⏳</span></div>
@@ -258,7 +258,7 @@
     <div class="decide-box fixed">
       <div class="box-label">Corrected — No Action Needed</div>
       <h4>"Project Profitability" report (PMO-08)</h4>
-      <p>Excel row 9.0 states a native "Project Profitability" report exists. Checked directly against ERPNext source — <b>it doesn't.</b> The real native report is <b>Profitability Analysis</b>, under Accounts, filterable by Project. The Cockpit Dashboard will reuse that, not chase a report that isn't there.</p>
+      <p>Excel row 9.0 states a native "Project Profitability" report exists — <b>it doesn't.</b> The real native report is <b>Profitability Analysis</b>, under Accounts, filterable by Project. The Cockpit Dashboard will reuse that, not chase a report that isn't there.</p>
     </div>
   </div>
 </section>
@@ -351,17 +351,18 @@
 </section>
 
 <section class="slide"><span class="slide-idx">10 / 27</span>
-  <div class="sec-head"><span class="sec-num">PMO-06 · Excel 7.0</span><h2 style="margin:0;">Timesheet / Log Sheet Management</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="sec-head"><span class="sec-num">PMO-06 · Excel 7.0</span><h2 style="margin:0;">Timesheet / Log Sheet Management</h2><span class="status-pill progressed">🟢 Progressed</span></div>
   <div class="ask-line">Log hours, roll into billing and payroll, with a guardrail against blowing past the budgeted mandays.</div>
   <div class="two-col">
-    <div class="added-box"><div class="box-label">Native, Today</div><ul><li>Timesheet + Timesheet Detail: project, task, activity_type, hours, billing_hours, is_billable, costing/billing rate</li><li>Submit-for-approval workflow; rolls into Sales Invoice and Payroll</li></ul></div>
-    <div class="pending-box"><div class="box-label">To Build — T08</div><ul><li>Activity Types config, 8-hour-to-1-manday conversion</li><li><b>Manday guardrail script</b> — warns/blocks when logged hours exceed T01's role-based budget</li><li>Mobile timesheet form, weekly missing-timesheet reminder</li><li>Overtime field, plus a 4-action approval flow if the client needs Reject/Request-Changes beyond native's binary Draft→Submitted</li></ul></div>
+    <div class="added-box"><div class="box-label">Added — Live</div><ul><li>4 Activity Types configured (Development, Design, PMO, Consulting)</li><li>Every timesheet line now carries a <b>Budget Role</b> — matched against the Project's Role-Based Budget (set up in PMO-01), converted at 8 hours = 1 manday</li><li>Submitting a timesheet checks cumulative logged mandays for that Project + Role and shows a warning if it's over budget — a heads-up, not a hard block</li><li>A mobile-friendly <b>Timesheet Entry</b> form — no desk login needed, logs hours as whoever's signed in</li><li>Weekly email reminder to anyone on an active project's team with zero logged hours in the last 7 days</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Overtime field, plus a 4-action approval flow (Reject/Request-Changes) beyond native's binary Draft→Submitted, if the client needs it</li><li>The weekly reminder's actual email delivery hasn't been confirmed sending yet — same missing-Email-Account environment gap as elsewhere in this build</li></ul></div>
   </div>
-  <div><span class="task-tag">Task List: T08 — Wed Aug 12</span></div>
+  <div><span class="task-tag">Task List: T08 — Done, Wed Aug 12 → 8 Aug</span></div>
+  <div class="field-chips"><span class="field-chip">pmo_budget_role</span></div>
   <div class="prd-tag">Project Management Module.pdf — §7: Timesheet Management</div>
   <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Project Management</span><span class="fp-arrow">→</span><span class="fp-step">Timesheet</span><span class="fp-arrow">→</span><span class="fp-step">any record</span></div>
-  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/timesheet" target="_blank">See native Timesheet today →</a></div>
-  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Devika — Consultant</div><div class="uc-flow">Logs 8 hours against a task; the system silently checks it against her role's manday budget and would flag her manager before she blows through it.</div></div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/timesheet" target="_blank">See native Timesheet today →</a> <a class="btn btn-navy" href="http://scale.localhost:8000/timesheet-entry" target="_blank">Open Timesheet Entry (mobile) →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Devika — Consultant</div><div class="uc-flow">Logs 8 hours from her phone against a task, tagged with her Budget Role — the system silently checks it against the project's planned mandays and would flag her manager before she blows through it.</div></div>
 </section>
 
 <section class="slide"><span class="slide-idx">11 / 27</span>
