@@ -197,9 +197,9 @@
   <div class="slide-eyebrow">Excel + PDF Alignment</div>
   <h2>20 Features. Here's Where We Stand — Honestly.</h2>
   <div class="big-nums">
-    <div class="big-num c-green"><div class="n">2</div><div class="l">Progressed</div></div>
+    <div class="big-num c-green"><div class="n">3</div><div class="l">Progressed</div></div>
     <div class="big-num c-amber"><div class="n">0</div><div class="l">Initiated</div></div>
-    <div class="big-num c-grey"><div class="n">18</div><div class="l">Planned</div></div>
+    <div class="big-num c-grey"><div class="n">17</div><div class="l">Planned</div></div>
     <div class="big-num c-navy"><div class="n">20</div><div class="l">Total PMO Features</div></div>
   </div>
   <div class="legend-row">
@@ -216,13 +216,13 @@
 <!-- 03 — TASK LIST HIGHLIGHT -->
 <section class="slide"><span class="slide-idx">03 / 27</span>
   <div class="slide-eyebrow">From Your Task List</div>
-  <h2>T00–T02 Done. 15 Tasks + R01 Next — All Sequenced.</h2>
+  <h2>T00–T03 Done. 14 Tasks + R01 Next — All Sequenced.</h2>
   <p class="lede">Your team's own task list (T00–T17, R01). One box down, none skipped, none reordered without a reason on the plan page.</p>
   <div class="task-grid">
     <div class="task-chip added"><span class="tid">T00</span><span class="ttitle">App scaffold, install, Workspace</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">T01</span><span class="ttitle">Project Onboarding — checklist, budget, sign-off</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">T02</span><span class="ttitle">Consultant Onboarding portal</span><span class="tmark">✅</span></div>
-    <div class="task-chip pending"><span class="tid">T03</span><span class="ttitle">Client Onboarding kickoff pack</span><span class="tmark">⏳</span></div>
+    <div class="task-chip added"><span class="tid">T03</span><span class="ttitle">Client Onboarding kickoff pack</span><span class="tmark">✅</span></div>
     <div class="task-chip pending"><span class="tid">T04</span><span class="ttitle">Calendar Management config</span><span class="tmark">⏳</span></div>
     <div class="task-chip pending"><span class="tid">T05</span><span class="ttitle">Task Management config</span><span class="tmark">⏳</span></div>
     <div class="task-chip pending"><span class="tid">T06</span><span class="ttitle">Milestone Dashboard</span><span class="tmark">⏳</span></div>
@@ -305,15 +305,20 @@
 </section>
 
 <section class="slide"><span class="slide-idx">07 / 27</span>
-  <div class="sec-head"><span class="sec-num">PMO-03 · Excel 3.0</span><h2 style="margin:0;">Client Onboarding</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="sec-head"><span class="sec-num">PMO-03 · Excel 3.0</span><h2 style="margin:0;">Client Onboarding</h2><span class="status-pill progressed">🟢 Progressed</span></div>
   <div class="ask-line">A newly onboarded client sees a kickoff pack in their portal on first login, not a blank screen.</div>
   <div class="two-col">
-    <div class="added-box"><div class="box-label">Native, Today</div><ul><li>Customer, Contact, Address all exist</li><li>Portal User accounts — a client can already log in and see linked Projects/Tasks/Invoices</li></ul></div>
-    <div class="pending-box"><div class="box-label">To Build — T03</div><ul><li>"Client Kickoff Pack" portal page — onboarding guide, document repository, escalation contact matrix</li><li>Automated welcome email trigger on Portal User activation</li></ul></div>
+    <div class="added-box"><div class="box-label">Added — Live</div><ul><li><code>/client-kickoff-pack</code> portal page — onboarding guide (per-client customizable, generic fallback), project documents (reuses native File attachments), escalation contact matrix (new Customer child table)</li><li>Shows automatically in the client's own portal sidebar — no direct link needed</li><li>Resolves the logged-in user to their Customer via the native <b>Portal User</b> table, same mechanism ERPNext's own portal pages use</li><li>Welcome email fires automatically the moment a client gets portal access</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Real outgoing Email Account isn't configured on this dev site yet — welcome emails queue but won't actually send until that's set up (environment gap, not a code gap)</li><li>Document repository is read-only today — no way for the client to upload back through the portal</li></ul></div>
   </div>
-  <div><span class="task-tag">Task List: T03 — Sat Aug 8</span></div>
+  <div><span class="task-tag">Task List: T03 — Done, Sat Aug 8 → 7 Aug</span></div>
+  <div class="rule-box">
+    <div class="box-label">Built &amp; Tested As A Real Portal User</div>
+    <ul><li>Not just console-tested — logged in as an actual Website User with no desk access, visited the page for real, confirmed the onboarding guide, escalation table, and portal-sidebar link all rendered correctly.</li>
+    <li>Caught a real Frappe convention along the way: a <code>www/</code> page's route/HTML can use hyphens, but its Python controller must be named with underscores — a hyphen-named <code>.py</code> file is silently never loaded, no error, it just renders with nothing wired up.</li></ul>
+  </div>
   <div class="prd-tag">Project Management Module.pdf — §2: Client Onboarding</div>
-  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Rohan — Client Stakeholder</div><div class="uc-flow">Logs in for the first time and lands on a Kickoff Pack instead of a blank portal, escalation contacts one click away.</div></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Rohan — Client Stakeholder</div><div class="uc-flow">Gets added as a portal contact for his company → a welcome email queues automatically → logs in and finds "Client Kickoff Pack" already in his portal sidebar, no blank screen, escalation contacts one click away.</div></div>
 </section>
 
 <section class="slide"><span class="slide-idx">08 / 27</span>
