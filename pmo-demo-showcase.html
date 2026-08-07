@@ -197,9 +197,9 @@
   <div class="slide-eyebrow">Excel + PDF Alignment</div>
   <h2>20 Features. Here's Where We Stand — Honestly.</h2>
   <div class="big-nums">
-    <div class="big-num c-green"><div class="n">1</div><div class="l">Progressed</div></div>
+    <div class="big-num c-green"><div class="n">2</div><div class="l">Progressed</div></div>
     <div class="big-num c-amber"><div class="n">0</div><div class="l">Initiated</div></div>
-    <div class="big-num c-grey"><div class="n">19</div><div class="l">Planned</div></div>
+    <div class="big-num c-grey"><div class="n">18</div><div class="l">Planned</div></div>
     <div class="big-num c-navy"><div class="n">20</div><div class="l">Total PMO Features</div></div>
   </div>
   <div class="legend-row">
@@ -216,12 +216,12 @@
 <!-- 03 — TASK LIST HIGHLIGHT -->
 <section class="slide"><span class="slide-idx">03 / 27</span>
   <div class="slide-eyebrow">From Your Task List</div>
-  <h2>T00–T01 Done. 16 Tasks + R01 Next — All Sequenced.</h2>
+  <h2>T00–T02 Done. 15 Tasks + R01 Next — All Sequenced.</h2>
   <p class="lede">Your team's own task list (T00–T17, R01). One box down, none skipped, none reordered without a reason on the plan page.</p>
   <div class="task-grid">
     <div class="task-chip added"><span class="tid">T00</span><span class="ttitle">App scaffold, install, Workspace</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">T01</span><span class="ttitle">Project Onboarding — checklist, budget, sign-off</span><span class="tmark">✅</span></div>
-    <div class="task-chip pending"><span class="tid">T02</span><span class="ttitle">Consultant Onboarding portal</span><span class="tmark">⏳</span></div>
+    <div class="task-chip added"><span class="tid">T02</span><span class="ttitle">Consultant Onboarding portal</span><span class="tmark">✅</span></div>
     <div class="task-chip pending"><span class="tid">T03</span><span class="ttitle">Client Onboarding kickoff pack</span><span class="tmark">⏳</span></div>
     <div class="task-chip pending"><span class="tid">T04</span><span class="ttitle">Calendar Management config</span><span class="tmark">⏳</span></div>
     <div class="task-chip pending"><span class="tid">T05</span><span class="ttitle">Task Management config</span><span class="tmark">⏳</span></div>
@@ -286,16 +286,22 @@
 </section>
 
 <section class="slide"><span class="slide-idx">06 / 27</span>
-  <div class="sec-head"><span class="sec-num">PMO-02 · Excel 2.0</span><h2 style="margin:0;">Consultant Onboarding</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="sec-head"><span class="sec-num">PMO-02 · Excel 2.0</span><h2 style="margin:0;">Consultant Onboarding</h2><span class="status-pill progressed">🟢 Progressed</span></div>
   <div class="ask-line">Self-service consultant signup — profile, skills, BGV, rate card, availability — approved by PMO before allocation.</div>
-  <div class="pending-box" style="max-width:640px;"><div class="box-label">To Build — T02 — Nothing Native Fits</div><ul><li>Supplier has no skills/rate-card/availability concept; Employee assumes a payroll relationship a consultant may not have</li><li>Consultant Profile, Consultant Skill Tag, BGV Compliance Checklist, Consultant Rate Card, Weekly Availability Planner DocTypes</li><li>External Web Form self-service portal + PMO approval action + availability-matching dashboard</li></ul></div>
-  <div class="rule-box">
-    <div class="box-label">Flagged Risk, As Written In Excel</div>
-    <ul><li>Excel's own Delay Risk column marks this row <b>High</b> — its note reads: "the full requirement... is a custom app on the native HR/user base, not a light refinement."</li></ul>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Added — Live</div><ul><li>4 child DocTypes + <b>Consultant Profile</b> parent — nothing native fits (Supplier has no skills/rate-card/availability; Employee assumes payroll)</li><li>Public <code>/consultant-signup</code> Web Form — no login required</li><li><b>Consultant Approval</b> workflow — Pending Review → Approved/Rejected, Approved → Inactive, Rejected → Pending Review</li><li><code>reviewed_by</code>/<code>review_date</code> auto-stamp the moment PMO decides</li><li><b>Consultant Availability</b> report — the seed surface for Resource Management (PMO-14)</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Bank details/rate card encryption or masking — currently plain fields, worth a security pass before real bank data is collected</li><li>Consultant-facing status visibility — no way for a consultant to check their own approval status today, only PMO sees it on the desk</li><li>Feeds Resource Management (PMO-14) once that schema exists — not built yet</li></ul></div>
   </div>
-  <div><span class="task-tag">Task List: T02 — Thu–Fri Aug 6–7</span></div>
+  <div><span class="task-tag">Task List: T02 — Done, Thu–Fri Aug 6–7 → 7 Aug</span></div>
+  <div class="rule-box">
+    <div class="box-label">Flagged Risk, As Written In Excel — Confirmed Accurate</div>
+    <ul><li>Excel's own Delay Risk column marks this row <b>High</b> — its note reads: "the full requirement... is a custom app on the native HR/user base, not a light refinement." Building it confirmed that: 4 child DocTypes, a public Web Form, and a full approval workflow — a genuine mini-project, not a quick add-on.</li>
+    <li>Web Form submissions insert with Frappe's own <code>ignore_permissions=True</code> regardless of login state — no Guest DocPerm needed on Consultant Profile for the public signup to work.</li></ul>
+  </div>
+  <div class="field-chips"><span class="fc-label">Live custom DocTypes</span><span class="field-chip">Consultant Profile</span><span class="field-chip">Consultant Skill Tag</span><span class="field-chip">BGV Compliance Checklist</span><span class="field-chip">Consultant Rate Card</span><span class="field-chip">Weekly Availability Planner</span></div>
   <div class="prd-tag">Project Management Module.pdf — §2: Consultant/Resource Onboarding</div>
-  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Devika — Incoming Consultant</div><div class="uc-flow">Clicks an invitation link, fills profile/skills/NDA upload/rate card/availability in one flow, and gets activated by PMO without a single back-and-forth email.</div></div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/consultant-signup" target="_blank">Open the public signup form →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Devika — Incoming Consultant</div><div class="uc-flow">Clicks the signup link, fills profile/skills/bank details/NDA upload/rate card/availability in one flow, and lands on "Thanks for signing up!" — no Frappe login needed. A PMO Director opens her record, checks it over, and clicks Approve — she's activated for allocation the same day.</div></div>
 </section>
 
 <section class="slide"><span class="slide-idx">07 / 27</span>
