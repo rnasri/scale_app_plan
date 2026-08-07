@@ -195,9 +195,9 @@
   <div class="slide-eyebrow">PDF Alignment</div>
   <h2>18 Sections. Here's Where We Stand.</h2>
   <div class="big-nums">
-    <div class="big-num c-green"><div class="n">4</div><div class="l">Progressed</div></div>
+    <div class="big-num c-green"><div class="n">5</div><div class="l">Progressed</div></div>
     <div class="big-num c-amber"><div class="n">7</div><div class="l">Initiated</div></div>
-    <div class="big-num c-grey"><div class="n">7</div><div class="l">Planned</div></div>
+    <div class="big-num c-grey"><div class="n">6</div><div class="l">Planned</div></div>
     <div class="big-num c-navy"><div class="n">18</div><div class="l">Total PDF Sections</div></div>
   </div>
   <div class="legend-row">
@@ -210,8 +210,8 @@
 <!-- 03 — TASK LIST HIGHLIGHT -->
 <section class="slide"><span class="slide-idx">03 / 26</span>
   <div class="slide-eyebrow">From Your Task List</div>
-  <h2>16 of 17 Dev Tasks — Addressed</h2>
-  <p class="lede">Your team's own task list (T01–T17). Here's what this build covers.</p>
+  <h2>18 of 21 Dev Tasks — Addressed</h2>
+  <p class="lede">Your team's own task list (T01–T20 + R01). Here's what this build covers.</p>
   <div class="task-grid">
     <div class="task-chip added"><span class="tid">T01</span><span class="ttitle">Lead Source values</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">T02</span><span class="ttitle">Customer Group hierarchy</span><span class="tmark">✅</span></div>
@@ -230,6 +230,9 @@
     <div class="task-chip added"><span class="tid">T15</span><span class="ttitle">Lead duplicate detection</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">T16</span><span class="ttitle">10 Pipeline stages</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">T17</span><span class="ttitle">Stakeholder + Competitor tables</span><span class="tmark">✅</span></div>
+    <div class="task-chip added"><span class="tid">T18</span><span class="ttitle">Customer Risk automation + Sales Config</span><span class="tmark">✅</span></div>
+    <div class="task-chip added"><span class="tid">T19</span><span class="ttitle">Real dunning auto-escalation job</span><span class="tmark">✅</span></div>
+    <div class="task-chip pending"><span class="tid">T20</span><span class="ttitle">Naming alignment — decision pending</span><span class="tmark">⏳</span></div>
     <div class="task-chip pending"><span class="tid">R01</span><span class="ttitle">Export fixtures — team commit</span><span class="tmark">⏳</span></div>
   </div>
 </section>
@@ -271,16 +274,24 @@
 <!-- ═══ CORE SECTIONS 1–12 ═══ -->
 
 <section class="slide"><span class="slide-idx">05 / 26</span>
-  <div class="sec-head"><span class="sec-num">SECTION 1</span><h2 style="margin:0;">CRM</h2><span class="status-pill initiated">🟡 Initiated</span></div>
+  <div class="sec-head"><span class="sec-num">SECTION 1</span><h2 style="margin:0;">CRM</h2><span class="status-pill progressed">🟢 Progressed</span></div>
   <div class="ask-line">Centralized customer profiles. Full relationship history.</div>
   <div class="two-col">
-    <div class="added-box"><div class="box-label">Added</div><ul><li>Turnover, competitor data</li><li>Account tier (A/B/C/Key/Strategic)</li><li>Live risk status</li></ul></div>
-    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Auto-logged interactions — no calls/emails are captured automatically yet, all logging is manual</li><li>Leadership view (CLV, top accounts) — no rollup report exists for account value today</li><li>Configurable Risk rule — "At Risk" is set manually; needs a real trigger rule plus a Sales Config screen to edit it without code</li></ul></div>
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Turnover, competitor data</li><li>Account tier (A/B/C/Key/Strategic)</li><li><b>Live, automatic risk status</b> — a real daily rule engine now sets At Risk, with an editable Sales Config screen (overdue invoices, competitor signals, inactivity — all threshold-tunable, no code change needed)</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Auto-logged interactions — no calls/emails are captured automatically yet, all logging is manual</li><li>Leadership view (CLV, top accounts) — no rollup report exists for account value today</li></ul></div>
   </div>
-  <div><span class="task-tag">Task List: T02, T03</span></div>
-  <div class="field-chips"><span class="field-chip">scale_sales_annual_turnover</span><span class="field-chip">scale_sales_competitor_products</span><span class="field-chip">scale_sales_account_classification</span><span class="field-chip">scale_sales_customer_status</span></div><div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Sales workspace</span><span class="fp-arrow">→</span><span class="fp-step">Customer</span><span class="fp-arrow">→</span><span class="fp-step">any record → More Information</span></div>
+  <div><span class="task-tag">Task List: T02, T03, T18 (7 Aug)</span></div>
+  <div class="field-chips"><span class="field-chip">scale_sales_annual_turnover</span><span class="field-chip">scale_sales_competitor_products</span><span class="field-chip">scale_sales_account_classification</span><span class="field-chip">scale_sales_customer_status</span><span class="field-chip">scale_sales_risk_reason</span></div><div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Sales workspace</span><span class="fp-arrow">→</span><span class="fp-step">Customer</span><span class="fp-arrow">→</span><span class="fp-step">any record → More Information</span></div>
+  <div class="rule-box">
+    <div class="box-label">Risk Rule — Live, Not Manual (Added 7 Aug 2026)</div>
+    <ul>
+      <li>Runs daily against every customer with sales activity: overdue unpaid invoice, a competitor logged on a recent deal, or no commercial activity in N days — all 3 individually toggleable, all thresholds editable in <b>Sales Config</b>, no code change needed</li>
+      <li>Respects a rep's manual "At Risk" call rather than overwriting it, and auto-clears back to Active once the rules stop matching (also toggleable)</li>
+    </ul>
+    <div class="rb-note">Same Sales Config screen also now stores the AI rule thresholds (Win Probability, Next Best Action, Lead Score) — the fields are live and editable, but <code>ai_utils.py</code> doesn't read from them yet, so that half is a config-storage handoff to the AI team, not yet a working control.</div>
+  </div>
   <div class="prd-tag">Sales Management Module.pdf — Section 1: CRM</div>
-  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/customer/new" target="_blank">See the fields live →</a></div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/customer/new" target="_blank">See the fields live →</a> <a class="btn btn-navy" href="http://scale.localhost:8000/app/sales-config" target="_blank">See Sales Config →</a></div>
   <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Naveen — Sales Rep</div><div class="uc-flow">Opens Nova Retail's record → sees "At Risk" status, ₹18L turnover → escalates to manager before the renewal call.</div></div>
 </section>
 
@@ -351,16 +362,16 @@
 </section>
 
 <section class="slide"><span class="slide-idx">11 / 26</span>
-  <div class="sec-head"><span class="sec-num">SECTION 7</span><h2 style="margin:0;">Distributor Management</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="sec-head"><span class="sec-num">SECTION 7</span><h2 style="margin:0;">Distributor Management</h2><span class="status-pill initiated">🟡 Initiated</span></div>
   <div class="ask-line">Distributor dashboard. Secondary sales tracking.</div>
   <div class="two-col">
-    <div class="added-box"><div class="box-label">Added</div><ul><li>"Distributor" customer group tag</li></ul></div>
-    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Everything else — same gap as Dealer Management; only the Customer Group tag exists</li></ul></div>
+    <div class="added-box"><div class="box-label">Added — 7 Aug 2026</div><ul><li><b>Distributor Onboarding</b> DocType — full application pipeline: Draft → Documents Pending → Under Review → Approved/Rejected → Active</li><li>Approving with a linked Customer auto-sets Customer Group = Distributor (verified in code)</li><li>Territory, Sales Person, Payment Terms, documents checklist all on the form</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>This covers onboarding/intake only — the ongoing-operations half (Secondary Sales Entry, Distributor Claim + approval workflow, Distributor Health Dashboard) isn't built yet</li></ul></div>
   </div>
-  <div><span class="task-tag">Task List: T02 (partial)</span></div>
-  <div class="field-chips"><span class="field-chip">Customer Group = "Distributor"</span></div><div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Sales workspace</span><span class="fp-arrow">→</span><span class="fp-step">Masters</span><span class="fp-arrow">→</span><span class="fp-step">Customer Group</span></div>
+  <div><span class="task-tag">Task List: T02 (partial), SALES-07 Distributor Onboarding (7 Aug)</span></div>
+  <div class="field-chips"><span class="field-chip">onboarding_status</span><span class="field-chip">Customer Group = "Distributor"</span></div><div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Sales workspace</span><span class="fp-arrow">→</span><span class="fp-step">Distributor Onboarding</span></div>
   <div class="prd-tag">Sales Management Module.pdf — Section 7: Distributor Management</div>
-  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Kabir — Channel Manager</div><div class="uc-flow">Checks the Distributor Dashboard → sees outstanding payments rising → flags it for the collections team.</div></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Kabir — Channel Manager</div><div class="uc-flow">Reviews a new distributor's application, checks the documents, approves it — the Customer record is automatically tagged Distributor, no separate manual step.</div></div>
 </section>
 
 <section class="slide"><span class="slide-idx">12 / 26</span>
@@ -419,23 +430,23 @@
   <div class="sec-head"><span class="sec-num">SECTION 11</span><h2 style="margin:0;">Collection Management</h2><span class="status-pill progressed">🟢 Progressed</span></div>
   <div class="ask-line">Track dues. Ageing. Automatic reminders.</div>
   <div class="two-col">
-    <div class="added-box"><div class="box-label">Added</div><ul><li>Reminder templates (manual — not auto-escalating)</li><li>Promise-to-Pay tracking — live, wired</li><li>Ageing buckets (30/60/90/120)</li></ul></div>
-    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Actual auto-escalation job — nothing yet watches overdue invoices and auto-fires T-7→T-0→T+15 on its own</li><li>Customer/rep/region breakdown — collections aren't sliced by owner or region yet</li></ul></div>
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Promise-to-Pay tracking — live, wired</li><li>Ageing buckets (30/60/90/120)</li><li><b>Real auto-escalation job (7 Aug 2026)</b> — daily, no manual step: T-7 and T-0 email reminders, T+15 auto-creates and submits a real Dunning document with interest</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Customer/rep/region breakdown — collections aren't sliced by owner or region yet</li><li>A systemic failure (e.g. mail server down) fails silently per-invoice into the error log rather than raising — a known, accepted limitation, not urgent</li></ul></div>
   </div>
-  <div><span class="task-tag">Task List: T09, T10, T11</span></div>
-  <div class="field-chips"><span class="field-chip">scale_sales_collection_status</span><span class="field-chip">scale_sales_promise_to_pay_date</span></div><div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Sales workspace</span><span class="fp-arrow">→</span><span class="fp-step">Sales Invoice</span><span class="fp-arrow">→</span><span class="fp-step">SINV-26-00001</span><span class="fp-arrow">→</span><span class="fp-step">More Info tab → Additional Info</span></div>
+  <div><span class="task-tag">Task List: T09, T10, T11, T19 (7 Aug)</span></div>
+  <div class="field-chips"><span class="field-chip">scale_sales_collection_status</span><span class="field-chip">scale_sales_promise_to_pay_date</span><span class="field-chip">scale_sales_dunning_reminders_sent</span></div><div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Sales workspace</span><span class="fp-arrow">→</span><span class="fp-step">Sales Invoice</span><span class="fp-arrow">→</span><span class="fp-step">SINV-26-00001</span><span class="fp-arrow">→</span><span class="fp-step">More Info tab → Additional Info</span></div>
   <div class="rule-box">
     <div class="box-label">What's Actually Automated vs. Manual</div>
     <ul>
-      <li><b>Promise-to-Pay + Collection Status</b> — real: auto-set to Pending on submit, auto-flips to Collected when fully paid</li>
-      <li><b>Dunning Types (reminder templates)</b> — data only, no automation: a rep manually creates each Dunning letter and picks a type</li>
+      <li><b>Promise-to-Pay + Collection Status</b> — real: auto-set to Pending on submit, auto-flips to Collected (or Partial, on part-payment) as payments post</li>
+      <li><b>Dunning reminders + escalation</b> — real, as of 7 Aug: a daily job emails T-7/T-0 reminders and auto-creates + submits a T+15 Dunning document using the matching Dunning Type's interest rate, with a tracking field so nothing repeats twice</li>
       <li><b>Ageing buckets</b> — real: Accounts Settings drives the 30/60/90/120 columns on the native Accounts Receivable report</li>
     </ul>
     <div class="rb-note">Both invoice fields sit on the <b>More Info</b> tab, inside the collapsed <b>Additional Info</b> section — not on Details. Frappe also auto-hides empty fields on a submitted document, so an unset Promise-to-Pay Date won't show at all until a value is entered.</div>
   </div>
   <div class="prd-tag">Sales Management Module.pdf — Section 11: Collection Management</div>
   <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/sales-invoice/SINV-26-00001" target="_blank">See the live invoice →</a> <a class="btn btn-navy" href="http://scale.localhost:8000/app/dunning-type" target="_blank">See reminder templates →</a> <a class="btn btn-navy" href="http://scale.localhost:8000/app/query-report/Accounts Receivable" target="_blank">See ageing buckets live →</a></div>
-  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Collections Team</div><div class="uc-flow">Invoice hits 15 days overdue → system auto-sends a dunning notice with interest → team steps in only if it's still ignored.</div></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Collections Team</div><div class="uc-flow">Invoice hits 15 days overdue → system auto-sends a dunning notice with interest, on its own → team steps in only if it's still ignored.</div></div>
 </section>
 
 <section class="slide"><span class="slide-idx">16 / 26</span>
@@ -492,7 +503,7 @@
   <div class="sec-head"><span class="sec-num">SECTION 16</span><h2 style="margin:0;">Next Best Action</h2><span class="status-pill initiated">🟡 Initiated</span></div>
   <div class="ask-line">System suggests the next move on every deal.</div>
   <div class="added-box" style="max-width:500px;"><div class="box-label">Added — Verified Live</div><ul><li>"Continue nurturing — log a call..." — a real recommendation, on a real deal, right now</li></ul></div>
-  <div class="pending-box" style="max-width:500px;"><div class="box-label">Pending</div><ul><li>Configurable rule — thresholds and messages are hardcoded in <code>ai_utils.py</code>; needs a Sales Config screen to edit without a code change</li></ul></div>
+  <div class="pending-box" style="max-width:500px;"><div class="box-label">Pending</div><ul><li>A Sales Config screen with these thresholds now exists (built for T18, 7 Aug) — but <code>ai_utils.py</code> doesn't read from it yet, so the fields are editable with no effect until that wiring lands</li></ul></div>
   <div class="field-chips"><span class="field-chip">scale_sales_next_action_recommendation</span></div><div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Sales workspace</span><span class="fp-arrow">→</span><span class="fp-step">Opportunity</span><span class="fp-arrow">→</span><span class="fp-step">Nova Retail Pvt Ltd</span><span class="fp-arrow">→</span><span class="fp-step">Contacts tab</span></div>
   <div class="prd-tag">Sales Management Module.pdf — Section 16: Next Best Action</div>
   <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/opportunity/CRM-OPP-2026-00001" target="_blank">See the live recommendation →</a></div>
@@ -503,7 +514,7 @@
   <div class="sec-head"><span class="sec-num">SECTION 17</span><h2 style="margin:0;">Win Probability</h2><span class="status-pill initiated">🟡 Initiated</span></div>
   <div class="ask-line">Dynamic win % on every opportunity.</div>
   <div class="added-box" style="max-width:500px;"><div class="box-label">Added</div><ul><li>Live rule-based engine, updates automatically</li></ul></div>
-  <div class="pending-box" style="max-width:500px;"><div class="box-label">Pending</div><ul><li>Configurable rule — stage weights and bonuses are hardcoded in <code>ai_utils.py</code>; needs a Sales Config screen to edit without a code change</li><li>Budget-confirmed bonus not wired — no field exists on Opportunity for this yet (Budget lives on Lead)</li></ul></div>
+  <div class="pending-box" style="max-width:500px;"><div class="box-label">Pending</div><ul><li>A Sales Config screen with these thresholds now exists (built for T18, 7 Aug) — but <code>ai_utils.py</code> doesn't read from it yet, so the fields are editable with no effect until that wiring lands</li><li>Budget-confirmed bonus not wired — no field exists on Opportunity for this yet (Budget lives on Lead)</li></ul></div>
   <div class="field-chips"><span class="field-chip">probability (native field)</span></div><div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Sales workspace</span><span class="fp-arrow">→</span><span class="fp-step">Opportunity</span><span class="fp-arrow">→</span><span class="fp-step">Nova Retail Pvt Ltd</span><span class="fp-arrow">→</span><span class="fp-step">Details tab</span></div>
   <div class="prd-tag">Sales Management Module.pdf — Section 17: Win Probability</div>
   <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/opportunity/CRM-OPP-2026-00001" target="_blank">See it on a live deal →</a></div>
