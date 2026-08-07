@@ -100,6 +100,7 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
     <div class="nav-group">Tracking</div>
     <a class="nav-link" href="sales-tracker.html">Sales Tracker</a>
     <a class="nav-link" href="sales-demo-showcase.html">Sales Showcase ✨</a>
+    <a class="nav-link" href="pmo-demo-showcase.html">PMO Showcase ✨</a>
   </nav>
   <div class="sidebar-foot">Pixaflip × SIL · AIWS ERP<br><a href="../../index.html">← AIWS Setup portal</a></div>
 </aside>
@@ -161,6 +162,12 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
 <div style="background:#f0fdf4;border:2px solid #bbf7d0;border-radius:8px;padding:14px 16px;margin:16px 0;font-size:.86rem;">
   <strong style="color:#166534;">✓ Decision 3 (confirmed 5 Aug 2026) — starts today, 3-week target</strong>
   <p style="margin:8px 0 0;color:#14532d;">PMO code work starts <strong>5 Aug 2026</strong>, running alongside Raghib's existing Sales &amp; Marketing track, targeting a wrap by <strong>25 Aug 2026</strong> (3 calendar weeks) for the dev-side build (T00–T17, R01) and the AI Track's first 6 tasks (V00–V05). This is a genuinely aggressive pace solo — see the pace-risk callout right before the Week 1 task cards below for the three likeliest slip points, including 4 AI tasks (V06–V09) that realistically extend past Aug 25.</p>
+</div>
+
+<div style="background:#ecfdf5;border:2px solid #6ee7b7;border-radius:8px;padding:14px 16px;margin:16px 0;font-size:.86rem;">
+  <p style="margin:0 0 8px;font-weight:700;color:#065f46;">✅ Update (6 Aug 2026) — T00 done, app is live</p>
+  <p style="margin:0 0 6px;color:#064e3b;"><strong>Every task card below will carry a status line</strong> right under its header as it lands — <span class="st-done">✅ Done</span>, <span class="st-wip">🟡 Partially done</span>, or <span class="st-ns">◯ Not started</span> — same convention as <a href="sales-module.html">sales-module.html</a>. Right now only T00 carries one; T01 onward are still ◯ Not Started (see the Progress Tracker at the bottom of this page, which stays in sync).</p>
+  <p style="margin:0;color:#064e3b;"><strong>See it live:</strong> <a href="pmo-demo-showcase.html">pmo-demo-showcase.html</a> — same descriptive, section-by-section showcase format as <a href="sales-demo-showcase.html">sales-demo-showcase.html</a>, kept up to date as each task lands. <code>apps/scale_project_management/README.md</code> + <code>TESTING.md</code> are also live on branch <code>feature/project-management-foundation</code>.</p>
 </div>
 
 <div style="background:#fff1f2;border:1px solid #fca5a5;border-radius:8px;padding:12px 14px;margin:16px 0;font-size:.86rem;">
@@ -463,6 +470,7 @@ bench --site scale.localhost migrate</pre>
     <span class="task-date">Wed Aug 5</span>
   </div>
   <div class="task-meta">Deliverable: scale_project_management installed and visible in the app launcher sidebar</div>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#ecfdf5;border-left:3px solid #10b981;"><span class="st-done">✅ Done</span> (6 Aug 2026) — app scaffolded, registered in <code>sites/apps.txt</code>, installed on <code>scale.localhost</code>, migrated clean. Workspace live with Project/Task/Timesheet shortcuts + a "Coming Soon" note. <code>README.md</code>/<code>TESTING.md</code> written matching <code>scale_sales</code>' format. Verified end-to-end in browser (login → workspace renders → Project list opens with no error). Committed on branch <code>feature/project-management-foundation</code>, not yet pushed. One bookkeeping bug caught along the way: <code>bench new-app</code> silently dropped <code>scale_finance</code>/<code>scale_account</code> from <code>sites/apps.txt</code> and <code>sites/apps.json</code> — restored before committing, confirmed via <code>frappe.get_installed_apps()</code> and a full <code>bench migrate</code> that neither app's actual install state was ever affected. Verify: <code>Home → Apps → Scale Project Management</code>.</div>
   <ol class="task-steps">
     <li>Run <code>bench new-app scale_project_management</code> per Section B above.</li>
     <li>Add to <code>sites/apps.txt</code>, install on <code>scale.localhost</code>, migrate.</li>
@@ -964,6 +972,7 @@ bench --site scale.localhost migrate</pre>
 <!-- PROGRESS TRACKER -->
 <hr class="section no-print">
 <h2 class="no-print">Progress Tracker</h2>
+<p class="no-print" style="font-size:.85rem;color:#374151;margin:0 0 10px;"><strong>App Foundation (T00):</strong> <span class="st-done">✅ Done</span> — scaffold, install, workspace live (6 Aug 2026). Not a numbered PMO feature, tracked separately here. All 20 features below start from T01.</p>
 <div class="tbl-wrap no-print">
   <table>
     <tr><th>ID</th><th>Feature</th><th>Priority</th><th>Status</th><th>Notes</th></tr>
