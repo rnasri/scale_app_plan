@@ -165,8 +165,8 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
 </div>
 
 <div style="background:#ecfdf5;border:2px solid #6ee7b7;border-radius:8px;padding:14px 16px;margin:16px 0;font-size:.86rem;">
-  <p style="margin:0 0 8px;font-weight:700;color:#065f46;">✅ Update (6 Aug 2026) — T00 done, app is live</p>
-  <p style="margin:0 0 6px;color:#064e3b;"><strong>Every task card below will carry a status line</strong> right under its header as it lands — <span class="st-done">✅ Done</span>, <span class="st-wip">🟡 Partially done</span>, or <span class="st-ns">◯ Not started</span> — same convention as <a href="sales-module.html">sales-module.html</a>. Right now only T00 carries one; T01 onward are still ◯ Not Started (see the Progress Tracker at the bottom of this page, which stays in sync).</p>
+  <p style="margin:0 0 8px;font-weight:700;color:#065f46;">✅ Update (7 Aug 2026) — T00 and T01 done</p>
+  <p style="margin:0 0 6px;color:#064e3b;"><strong>Every task card below carries a status line</strong> right under its header as it lands — <span class="st-done">✅ Done</span>, <span class="st-wip">🟡 Partially done</span>, or <span class="st-ns">◯ Not started</span> — same convention as <a href="sales-module.html">sales-module.html</a>. T00 (app scaffold) and T01 (Project Onboarding — kickoff checklist, role-based budget, PMO Director sign-off workflow) are both live and tested end-to-end; T02 onward are still ◯ Not Started (see the Progress Tracker at the bottom of this page, which stays in sync).</p>
   <p style="margin:0;color:#064e3b;"><strong>See it live:</strong> <a href="pmo-demo-showcase.html">pmo-demo-showcase.html</a> — same descriptive, section-by-section showcase format as <a href="sales-demo-showcase.html">sales-demo-showcase.html</a>, kept up to date as each task lands. <code>apps/scale_project_management/README.md</code> + <code>TESTING.md</code> are also live on branch <code>feature/project-management-foundation</code>.</p>
 </div>
 
@@ -489,6 +489,7 @@ bench --site scale.localhost migrate</pre>
       <span class="task-date">Wed Aug 5</span>
   </div>
   <div class="task-meta">Feature: PMO-01 | Deliverable: New Project can't go Active without a completed checklist and PMO Director approval</div>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#ecfdf5;border-left:3px solid #10b981;"><span class="st-done">✅ Done</span> (7 Aug 2026) — Kickoff Checklist, Role-Based Budget (Planned Cost auto-computed server-side from Mandays × Rate), Deliverables, and the PDF-named fields (Project Code, Sponsor, Contract Value, Methodology, Success Criteria, Scope, Objectives) all live on Project. <strong>Project Kickoff Approval</strong> workflow built as specced: Draft → Kickoff Pending → PMO Approved, PMO Director-only Approve/Reject. Project Initiation print format and a "PMO Project Portfolio" report both live. One built-differently note: native <code>Project.status</code> has no "Draft"/"Active" options at all (only Open/On hold/Completed/Cancelled), so "can't go Active" is enforced as "can't go <strong>Open</strong> until PMO Approved" — a new project is silently held at On hold until kickoff clears, then Open is unblocked. Tested end-to-end: Approve correctly rejected with an incomplete checklist item, then succeeded once checked. Verify: <code>Home → Scale Project Management → Project → any record</code>.</div>
   <div class="task-context">
     <p><span class="ctx-label">What we're trying to achieve:</span> Today a Project can be created and marked Active with nothing more than a name and dates — there's no gate ensuring a kickoff actually happened, no visibility into planned manday/cost budget by role, and no PMO-level sign-off before work starts.</p>
     <p><span class="ctx-label">In practice:</span> Add a Kickoff Checklist child table to Project (custom items, checkbox + notes each). Add role-based budget fields (a child table: Role, Planned Mandays, Cost Rate, Planned Cost). Build a Workflow on Project: Draft → Kickoff Pending → PMO Approved → Active, with the PMO Director role as the approval step. Create a Project Initiation PDF print format for the signed record.</p>
@@ -976,7 +977,7 @@ bench --site scale.localhost migrate</pre>
 <div class="tbl-wrap no-print">
   <table>
     <tr><th>ID</th><th>Feature</th><th>Priority</th><th>Status</th><th>Notes</th></tr>
-    <tr><td>PMO-01</td><td>Project Onboarding</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>Native Project/Template exist; checklist, budget fields, sign-off workflow to build</td></tr>
+    <tr><td>PMO-01</td><td>Project Onboarding</td><td><span class="pill bp1">P1</span></td><td><span class="st-done">✅ Done</span></td><td>Checklist, role-based budget (auto-calc), Deliverables, PDF fields, and the Kickoff Approval workflow all live — see T01 note above for the status-field deviation</td></tr>
     <tr><td>PMO-02</td><td>Consultant Onboarding</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>High delay risk per Excel — full custom app</td></tr>
     <tr><td>PMO-03</td><td>Client Onboarding</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>Native Customer/Portal exist; kickoff pack to build</td></tr>
     <tr><td>PMO-04</td><td>Calendar Management</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>Native — config only</td></tr>
