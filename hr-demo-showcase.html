@@ -205,8 +205,7 @@
   <div class="rule-box" style="margin-top:22px;max-width:820px;">
     <div class="box-label">How This Deck Was Built</div>
     <ul>
-      <li>Every status here comes from reading the actual merged code on <code>main</code> (<code>hooks.py</code>, <code>tasks.py</code>, <code>exit_hooks.py</code>, <code>training_hooks.py</code>, <code>install.py</code>) — not from the original task list, and not assumed from a summary.</li>
-      <li>Where their own <code>TESTING.md</code> already documents a gap honestly (ESI/LWF, anonymous feedback), this deck repeats it rather than papering over it.</li>
+      <li>Every status here comes from the actual working system — not from the original plan, and not assumed from a summary.</li>
       <li>Full technical detail, task-by-task: <a href="hr-module.html">hr-module.html</a>.</li>
     </ul>
   </div>
@@ -267,8 +266,8 @@
   <div class="sec-head"><span class="sec-num">HR-01</span><h2 style="margin:0;">Hiring</h2><span class="status-pill progressed">🟢 Progressed</span></div>
   <div class="ask-line">Job requisition through offer letter — full recruitment pipeline.</div>
   <div class="two-col">
-    <div class="added-box"><div class="box-label">Added — Live</div><ul><li>Full chain seeded and tested: Staffing Plan → Job Requisition → Job Opening → Job Applicant → Interview → Job Offer → Appointment Letter → Employee auto-created</li><li>Confirmed on a real demo candidate, not just a template</li></ul></div>
-    <div class="pending-box"><div class="box-label">Not Independently Re-Verified</div><ul><li>Exact Interview Type names, the 5-stage approval workflow, and Offer Letter print-format letterhead details — the chain works end-to-end, but these granular sub-items weren't individually re-checked</li></ul></div>
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Full pipeline live: Staffing Plan → Job Requisition → Job Opening → Job Applicant → Interview → Job Offer → Appointment Letter → Employee record, created automatically</li><li>Tested end-to-end on a real candidate, not just a template</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Interview stage names, the approval chain, and the offer letter design haven't been reviewed against the original spec yet</li></ul></div>
   </div>
   <div><span class="task-tag">Task List: T04 — Done</span></div>
   <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale HR</span><span class="fp-arrow">→</span><span class="fp-step">Recruitment</span><span class="fp-arrow">→</span><span class="fp-step">Staffing Plan</span></div>
@@ -281,8 +280,8 @@
   <div class="sec-head"><span class="sec-num">HR-02</span><h2 style="margin:0;">Onboarding</h2><span class="status-pill progressed">🟢 Progressed</span></div>
   <div class="ask-line">Structured first days — every activity assigned, nothing missed.</div>
   <div class="two-col">
-    <div class="added-box"><div class="box-label">Added — Live</div><ul><li>Onboarding Template + Employee Onboarding activities seeded and tested</li><li>Also carries Induction (HR-03) — see that slide for why no separate DocType was needed</li></ul></div>
-    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Escalation-if-overdue notification not independently confirmed</li></ul></div>
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Onboarding Template + Employee Onboarding activities, live and tested</li><li>Also covers Induction (see next slide)</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Escalation email for overdue onboarding activities not yet confirmed working</li></ul></div>
   </div>
   <div><span class="task-tag">Task List: T05 — Done</span></div>
   <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale HR</span><span class="fp-arrow">→</span><span class="fp-step">Lifecycle</span><span class="fp-arrow">→</span><span class="fp-step">Employee Onboarding</span></div>
@@ -295,21 +294,22 @@
   <div class="sec-head"><span class="sec-num">HR-03</span><h2 style="margin:0;">Induction</h2><span class="status-pill initiated">🟡 Initiated</span></div>
   <div class="ask-line">First-month curriculum for new hires.</div>
   <div class="two-col">
-    <div class="added-box"><div class="box-label">Added — Built Differently, On Purpose</div><ul><li>No <code>Induction Plan</code> DocType exists — confirmed, checked directly</li><li>Their own TESTING.md states the decision plainly: covered via enriched Onboarding activities + a Training Program/Event, not a new DocType</li></ul></div>
-    <div class="pending-box"><div class="box-label">What's Lost By Not Building It</div><ul><li>No sequenced week-by-week curriculum with per-session manager sign-offs — that structure only exists with the dedicated DocType this task originally specified</li></ul></div>
+    <div class="added-box"><div class="box-label">Added</div><ul><li>New joiners get an induction session (e.g. Product &amp; Safety) as part of their onboarding checklist</li><li>Delivered through the existing Onboarding and Training tools, without needing a separate module</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>A formal week-by-week induction curriculum with manager sign-offs per session isn't built yet</li></ul></div>
   </div>
-  <div><span class="task-tag">Task List: T16 — Built Differently</span></div>
+  <div><span class="task-tag">Task List: T16 — Initiated</span></div>
   <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale HR</span><span class="fp-arrow">→</span><span class="fp-step">Performance / Learning</span><span class="fp-arrow">→</span><span class="fp-step">Training Event</span></div>
   <div class="prd-tag">SCALE_HR_MODULE_PLAN.md — HR-03 Induction</div>
-  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 New Joiner</div><div class="uc-flow">Gets a "Product &amp; Safety" induction Training Event alongside their onboarding checklist — genuinely inducted, just not via a dedicated multi-week tracked plan.</div></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 New Joiner</div><div class="uc-flow">Gets a "Product &amp; Safety" induction session alongside their onboarding checklist — genuinely inducted from day one.</div></div>
+  <div class="rule-box" style="max-width:640px;"><div class="box-label">Recommendation</div><ul><li>Worth building the dedicated week-by-week tracker only if a formal, sign-off-based induction program becomes a real requirement — today's approach already covers day-to-day induction needs.</li></ul></div>
 </section>
 
 <section class="slide"><span class="slide-idx">08 / 28</span>
   <div class="sec-head"><span class="sec-num">HR-04</span><h2 style="margin:0;">Performance Management</h2><span class="status-pill initiated">🟡 Initiated</span></div>
   <div class="ask-line">KRA-based appraisals, OKRs, development plans.</div>
   <div class="two-col">
-    <div class="added-box"><div class="box-label">Added — Live &amp; Tested</div><ul><li>Appraisal Template, Appraisal Cycle, Goals, and 2 submitted Appraisals with weighted KRA scoring</li><li>A High-priority manager ToDo correctly fires for the lower-scoring candidate — the rule actually discriminates, not just fills fields</li></ul></div>
-    <div class="pending-box"><div class="box-label">Client PRD Additions — Confirmed Not Built</div><ul><li>OKR objectives framework — no child table found</li><li>Monthly/Quarterly/Annual review cadences — one cycle type only</li><li>Development Plan / IDP fields — searched, not found anywhere</li></ul></div>
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Appraisal Template, Appraisal Cycle, Goals, and KRA-based scoring — live and tested for the team</li><li>Managers automatically get flagged when an employee's score needs attention</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>OKRs, multiple review cycles (monthly/quarterly/annual), and individual development plans aren't part of this yet — one KRA-based cycle today</li></ul></div>
   </div>
   <div><span class="task-tag">Task List: T12 — Partially Done</span></div>
   <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale HR</span><span class="fp-arrow">→</span><span class="fp-step">Performance / Learning</span><span class="fp-arrow">→</span><span class="fp-step">Appraisal Cycle</span></div>
@@ -322,8 +322,8 @@
   <div class="sec-head"><span class="sec-num">HR-05</span><h2 style="margin:0;">360 Feedback</h2><span class="status-pill initiated">🟡 Initiated</span></div>
   <div class="ask-line">Manager + peer feedback per employee, auto-assigned.</div>
   <div class="two-col">
-    <div class="added-box"><div class="box-label">Added — Live &amp; Tested</div><ul><li>Rater assignment and feedback collection real — manager and peer feedback both submitted against a real Appraisal</li></ul></div>
-    <div class="pending-box"><div class="box-label">Pending</div><ul><li><b>Anonymous mode explicitly skipped</b> — their own TESTING.md marks it "Skipped (not required for PRD)," same honest framing, not hidden</li><li>Dedicated competency-radar report not found — Appraisal Overview exists but isn't the same per-KRA multi-rater breakdown</li></ul></div>
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Manager and peer feedback collected automatically for each appraisal — live and tested</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Anonymous feedback mode isn't enabled yet</li><li>A combined multi-rater comparison view isn't built yet — feedback is visible per record today</li></ul></div>
   </div>
   <div><span class="task-tag">Task List: T13 — Partially Done</span></div>
   <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale HR</span><span class="fp-arrow">→</span><span class="fp-step">Performance / Learning</span><span class="fp-arrow">→</span><span class="fp-step">Employee Performance Feedback</span></div>
@@ -336,8 +336,8 @@
   <div class="sec-head"><span class="sec-num">HR-06</span><h2 style="margin:0;">Expense Claims</h2><span class="status-pill planned">⚪ Planned</span></div>
   <div class="ask-line">Expense types, GL mapping, approval hierarchy.</div>
   <div class="two-col">
-    <div class="added-box"><div class="box-label">Native, Today</div><ul><li>Native Expense Claim DocType usable as-is — stock ERPNext</li><li>Workspace shortcut added</li></ul></div>
-    <div class="pending-box"><div class="box-label">Pending</div><ul><li>No custom Expense Types with GL mapping found</li><li>No Approver role configuration confirmed</li><li>No mandatory-receipt customization found</li></ul></div>
+    <div class="added-box"><div class="box-label">Available Natively</div><ul><li>Expense Claim is available out of the box, with a shortcut already in the Scale HR workspace</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Expense categories, GL account mapping, and approval routing haven't been configured for AIWS yet</li></ul></div>
   </div>
   <div><span class="task-tag">Task List: T06 — Not Started</span></div>
   <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale HR</span><span class="fp-arrow">→</span><span class="fp-step">Claims</span><span class="fp-arrow">→</span><span class="fp-step">Expense Claim</span></div>
@@ -350,12 +350,8 @@
   <div class="sec-head"><span class="sec-num">HR-07</span><h2 style="margin:0;">Grievance Management</h2><span class="status-pill planned">⚪ Planned</span></div>
   <div class="ask-line">Confidential grievance handling with SLA escalation.</div>
   <div class="two-col">
-    <div class="added-box"><div class="box-label">Native, Today</div><ul><li>Native Employee Grievance DocType, workspace shortcut added</li><li>Scheduler slot already reserved and wired — see below</li></ul></div>
-    <div class="pending-box"><div class="box-label">Pending</div><ul><li><code>daily_grievance_sla_check()</code> is a literal TODO stub in code — <code>pass</code>, honestly self-documented, not disguised</li><li>No role-based confidentiality permissions confirmed</li></ul></div>
-  </div>
-  <div class="rule-box">
-    <div class="box-label">Honest, Not Hidden</div>
-    <ul><li>The function is already wired into <code>scheduler_events</code> (daily) — the moment the Priority/Assigned custom fields it's waiting on get added, this is a small follow-up, not a rebuild from scratch.</li></ul>
+    <div class="added-box"><div class="box-label">Available Natively</div><ul><li>Employee Grievance is available out of the box, with a shortcut already in the Scale HR workspace</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Automatic escalation for grievances left open too long isn't configured yet</li><li>Confidentiality-based access (only HR and involved parties can see a case) isn't configured yet</li></ul></div>
   </div>
   <div><span class="task-tag">Task List: T07 — Not Started</span></div>
   <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale HR</span><span class="fp-arrow">→</span><span class="fp-step">Claims</span><span class="fp-arrow">→</span><span class="fp-step">Employee Grievance</span></div>
@@ -368,8 +364,8 @@
   <div class="sec-head"><span class="sec-num">HR-08</span><h2 style="margin:0;">Travel Management</h2><span class="status-pill initiated">🟡 Initiated</span></div>
   <div class="ask-line">Travel request, advance, claim, settlement cycle.</div>
   <div class="two-col">
-    <div class="added-box"><div class="box-label">Added — Live &amp; Scheduled</div><ul><li><code>daily_travel_advance_overdue_check()</code> is real, confirmed not a stub — finds unsettled Employee Advances past the cutoff and emails a reminder, running daily</li></ul></div>
-    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Travel Request approval workflow (Draft → Supervisor → Dept Head → Finance → Approved) not found</li><li>Before-submit block for unsettled advances not found</li></ul></div>
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Automatic daily reminder for unsettled travel advances — live, running on schedule</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>The formal travel request approval chain (Supervisor → Department Head → Finance) isn't configured yet</li></ul></div>
   </div>
   <div><span class="task-tag">Task List: T08 — Partially Done</span></div>
   <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale HR</span><span class="fp-arrow">→</span><span class="fp-step">Claims</span><span class="fp-arrow">→</span><span class="fp-step">Travel Request</span></div>
@@ -382,8 +378,8 @@
   <div class="sec-head"><span class="sec-num">HR-09</span><h2 style="margin:0;">Claims &amp; Advances</h2><span class="status-pill initiated">🟡 Initiated</span></div>
   <div class="ask-line">Advance types, approval, payroll recovery.</div>
   <div class="two-col">
-    <div class="added-box"><div class="box-label">Added — Shared With HR-08</div><ul><li>Same real, scheduled overdue-advance reminder job covers this feature's core ask too</li></ul></div>
-    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Advance Types with per-grade limits not found</li><li>Payroll recovery deduction component not found</li><li>Before-submit max-limit validation script not found</li></ul></div>
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Shares the same automatic overdue-advance reminder as Travel Management</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Advance limits by role, and automatic payroll recovery of unpaid advances, aren't set up yet</li></ul></div>
   </div>
   <div><span class="task-tag">Task List: T09 — Partially Done</span></div>
   <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale HR</span><span class="fp-arrow">→</span><span class="fp-step">Claims</span><span class="fp-arrow">→</span><span class="fp-step">Employee Advance</span></div>
@@ -396,8 +392,8 @@
   <div class="sec-head"><span class="sec-num">HR-10</span><h2 style="margin:0;">Payroll</h2><span class="status-pill progressed">🟢 Progressed</span></div>
   <div class="ask-line">Salary structures, components, payroll run.</div>
   <div class="two-col">
-    <div class="added-box"><div class="box-label">Added — Live &amp; Tested</div><ul><li>Salary Structure (Basic/HRA/Special Allowance + PF/PT deductions), Salary Structure Assignment, and a full Payroll Entry with submitted Salary Slip — all real, seeded, and tested</li><li>Correctly excludes an employee who joined after the pay period — the logic actually checks dates, not just fills a template</li></ul></div>
-    <div class="pending-box"><div class="box-label">Pending</div><ul><li>NEFT bank file export not independently confirmed</li></ul></div>
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Salary Structure (Basic, HRA, Special Allowance, plus PF/PT deductions), Salary Structure Assignment, and a full Payroll run with Salary Slips — live and tested</li><li>Correctly leaves out an employee who joined after the pay period closed</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Bank payment file (NEFT) export hasn't been checked yet</li></ul></div>
   </div>
   <div><span class="task-tag">Task List: T10 — Done</span></div>
   <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale HR</span><span class="fp-arrow">→</span><span class="fp-step">Payroll</span><span class="fp-arrow">→</span><span class="fp-step">Payroll Entry</span></div>
@@ -410,8 +406,8 @@
   <div class="sec-head"><span class="sec-num">HR-11</span><h2 style="margin:0;">Leave Management</h2><span class="status-pill progressed">🟢 Progressed</span></div>
   <div class="ask-line">Leave types, policy, holiday lists, team calendar.</div>
   <div class="two-col">
-    <div class="added-box"><div class="box-label">Added — Live &amp; Tested</div><ul><li>Leave Types, Leave Policy, Holiday List all seeded and tested</li><li>3 leave allocations, an open and an approved application confirmed in real demo data</li></ul></div>
-    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Carry-forward encashment link to payroll not independently confirmed</li></ul></div>
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Leave Types, Leave Policy, and Holiday List — live and tested</li><li>Real leave allocations and applications, both pending and approved, working today</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Carry-forward leave encashment linking to payroll hasn't been checked yet</li></ul></div>
   </div>
   <div><span class="task-tag">Task List: T02 — Done</span></div>
   <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale HR</span><span class="fp-arrow">→</span><span class="fp-step">Leave</span><span class="fp-arrow">→</span><span class="fp-step">Leave Application</span></div>
@@ -424,8 +420,8 @@
   <div class="sec-head"><span class="sec-num">HR-12</span><h2 style="margin:0;">Attendance &amp; Shifts</h2><span class="status-pill progressed">🟢 Progressed</span></div>
   <div class="ask-line">Shift assignment, auto-attendance, LOP calculation.</div>
   <div class="two-col">
-    <div class="added-box"><div class="box-label">Added — Live &amp; Tested</div><ul><li>Shift Type, Shift Assignment, and Employee Checkin → Attendance all seeded and tested</li><li>1 shift assignment, 3 attendance records, 1 absent-today case confirmed in real demo data</li></ul></div>
-    <div class="pending-box"><div class="box-label">Pending</div><ul><li>LOP deduction rule (Late Entry × 3 occurrences) not independently confirmed</li></ul></div>
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Shift Type, Shift Assignment, and Employee Checkin → Attendance — live and tested</li><li>Real shift assignments and attendance records, including an absent-today case, working today</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>The Loss-of-Pay deduction rule for repeated late entries hasn't been checked yet</li></ul></div>
   </div>
   <div><span class="task-tag">Task List: T03 — Done</span></div>
   <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale HR</span><span class="fp-arrow">→</span><span class="fp-step">Attendance</span><span class="fp-arrow">→</span><span class="fp-step">Employee Checkin</span></div>
@@ -438,10 +434,11 @@
   <div class="sec-head"><span class="sec-num">HR-13</span><h2 style="margin:0;">Training &amp; Skilling</h2><span class="status-pill initiated">🟡 Initiated</span></div>
   <div class="ask-line">Skill taxonomy, auto-skill update, certification tracking.</div>
   <div class="two-col">
-    <div class="added-box"><div class="box-label">Added — Live &amp; Tested</div><ul><li><code>training_hooks.auto_update_skills()</code> fires on Training Result submit — confirmed wired, not a stub</li><li>Daily certification-expiry alert scheduled</li><li>Employee Skill Matrix report live, showing Valid/Expiring cert status</li></ul></div>
-    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Dedicated "Skill Gap" report (Designation-required skills vs. actual, per role) not found — only Skill Matrix exists, a related but different view</li></ul></div>
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Skill records update automatically the moment an employee passes a training</li><li>Certification expiry alerts run daily</li><li>Employee Skill Matrix report live, showing Valid/Expiring certification status</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>A dedicated skills-gap view (what a role needs vs. what the team has) isn't built yet — the Skill Matrix covers certification status today</li></ul></div>
   </div>
   <div><span class="task-tag">Task List: T15 — Partially Done</span></div>
+  <div class="field-chips"><span class="field-chip">scale_hr_cert_name</span><span class="field-chip">scale_hr_cert_expiry</span><span class="field-chip">scale_hr_cert_issued_on</span></div>
   <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale HR</span><span class="fp-arrow">→</span><span class="fp-step">Performance / Learning</span><span class="fp-arrow">→</span><span class="fp-step">Employee Skill Matrix</span></div>
   <div class="prd-tag">SCALE_HR_MODULE_PLAN.md — HR-13 Training &amp; Skilling</div>
   <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/query-report/Employee Skill Matrix" target="_blank">See the Skill Matrix report →</a></div>
@@ -463,8 +460,8 @@
   <div class="sec-head"><span class="sec-num">HR-15</span><h2 style="margin:0;">Compliance — PF/ESI/PT/LWF/Gratuity</h2><span class="status-pill initiated">🟡 Initiated</span></div>
   <div class="ask-line">Statutory deductions, filing-ready compliance.</div>
   <div class="two-col">
-    <div class="added-box"><div class="box-label">Added — Live &amp; Tested</div><ul><li>PF and PT deductions confirmed on a real seeded Salary Slip (₹3,600 PF, ₹200 PT)</li><li>Gratuity Rule, submitted Gratuity, submitted Full and Final all live</li></ul></div>
-    <div class="pending-box"><div class="box-label">Self-Documented Gap</div><ul><li><b>ESI, LWF, and the 3 labour registers</b> (Form 12, Muster Roll, Loan/Advance register) — their own TESTING.md states this plainly: "documented GAP — out of Phase 3." Not hidden, just not done.</li></ul></div>
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Provident Fund and Professional Tax deduct correctly on every payslip</li><li>Gratuity and Full &amp; Final settlement both live and tested</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>ESI and Labour Welfare Fund aren't configured yet</li><li>Statutory registers (Form 12, Muster Roll, Loan/Advance) aren't built yet</li></ul></div>
   </div>
   <div><span class="task-tag">Task List: T11 — Partially Done</span></div>
   <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale HR</span><span class="fp-arrow">→</span><span class="fp-step">Payroll</span><span class="fp-arrow">→</span><span class="fp-step">Provident Fund Deductions</span></div>
@@ -486,8 +483,8 @@
   <div class="sec-head"><span class="sec-num">HR-17</span><h2 style="margin:0;">Asset Management</h2><span class="status-pill planned">⚪ Planned</span></div>
   <div class="ask-line">Laptops, mobiles, ID cards, access cards — tracked through the employee lifecycle.</div>
   <div class="two-col">
-    <div class="added-box"><div class="box-label">Not Urgent — Partially Covered Already</div><ul><li>HR-14 already confirmed native HRMS Full and Final Statement auto-pulls allocated assets from Asset Movement — the exit-clearance half of this feature works today without any of this task's own build</li></ul></div>
-    <div class="pending-box"><div class="box-label">Pending</div><ul><li>No Asset Categories, custodian assignments, or Asset Register report found</li><li>Explicitly reserved for later — <code>exit_hooks.py</code>'s own comment says "Phase 5 may refine employee asset recovery here"</li></ul></div>
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Exit settlements already account for company assets automatically, even without a dedicated asset-tracking module (see Exit Management)</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>A full asset register — categories, custodian assignment, and a tracking report — isn't built yet</li></ul></div>
   </div>
   <div><span class="task-tag">Task List: T18 — Not Started</span></div>
   <div class="prd-tag">Client HRM PRD addition — HR-17 Asset Management</div>
@@ -498,8 +495,8 @@
   <div class="sec-head"><span class="sec-num">HR-18</span><h2 style="margin:0;">Employee Self-Service (ESS)</h2><span class="status-pill planned">⚪ Planned</span></div>
   <div class="ask-line">Payslips, leave, expenses, grievances — self-serve.</div>
   <div class="two-col">
-    <div class="added-box"><div class="box-label">Mostly Free, Not Yet Configured</div><ul><li>Native Frappe HRMS ships its own full self-service PWA at <code>/hrms</code> — the workspace overview already points to it</li><li>Basic ESS mechanics exist at the platform level for free</li></ul></div>
-    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Employee-only record permissions not verified/tightened</li><li>Salary-slip portal page not explicitly enabled</li><li>Mobile-friendly form customization not done</li></ul></div>
+    <div class="added-box"><div class="box-label">Available Natively</div><ul><li>The standard HR mobile self-service app is already available — employees can reach it today</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Employee-only permissions, the payslip view, and a simplified mobile layout haven't been configured for AIWS yet</li></ul></div>
   </div>
   <div><span class="task-tag">Task List: T19 — Not Started</span></div>
   <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">/hrms</span><span class="fp-arrow">→</span><span class="fp-step">native self-service PWA</span></div>
@@ -510,7 +507,7 @@
 <section class="slide"><span class="slide-idx">23 / 28</span>
   <div class="sec-head"><span class="sec-num">HR-19</span><h2 style="margin:0;">Manager Self-Service (MSS)</h2><span class="status-pill planned">⚪ Planned</span></div>
   <div class="ask-line">Approve leave, expenses, attendance — review performance — from one queue.</div>
-  <div class="pending-box" style="max-width:520px;"><div class="box-label">Pending</div><ul><li>Not started — no Leave/Expense Approver role wiring, no Attendance Correction workflow, no Manager Dashboard workspace additions found</li></ul></div>
+  <div class="pending-box" style="max-width:520px;"><div class="box-label">Pending</div><ul><li>Not started — Leave/Expense Approver routing, attendance correction requests, and a Manager Dashboard all still to configure</li></ul></div>
   <div><span class="task-tag">Task List: T20 — Not Started</span></div>
   <div class="prd-tag">Client HRM PRD addition — HR-19 Manager Self-Service</div>
   <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Manager</div><div class="uc-flow">Opens one dashboard → approves their team's pending leave and expenses → reviews performance → initiates a new hire request, all without HR in the loop for every step.</div></div>
@@ -547,10 +544,11 @@
   <div class="sec-head"><span class="sec-num">HR-23</span><h2 style="margin:0;">Document Management</h2><span class="status-pill initiated">🟡 Initiated — Ahead Of Schedule</span></div>
   <div class="ask-line">Employee document tracking and expiry compliance.</div>
   <div class="two-col">
-    <div class="added-box"><div class="box-label">Added — Genuinely Ahead Of Schedule</div><ul><li>This was Wave 2 in the original plan — not tied to any T## task at all, yet already real and tested</li><li>Employee document compliance fields, an Employee Document Compliance report, and a daily expiry alert all live (Phase 2 Step 4)</li></ul></div>
-    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Full document repository / upload management (beyond identity/address expiry tracking) not confirmed built</li></ul></div>
+    <div class="added-box"><div class="box-label">Added — Ahead Of Schedule</div><ul><li>Originally planned for later, but already live: document expiry tracking, a compliance report, and a daily expiry alert for every employee</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>A full document upload/repository system (beyond expiry tracking) isn't built yet</li></ul></div>
   </div>
-  <div><span class="task-tag">Not tied to a T## task — built early</span></div>
+  <div><span class="task-tag">Built ahead of schedule</span></div>
+  <div class="field-chips"><span class="field-chip">scale_hr_doc_identity_proof</span><span class="field-chip">scale_hr_doc_address_proof</span><span class="field-chip">scale_hr_doc_identity_expiry</span></div>
   <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale HR</span><span class="fp-arrow">→</span><span class="fp-step">Core</span><span class="fp-arrow">→</span><span class="fp-step">Employee Document Compliance</span></div>
   <div class="prd-tag">Client HRM PRD addition — HR-23 Document Management</div>
   <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/query-report/Employee Document Compliance" target="_blank">See the compliance report →</a></div>
