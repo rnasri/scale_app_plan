@@ -1215,14 +1215,15 @@ apps/scale_hr/
   </div>
   <ol class="task-steps">
     <li>Create separation clearance templates per department (as per HR policy)</li>
-    <li>Write <code>exit_hooks.fetch_allocated_assets()</code> in <code>apps/scale_hr/scale_hr/exit_hooks.py</code> (see Section C.5 for exact code pattern)</li>
-    <li>Declare in hooks.py: <code>"Employee Separation": {"before_submit": "scale_hr.exit_hooks.fetch_allocated_assets"}</code></li>
-    <li>Run <code>bench restart</code></li>
+    <li style="text-decoration:line-through;color:#9ca3af;">Write <code>exit_hooks.fetch_allocated_assets()</code> in <code>apps/scale_hr/scale_hr/exit_hooks.py</code> (see Section C.5 for exact code pattern) <span style="text-decoration:none;background:#f1f5f9;color:#475569;font-size:.72rem;font-weight:700;padding:1px 6px;border-radius:3px;">IGNORE — not implemented, correctly</span></li>
+    <li style="text-decoration:line-through;color:#9ca3af;">Declare in hooks.py: <code>"Employee Separation": {"before_submit": "scale_hr.exit_hooks.fetch_allocated_assets"}</code> <span style="text-decoration:none;background:#f1f5f9;color:#475569;font-size:.72rem;font-weight:700;padding:1px 6px;border-radius:3px;">IGNORE</span></li>
+    <li style="text-decoration:line-through;color:#9ca3af;">Run <code>bench restart</code> (for the hook above) <span style="text-decoration:none;background:#f1f5f9;color:#475569;font-size:.72rem;font-weight:700;padding:1px 6px;border-radius:3px;">IGNORE</span></li>
     <li>Build exit interview web form (Frappe Web Form on Exit Interview DocType)</li>
     <li>Build F&amp;F PDF Print Format: salary dues, gratuity calculation, leave encashment, advance recoveries, asset deduction rows, net payable, signature blocks</li>
     <li>Write SLA scheduler in <code>tasks.py</code>: daily check for clearance tasks overdue beyond 5 days → email HR Head</li>
     <li>Test end-to-end: raise Employee Separation for a test employee who has assets assigned → submit → verify assets auto-appear in F&amp;F → generate PDF</li>
   </ol>
+  <div class="task-note">Steps struck through above: checked directly in code, confirmed <strong>not implemented</strong> — <code>exit_hooks.py</code>'s own docstring says "Employee Separation has no asset table — do not register this module against Separation submit," and the function body is a bare no-op. Nothing to revert; this was a correct, deliberate decision by Vandana's team, not a missed step. Native HRMS's Full and Final Statement already pulls allocated assets from Asset Movement (<code>get_assets_statements</code>) with no custom code needed. Safe to permanently ignore these 3 steps in this plan going forward.</div>
 </div>
 
 <div class="week-label">Week 4 · Sep 8–24 · Training, Induction, Final Testing</div>
