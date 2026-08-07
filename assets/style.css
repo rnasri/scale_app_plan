@@ -108,6 +108,15 @@ body {
   padding: 1px 7px; border-radius: 10px;
 }
 .nav-link.active .nav-pill { background: rgba(255,255,255,.2); color: #fff; }
+.nav-link.showcase {
+  color: rgba(255,255,255,.9);
+  font-weight: 600;
+  background: rgba(8,145,178,.16);
+  border-left: 3px solid var(--cyan);
+  margin-left: 5px;
+}
+.nav-link.showcase:hover  { background: rgba(8,145,178,.28); color: #fff; }
+.nav-link.showcase.active { background: var(--cyan); border-left-color: #fff; color: #fff; }
 .sidebar-foot {
   margin-top: auto;
   padding: 14px 16px;
