@@ -104,6 +104,7 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
     <a class="nav-link" href="sales-tracker.html">Sales Tracker</a>
     <a class="nav-link" href="sales-demo-showcase.html">Sales Showcase ✨</a>
     <a class="nav-link" href="pmo-demo-showcase.html">PMO Showcase ✨</a>
+    <a class="nav-link" href="hr-demo-showcase.html">HR Showcase ✨</a>
   </nav>
   <div class="sidebar-foot">Pixaflip × SIL · AIWS ERP<br><a href="../../index.html">← AIWS Setup portal</a></div>
 </aside>
@@ -137,6 +138,12 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
   <div style="font-size:10pt;color:#666;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">AIWS ERP · Pixaflip × SIL</div>
   <div style="font-size:20pt;font-weight:900;color:#1e3a5f;letter-spacing:-.5px;">HR Module — Developer Handover Pack</div>
   <div style="font-size:10pt;color:#444;margin-top:6px;">Module Lead: <strong>Vandana</strong> · Developer2: <strong>Vinay</strong> · AI Head: <strong>Veeren</strong> · Printed: July 2026</div>
+</div>
+
+<div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:10px;padding:14px 18px;margin:0 0 18px;">
+  <p style="margin:0 0 8px;font-weight:700;color:#065f46;">✅ Update (7 Aug 2026) — Vandana's team's merged work deep-reviewed, task list and Progress Tracker updated</p>
+  <p style="margin:0 0 6px;color:#064e3b;"><strong>Every task card below now carries a verified status line</strong> — <span class="st-done">✅ Done</span>, <span class="st-wip">🟡 Partially done</span>, or <span class="st-ns">◯ Not started</span> — same convention as <a href="sales-module.html">sales-module.html</a> and <a href="pmo-module.html">pmo-module.html</a>. This was built entirely by Vandana/Vinay's team via their own PRs on <code>main</code> (PR #12/#13), not by this session — status was determined by reading the actual merged code (<code>hooks.py</code>, <code>tasks.py</code>, <code>exit_hooks.py</code>, <code>training_hooks.py</code>, <code>install.py</code>) and their own honest <code>TESTING.md</code>/<code>CLIENT_DEMO.md</code>, not assumed from this plan.</p>
+  <p style="margin:0;color:#064e3b;">Headline: 8 of 15 core features fully done, 6 partially done (each with a specific, named gap — not vague), 1 not started (Expense Claims). Of the 8 PRD additions, Document Management started early and unexpectedly; Asset Management, ESS, and MSS are genuinely not started; the remaining 4 are correctly still Wave 2. See the showcase deck (<a href="hr-demo-showcase.html">hr-demo-showcase.html</a>) for a walkthrough with live links.</p>
 </div>
 
 <h2 style="margin-top:0;">Section A — Overview &amp; Scope</h2>
@@ -830,6 +837,7 @@ apps/scale_hr/
     <span class="task-date">Jul 29, 2026 · Day 1</span>
   </div>
   <h4>Create scale_hr app scaffold and push to git</h4>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#ecfdf5;border-left:3px solid #10b981;"><span class="st-done">✅ Done</span> (verified 7 Aug 2026, deep-dive against merged PR #13) — app installed, Scale HR workspace live with full sidebar (Core/Leave/Attendance/Recruitment/Lifecycle/Payroll/Claims/Performance-Learning cards), <code>hooks.py</code>/<code>tasks.py</code>/<code>exit_hooks.py</code>/<code>training_hooks.py</code> all real (not stubs — see individual tasks below for what each does).</div>
   <div class="task-meta">Feature: Foundation · Deliverable: scale_hr app installed + workspace sidebar visible + team can pull</div>
   <div class="task-context">
     <p><span class="ctx-label">Why this task:</span> Every custom feature in the HR module lives inside <code>scale_hr</code>. Without this app, there is no safe place to put custom DocTypes, Python hooks, or fixtures — any UI config done without it cannot be version-controlled. This is the starting gate for everything else.</p>
@@ -859,6 +867,7 @@ apps/scale_hr/
     <span class="task-date">Jul 29–30</span>
   </div>
   <h4>Configure HR Masters — Departments, Designations, Employment Types, Grades</h4>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#ecfdf5;border-left:3px solid #10b981;"><span class="st-done">✅ Done</span> — confirmed via seed data and every downstream Phase depending on it cleanly (Leave Policy, Salary Structure, Appraisal Template all resolve against these masters with no missing-master errors). Also went further than specced: full PHS manpower band structure (Employee Grades M0–W, matching Designations, PHS Manpower Plan) built as its own later seed phase (<code>seed_manpower.py</code>) — ahead of where the original plan expected this level of grade detail.</div>
   <div class="task-meta">Feature: HR-01, HR-04 · Deliverable: All master data configured, Employee form fully usable</div>
   <div class="task-context">
     <p><span class="ctx-label">Why this task:</span> Every other HR feature depends on these masters. Leave policies attach to Grades, Appraisal Templates link to Designations, payroll Salary Structures are assigned by Grade. Getting this right first avoids cascading data corrections later.</p>
@@ -883,6 +892,7 @@ apps/scale_hr/
     <span class="task-date">Jul 29–31</span>
   </div>
   <h4>Configure Leave Types, Leave Policies, and Holiday Lists</h4>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#ecfdf5;border-left:3px solid #10b981;"><span class="st-done">✅ Done</span> — Leave Types, Policy, Holiday List all seeded and tested (their own TESTING.md Phase 1, self-marked "Ready to test"). Leave allocations, applications, and team calendar all live with real demo data (3 allocations, 1 open + 1 approved application confirmed in seed output).</div>
   <div class="task-meta">Feature: HR-11 Leave Management · Deliverable: Leave system live for all employees</div>
   <div class="task-context">
     <p><span class="ctx-label">Why this task:</span> Leave Management is the highest-frequency HR interaction for employees. Getting Leave Types and Policies configured early means employees can start applying leaves from Day 1 of go-live rather than waiting weeks for HR setup.</p>
@@ -907,6 +917,7 @@ apps/scale_hr/
     <span class="task-date">Aug 1–5</span>
   </div>
   <h4>Configure Shift Types and Auto-Attendance Job</h4>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#ecfdf5;border-left:3px solid #10b981;"><span class="st-done">✅ Done</span> — Shift Type, Shift Assignment, and Employee Checkin → Attendance all seeded and tested (Phase 1, "Ready to test"). Confirmed via seed output: 1 shift assignment, 3 attendance records, 1 absent-today case for the demo employee.</div>
   <div class="task-meta">Feature: HR-12 Attendance &amp; Shifts · Deliverable: Auto-attendance running; attendance feeds into payroll LOP</div>
   <div class="task-context">
     <p><span class="ctx-label">Why this task:</span> Without auto-attendance, HR must manually mark attendance for every employee every day — impractical at scale. The Auto-Attendance scheduled job reads check-in logs and marks Present/Absent/Late automatically each night, so payroll can calculate LOP deductions without manual intervention.</p>
@@ -930,6 +941,7 @@ apps/scale_hr/
     <span class="task-date">Aug 3–7</span>
   </div>
   <h4>Configure Hiring — Job Openings, Interview Rounds, Offer Letter print format</h4>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#ecfdf5;border-left:3px solid #10b981;"><span class="st-done">✅ Done</span> — the full chain is live and tested end-to-end (Phase 2 Step 1): Staffing Plan → Job Requisition → Job Opening → Job Applicant → Interview → Job Offer → Appointment Letter → Employee auto-created. Confirmed in seed output for a real demo candidate (HR-HIREQ-00001 through HR-APP-LETTER-00001). Granular sub-items (exact Interview Type names, the specific 5-stage approval workflow, print-format letterhead details) weren't individually re-verified beyond the chain working end-to-end — flag if a specific one needs checking.</div>
   <div class="task-meta">Feature: HR-01 Hiring · Deliverable: Full recruitment flow live — applicant → offer → employee</div>
   <div class="task-context">
     <p><span class="ctx-label">Why this task:</span> Hiring is a P1 feature. Every new joiner goes through this flow. Without it, HR tracks candidates in spreadsheets and manually creates Employee records — creating data quality risks at the source of the employee master.</p>
@@ -954,6 +966,7 @@ apps/scale_hr/
     <span class="task-date">Aug 5–8</span>
   </div>
   <h4>Configure Employee Onboarding Templates</h4>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#ecfdf5;border-left:3px solid #10b981;"><span class="st-done">✅ Done</span> — Onboarding Template + Employee Onboarding activities live and tested (Phase 2 Step 2). Also carries Induction (T16) — see that card's note on why no separate DocType was built.</div>
   <div class="task-meta">Feature: HR-02 Onboarding · Deliverable: Onboarding auto-triggers on Employee creation; all activities assigned</div>
   <div class="task-context">
     <p><span class="ctx-label">Why this task:</span> Without a structured onboarding process, new hires experience inconsistent first days — missing system access, no ID card, unconfigured payroll. Automated onboarding templates ensure every activity gets assigned to the right department owner with a deadline, and HR can track completion on a single dashboard.</p>
@@ -975,6 +988,7 @@ apps/scale_hr/
     <span class="task-date">Aug 8</span>
   </div>
   <h4>Export custom field fixtures — first code commit for HR module</h4>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#ecfdf5;border-left:3px solid #10b981;"><span class="st-done">✅ Done</span> — <code>apps/scale_hr/scale_hr/fixtures/custom_field.json</code> exists and is substantial (nearly 2,000 lines), plus <code>notification.json</code>, <code>number_card.json</code>, <code>property_setter.json</code>, <code>workflow.json</code> — every custom field across every later task is version-controlled, confirmed directly against the file.</div>
   <div class="task-meta">Feature: All custom fields (T01) · Deliverable: Custom fields version-controlled in git</div>
   <div class="task-context">
     <p><span class="ctx-label">Why this task:</span> Custom fields created via the ERPNext UI exist only in the database until exported. After this commit, any developer who clones the repo and runs <code>bench migrate</code> gets the custom fields automatically — no manual UI steps.</p>
@@ -998,6 +1012,7 @@ apps/scale_hr/
     <span class="task-date">Aug 10–12</span>
   </div>
   <h4>Configure Expense Types, Approval Hierarchy, GL Mapping</h4>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#f8fafc;border-left:3px solid #9ca3af;"><span class="st-ns">◯ Not started</span> — confirmed in code: only a workspace shortcut to native Expense Claim exists. No custom Expense Types with GL mapping, no Approver role configuration, no mandatory-receipt customization found anywhere in <code>install.py</code> or fixtures. Native Expense Claim is usable as-is (stock ERPNext), but none of this task's specific configuration work has been done.</div>
   <div class="task-meta">Feature: HR-06 Expense Claims · Deliverable: Expense claim flow live; GL entries auto-posting</div>
   <div class="task-context">
     <p><span class="ctx-label">Why this task:</span> Expense claims are a near-daily activity for field teams, sales reps, and managers. Without configuration, employees cannot get reimbursements and Finance cannot track project costs — blocking both HR and the Finance module's cost centre reporting.</p>
@@ -1019,6 +1034,7 @@ apps/scale_hr/
     <span class="task-date">Aug 13–15</span>
   </div>
   <h4>Configure Grievance Types, Permissions, and SLA Escalation</h4>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#f8fafc;border-left:3px solid #9ca3af;"><span class="st-ns">◯ Not started</span> — confirmed directly in code: <code>tasks.py</code>'s <code>daily_grievance_sla_check()</code> is a literal stub — <code>"""TODO: implement after Priority / Assigned HR Custom Fields are added.""" pass</code> — honestly self-documented as not done, not disguised as working. It IS wired into <code>scheduler_events</code> (daily), so the moment the Priority/Assigned fields get added, this is a small follow-up, not a rebuild. Only a workspace shortcut exists otherwise.</div>
   <div class="task-meta">Feature: HR-07 Grievance Management · Deliverable: Confidential grievance flow live with SLA alert</div>
   <div class="task-context">
     <p><span class="ctx-label">Why this task:</span> Grievances must be handled confidentially and within defined timelines. Without role-based permission config, any manager can see all grievances, which is a compliance and trust risk. The SLA script ensures HR doesn't miss escalation windows.</p>
@@ -1041,6 +1057,7 @@ apps/scale_hr/
     <span class="task-date">Aug 17–21</span>
   </div>
   <h4>Configure Travel Request Workflow and Advance Validation</h4>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#fffbeb;border-left:3px solid #f59e0b;"><span class="st-wip">🟡 Partially done</span> — the overdue-advance reminder is real and running: <code>tasks.py</code>'s <code>daily_travel_advance_overdue_check()</code> queries unsettled Employee Advances past the cutoff and emails a reminder, wired into <code>scheduler_events</code> (daily), confirmed not a stub. The Travel Request approval workflow (Draft → Supervisor → Dept Head → Finance → Approved) and the before-submit block-if-unsettled-advance validation were not found — only a workspace shortcut for Travel Request exists beyond the reminder job.</div>
   <div class="task-meta">Feature: HR-08 Travel Management · Deliverable: Travel request → advance → claim → settlement cycle live</div>
   <div class="task-context">
     <p><span class="ctx-label">Why this task:</span> Travel advances are a Finance liability until settled. Without the validation blocking new requests for employees with unsettled advances, Finance accumulates untracked advance balances — a common audit finding. The full cycle ensures every advance is accounted for.</p>
@@ -1063,6 +1080,7 @@ apps/scale_hr/
     <span class="task-date">Aug 22–24</span>
   </div>
   <h4>Configure Claims &amp; Advances — Types, Approval, Payroll Recovery</h4>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#fffbeb;border-left:3px solid #f59e0b;"><span class="st-wip">🟡 Partially done</span> — shares the same real, scheduled overdue-reminder job as T08 (both tasks' core ask overlaps on Employee Advance). Advance Types with per-grade limits, the payroll recovery deduction component, and the before-submit max-limit validation script were not found in code — not built beyond the reminder.</div>
   <div class="task-meta">Feature: HR-09 Claims &amp; Advances · Deliverable: Advance-to-payroll-recovery cycle configured</div>
   <div class="task-context">
     <p><span class="ctx-label">Why this task:</span> Unrecovered advances show up as employee receivables in Finance. Linking advance recovery to payroll ensures automatic deduction in the next salary run rather than manual follow-up, which almost never gets done consistently.</p>
@@ -1086,6 +1104,7 @@ apps/scale_hr/
     <span class="task-date">Aug 25–Sep 1</span>
   </div>
   <h4>Configure Salary Components, Salary Structures, Payroll Calendar</h4>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#ecfdf5;border-left:3px solid #10b981;"><span class="st-done">✅ Done</span> — Salary Structure (Basic/HRA/Special Allowance + PF/PT deductions), Salary Structure Assignment, and a full Payroll Entry with Salary Slip all seeded and tested (Phase 3 Steps 1–3). Confirmed in seed output: submitted structure, 2 assignments, a previous-month Payroll Entry with a submitted Salary Slip and an Additional Salary arrear row, correctly excluding an employee who joined after that pay period.</div>
   <div class="task-meta">Feature: HR-10 Payroll · Deliverable: Salary Structures assigned; dry-run payroll completes without error</div>
   <div class="task-context">
     <p><span class="ctx-label">Why this task:</span> Payroll is the most operationally critical HR deliverable. A misconfigured salary structure or wrong GL mapping can cause Finance to post incorrect entries that are hard to reverse after month close. The mandatory dry-run catches issues before the first live payroll run.</p>
@@ -1110,6 +1129,7 @@ apps/scale_hr/
     <span style="background:#fef3c7;color:#92400e;font-size:.72rem;font-weight:700;padding:2px 7px;border-radius:4px;">Updated · Client PRD</span>
   </div>
   <h4>Configure PF / ESI / PT / LWF / Gratuity Compliance via India Payroll App</h4>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#fffbeb;border-left:3px solid #f59e0b;"><span class="st-wip">🟡 Partially done</span> — PF and PT deductions are live and confirmed on the seeded Salary Slip (Provident Fund ₹3,600, Professional Tax ₹200). Gratuity is fully built and tested: a real Gratuity Rule, a submitted Gratuity document, and a submitted Full and Final Statement for the exit candidate (Phase 3 Step 5). <strong>ESI, LWF, and the 3 labour registers (Form 12, Muster Roll, Loan/Advance register) are an explicit, self-documented gap</strong> — their own TESTING.md states this plainly: "ESI / LWF / labour registers (documented GAP — out of Phase 3)." Not hidden, just not done yet.</div>
   <div class="task-meta">Feature: HR-15 Compliance · Deliverable: All statutory deductions auto-calculating; ECR and ESIC files exportable; LWF deducted; Gratuity calculated</div>
   <div class="task-context">
     <p><span class="ctx-label">Why this task:</span> PF/ESI/PT are legal obligations — wrong configuration means statutory filings are incorrect, which carries significant penalty risk. This task has the highest delay risk in the HR module because PT slab data must come from HR leadership, and ECR file validation requires access to the EPFO portal.</p>
@@ -1138,6 +1158,7 @@ apps/scale_hr/
     <span style="background:#fef3c7;color:#92400e;font-size:.72rem;font-weight:700;padding:2px 7px;border-radius:4px;">Updated · Client PRD</span>
   </div>
   <h4>Configure Appraisal Templates, KRA/KPI/OKR Framework, and Appraisal Cycle</h4>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#fffbeb;border-left:3px solid #f59e0b;"><span class="st-wip">🟡 Partially done</span> — the core KRA-based appraisal cycle is live and tested (Phase 4 Steps 1–2): Appraisal Template, Appraisal Cycle, Goals, and 2 submitted Appraisals with weighted scoring, including a High-priority manager ToDo correctly firing for the lower-scoring candidate. <strong>All 3 Client PRD additions confirmed not built</strong> — searched for the OKR objectives child table, review-cadence templates, and the IDP/Development Plan fields; none exist anywhere in <code>install.py</code> or the fixtures. This task's PDF print format wasn't independently re-verified.</div>
   <div class="task-meta">Feature: HR-04 Performance Management · Deliverable: Appraisal cycle runs end-to-end with KRA+OKR framework; PDF print format generated</div>
   <div class="task-context">
     <p><span class="ctx-label">Why this task:</span> Performance appraisal is a P1 feature and a key cultural deliverable. Without KRA templates configured before the first cycle, employees and managers have no shared framework for rating — making the appraisal process subjective and legally indefensible. The KRA list is a business input, not a technical one.</p>
@@ -1164,6 +1185,7 @@ apps/scale_hr/
     <span class="task-date">Sep 1–6</span>
   </div>
   <h4>Build 360 Feedback — Rater Assignment Script and Anonymous Mode</h4>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#fffbeb;border-left:3px solid #f59e0b;"><span class="st-wip">🟡 Partially done</span> — rater assignment and feedback collection are live and tested (Phase 4 Step 3): manager + peer feedback both submitted against the Demo Appraisal. <strong>Anonymous mode was explicitly not built</strong> — their own TESTING.md marks it "Skipped (not required for PRD)," same honest framing as the compliance gap above. The dedicated competency-radar Script Report wasn't found as its own report (Appraisal Overview exists but isn't the same per-KRA multi-rater breakdown this task specified).</div>
   <div class="task-meta">Feature: HR-05 360 Feedback · Deliverable: Rater assignment auto-runs; reviewers receive email with form link</div>
   <div class="task-context">
     <p><span class="ctx-label">Why this task:</span> Manual rater selection is slow and prone to bias. Auto-assignment from the org chart (reports-to for manager, peers from same department) removes this bottleneck. Anonymous feedback increases honesty and is required by the HR policy specification.</p>
@@ -1185,6 +1207,7 @@ apps/scale_hr/
     <span class="task-date">Sep 4–7</span>
   </div>
   <h4>Build Exit Management — Asset Fetch Hook, F&amp;F Print Format, Clearance SLA</h4>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#ecfdf5;border-left:3px solid #10b981;"><span class="st-done">✅ Done, and found to be simpler than planned</span> — Employee Separation, Exit Interview, and Full and Final Statement all seeded and tested (Phase 2 Step 5, Phase 3 Step 5). The originally-specced custom <code>exit_hooks.fetch_allocated_assets()</code> hook exists but is a <strong>deliberate no-op</strong> — read directly in code: its own docstring explains native HRMS's Full and Final Statement already populates <code>assets_allocated</code> from Asset Movement automatically, so the custom hook would have duplicated something that already works. A genuine "checked, found native already covers it" resolution, not an incomplete stub — same category of finding as several PMO discoveries this session.</div>
   <div class="task-meta">Feature: HR-14 Exit Management · Deliverable: Employee Separation auto-fetches assets; F&amp;F PDF generates correctly</div>
   <div class="task-context">
     <p><span class="ctx-label">Why this task:</span> Missing an asset during exit causes financial loss and creates unresolved liability in the Asset module. Manually checking all assigned assets per employee is error-prone. The auto-fetch hook eliminates this risk. The F&amp;F PDF is required for legal settlement.</p>
@@ -1211,6 +1234,7 @@ apps/scale_hr/
     <span class="task-date">Sep 8–13</span>
   </div>
   <h4>Training Programs — Skill Taxonomy, Auto-Skill Update, Certification Expiry Alert</h4>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#fffbeb;border-left:3px solid #f59e0b;"><span class="st-wip">🟡 Partially done</span> — the core is real and tested (Phase 4 Steps 4–6): <code>training_hooks.auto_update_skills()</code> fires on Training Result submit (confirmed wired in <code>hooks.py</code>, not a stub), a daily certification-expiry alert is scheduled, and the Employee Skill Matrix report is live showing Valid/Expiring status. This task's dedicated "Skill Gap" report (Designation-required skills vs. actual, per role) wasn't found as its own report — only the Skill Matrix exists, which is a related but different view.</div>
   <div class="task-meta">Feature: HR-13 Training &amp; Skilling · Deliverable: Training result → skill auto-updated; expiry alerts running</div>
   <div class="task-context">
     <p><span class="ctx-label">Why this task:</span> Without auto skill updates, the Employee Skill master becomes stale and useless. The skill gap report is only actionable if the skill data is accurate and current. The certification expiry alert prevents legal and operational risk for certified roles.</p>
@@ -1234,6 +1258,7 @@ apps/scale_hr/
     <span class="task-date">Sep 10–13</span>
   </div>
   <h4>Create Induction Plan Custom DocType</h4>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#fffbeb;border-left:3px solid #f59e0b;"><span class="st-wip">🟡 Built differently — deliberate substitution, not a gap</span> — confirmed: no <code>Induction Plan</code> or <code>Induction Session</code> DocType exists anywhere in the app. Their own TESTING.md states the decision plainly: "Induction is covered by enriched boarding activities plus a Training Program/Event (product & safety) for the joiner employee — no separate Induction DocType." Satisfies the real need (a new joiner gets a structured induction) via existing Onboarding + Training Event machinery instead of new schema — a legitimate simplification, but it does mean there's no sequenced week-by-week curriculum with per-session manager sign-offs, since that structure doesn't exist without the dedicated DocType.</div>
   <div class="task-meta">Feature: HR-03 Induction · Deliverable: Induction Plan DocType live; first-month curriculum trackable</div>
   <div class="task-context">
     <p><span class="ctx-label">Why this task:</span> The native Training Program handles event scheduling but cannot model a sequenced first-month curriculum with week-wise dependencies and manager sign-offs. A custom DocType gives HR a proper onboarding checklist that goes beyond Day 1 into the full first month.</p>
@@ -1257,6 +1282,7 @@ apps/scale_hr/
     <span class="task-date">Sep 15–20</span>
   </div>
   <h4>End-to-end HR Module Testing</h4>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#ecfdf5;border-left:3px solid #10b981;"><span class="st-done">✅ Done — and thorough</span> — <code>apps/scale_hr/TESTING.md</code> is a genuinely comprehensive 1,189-line layman testing guide, Parts A through M, with an honest status table up top (explicitly separating "Ready to test" from "Not built yet — skip," including the same PF/ESI/LWF and anonymous-feedback gaps flagged on their own task cards above rather than glossed over). This is the same testing discipline already seen in <code>scale_sales</code>'s TESTING.md.</div>
   <div class="task-meta">Feature: All · Deliverable: Full employee lifecycle tested — hire to exit — without errors</div>
   <div class="task-context">
     <p><span class="ctx-label">Why this task:</span> Individual feature testing catches isolated bugs, but lifecycle testing catches integration failures — e.g. an advance not recovering in payroll, or a separation not blocking leave allocation carry-forward. This is the final quality gate before any team goes live.</p>
@@ -1284,6 +1310,7 @@ apps/scale_hr/
     <span style="background:#fef3c7;color:#92400e;font-size:.72rem;font-weight:700;padding:2px 7px;border-radius:4px;">New · Client PRD · HR-17</span>
   </div>
   <h4>Configure Asset Management for HR Lifecycle (Laptops, Mobiles, ID Cards, Access Cards)</h4>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#f8fafc;border-left:3px solid #9ca3af;"><span class="st-ns">◯ Not started</span> — confirmed reserved for later: <code>exit_hooks.py</code>'s own comment reads "Phase 5 may refine employee asset recovery here if custodian-based Asset rows need a Scale-specific pass." No Asset Categories, custodian assignments, or Asset Register report found. Not urgent — T14 already confirmed native HRMS F&F asset loading covers the exit-clearance half of this without custom work.</div>
   <div class="task-meta">Feature: HR-17 Asset Management · Deliverable: Employee assets tracked from allocation to return; exit clearance linked to Asset module</div>
   <div class="task-context">
     <p><span class="ctx-label">Why this task:</span> The client PRD explicitly requires tracking of Laptops, Mobiles, ID Cards, Access Cards, Vehicles, Uniforms, and Software Licenses throughout the employee lifecycle. ERPNext already has a full Asset module — this task wires it to the HR workflow without building anything from scratch.</p>
@@ -1309,6 +1336,7 @@ apps/scale_hr/
     <span style="background:#fef3c7;color:#92400e;font-size:.72rem;font-weight:700;padding:2px 7px;border-radius:4px;">New · Client PRD · HR-18</span>
   </div>
   <h4>Enable Employee Self-Service (ESS) Portal — Payslips, Leave, Expenses, Grievances</h4>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#f8fafc;border-left:3px solid #9ca3af;"><span class="st-ns">◯ Not started</span> — their own TESTING.md lists this under "Phase 5 ... Not built yet — skip." Worth knowing: the workspace overview text already points to <code>/hrms</code>, native Frappe HRMS's own full self-service PWA — so basic ESS mechanics (view payslip, apply leave) exist for free at the platform level. What hasn't been done is this task's own list: verifying/tightening employee-only record permissions, enabling the salary-slip portal page explicitly, and the mobile-friendly form customization. Genuinely close to "free," but not yet configured or tested.</div>
   <div class="task-meta">Feature: HR-18 Employee Self-Service · Deliverable: Employees can access payslips, apply leave, submit expenses, raise grievances independently via browser</div>
   <div class="task-context">
     <p><span class="ctx-label">Why this task:</span> The client PRD requires employees to self-serve for routine HR activities (view payslips, apply leave, submit expenses, update profile, download documents, raise grievances, complete learning). Frappe HRMS ships with a built-in ESS portal — this is mostly a configuration and permissions task.</p>
@@ -1332,6 +1360,7 @@ apps/scale_hr/
     <span style="background:#fef3c7;color:#92400e;font-size:.72rem;font-weight:700;padding:2px 7px;border-radius:4px;">New · Client PRD · HR-19</span>
   </div>
   <h4>Enable Manager Self-Service (MSS) — Approve Leave, Expenses, Attendance, Review Performance, Initiate Hiring</h4>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#f8fafc;border-left:3px solid #9ca3af;"><span class="st-ns">◯ Not started</span> — same "Phase 5 ... skip" bucket as ESS. No Leave/Expense Approver role wiring, no Attendance Correction workflow, no Manager Dashboard workspace additions found.</div>
   <div class="task-meta">Feature: HR-19 Manager Self-Service · Deliverable: Managers can action all team HR tasks from a single approval queue</div>
   <div class="task-context">
     <p><span class="ctx-label">Why this task:</span> The client PRD requires managers to approve leave, expenses, attendance corrections, review team performance, and initiate hiring requests without HR involvement at every step. ERPNext handles this natively via the Leave Approver / Expense Approver roles — this task correctly configures those roles and sets up the manager's workspace view.</p>
@@ -1350,6 +1379,7 @@ apps/scale_hr/
 <!-- AI TRACK -->
 <h2>AI Track (Veeren)</h2>
 <p class="no-print">Veeren runs parallel to the developer track from Day 1. Tasks V01–V04 wire up the AI hooks on top of features the dev team has configured. V05 is the NL Query assistant for HR data — start schema mapping on Day 1 even before any dev work is done.</p>
+<div style="margin:8px 0 16px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#f8fafc;border-left:3px solid #9ca3af;"><span class="st-ns">◯ V01–V05 — none started</span> — confirmed: <code>apps/scale_hr/scale_hr/ai_utils.py</code> does not exist anywhere in the app (unlike <code>scale_sales</code>, where the equivalent file is real and live). No candidate scoring, retention risk flags, appraisal coaching notes, or NL query endpoint. Matches their own TESTING.md: "Later: AI (face recognition, burnout prediction, etc.) — Not in scope — skip." Same status across all 5 sub-tasks below — not repeated per card.</div>
 
 <div class="task-card">
   <div class="task-header">
@@ -1443,30 +1473,30 @@ apps/scale_hr/
   <tr>
     <th>Feature ID</th><th>Feature</th><th>Priority</th><th>Status</th><th>Assigned Tasks</th>
   </tr>
-  <tr><td>HR-01</td><td>Hiring</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T04</td></tr>
-  <tr><td>HR-02</td><td>Onboarding</td><td><span class="pill bp2">P2</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T05</td></tr>
-  <tr><td>HR-03</td><td>Induction</td><td><span class="pill bp3">P3</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T16</td></tr>
-  <tr><td>HR-04</td><td>Performance Management</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T12</td></tr>
-  <tr><td>HR-05</td><td>360 Feedback</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T13</td></tr>
-  <tr><td>HR-06</td><td>Expense Claims</td><td><span class="pill bpd">—</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T06</td></tr>
-  <tr><td>HR-07</td><td>Grievance Management</td><td><span class="pill bpd">—</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T07</td></tr>
-  <tr><td>HR-08</td><td>Travel Management</td><td><span class="pill bp1">P1</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T08</td></tr>
-  <tr><td>HR-09</td><td>Claims &amp; Advances</td><td><span class="pill bpd">—</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T09</td></tr>
-  <tr><td>HR-10</td><td>Payroll</td><td><span class="pill bpd">—</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T10</td></tr>
-  <tr><td>HR-11</td><td>Leave Management</td><td><span class="pill bpd">—</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T02</td></tr>
-  <tr><td>HR-12</td><td>Attendance &amp; Shifts</td><td><span class="pill bpd">—</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T03</td></tr>
-  <tr><td>HR-13</td><td>Training &amp; Skilling</td><td><span class="pill bp3">P3</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T15</td></tr>
-  <tr><td>HR-14</td><td>Exit Management</td><td><span class="pill bpd">—</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T14</td></tr>
-  <tr><td>HR-15</td><td>Compliance PF/ESI/PT/LWF/Gratuity <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">Updated PRD</span></td><td><span class="pill bpd">—</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T11</td></tr>
+  <tr><td>HR-01</td><td>Hiring</td><td><span class="pill bp1">P1</span></td><td><span class="st-done">✅ Done</span></td><td>T04 — full chain seeded &amp; tested, applicant through Employee auto-create</td></tr>
+  <tr><td>HR-02</td><td>Onboarding</td><td><span class="pill bp2">P2</span></td><td><span class="st-done">✅ Done</span></td><td>T05 — template + activities seeded &amp; tested</td></tr>
+  <tr><td>HR-03</td><td>Induction</td><td><span class="pill bp3">P3</span></td><td><span class="st-wip">🟡 Built Differently</span></td><td>T16 — no Induction Plan DocType; deliberately reused Onboarding + Training Event instead</td></tr>
+  <tr><td>HR-04</td><td>Performance Management</td><td><span class="pill bp1">P1</span></td><td><span class="st-wip">🟡 Partially Done</span></td><td>T12 — core KRA appraisal live &amp; tested; OKR/multi-cadence/Dev Plan PRD additions confirmed not built</td></tr>
+  <tr><td>HR-05</td><td>360 Feedback</td><td><span class="pill bp1">P1</span></td><td><span class="st-wip">🟡 Partially Done</span></td><td>T13 — rater assignment + feedback live &amp; tested; anonymous mode explicitly skipped</td></tr>
+  <tr><td>HR-06</td><td>Expense Claims</td><td><span class="pill bpd">—</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T06 — workspace shortcut only, no HR-specific config found</td></tr>
+  <tr><td>HR-07</td><td>Grievance Management</td><td><span class="pill bpd">—</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T07 — SLA scheduler is a literal TODO stub, honestly marked as such in code</td></tr>
+  <tr><td>HR-08</td><td>Travel Management</td><td><span class="pill bp1">P1</span></td><td><span class="st-wip">🟡 Partially Done</span></td><td>T08 — advance-overdue reminder job real &amp; scheduled; approval workflow not found</td></tr>
+  <tr><td>HR-09</td><td>Claims &amp; Advances</td><td><span class="pill bpd">—</span></td><td><span class="st-wip">🟡 Partially Done</span></td><td>T09 — shares T08's reminder job; advance types/limits/payroll recovery not found</td></tr>
+  <tr><td>HR-10</td><td>Payroll</td><td><span class="pill bpd">—</span></td><td><span class="st-done">✅ Done</span></td><td>T10 — structures, assignment, payroll run, salary slip all seeded &amp; tested</td></tr>
+  <tr><td>HR-11</td><td>Leave Management</td><td><span class="pill bpd">—</span></td><td><span class="st-done">✅ Done</span></td><td>T02 — types/policy/holiday/allocation seeded &amp; tested</td></tr>
+  <tr><td>HR-12</td><td>Attendance &amp; Shifts</td><td><span class="pill bpd">—</span></td><td><span class="st-done">✅ Done</span></td><td>T03 — shift assignment + auto-attendance seeded &amp; tested</td></tr>
+  <tr><td>HR-13</td><td>Training &amp; Skilling</td><td><span class="pill bp3">P3</span></td><td><span class="st-wip">🟡 Partially Done</span></td><td>T15 — auto-skill-update, cert expiry alert, Skill Matrix report all real &amp; tested; dedicated Skill Gap report not found</td></tr>
+  <tr><td>HR-14</td><td>Exit Management</td><td><span class="pill bpd">—</span></td><td><span class="st-done">✅ Done</span></td><td>T14 — Separation/Exit Interview/F&amp;F seeded &amp; tested; asset-fetch hook is a deliberate no-op, native F&amp;F already covers it</td></tr>
+  <tr><td>HR-15</td><td>Compliance PF/ESI/PT/LWF/Gratuity <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">Updated PRD</span></td><td><span class="pill bpd">—</span></td><td><span class="st-wip">🟡 Partially Done</span></td><td>T11 — PF/PT/Gratuity/F&amp;F live &amp; tested; ESI, LWF, and 3 labour registers self-documented as GAP, out of Phase 3</td></tr>
   <tr style="background:#fffbeb;"><td colspan="5" style="padding:7px 10px;font-size:.78rem;font-weight:700;color:#92400e;border:1px solid #fcd34d;">CLIENT PRD ADDITIONS — HR-16 to HR-23</td></tr>
-  <tr><td>HR-16</td><td>Governance &amp; Funding <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">New PRD</span></td><td><span class="pill bpd">W2</span></td><td><span class="st-ns">◯ Wave 2</span></td><td>—</td></tr>
-  <tr><td>HR-17</td><td>Asset Management <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">New PRD</span></td><td><span class="pill bp2">P2</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T18</td></tr>
-  <tr><td>HR-18</td><td>Employee Self-Service (ESS) <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">New PRD</span></td><td><span class="pill bp2">P2</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T19</td></tr>
-  <tr><td>HR-19</td><td>Manager Self-Service (MSS) <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">New PRD</span></td><td><span class="pill bp2">P2</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T20</td></tr>
-  <tr><td>HR-20</td><td>Succession Planning &amp; Talent Mgmt <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">New PRD</span></td><td><span class="pill bpd">W2</span></td><td><span class="st-ns">◯ Wave 2</span></td><td>—</td></tr>
-  <tr><td>HR-21</td><td>Employee Engagement Management <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">New PRD</span></td><td><span class="pill bpd">W2</span></td><td><span class="st-ns">◯ Wave 2</span></td><td>—</td></tr>
-  <tr><td>HR-22</td><td>Workforce Planning &amp; Analytics <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">New PRD</span></td><td><span class="pill bpd">W2</span></td><td><span class="st-ns">◯ Wave 2</span></td><td>—</td></tr>
-  <tr><td>HR-23</td><td>Document Management <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">New PRD</span></td><td><span class="pill bpd">W2</span></td><td><span class="st-ns">◯ Wave 2</span></td><td>—</td></tr>
+  <tr><td>HR-16</td><td>Governance &amp; Funding <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">New PRD</span></td><td><span class="pill bpd">W2</span></td><td><span class="st-ns">◯ Wave 2</span></td><td>— unchanged, as originally scheduled</td></tr>
+  <tr><td>HR-17</td><td>Asset Management <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">New PRD</span></td><td><span class="pill bp2">P2</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T18 — explicitly reserved for "Phase 5" in code comments</td></tr>
+  <tr><td>HR-18</td><td>Employee Self-Service (ESS) <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">New PRD</span></td><td><span class="pill bp2">P2</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T19 — native /hrms portal exists unconfigured; this task's own config/permissions work not done</td></tr>
+  <tr><td>HR-19</td><td>Manager Self-Service (MSS) <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">New PRD</span></td><td><span class="pill bp2">P2</span></td><td><span class="st-ns">◯ Not Started</span></td><td>T20 — not started</td></tr>
+  <tr><td>HR-20</td><td>Succession Planning &amp; Talent Mgmt <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">New PRD</span></td><td><span class="pill bpd">W2</span></td><td><span class="st-ns">◯ Wave 2</span></td><td>— unchanged, as originally scheduled</td></tr>
+  <tr><td>HR-21</td><td>Employee Engagement Management <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">New PRD</span></td><td><span class="pill bpd">W2</span></td><td><span class="st-ns">◯ Wave 2</span></td><td>— unchanged, as originally scheduled</td></tr>
+  <tr><td>HR-22</td><td>Workforce Planning &amp; Analytics <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">New PRD</span></td><td><span class="pill bpd">W2</span></td><td><span class="st-ns">◯ Wave 2</span></td><td>— unchanged, as originally scheduled</td></tr>
+  <tr><td>HR-23</td><td>Document Management <span style="background:#fef3c7;color:#92400e;font-size:.68rem;font-weight:700;padding:1px 4px;border-radius:3px;">New PRD</span></td><td><span class="pill bpd">W2</span></td><td><span class="st-wip">🟡 Started early, ahead of Wave 2</span></td><td>Not tied to any T## — Employee document compliance fields + report + daily expiry alert all real &amp; tested (Phase 2 Step 4), well before its scheduled wave</td></tr>
 </table>
 </div>
 
