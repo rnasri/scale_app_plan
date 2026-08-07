@@ -1105,6 +1105,32 @@ git commit -m "feat(sales): export custom field fixtures for Customer and Lead D
     <span class="task-date">Fri 1 Aug · Est. 1 hr</span>
   </div>
   <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#fffbeb;border-left:3px solid #f59e0b;"><span class="st-wip">🟡 Done, but built differently</span> — 4 Sales Person records exist (Rajesh Kumar - North / Priya Singh - South / Amit Verma - West / Sanjay Rao - East), flat under stock "Sales Team", <strong>not</strong> the Raghib → Archit/Muhammad hierarchy this task specifies, and not linked to any User/Employee. Price Lists: "Dealer Price List" + "Distributor Price List" (not "Standard Selling" — that already exists as an ERPNext default, so wasn't recreated). <strong>Needs a decision:</strong> keep the placeholder reps or repoint the hierarchy to the real team.</div>
+
+  <div style="margin:8px 0 12px;padding:10px 14px;border-radius:6px;font-size:.85rem;background:#eff6ff;border-left:3px solid #3b82f6;">
+    <p style="margin:0 0 8px;font-weight:700;color:#1e3a8a;">📋 Implementation Plan — Reviewed 7 Aug 2026, Not Yet Built</p>
+    <p style="margin:0 0 8px;color:#1e3a8a;">Researched against ERPNext's own documented Sales Person/Territory pattern and general CRM territory-management practice (Salesforce/HubSpot-style manager→rep rollups) before deciding — not a guess. Verified directly against the schema and this codebase's actual data, not assumed.</p>
+    <p style="margin:0 0 6px;font-weight:700;color:#1e3a8a;">What's actually wrong today (found during this review, not previously flagged):</p>
+    <ul style="margin:0 0 10px;padding-left:20px;line-height:1.7;color:#1e3a8a;">
+      <li>The 4 Sales Person names are disconnected fiction — they don't match the 4 <em>real</em> zone-rep Users already live for Lead auto-assignment (T05/T15: Arjun Mehta–North, Priya Sharma–South, Sneha Iyer–East, AIWS Admin–West). Two separate fake identities exist for "the same" 4 territories, and the zone-to-name mapping doesn't even line up between them.</li>
+      <li>Verified in schema: <code>Sales Person</code> links to <code>Employee</code>, not directly to <code>User</code> — this task's own original step ("set Employee field or User field") was uncertain and only half right.</li>
+      <li><code>Territory.territory_manager</code> (Link → Sales Person) exists natively, specifically for this purpose, and sits unused/blank on every territory today.</li>
+    </ul>
+    <p style="margin:0 0 6px;font-weight:700;color:#1e3a8a;">Recommended model:</p>
+    <ol style="margin:0 0 10px;padding-left:20px;line-height:1.7;color:#1e3a8a;">
+      <li><strong>Retire the fake names — reuse the real zone reps.</strong> One consistent person per territory across the whole pipeline: the same rep a Lead auto-assigns to is the one tagged as Sales Person on the Quotation/Order/Invoice that follows.</li>
+      <li><strong>One-level hierarchy, not a deeper tree.</strong> Keep native "Sales Team" as the single parent group, 4 zone reps as direct children — matches the standard small-team CRM model; there's no real second layer of org structure here to justify going deeper.</li>
+      <li><strong>Link each Sales Person → its real Employee.</strong> Checked directly: Arjun Mehta (HR-EMP-00002), Priya Sharma (HR-EMP-00001), and Sneha Iyer (HR-EMP-00003) already have live Employee records via <code>scale_hr</code>'s own seed — same shared demo-persona names, genuinely linkable today with no new records needed. Only West (AIWS Admin) has none — see open decision below.</li>
+      <li><strong>Wire <code>Territory.territory_manager</code></strong> for the 4 zone territories → matching Sales Person. Native mechanism, currently unused; this is what makes ERPNext's own Target Variance / territory reports actually mean something once targets get set.</li>
+      <li><strong>Drop "Raghib → Archit/Muhammad" entirely.</strong> That modeled the dev team building this software, not AIWS's actual sales org — conflating the two was the root issue in the original task spec, not something to build as originally written.</li>
+    </ol>
+    <p style="margin:0 0 6px;font-weight:700;color:#1e3a8a;">Two decisions for Raghib, not assumed by this plan:</p>
+    <ul style="margin:0 0 10px;padding-left:20px;line-height:1.7;color:#1e3a8a;">
+      <li><strong>West zone / AIWS Admin</strong> — leave without an Employee link (Admin genuinely isn't a person), or replace with a real-named rep for consistency with the other 3?</li>
+      <li><strong>Existing bad data</strong> — the 4 wrong Sales Person records already exist on shared dev sites. Plan is to <code>frappe.rename_doc</code> them in place rather than delete+recreate, so any Quotation/Order that already references one by name doesn't break. Confirm before it goes in front of the team.</li>
+    </ul>
+    <p style="margin:0;color:#1e3a8a;">Scheduled to implement after the current PMO submission — this block is the full context for whoever picks it up, so it doesn't need to be re-derived from scratch.</p>
+  </div>
+
   <div class="task-meta">Feature: SALES-01 / SALES-05 | Deliverable: Sales Person tree + 2 Price Lists</div>
   <div class="task-context">
     <p><span class="ctx-label">What we're trying to achieve:</span> "Sales Person" in ERPNext is a trackable entity separate from a system user — it can be linked to every Quotation, Opportunity, and Sales Order to measure individual performance. The hierarchy (Raghib → Archit, Muhammad) means management can view aggregate team performance in one report, or drill into individual numbers. Price Lists are the rate cards applied to every Quotation: Standard Selling for direct customers, a Dealer Price List with discounted rates for authorized dealers. Without both, there's no structured way to track who sold what, or to apply the right pricing to the right channel.</p>
