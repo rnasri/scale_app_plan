@@ -369,7 +369,7 @@
   <div class="sec-head"><span class="sec-num">PMO-07 · Excel 8.0</span><h2 style="margin:0;">Invoicing / Expense</h2><span class="status-pill progressed">🟢 Progressed</span></div>
   <div class="ask-line">Bill approved hours and expenses without re-typing anything into a fresh invoice.</div>
   <div class="two-col">
-    <div class="added-box"><div class="box-label">Added — Live</div><ul><li>New <b>PMO Billing Wizard</b> page — pick a date range and optional client, preview billable hours + approved expenses grouped by client, generate draft Sales Invoices in one click</li><li>Each draft invoice properly links back to its source timesheets, the same way the standard desk "Get Items From Timesheet" button does</li><li>Nothing gets billed twice — already-drafted work is automatically excluded from the next run</li><li>Expense Claims now carry a Billable To Client flag and show which invoice they landed on</li></ul></div>
+    <div class="added-box"><div class="box-label">Added — Live</div><ul><li>New <b>PMO Billing Wizard</b> page — pick a date range and optional client, preview billable hours + approved expenses grouped by client, generate draft Sales Invoices in one click</li><li>Each draft invoice properly links back to its source timesheets, the same way the standard desk "Get Items From Timesheet" button does</li><li>Nothing gets billed twice — already-drafted work is automatically excluded from the next run</li><li>Expense Claims now carry a Billable To Client flag and show which invoice they landed on</li><li>Expense accounting itself reuses the Accounts module's own setup rather than duplicating it — one clean source of truth for which GL account each expense type posts to</li></ul></div>
     <div class="pending-box"><div class="box-label">Pending</div><ul><li>Payment gateway link in the invoice email template — no client requirement for it yet</li><li>If a draft invoice is cancelled without ever being submitted, its expenses stay marked billed and need a manual clear</li></ul></div>
   </div>
   <div><span class="task-tag">Task List: T09 — Done, Wed Aug 12 → 8 Aug</span></div>
@@ -378,7 +378,6 @@
   <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Project Management</span><span class="fp-arrow">→</span><span class="fp-step">Billing Wizard</span></div>
   <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/pmo-billing-wizard" target="_blank">Open the Billing Wizard →</a></div>
   <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Priya — PMO Director</div><div class="uc-flow">Opens the Billing Wizard on the 1st of the month, picks last month's date range, and one click drafts every client's invoice — approved hours and expenses already rolled in, nothing re-typed.</div></div>
-  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Priya — PMO Director</div><div class="uc-flow">Runs the Monthly Billing Wizard on the 1st — every approved timesheet across every client rolls into draft invoices in one click, not one-by-one.</div></div>
 </section>
 
 <section class="slide"><span class="slide-idx">12 / 27</span>
