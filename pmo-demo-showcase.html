@@ -200,9 +200,9 @@
   <div class="slide-eyebrow">Excel + PDF Alignment</div>
   <h2>20 Features. Here's Where We Stand — Honestly.</h2>
   <div class="big-nums">
-    <div class="big-num c-green"><div class="n">11</div><div class="l">Progressed</div></div>
+    <div class="big-num c-green"><div class="n">12</div><div class="l">Progressed</div></div>
     <div class="big-num c-amber"><div class="n">0</div><div class="l">Initiated</div></div>
-    <div class="big-num c-grey"><div class="n">9</div><div class="l">Planned</div></div>
+    <div class="big-num c-grey"><div class="n">8</div><div class="l">Planned</div></div>
     <div class="big-num c-navy"><div class="n">20</div><div class="l">Total PMO Features</div></div>
   </div>
   <div class="legend-row">
@@ -219,7 +219,7 @@
 <!-- 03 — TASK LIST HIGHLIGHT -->
 <section class="slide"><span class="slide-idx">03 / 27</span>
   <div class="slide-eyebrow">From Your Task List</div>
-  <h2>T00–T10 + T14 Done. 6 Tasks + R01 Next — All Sequenced.</h2>
+  <h2>T00–T11 + T14 Done. 5 Tasks + R01 Next — All Sequenced.</h2>
   <p class="lede">Your team's own task list (T00–T17, R01). One box down, none skipped, none reordered without a reason on the plan page.</p>
   <div class="task-grid">
     <div class="task-chip added"><span class="tid">T00</span><span class="ttitle">App scaffold, install, Workspace</span><span class="tmark">✅</span></div>
@@ -233,7 +233,7 @@
     <div class="task-chip added"><span class="tid">T08</span><span class="ttitle">Timesheet + manday guardrails</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">T09</span><span class="ttitle">Monthly Billing Wizard</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">T10</span><span class="ttitle">Project Budget — categories + approval</span><span class="tmark">✅</span></div>
-    <div class="task-chip pending"><span class="tid">T11</span><span class="ttitle">Resource Management (biggest build)</span><span class="tmark">⏳</span></div>
+    <div class="task-chip added"><span class="tid">T11</span><span class="ttitle">Resource Management (biggest build)</span><span class="tmark">✅</span></div>
     <div class="task-chip pending"><span class="tid">T12</span><span class="ttitle">Risk Register + Heatmap</span><span class="tmark">⏳</span></div>
     <div class="task-chip pending"><span class="tid">T13</span><span class="ttitle">Change Request + Impact Calculator</span><span class="tmark">⏳</span></div>
     <div class="task-chip added"><span class="tid">T14</span><span class="ttitle">PMO Cockpit Dashboard</span><span class="tmark">✅</span></div>
@@ -452,14 +452,18 @@
 </section>
 
 <section class="slide"><span class="slide-idx">18 / 27</span>
-  <div class="sec-head"><span class="sec-num">PMO-14 · Gap-Identified</span><h2 style="margin:0;">Resource Management</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="sec-head"><span class="sec-num">PMO-14 · Gap-Identified</span><h2 style="margin:0;">Resource Management</h2><span class="status-pill progressed">🟢 Progressed</span></div>
   <div class="ask-line">One resourceable pool — Employees, Consultants, Contractors, Machines, Vehicles, Tools, Equipment — bookable and trackable.</div>
-  <div class="gap-box"><div class="box-label">⚠ The Single Largest Gap In This Build</div><p>A full PDF chapter (§3) — pooling, availability, skills, certifications, workload, capacity, booking/transfer/replacement, AI shortage prediction — with <b>zero corresponding Excel row at all.</b> Nothing in the system today covers resource booking or capacity planning.</p></div>
-  <div class="added-box" style="max-width:640px;"><div class="box-label">Added — Live (Ahead Of The Main Build)</div><p>An on/off switch for Consultant and Contractor resourcing, in a new <b>PMO Settings</b> page — <b>off by default</b>, so a new client starts with both switched off and turns on only what they actually use. Turn either off and no new record of that type can be added — including the public consultant signup form, which goes offline automatically — while everything already on file stays exactly as it was. Turn it on and it's available immediately. Employees, Machines, Vehicles, Tools, and Equipment are always available; only these two external resource types are optional.</p></div>
-  <div class="pending-box" style="max-width:640px;"><div class="box-label">To Build — T11 (Biggest Build In The Module)</div><ul><li>A Resource concept spanning Employee/Consultant/Contractor/Machine/Vehicle/Tool/Equipment; Certifications child table</li><li>Leave Calendar pulled from native HRMS Leave Application, not duplicated</li><li>Resource Allocation DocType (resource × Project/Task × date range × allocated %)</li><li>Booking/Transfer/Replacement as workflow actions on Allocation</li><li>Utilization Dashboard, Capacity Report, Skill Availability, Resource Cost Report, Utilization Heat Map</li></ul></div>
-  <div><span class="task-tag">Task List: T11 — Mon–Tue Aug 17–18</span></div>
+  <div class="gap-box"><div class="box-label">⚠ The Single Largest Gap In This Build</div><p>A full PDF chapter (§3) — pooling, availability, skills, certifications, workload, capacity, booking/transfer/replacement — with <b>zero corresponding Excel row at all.</b> Nothing in the system covered resource booking or capacity planning before this.</p></div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Added — Live</div><ul><li>New master records for every resource type: <b>Contractor</b>, <b>Machine</b>, <b>Tool</b>, <b>Equipment</b> — Employee and Consultant already existed, and Vehicle reuses the vehicle register already built into the ERP</li><li>New <b>Resource Allocation</b> — book any resource against a Project or Task for a date range at a percentage, with a cost rate</li><li><b>Transfer</b> and <b>Replace</b> buttons move a resource to a different project or swap in a different resource, keeping a clean history instead of overwriting the old booking</li><li>A soft warning if a resource ends up booked over 100% across overlapping dates — doesn't block the save, just flags it</li><li>Skills and certifications tracked per resource, and Employee capacity automatically accounts for approved leave</li><li>Four report views: <b>Resource Allocation Register</b>, <b>Utilization Dashboard</b>, <b>Capacity Report</b>, <b>Skill Availability</b></li><li>Contractor resourcing has the same on/off switch as Consultant, in <b>PMO Settings</b> — off by default, existing records always stay visible even when off</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Approval routing for a booking isn't part of this — the PDF doesn't ask for one here (unlike Budget's 4-level chain), so none was invented</li><li>The AI layer — best-fit suggestions, shortage prediction, a smarter over-allocation check — is separate future scope, not this build</li></ul></div>
+  </div>
+  <div><span class="task-tag">Task List: T11 — Done, Mon–Tue Aug 17–18 → 12 Aug</span></div>
   <div class="prd-tag">Project Management Module.pdf — §3: Resource Management</div>
-  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Priya — PMO Director</div><div class="uc-flow">Before green-lighting 3 new projects, checks the Utilization Dashboard and sees exactly which skill is already over-booked next month — instead of finding out from an angry consultant.</div></div>
+  <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Project Management</span><span class="fp-arrow">→</span><span class="fp-step">Resource Management</span></div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/resource-allocation" target="_blank">See live Resource Allocations →</a> <a class="btn btn-navy" href="http://scale.localhost:8000/app/query-report/PMO Utilization Dashboard" target="_blank">Utilization Dashboard →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Priya — PMO Director</div><div class="uc-flow">Before green-lighting 3 new projects, checks the Utilization Dashboard and sees exactly which resource is already over-booked next month — instead of finding out from an angry consultant.</div></div>
 </section>
 
 <section class="slide"><span class="slide-idx">19 / 27</span>
