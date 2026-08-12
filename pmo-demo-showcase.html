@@ -441,20 +441,20 @@
   <div class="ask-line">One executive PDF at project close, combining delivery, risk, financial, and client-sentiment data.</div>
   <div class="pending-box" style="max-width:640px;"><div class="box-label">To Build — T15 — Nothing Native Fits</div><ul><li>Project Stakeholder Survey DocType (NPS 1–10 + qualitative feedback)</li><li>Script Report: Onboarding Goals vs Delivered Outcomes, Realized Risks (T12), Financial Efficiency (T10), NPS Score</li><li>Executive PDF print format, automated NPS email trigger on project completion</li></ul></div>
   <div class="rule-box"><div class="box-label">Open Question — See Slide 04</div><ul><li>Excel's own note: <em>"Business definition of 'impact' still requested."</em> Layout can be built now; scoring logic waits for that answer.</li></ul></div>
-  <div><span class="task-tag">Task List: T15 — Fri Aug 21</span></div>
-  <div class="prd-tag">Project Management Module.pdf — closing section: Project Impact</div>
+  <div><span class="task-tag">Task List: T15 — Fri Aug 21 (queued, passed over for T16 — see Slide 02)</span></div>
+  <div class="prd-tag">Excel workbook — Project Management Office tab, row 14 (no PDF chapter covers this feature)</div>
   <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Rohan — Client</div><div class="uc-flow">Gets an NPS survey email the day his project closes; his score feeds straight into the executive impact report without anyone chasing him for feedback.</div></div>
 </section>
 
 <section class="slide"><span class="slide-idx">17 / 27</span>
-  <div class="sec-head"><span class="sec-num">PMO-13 · Excel 14.0</span><h2 style="margin:0;">Library Management</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="sec-head"><span class="sec-num">PMO-13 · Excel 14.0</span><h2 style="margin:0;">Library Management</h2><span class="status-pill planned">⚪ Deferred</span></div>
   <div class="ask-line">Every project's documents, tagged, searchable, and confidential where they need to be.</div>
   <div class="two-col">
     <div class="added-box"><div class="box-label">Native, Today</div><ul><li>File DocType with cloud attachment storage — files already attach to any Project/Task</li></ul></div>
-    <div class="pending-box"><div class="box-label">To Build — T17</div><ul><li>Project Tag, Industry Tag, Technology Tag, Is Confidential custom fields on File</li><li>User Permission hooks restricting confidential files to assigned team members</li><li>"Project Library" Workspace page — tag multi-filtering, full-text search</li></ul></div>
+    <div class="pending-box"><div class="box-label">Designed, Held For A Future Phase — T17</div><ul><li>Project Tag, Industry Tag, Technology Tag, Is Confidential custom fields on File</li><li>User Permission hooks restricting confidential files to assigned team members</li><li>"Project Library" page — tag multi-filtering, filename/tag search</li><li>Full design already worked out; holding until the core feature set is stable rather than building now</li></ul></div>
   </div>
-  <div><span class="task-tag">Task List: T17 — Mon Aug 24</span></div>
-  <div class="prd-tag">Project Management Module.pdf — §14: Library / Document Management</div>
+  <div><span class="task-tag">Task List: T17 — Deferred, was Mon Aug 24</span></div>
+  <div class="prd-tag">Excel workbook — Project Management Office tab, row 15 (no PDF chapter covers this feature)</div>
   <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">any Project</span><span class="fp-arrow">→</span><span class="fp-step">Attachments (native)</span></div>
   <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/file" target="_blank">See native File attachments →</a></div>
   <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Arjun — Project Manager</div><div class="uc-flow">Searches the Project Library by "Technology: Frappe" and finds a reusable SOW template from a past project instead of writing one from scratch.</div></div>
@@ -536,13 +536,18 @@
 </section>
 
 <section class="slide"><span class="slide-idx">24 / 27</span>
-  <div class="sec-head"><span class="sec-num">PMO-20 · Gap-Identified</span><h2 style="margin:0;">Executive Dashboard (CXO &amp; PMO View)</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="sec-head"><span class="sec-num">PMO-20 · Gap-Identified</span><h2 style="margin:0;">Executive Dashboard (CXO &amp; PMO View)</h2><span class="status-pill progressed">🟢 Progressed</span></div>
   <div class="ask-line">One portfolio-wide screen for leadership — distinct audience from PMO-08's operational Cockpit.</div>
   <div class="gap-box"><div class="box-label">⚠ Not An Excel Row At All</div><p>Added because a modern PMO platform's single most-referenced screen by leadership is exactly this — the PDF closes its entire document on this section. <b>17 KPIs</b> total, recounted directly against the PDF.</p></div>
-  <div class="pending-box" style="max-width:680px;"><div class="box-label">To Build — T16</div><ul><li>A second, CXO-facing Dashboard Workspace, separate from PMO-08</li><li>Aggregates delivery (T01/T05/T06), financial (T10), resource (T11), risk (T12) metrics</li><li>Customer Satisfaction Score reused from PMO-12's NPS, not rebuilt</li><li>3 AI scores (V01/V02/V03) combined into one "AI Project Health Score" + "Top AI Recommendations" feed</li></ul></div>
-  <div><span class="task-tag">Task List: T16 — Mon Aug 24</span></div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Added — Live (12 of 17)</div><ul><li>Total Active Projects, Projects by Status, Projects by Business Unit, On-Time Delivery %</li><li>Budget vs Actual, Resource Utilization, Task Completion %, Milestone Achievement %</li><li>High-Risk Projects, Delayed Projects, Timesheet Compliance %</li><li>Project Profitability links straight to the native report already used elsewhere — not rebuilt</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending (5 of 17) — Shown, Not Hidden</div><ul><li>Customer Satisfaction Score — waiting on the NPS Survey feature, not yet built</li><li>AI Project Health Score, Budget Forecast Accuracy, Resource Capacity Forecast, Top AI Recommendations — all AI-team scope, separate from this build</li></ul></div>
+  </div>
+  <div><span class="task-tag">Task List: T16 — Done, Mon Aug 24 → 12 Aug</span></div>
   <div class="prd-tag">Project Management Module.pdf — closing section: Executive Dashboard</div>
-  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 CXO / Leadership</div><div class="uc-flow">Opens one screen Monday morning and sees every project's health, budget, and top AI recommendation — without asking anyone for a status update.</div></div>
+  <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Project Management</span><span class="fp-arrow">→</span><span class="fp-step">PMO Executive Dashboard</span></div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/pmo-executive-dashboard" target="_blank">Open the Executive Dashboard →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 CXO / Leadership</div><div class="uc-flow">Opens one screen Monday morning and sees every project's health, budget, and risk status at a glance — the AI-driven recommendations feed lands once that work is ready.</div></div>
 </section>
 
 <!-- 25 — TRANSPARENCY NOTE -->
