@@ -200,9 +200,9 @@
   <div class="slide-eyebrow">Excel + PDF Alignment</div>
   <h2>20 Features. Here's Where We Stand — Honestly.</h2>
   <div class="big-nums">
-    <div class="big-num c-green"><div class="n">12</div><div class="l">Progressed</div></div>
+    <div class="big-num c-green"><div class="n">13</div><div class="l">Progressed</div></div>
     <div class="big-num c-amber"><div class="n">0</div><div class="l">Initiated</div></div>
-    <div class="big-num c-grey"><div class="n">8</div><div class="l">Planned</div></div>
+    <div class="big-num c-grey"><div class="n">7</div><div class="l">Planned</div></div>
     <div class="big-num c-navy"><div class="n">20</div><div class="l">Total PMO Features</div></div>
   </div>
   <div class="legend-row">
@@ -219,7 +219,7 @@
 <!-- 03 — TASK LIST HIGHLIGHT -->
 <section class="slide"><span class="slide-idx">03 / 27</span>
   <div class="slide-eyebrow">From Your Task List</div>
-  <h2>T00–T11 + T14 Done. 5 Tasks + R01 Next — All Sequenced.</h2>
+  <h2>T00–T12 + T14 Done. 4 Tasks + R01 Next — All Sequenced.</h2>
   <p class="lede">Your team's own task list (T00–T17, R01). One box down, none skipped, none reordered without a reason on the plan page.</p>
   <div class="task-grid">
     <div class="task-chip added"><span class="tid">T00</span><span class="ttitle">App scaffold, install, Workspace</span><span class="tmark">✅</span></div>
@@ -234,7 +234,7 @@
     <div class="task-chip added"><span class="tid">T09</span><span class="ttitle">Monthly Billing Wizard</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">T10</span><span class="ttitle">Project Budget — categories + approval</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">T11</span><span class="ttitle">Resource Management (biggest build)</span><span class="tmark">✅</span></div>
-    <div class="task-chip pending"><span class="tid">T12</span><span class="ttitle">Risk Register + Heatmap</span><span class="tmark">⏳</span></div>
+    <div class="task-chip added"><span class="tid">T12</span><span class="ttitle">Risk Register + Heatmap</span><span class="tmark">✅</span></div>
     <div class="task-chip pending"><span class="tid">T13</span><span class="ttitle">Change Request + Impact Calculator</span><span class="tmark">⏳</span></div>
     <div class="task-chip added"><span class="tid">T14</span><span class="ttitle">PMO Cockpit Dashboard</span><span class="tmark">✅</span></div>
     <div class="task-chip pending"><span class="tid">T15</span><span class="ttitle">Project Impact Report + NPS</span><span class="tmark">⏳</span></div>
@@ -409,12 +409,17 @@
 </section>
 
 <section class="slide"><span class="slide-idx">14 / 27</span>
-  <div class="sec-head"><span class="sec-num">PMO-10 · Excel 11.0</span><h2 style="margin:0;">Risk Management</h2><span class="status-pill planned">⚪ Planned</span></div>
-  <div class="ask-line">A living risk register with an auto-scored severity and alerts before a risk becomes an incident.</div>
-  <div class="pending-box" style="max-width:640px;"><div class="box-label">To Build — T12 — Nothing Native Fits</div><ul><li>Project Risk + Mitigation Plan DocTypes — 8 categories, Probability (1–5) × Impact (1–5) auto-score, Severity</li><li>5×5 Risk Matrix Heatmap, Critical-severity stakeholder notifications, Project Risk Summary report</li></ul></div>
-  <div><span class="task-tag">Task List: T12 — Wed Aug 19</span></div>
+  <div class="sec-head"><span class="sec-num">PMO-10 · Excel 11.0</span><h2 style="margin:0;">Risk Management</h2><span class="status-pill progressed">🟢 Progressed</span></div>
+  <div class="ask-line">A living risk register, categorized and rated, with a heat map and mitigation tracking.</div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Added — Live</div><ul><li>A <b>Project Risk</b> register — 8 categories (Financial, Technical, Operational, Vendor, Resource, Regulatory, Schedule, Quality), Probability/Impact/Severity, an Owner, a Mitigation Plan, and a Contingency Plan, per risk</li><li>A <b>Risk Heat Map</b> — how many risks sit at each Probability/Impact combination, at a glance</li><li>A <b>High Risk Projects</b> view — which projects currently carry a High or Critical risk, and in what category</li><li>A <b>Mitigation Status</b> view — every open risk's mitigation and contingency plan side by side with its current status</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>No automatic alerting when a risk is entered — Severity is set by whoever logs the risk, and stays a manual judgment call, not an automated score</li><li>The AI layer — predicting risks before they're logged, recommending mitigation strategies — is separate future scope</li></ul></div>
+  </div>
+  <div><span class="task-tag">Task List: T12 — Done, Wed Aug 19 → 12 Aug</span></div>
   <div class="prd-tag">Project Management Module.pdf — §6: Risk Management</div>
-  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Priya — PMO Director</div><div class="uc-flow">A risk crosses Critical severity and she's notified automatically — instead of finding out at the next status call.</div></div>
+  <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Project Management</span><span class="fp-arrow">→</span><span class="fp-step">Risk Management</span></div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/project-risk" target="_blank">See live Project Risks →</a> <a class="btn btn-navy" href="http://scale.localhost:8000/app/query-report/PMO Risk Heat Map" target="_blank">Risk Heat Map →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Priya — PMO Director</div><div class="uc-flow">Before a portfolio review, opens High Risk Projects and sees exactly which engagements have an unresolved Critical risk — instead of finding out at the status call.</div></div>
 </section>
 
 <section class="slide"><span class="slide-idx">15 / 27</span>
