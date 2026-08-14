@@ -229,7 +229,7 @@
     <div class="task-chip added"><span class="tid">T04</span><span class="ttitle">Calendar Management config</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">T05</span><span class="ttitle">Task Management config</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">T06</span><span class="ttitle">Milestone Dashboard</span><span class="tmark">✅</span></div>
-    <div class="task-chip added"><span class="tid">T07</span><span class="ttitle">Gantt — critical path + baseline</span><span class="tmark">✅</span></div>
+    <div class="task-chip added"><span class="tid">T07</span><span class="ttitle">Gantt — RAG, critical path + baseline</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">T08</span><span class="ttitle">Timesheet + manday guardrails</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">T09</span><span class="ttitle">Monthly Billing Wizard</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">T10</span><span class="ttitle">Project Budget — categories + approval</span><span class="tmark">✅</span></div>
@@ -396,16 +396,16 @@
 
 <section class="slide"><span class="slide-idx">13 / 27</span>
   <div class="sec-head"><span class="sec-num">PMO-09 · Excel 10.0</span><h2 style="margin:0;">Project Gantt Chart</h2><span class="status-pill progressed">🟢 Progressed</span></div>
-  <div class="ask-line">Drag-to-reschedule timeline with the critical path highlighted, not just a static bar chart.</div>
+  <div class="ask-line">Drag-to-reschedule timeline with schedule health and the critical path highlighted, not just a static bar chart.</div>
   <div class="two-col">
-    <div class="added-box"><div class="box-label">Added — Live</div><ul><li><b>Critical path</b> — every task on the zero-float chain renders in red automatically, recalculated the moment any task's dates or dependencies change</li><li><b>Baseline vs. current</b> — snapshot original dates with one click, then see the variance directly in the Gantt bar's popup, plus a dedicated Baseline Variance report for the full project at a glance</li></ul></div>
-    <div class="pending-box"><div class="box-label">Pending</div><ul><li>None — both halves of this feature are live</li></ul></div>
+    <div class="added-box"><div class="box-label">Added — Live</div><ul><li><b>RAG schedule health</b> — every task's bar is colored 🟢 on schedule, 🟡 at risk (well into its planned time with progress lagging behind), or 🔴 overdue/finished late, recalculated automatically as dates and progress change</li><li><b>Critical path</b> — the zero-float chain that actually threatens the deadline is called out on hover, alongside each task's float in days</li><li><b>Baseline vs. current</b> — snapshot original dates with one click, then see the variance directly in the Gantt bar's popup, plus a dedicated Baseline Variance report for the full project at a glance</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>None — all three parts of this feature are live</li></ul></div>
   </div>
-  <div><span class="task-tag">Task List: T07 — Done, Tue Aug 11 → 7 Aug</span></div>
+  <div><span class="task-tag">Task List: T07 — Done, Tue Aug 11 → 7 Aug, updated 14 Aug</span></div>
   <div class="prd-tag">Project Management Module.pdf — §1: Project Planning (Gantt)</div>
   <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Project Management</span><span class="fp-arrow">→</span><span class="fp-step">Task Gantt</span></div>
   <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/task/view/gantt" target="_blank">Open the Task Gantt →</a> <a class="btn btn-navy" href="http://scale.localhost:8000/app/query-report/PMO Baseline Variance" target="_blank">See Baseline Variance →</a></div>
-  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Arjun — Project Manager</div><div class="uc-flow">Opens the Gantt and, instead of guessing, sees the critical-path tasks highlighted red — he knows exactly which slip actually threatens the deadline, and can check any task's drift against its original plan in one click.</div></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Arjun — Project Manager</div><div class="uc-flow">Opens the Gantt and immediately sees which tasks are red or amber — no guessing which slip actually threatens the deadline — and can check any task's drift against its original plan in one click.</div></div>
 </section>
 
 <section class="slide"><span class="slide-idx">14 / 27</span>
