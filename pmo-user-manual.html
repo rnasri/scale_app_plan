@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PMO Working Manual — Roles, Logins &amp; Workflows | AIWS ERP</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.toc-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:10px; margin:16px 0 8px; }
+.toc-item { display:flex; align-items:center; gap:10px; padding:10px 14px; border:1px solid var(--border); border-radius:var(--r); background:var(--surface); text-decoration:none; color:var(--text-1); font-size:13px; font-weight:600; transition:border-color .15s; }
+.toc-item:hover { border-color:var(--blue); }
+.toc-num { flex-shrink:0; width:22px; height:22px; border-radius:5px; background:var(--surface-2); color:var(--text-3); font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+
+.role-card { border:1px solid var(--border); border-radius:var(--r-lg); padding:16px 18px; margin-bottom:12px; background:var(--surface); box-shadow:var(--sh); }
+.role-card .rc-head { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px; }
+.role-card h3 { margin:0; font-size:15px; color:var(--navy); }
+.login-tag { font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:.4px; padding:3px 10px; border-radius:20px; }
+.lt-desk    { background:var(--blue-bg); color:#1d4ed8; }
+.lt-portal  { background:var(--purple-bg); color:var(--purple); }
+.lt-public  { background:var(--green-bg); color:var(--green); }
+.role-card .rc-row { display:grid; grid-template-columns:120px 1fr; gap:4px 12px; font-size:13px; padding:5px 0; border-top:1px dashed var(--border); }
+.role-card .rc-row:first-of-type { border-top:none; }
+.role-card .rc-label { font-weight:700; color:var(--text-3); font-size:11.5px; text-transform:uppercase; letter-spacing:.3px; padding-top:2px; }
+.role-card .rc-val { color:var(--text-2); line-height:1.6; }
+.role-card .rc-val code { font-size:12px; }
+
+.wf-block { border:1px solid var(--border); border-radius:var(--r-lg); padding:18px 20px 8px; margin:10px 0 18px; background:var(--surface); box-shadow:var(--sh); scroll-margin-top:20px; }
+.wf-head { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:4px; }
+.wf-head h3 { margin:0; font-size:15px; color:var(--navy); }
+.wf-doctype { font-size:11px; color:var(--text-4); font-weight:600; }
+.wf-sub { font-size:12.5px; color:var(--text-3); margin-bottom:14px; }
+.wf-step { display:flex; gap:14px; padding:12px 0; border-bottom:1px dashed var(--border); }
+.wf-step:last-child { border-bottom:none; padding-bottom:4px; }
+.wf-num { flex-shrink:0; width:26px; height:26px; border-radius:50%; background:#2563eb; color:#fff; font-size:11.5px; font-weight:800; display:flex; align-items:center; justify-content:center; margin-top:1px; }
+.wf-num.rej { background:var(--red); }
+.wf-actor { font-weight:700; font-size:13.5px; color:var(--text-1); margin-bottom:3px; }
+.wf-actor .role-chip { font-size:10.5px; font-weight:800; background:var(--surface-2); color:var(--navy); border:1px solid var(--border); border-radius:4px; padding:1px 7px; margin-left:6px; vertical-align:1px; }
+.wf-detail { font-size:13px; color:var(--text-3); line-height:1.6; }
+.wf-detail code { font-size:12px; }
+
+.journey-card { border:1px solid var(--border); border-radius:var(--r-lg); padding:16px 18px; margin-bottom:12px; background:var(--surface-2); }
+.journey-card h4 { margin:0 0 8px; font-size:14px; color:var(--navy); }
+.journey-card ol { margin:0; padding-left:18px; }
+.journey-card li { font-size:13px; line-height:1.75; color:var(--text-2); }
+
+.gap-item { border-left:3px solid var(--amber); background:var(--amber-bg); border-radius:0 8px 8px 0; padding:10px 14px; margin-bottom:8px; font-size:13px; line-height:1.65; color:#78350f; }
+.gap-item.g-red { border-left-color:var(--red); background:var(--red-bg); color:#7f1d1d; }
+.gap-item.g-blue { border-left-color:var(--blue); background:#eff6ff; color:#1e3a5f; }
+.gap-item b { color:inherit; }
+
+.boot-list { counter-reset:boot; list-style:none; margin:0; padding:0; display:grid; gap:10px; }
+.boot-list li { counter-increment:boot; font-size:13.5px; padding-left:34px; position:relative; line-height:1.6; }
+.boot-list li::before { content:counter(boot); position:absolute; left:0; top:0; width:22px; height:22px; border-radius:50%; background:var(--navy); color:#fff; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+.boot-list code { font-size:12px; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="s-title">AIWS ERP</div>
+    <div class="s-sub">Implementation Master Plan</div>
+    <span class="s-tag">Claude / implementation</span>
+  </div>
+  <nav>
+    <div class="nav-group">📋 Daily Update</div>
+    <a class="nav-link" href="dev-dashboard.html">Development Dashboard 🔴</a>
+
+    <div class="nav-group">Start Here</div>
+    <a class="nav-link" href="index.html">Program Overview</a>
+
+    <div class="nav-group">✨ Live Showcases</div>
+    <a class="nav-link showcase" href="sales-demo-showcase.html">Sales Showcase ✨</a>
+    <a class="nav-link showcase" href="pmo-demo-showcase.html">PMO Showcase ✨</a>
+    <a class="nav-link showcase" href="hr-demo-showcase.html">HR Showcase ✨</a>
+
+    <div class="nav-group">User Manual</div>
+    <a class="nav-link" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
+    <a class="nav-link active" href="pmo-user-manual.html">PMO Working Manual ✨</a>
+
+    <div class="nav-group">Module Plans</div>
+    <a class="nav-link" href="sales-module.html">Sales Module Plan</a>
+    <a class="nav-link" href="hr-module.html">HR Module Plan</a>
+    <a class="nav-link" href="accounts-module.html">Accounts Module Plan</a>
+    <a class="nav-link" href="finance-module.html">Finance Module Plan</a>
+    <a class="nav-link" href="pmo-module.html">PMO Module Plan</a>
+
+    <div class="nav-group">Foundation</div>
+    <a class="nav-link" href="frappe-verdict.html">Frappe Capability</a>
+    <a class="nav-link" href="architecture.html">System Architecture</a>
+
+    <div class="nav-group">Development Framework</div>
+    <a class="nav-link" href="customization-guide.html">Customization Guide</a>
+    <a class="nav-link" href="developer-guide.html">Developer Workflow</a>
+
+    <div class="nav-group">Implementation</div>
+    <a class="nav-link" href="module-plan.html">All 13 Modules</a>
+    <a class="nav-link" href="sprint-plan.html">Parallel Sprint Plan</a>
+    <a class="nav-link" href="wave-1.html">Sales &amp; Marketing Detail</a>
+
+    <div class="nav-group">AI Strategy</div>
+    <a class="nav-link" href="ai-plan-strategy.html">AI Plan Strategy</a>
+
+    <div class="nav-group">Tracking</div>
+    <a class="nav-link" href="sales-tracker.html">Sales Tracker</a>
+  </nav>
+  <div class="sidebar-foot">Pixaflip × SIL · AIWS ERP<br><a href="../../index.html">← AIWS Setup portal</a></div>
+</aside>
+
+<main>
+<div class="breadcrumb">AIWS ERP <span>›</span> PMO Working Manual</div>
+
+<div class="page-header">
+  <h1>PMO Working Manual — Roles, Logins &amp; Workflows</h1>
+  <p class="subtitle">Who touches the PMO module, how each person logs in, and exactly what happens at every approval step. Written for the people who will actually use <code>scale_project_management</code> day to day — PMO leadership, project managers, finance approvers, consultants, and clients — not for developers. For the build-vs-spec detail behind each feature, see <a href="pmo-module.html" style="color:var(--blue);font-weight:600;">pmo-module.html</a>; for a live click-through, see <a href="pmo-demo-showcase.html" style="color:var(--blue);font-weight:600;">pmo-demo-showcase.html</a>.</p>
+</div>
+
+<div class="summary-strip">
+  <div class="s-stat"><div class="sv">8</div><div class="sl">Distinct Login Roles</div></div>
+  <div class="s-stat"><div class="sv">3</div><div class="sl">Frappe Workflows</div></div>
+  <div class="s-stat"><div class="sv">5</div><div class="sl">Script-Based Approval Actions</div></div>
+  <div class="s-stat"><div class="sv">20/20</div><div class="sl">PMO Features Live</div></div>
+  <div class="s-stat"><div class="sv">19 Aug</div><div class="sl">As-Of Date</div></div>
+</div>
+
+<div class="callout cs">
+  <p><strong>Status check first (per the standing rule — verify against the actual codebase, not a memory of the plan):</strong> everything below was cross-checked directly against the live <code>scale_project_management</code> app on branch <code>main</code> at commit <code>c7ffe8e</code> (PR #34, merged 19 Aug 2026) — role permissions read from each DocType's own JSON, workflow states/transitions read from <code>fixtures/workflow.json</code>, portal behavior read from the actual hook functions. All 20 PMO features (PMO-01 to PMO-20) are <span class="st-done" style="color:var(--green);font-weight:700;">✅ Done</span>. The only work not yet started is the AI Track (PMO-17/18/19, tasks V00–V09) — that belongs to Veeren's team, not this manual's scope. See <a href="#gaps" style="color:#065f46;font-weight:700;">§5 Known Gaps &amp; Open Items</a> below for the handful of real loose ends found during this check.</p>
+</div>
+
+<h2>On this page</h2>
+<div class="toc-grid">
+  <a class="toc-item" href="#roles"><span class="toc-num">1</span> Roles &amp; Logins</a>
+  <a class="toc-item" href="#workflows"><span class="toc-num">2</span> Approval Workflows</a>
+  <a class="toc-item" href="#journeys"><span class="toc-num">3</span> A Day in the Life</a>
+  <a class="toc-item" href="#bootstrap"><span class="toc-num">4</span> Standing Up a Fresh Site</a>
+  <a class="toc-item" href="#gaps"><span class="toc-num">5</span> Known Gaps &amp; Open Items</a>
+</div>
+
+<!-- ═══════════════════════════════════
+     SECTION 1 — ROLES & LOGINS
+═══════════════════════════════════ -->
+<h2 id="roles">1 · Roles &amp; Logins</h2>
+<p style="font-size:13.5px;margin-bottom:14px;">Two kinds of access exist: <span class="login-tag lt-desk">Desk</span> — a full Frappe backend login (username/password, inside the company's ERP instance) for internal staff, and <span class="login-tag lt-portal">Portal</span> — a lighter external login (email-based, website-only) for clients and resources who never see the desk. A third, <span class="login-tag lt-public">Public</span>, needs no account at all — used only for the two open web forms (consultant self-signup, NPS survey).</p>
+
+<div class="role-card">
+  <div class="rc-head"><h3>PMO Director</h3><span class="login-tag lt-desk">Desk</span></div>
+  <div class="rc-row"><div class="rc-label">Who</div><div class="rc-val">The senior PMO leadership role — final sign-off authority across the module.</div></div>
+  <div class="rc-row"><div class="rc-label">How they get in</div><div class="rc-val">Standard Frappe desk login. The <code>PMO Director</code> Role itself is created automatically the first time the module is bootstrapped on a site (see <a href="#bootstrap" style="color:var(--blue);">§4</a>) — a System Manager then assigns it to the relevant person's User record.</div></div>
+  <div class="rc-row"><div class="rc-label">What they do</div><div class="rc-val">Approve/reject Project Kickoff; approve/reject/deactivate Consultant Profiles; final ("Management") approver on the 4-level Project Budget chain; reads the PMO Executive Dashboard and PMO Cockpit Dashboard.</div></div>
+</div>
+
+<div class="role-card">
+  <div class="rc-head"><h3>Projects Manager</h3><span class="login-tag lt-desk">Desk</span></div>
+  <div class="rc-row"><div class="rc-label">Who</div><div class="rc-val">The day-to-day operational owner of each project — native ERPNext role, not PMO-specific.</div></div>
+  <div class="rc-row"><div class="rc-label">How they get in</div><div class="rc-val">Standard Frappe desk login, <code>Projects Manager</code> role assigned by a System Manager.</div></div>
+  <div class="rc-row"><div class="rc-label">What they do</div><div class="rc-val">Creates/edits Projects and submits them for Kickoff Review; reviews Consultant Profile applications before PMO Director sign-off; drafts and submits Project Budgets (step 1 of 4); manages Tasks, Gantt, Risk Register, Change Requests; reviews/approves timesheets day to day.</div></div>
+</div>
+
+<div class="role-card">
+  <div class="rc-head"><h3>Department Head</h3><span class="login-tag lt-desk">Desk</span></div>
+  <div class="rc-row"><div class="rc-label">Who</div><div class="rc-val">PMO-specific custom role — the second checkpoint on any project budget.</div></div>
+  <div class="rc-row"><div class="rc-label">How they get in</div><div class="rc-val">Standard Frappe desk login, <code>Department Head</code> role assigned by a System Manager (this role ships as a fixture — it's on any site the moment the app is installed).</div></div>
+  <div class="rc-row"><div class="rc-label">What they do</div><div class="rc-val">Reviews and approves/rejects a Project Budget after the Projects Manager submits it, before it reaches Finance.</div></div>
+</div>
+
+<div class="role-card">
+  <div class="rc-head"><h3>Accounts Manager (Finance)</h3><span class="login-tag lt-desk">Desk</span></div>
+  <div class="rc-row"><div class="rc-label">Who</div><div class="rc-val">Native ERPNext finance role — the third checkpoint on the budget chain.</div></div>
+  <div class="rc-row"><div class="rc-label">How they get in</div><div class="rc-val">Standard Frappe desk login, <code>Accounts Manager</code> role — typically already assigned via the Accounts/Finance modules, not something PMO grants on its own.</div></div>
+  <div class="rc-row"><div class="rc-label">What they do</div><div class="rc-val">Reviews and approves/rejects a Project Budget after the Department Head, before it goes to the PMO Director for final Management sign-off.</div></div>
+</div>
+
+<div class="role-card">
+  <div class="rc-head"><h3>Employee</h3><span class="login-tag lt-desk">Desk or Portal</span></div>
+  <div class="rc-row"><div class="rc-label">Who</div><div class="rc-val">Internal staff logging time and expenses against Projects.</div></div>
+  <div class="rc-row"><div class="rc-label">How they get in</div><div class="rc-val">Full desk login for anyone with normal ERP access, <em>or</em> the mobile-friendly <code>/timesheet-entry</code> Web Form (still needs a Frappe User account — <code>login_required=1</code> — just no desk UI). A System Manager must create the User; approving a Consultant or hiring an Employee does not auto-create one.</div></div>
+  <div class="rc-row"><div class="rc-label">What they do</div><div class="rc-val">Logs hours against Project/Task/Activity Type, submits for the weekly manday guardrail, receives the missing-timesheet reminder if hours go unlogged.</div></div>
+</div>
+
+<div class="role-card">
+  <div class="rc-head"><h3>Consultant / Contractor</h3><span class="login-tag lt-public">Public application</span> <span class="login-tag lt-desk" style="margin-left:4px;">Desk once approved</span></div>
+  <div class="rc-row"><div class="rc-label">Who</div><div class="rc-val">External resources — Consultants self-apply; Contractors are desk-created only (no public signup form exists for Contractor).</div></div>
+  <div class="rc-row"><div class="rc-label">How they get in</div><div class="rc-val">A prospective Consultant applies via the public <code>/consultant-signup</code> Web Form — no login needed to apply. Once <b>PMO Director-approved</b>, they still have no automatic system access: if they need to log their own timesheets via <code>/timesheet-entry</code>, a System Manager has to separately create a Frappe User for them. Both Consultant and Contractor onboarding can be switched off entirely per PMO Settings (off by default on a fresh site — see <a href="#gaps" style="color:var(--blue);">§5</a>).</div></div>
+  <div class="rc-row"><div class="rc-label">What they do</div><div class="rc-val">Submit profile, skills, BGV/NDA docs, rate card, and weekly availability through the signup form; once approved, become bookable in Resource Allocation and (if a User exists) can log hours.</div></div>
+</div>
+
+<div class="role-card">
+  <div class="rc-head"><h3>Client (Customer Portal User)</h3><span class="login-tag lt-portal">Portal</span></div>
+  <div class="rc-row"><div class="rc-label">Who</div><div class="rc-val">The client organization's own contact(s) — never has desk access.</div></div>
+  <div class="rc-row"><div class="rc-label">How they get in</div><div class="rc-val">A native Frappe portal login, granted when their Contact/User is added to the Customer record's Portal Users table — that add fires an automatic welcome email pointing them to <code>/client-kickoff-pack</code>.</div></div>
+  <div class="rc-row"><div class="rc-label">What they do</div><div class="rc-val">Views the Client Kickoff Pack (onboarding guide, document repository, escalation contacts); <b>approves or rejects Change Requests</b> at <code>/change-request-approval</code> — this is a client action, not a PMO one; receives the automatic post-completion NPS survey email.</div></div>
+</div>
+
+<div class="role-card">
+  <div class="rc-head"><h3>Anyone (Anonymous)</h3><span class="login-tag lt-public">Public, no login</span></div>
+  <div class="rc-row"><div class="rc-label">Who</div><div class="rc-val">Not a system user at all.</div></div>
+  <div class="rc-row"><div class="rc-label">How they get in</div><div class="rc-val">Two specific public forms need no account: <code>/consultant-signup</code> (see above) and <code>/project-nps-survey</code> (client feedback at project close — the emailed link works for a logged-out recipient, and the form is also open for anyone with the URL).</div></div>
+  <div class="rc-val" style="grid-column:1/-1;font-size:12px;color:var(--text-4);margin-top:2px;">Deliberate design choice, not an oversight: an NPS survey gated behind a login would suppress genuine response rates.</div>
+</div>
+
+<div class="role-card">
+  <div class="rc-head"><h3>System Manager</h3><span class="login-tag lt-desk">Desk (Admin)</span></div>
+  <div class="rc-row"><div class="rc-label">Who</div><div class="rc-val">IT/technical administrator — not a PMO business role, but the one who makes every other role possible.</div></div>
+  <div class="rc-row"><div class="rc-label">How they get in</div><div class="rc-val">The site's own <code>Administrator</code> account, or any User granted <code>System Manager</code>.</div></div>
+  <div class="rc-row"><div class="rc-label">What they do</div><div class="rc-val">Runs the one-time bootstrap (<a href="#bootstrap" style="color:var(--blue);">§4</a>) on a fresh site, creates User accounts for staff/consultants who need logins, assigns the roles above, flips the Consultant/Contractor toggles in PMO Settings.</div></div>
+</div>
+
+<!-- ═══════════════════════════════════
+     SECTION 2 — WORKFLOWS
+═══════════════════════════════════ -->
+<h2 id="workflows" style="margin-top:36px;">2 · Approval Workflows</h2>
+<p style="font-size:13.5px;margin-bottom:6px;">Three are formal Frappe Workflows (a document literally cannot skip a state); five more are single-step script actions gated by desk buttons rather than a multi-state engine. Both kinds are real approval gates — the difference is just how many states the document passes through.</p>
+
+<div class="wf-block">
+  <div class="wf-head"><h3>Project Kickoff Approval</h3><span class="wf-doctype">Frappe Workflow · doctype: Project</span></div>
+  <div class="wf-sub">Gate: a new Project cannot go operationally Active until PMO signs off. Native <code>status</code> stays locked to Open until this workflow reaches PMO Approved.</div>
+  <div class="wf-step">
+    <div class="wf-num">1</div>
+    <div><div class="wf-actor">Projects Manager <span class="role-chip">Draft</span></div><div class="wf-detail">Creates the Project, completes the Kickoff Checklist, Deliverables Checklist, and role-based budget, then clicks <b>Submit for Kickoff Review</b>.</div></div>
+  </div>
+  <div class="wf-step">
+    <div class="wf-num">2</div>
+    <div><div class="wf-actor">System <span class="role-chip">Kickoff Pending</span></div><div class="wf-detail">Approval is blocked until every Kickoff Checklist item is ticked — enforced in code, not just convention.</div></div>
+  </div>
+  <div class="wf-step">
+    <div class="wf-num">3</div>
+    <div><div class="wf-actor">PMO Director <span class="role-chip">Approve / Reject</span></div><div class="wf-detail">Approve → <b>PMO Approved</b>, the Project can now proceed. Reject → sent back to <b>Draft</b> for revision.</div></div>
+  </div>
+</div>
+
+<div class="wf-block">
+  <div class="wf-head"><h3>Consultant Approval</h3><span class="wf-doctype">Frappe Workflow · doctype: Consultant Profile</span></div>
+  <div class="wf-sub">Gate: an applicant is not bookable on any project until PMO reviews them.</div>
+  <div class="callout ci" style="margin:0 0 14px;">
+    <p style="font-size:12.5px;margin:0;"><strong>Optional, off by default:</strong> this entire workflow can be switched off. <b>Enable Consultant Management</b> and <b>Enable Contractor Management</b> are two independent toggles on <b>PMO Settings</b> — a client that doesn't use external consultants or contractors simply leaves the relevant one off. While off: the public <code>/consultant-signup</code> form auto-unpublishes and no new Consultant (or Contractor) Profile can be created at all, desk or portal; existing profiles stay fully visible and editable either way, so switching back on later needs no data recovery. Configured at <code>Home → Scale Project Management → PMO Settings</code>, e.g. <a href="http://scale.localhost:8000/app/pmo-settings" style="color:#1d4ed8;font-weight:600;">scale.localhost:8000/app/pmo-settings</a> on this dev bench. Both ship <b>off</b> on a fresh site (owner decision, 12 Aug 2026) — see <a href="#bootstrap" style="color:#1d4ed8;font-weight:600;">§4</a> step 6.</p>
+  </div>
+  <div class="wf-step">
+    <div class="wf-num">1</div>
+    <div><div class="wf-actor">Prospective Consultant <span class="role-chip">Public form</span></div><div class="wf-detail">Applies via <code>/consultant-signup</code> — no account needed. Lands in <b>Pending Review</b>.</div></div>
+  </div>
+  <div class="wf-step">
+    <div class="wf-num">2</div>
+    <div><div class="wf-actor">PMO Director <span class="role-chip">Approve / Reject</span></div><div class="wf-detail">Approve → <b>Approved</b>, now bookable in Resource Allocation. Reject → <b>Rejected</b> (can be moved back to Pending Review for reconsideration).</div></div>
+  </div>
+  <div class="wf-step">
+    <div class="wf-num">3</div>
+    <div><div class="wf-actor">PMO Director <span class="role-chip">Deactivate</span></div><div class="wf-detail">An Approved consultant can later be moved to <b>Inactive</b> — profile stays intact, just drops out of new bookings.</div></div>
+  </div>
+</div>
+
+<div class="wf-block">
+  <div class="wf-head"><h3>Project Budget Approval</h3><span class="wf-doctype">Frappe Workflow · doctype: Project Budget</span></div>
+  <div class="wf-sub">The one 4-level chain in the module — matches the PDF's Planning→Manager→Finance→Management flow exactly.</div>
+  <div class="wf-step">
+    <div class="wf-num">1</div>
+    <div><div class="wf-actor">Projects Manager <span class="role-chip">Draft → Pending PM Approval</span></div><div class="wf-detail">Builds the 7-category budget (Labor, Materials, Procurement, Contractors, Travel, Equipment, Misc) and submits.</div></div>
+  </div>
+  <div class="wf-step">
+    <div class="wf-num">2</div>
+    <div><div class="wf-actor">Projects Manager <span class="role-chip">→ Pending Dept Head Approval</span></div><div class="wf-detail">Self-approves the PM checkpoint (same role owns both the Draft submit and this first approve step).</div></div>
+  </div>
+  <div class="wf-step">
+    <div class="wf-num">3</div>
+    <div><div class="wf-actor">Department Head <span class="role-chip">→ Pending Finance Approval</span></div><div class="wf-detail">Second checkpoint.</div></div>
+  </div>
+  <div class="wf-step">
+    <div class="wf-num">4</div>
+    <div><div class="wf-actor">Accounts Manager <span class="role-chip">→ Pending Management Approval</span></div><div class="wf-detail">Finance checkpoint.</div></div>
+  </div>
+  <div class="wf-step">
+    <div class="wf-num">5</div>
+    <div><div class="wf-actor">PMO Director <span class="role-chip">→ Approved</span></div><div class="wf-detail">Final Management sign-off. A <b>Reject</b> at any of the four checkpoints sends the whole document to <b>Rejected</b>, from where the Projects Manager can <b>Revise</b> it back to Draft.</div></div>
+  </div>
+</div>
+
+<div class="wf-block">
+  <div class="wf-head"><h3>Timesheet Review</h3><span class="wf-doctype">Script action · doctype: Timesheet</span></div>
+  <div class="wf-sub">Not a Frappe Workflow — a lighter status field plus three whitelisted desk actions, because the underlying Timesheet document still needs its own native Draft→Submitted lifecycle alongside this.</div>
+  <div class="wf-step">
+    <div class="wf-num">1</div>
+    <div><div class="wf-actor">Employee / Consultant</div><div class="wf-detail">Logs hours via desk or the <code>/timesheet-entry</code> Web Form. A manday guardrail warns (does not block) if cumulative hours exceed the role's allocated budget.</div></div>
+  </div>
+  <div class="wf-step">
+    <div class="wf-num">2</div>
+    <div><div class="wf-actor">Projects Manager / PMO Director <span class="role-chip">Approve / Reject / Request Changes</span></div><div class="wf-detail">Three desk actions on the Timesheet's PMO Review section — Reject and Request Changes both require a reason. This is the fuller 4-action review the PDF specifies, on top of native Timesheet's own binary Draft/Submitted state.</div></div>
+  </div>
+</div>
+
+<div class="wf-block">
+  <div class="wf-head"><h3>Milestone Approval</h3><span class="wf-doctype">Script action · doctype: Task (is_milestone=1)</span></div>
+  <div class="wf-sub">Only applies to a Task flagged both <code>is_milestone</code> and <code>approval_required</code> — a milestone without that flag can be marked Completed by anyone with normal Task access, no gate.</div>
+  <div class="wf-step">
+    <div class="wf-num">1</div>
+    <div><div class="wf-actor">System</div><div class="wf-detail">Blocks a flagged milestone from reaching <b>Completed</b> until it has been explicitly approved — enforced server-side, not just a UI hint.</div></div>
+  </div>
+  <div class="wf-step">
+    <div class="wf-num">2</div>
+    <div><div class="wf-actor">Projects Manager / PMO Director <span class="role-chip">Approve Milestone</span></div><div class="wf-detail">A single desk action stamps who approved it and when; the Task can then move to Completed normally.</div></div>
+  </div>
+</div>
+
+<div class="wf-block">
+  <div class="wf-head"><h3>Change Request</h3><span class="wf-doctype">Script action · doctype: Project Change Request</span></div>
+  <div class="wf-sub">The one approval in this whole module decided by the <b>client</b>, not by PMO — worth calling out since every other flow above is internal.</div>
+  <div class="wf-step">
+    <div class="wf-num">1</div>
+    <div><div class="wf-actor">Projects Manager <span class="role-chip">Draft → Submitted</span></div><div class="wf-detail">Logs the scope change; the Impact Calculator estimates extra cost from role rates × additional mandays.</div></div>
+  </div>
+  <div class="wf-step">
+    <div class="wf-num">2</div>
+    <div><div class="wf-actor">Client <span class="role-chip">Portal: Approve / Reject</span></div><div class="wf-detail">At <code>/change-request-approval</code> — only that Customer's own portal users can act on it (checked server-side). Approve automatically versions the Project Budget: snapshots the current total into Version History, adds the CR's estimated cost onto the Labor category, and increments the budget version — Reject has no budget effect.</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     SECTION 3 — JOURNEYS
+═══════════════════════════════════ -->
+<h2 id="journeys" style="margin-top:36px;">3 · A Day in the Life</h2>
+<p style="font-size:13.5px;margin-bottom:14px;">Condensed end-to-end paths through the desk/portal, one per role, tying the workflows above into what a real week looks like.</p>
+
+<div class="journey-card">
+  <h4>PMO Director</h4>
+  <ol>
+    <li>Opens <b>PMO Executive Dashboard</b> — portfolio-wide view: active projects, on-time %, budget vs. actual, risk counts, customer satisfaction (NPS).</li>
+    <li>Clears the approval queue: new Project Kickoffs, Consultant applications, Project Budgets waiting on the final Management step.</li>
+    <li>Checks the <b>Risk Heat Map</b> and <b>High Risk Projects</b> report for anything crossing severity thresholds.</li>
+    <li>Reviews <b>PMO Cockpit Dashboard</b> for manday utilization and missing-logsheet flags across the team.</li>
+  </ol>
+</div>
+
+<div class="journey-card">
+  <h4>Projects Manager</h4>
+  <ol>
+    <li>Sets up a new engagement: Project → Kickoff Checklist → Deliverables Checklist → role-based budget → Submit for Kickoff Review.</li>
+    <li>Runs the <b>PMO Task Board</b> Kanban day to day; checks the Gantt's RAG (🟢🟡🔴) schedule-health coloring.</li>
+    <li>Reviews team timesheets (Approve / Reject / Request Changes) before the Monthly Billing Wizard runs.</li>
+    <li>Logs and submits any scope changes as a Change Request; drafts the Project Budget and pushes it into the approval chain.</li>
+    <li>Approves flagged milestones once their deliverables are actually done.</li>
+  </ol>
+</div>
+
+<div class="journey-card">
+  <h4>Client (Portal)</h4>
+  <ol>
+    <li>Receives the automatic welcome email → logs into <b>Client Kickoff Pack</b> (<code>/client-kickoff-pack</code>) for onboarding docs and the escalation contact matrix.</li>
+    <li>Gets notified of any Change Request → reviews and approves/rejects at <code>/change-request-approval</code>.</li>
+    <li>At project close, receives the automatic NPS email → fills the public <code>/project-nps-survey</code> form (0–10 score + feedback).</li>
+  </ol>
+</div>
+
+<div class="journey-card">
+  <h4>Consultant / Employee (resourcing)</h4>
+  <ol>
+    <li>Consultant: applies at <code>/consultant-signup</code> — profile, skills, BGV/NDA upload, rate card, weekly availability. Waits for PMO Director approval.</li>
+    <li>Once approved (and, for a Consultant, once a System Manager has created their User), logs hours via desk Timesheet or the mobile <code>/timesheet-entry</code> form.</li>
+    <li>Gets a weekly reminder email if timesheet hours are missing for the prior week.</li>
+    <li>May be booked, transferred, or replaced on a project by the Projects Manager via Resource Allocation — no self-service on that part.</li>
+  </ol>
+</div>
+
+<!-- ═══════════════════════════════════
+     SECTION 4 — BOOTSTRAP
+═══════════════════════════════════ -->
+<h2 id="bootstrap" style="margin-top:36px;">4 · Standing Up a Fresh Site</h2>
+<p style="font-size:13.5px;margin-bottom:14px;">Installing the app is not enough by itself — most of the module's DocTypes, roles, workflows, and Web Forms are created by an idempotent setup script rather than by fixtures, deliberately kept off <code>after_migrate</code> (a brand-new production site lacks Company/Item Group/UOM masters at migrate time, which would make an automatic run fail). This is the real, one-time sequence a System Manager runs.</p>
+<ol class="boot-list">
+  <li>Install the app: <code>bench --site &lt;site&gt; install-app scale_project_management</code>, then <code>bench --site &lt;site&gt; migrate</code> — this brings in the Custom Fields, Property Setters, the 3 Workflows, the Department Head role, and Reports that <em>are</em> in fixtures.</li>
+  <li>Make sure Company, a Fiscal Year, and at least one Cost Center exist first (native ERPNext setup — PMO budget tracking depends on Cost Center existing).</li>
+  <li>Run the schema/setup script once: <code>bench --site &lt;site&gt; execute scale_project_management.demo_setup.run_all</code> — this is what actually creates the PMO Director role, the Consultant/Contractor/Risk/Change Request/Budget DocTypes, the 3 public/portal Web Forms, and the PMO Settings doctype (Consultant and Contractor management both default <b>off</b>).</li>
+  <li>Optional, for a demo or UAT environment only: <code>bench --site &lt;site&gt; execute scale_project_management.demo_setup.seed_demo_data</code> — walks one sample engagement through every PMO surface so the site isn't empty on first login. Skip this on a real production site.</li>
+  <li>Create Frappe User accounts for internal staff and assign roles from <a href="#roles" style="color:var(--blue);">§1</a> (PMO Director, Projects Manager, Department Head — Accounts Manager is usually already assigned via Accounts/Finance).</li>
+  <li>If the client uses external Consultants or Contractors, a PMO Director turns the relevant toggle on in <b>PMO Settings</b> — until then, the public signup form stays unpublished and new profiles of that type can't be created at all.</li>
+  <li>Configure an outgoing Email Account (Settings → Email Account) — without one, welcome emails, timesheet reminders, and NPS survey triggers all queue silently but never actually send. This is a genuine environment gap on the current dev site (documented repeatedly across T03/T05/T08/T15 testing) — not a code defect.</li>
+</ol>
+
+<!-- ═══════════════════════════════════
+     SECTION 5 — GAPS
+═══════════════════════════════════ -->
+<h2 id="gaps" style="margin-top:36px;">5 · Known Gaps &amp; Open Items</h2>
+<p style="font-size:13.5px;margin-bottom:14px;">Everything the plan called for is built (PMO-01 to PMO-20, all ✅ Done per <a href="pmo-module.html" style="color:var(--blue);">pmo-module.html</a>'s Progress Tracker). What's below are the honest loose ends found while re-verifying that status for this manual — not missing code, but decisions, dependencies, or documentation that still need attention.</p>
+
+<div class="gap-item g-red">
+  <b>AI Track not started (PMO-17, 18, 19 + tasks V00–V09).</b> AI Project Delay Prediction, AI Resource Optimization, and AI Budget Forecasting are all <span class="st-ns" style="color:#9ca3af;">◯ Not Started</span> — this is Veeren's team's scope entirely, tracked separately, not a PMO delivery gap. Downstream effect: the Executive Dashboard's <b>AI Project Health Score</b>, <b>Budget Forecast Accuracy</b>, <b>Resource Capacity Forecast</b>, and <b>Top AI Recommendations</b> tiles (4 of the PDF's 17 named metrics) stay empty until that track lands. The 13 other metrics, including Customer Satisfaction Score (NPS), are live today.</div>
+
+<div class="gap-item">
+  <b>Task status labels don't match the source PDF's wording.</b> Native Task ships Open/Working/Pending Review/Overdue/Completed/Cancelled; the PDF asks for Not Started/In Progress/On Hold/Under Review/Completed/Cancelled — including an "On Hold" state with no native equivalent. Renaming needs a client decision first, since Kanban columns, hooks, and reports currently key off the literal current strings — a silent rename would break all three.</div>
+
+<div class="gap-item">
+  <b>"Project impact" has no single combined score yet.</b> The Project Impact Report (PMO-12) shows Goals, Realized Risks, Budget, and NPS side by side — exactly what the source Excel asks for — but the Excel's own note ("business definition of 'impact' still requested") is still open. Not a build gap; a business definition is needed before a single blended score could be built.</div>
+
+<div class="gap-item g-blue">
+  <b>No Program/Portfolio grouping.</b> The PDF's concept of grouping multiple Projects under a Program, and Programs under a Portfolio, has no ERPNext equivalent and isn't in the Excel scope either. Deliberately not built — flagged here in case the business wants project hierarchies above the single-Project level later.</div>
+
+<div class="gap-item g-blue">
+  <b>The general ERP Flow &amp; Operations Manual is stale on Projects (PMO).</b> <a href="erp-flow-manual.html#projects" style="color:#1e3a5f;font-weight:700;">erp-flow-manual.html §6</a> still marks every PMO addition as "Planned" (purple callouts) from when that section was written on 5 Aug, before the module was built — it hasn't been refreshed since PMO went to 20/20 Done on 19 Aug. Worth a follow-up pass to bring it in line with this page.</div>
+
+<div class="gap-item">
+  <b>Consultant/Contractor onboarding is off by default.</b> Not a bug — an explicit 12 Aug decision — but worth knowing before a client asks "why can't I add a consultant": a fresh site ships with both toggles off in PMO Settings until a PMO Director turns them on (see <a href="#bootstrap" style="color:var(--blue);">§4</a>, step 6).</div>
+
+<div class="page-nav">
+  <a class="prev" href="pmo-module.html">← PMO Module Plan</a>
+  <a class="next" href="pmo-demo-showcase.html">PMO Live Showcase →</a>
+</div>
+
+</main>
+</body>
+</html>

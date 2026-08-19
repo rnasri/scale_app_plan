@@ -138,6 +138,9 @@
     <span class="s-tag">Claude / implementation</span>
   </div>
   <nav>
+    <div class="nav-group">📋 Daily Update</div>
+    <a class="nav-link" href="dev-dashboard.html">Development Dashboard 🔴</a>
+
     <div class="nav-group">Start Here</div>
     <a class="nav-link" href="index.html">Program Overview</a>
 
@@ -145,6 +148,10 @@
     <a class="nav-link showcase" href="sales-demo-showcase.html">Sales Showcase ✨</a>
     <a class="nav-link showcase active" href="pmo-demo-showcase.html">PMO Showcase ✨</a>
     <a class="nav-link showcase" href="hr-demo-showcase.html">HR Showcase ✨</a>
+
+    <div class="nav-group">User Manual</div>
+    <a class="nav-link" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
+    <a class="nav-link" href="pmo-user-manual.html">PMO Working Manual ✨</a>
 
     <div class="nav-group">Module Plans</div>
     <a class="nav-link" href="sales-module.html">Sales Module Plan</a>
@@ -165,9 +172,6 @@
     <a class="nav-link" href="module-plan.html">All 13 Modules</a>
     <a class="nav-link" href="sprint-plan.html">Parallel Sprint Plan</a>
     <a class="nav-link" href="wave-1.html">Sales &amp; Marketing Detail</a>
-
-    <div class="nav-group">User Manual</div>
-    <a class="nav-link" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
 
     <div class="nav-group">AI Strategy</div>
     <a class="nav-link" href="ai-plan-strategy.html">AI Plan Strategy</a>
@@ -293,6 +297,7 @@
 <section class="slide"><span class="slide-idx">06 / 27</span>
   <div class="sec-head"><span class="sec-num">PMO-02 · Excel 2.0</span><h2 style="margin:0;">Consultant Onboarding</h2><span class="status-pill progressed">🟢 Progressed</span></div>
   <div class="ask-line">Self-service consultant signup — profile, skills, BGV, rate card, availability — approved by PMO before allocation.</div>
+  <div class="gap-box"><div class="box-label">⚠ Configurable — Can Be Switched Off</div><p>This whole workflow is optional, not mandatory for every client. <b>Enable Consultant Management</b> is an on/off toggle in <b>PMO Settings</b> — off by default on a fresh site. While off: the public signup form auto-unpublishes and no new Consultant Profile can be created at all; existing profiles stay fully visible/editable regardless. <b>Contractor Management</b> (PMO-14) has the identical independent toggle. Configure at <code>Home → Scale Project Management → PMO Settings</code>.</p></div>
   <div class="two-col">
     <div class="added-box"><div class="box-label">Added — Live</div><ul><li>4 child DocTypes + <b>Consultant Profile</b> parent — nothing native fits (Supplier has no skills/rate-card/availability; Employee assumes payroll)</li><li>Public <code>/consultant-signup</code> Web Form — no login required</li><li><b>Consultant Approval</b> workflow — Pending Review → Approved/Rejected, Approved → Inactive, Rejected → Pending Review</li><li><code>reviewed_by</code>/<code>review_date</code> auto-stamp the moment PMO decides</li><li><b>Consultant Availability</b> report — the seed surface for Resource Management (PMO-14)</li></ul></div>
     <div class="pending-box"><div class="box-label">Pending</div><ul><li>Bank details/rate card encryption or masking — currently plain fields, worth a security pass before real bank data is collected</li><li>Consultant-facing status visibility — no way for a consultant to check their own approval status today, only PMO sees it on the desk</li><li>Feeds Resource Management (PMO-14) once that schema exists — not built yet</li></ul></div>
@@ -305,7 +310,7 @@
   </div>
   <div class="field-chips"><span class="fc-label">Live custom DocTypes</span><span class="field-chip">Consultant Profile</span><span class="field-chip">Consultant Skill Tag</span><span class="field-chip">BGV Compliance Checklist</span><span class="field-chip">Consultant Rate Card</span><span class="field-chip">Weekly Availability Planner</span></div>
   <div class="prd-tag">Project Management Module.pdf — §2: Consultant/Resource Onboarding</div>
-  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/consultant-signup" target="_blank">Open the public signup form →</a> <a class="btn btn-navy" href="http://scale.localhost:8000/app/consultant-profile/new" target="_blank">Or add one directly from the desk (PMO-side) →</a></div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/consultant-signup" target="_blank">Open the public signup form →</a> <a class="btn btn-navy" href="http://scale.localhost:8000/app/consultant-profile/new" target="_blank">Or add one directly from the desk (PMO-side) →</a> <a class="btn btn-navy" href="http://scale.localhost:8000/app/pmo-settings" target="_blank">⚠ Switch this on/off in PMO Settings →</a></div>
   <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Devika — Incoming Consultant</div><div class="uc-flow">Clicks the signup link, fills profile/skills/bank details/NDA upload/rate card/availability in one flow, and lands on "Thanks for signing up!" — no Frappe login needed. A PMO Director opens her record, checks it over, and clicks Approve — she's activated for allocation the same day.</div></div>
 </section>
 

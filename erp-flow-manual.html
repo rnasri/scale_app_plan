@@ -78,6 +78,9 @@
     <span class="s-tag">Claude / implementation</span>
   </div>
   <nav>
+    <div class="nav-group">📋 Daily Update</div>
+    <a class="nav-link" href="dev-dashboard.html">Development Dashboard 🔴</a>
+
     <div class="nav-group">Start Here</div>
     <a class="nav-link" href="index.html">Program Overview</a>
 
@@ -85,6 +88,10 @@
     <a class="nav-link showcase" href="sales-demo-showcase.html">Sales Showcase ✨</a>
     <a class="nav-link showcase" href="pmo-demo-showcase.html">PMO Showcase ✨</a>
     <a class="nav-link showcase" href="hr-demo-showcase.html">HR Showcase ✨</a>
+
+    <div class="nav-group">User Manual</div>
+    <a class="nav-link active" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
+    <a class="nav-link" href="pmo-user-manual.html">PMO Working Manual ✨</a>
 
     <div class="nav-group">Module Plans</div>
     <a class="nav-link" href="sales-module.html">Sales Module Plan</a>
@@ -106,9 +113,6 @@
     <a class="nav-link" href="sprint-plan.html">Parallel Sprint Plan</a>
     <a class="nav-link" href="wave-1.html">Sales &amp; Marketing Detail</a>
 
-    <div class="nav-group">User Manual</div>
-    <a class="nav-link active" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
-
     <div class="nav-group">AI Strategy</div>
     <a class="nav-link" href="ai-plan-strategy.html">AI Plan Strategy</a>
 
@@ -128,9 +132,9 @@
 
 <div class="summary-strip">
   <div class="s-stat"><div class="sv">8</div><div class="sl">Modules Covered</div></div>
-  <div class="s-stat"><div class="sv">1</div><div class="sl">Live — Sales</div></div>
+  <div class="s-stat"><div class="sv">2</div><div class="sl">Live — Sales, Projects</div></div>
   <div class="s-stat"><div class="sv">3</div><div class="sl">In Progress / Early</div></div>
-  <div class="s-stat"><div class="sv">3</div><div class="sl">Not Yet Started</div></div>
+  <div class="s-stat"><div class="sv">2</div><div class="sl">Not Yet Started</div></div>
   <div class="s-stat"><div class="sv">1</div><div class="sl">Architecture Flag — CRM</div></div>
 </div>
 
@@ -728,9 +732,9 @@
      6 — PROJECTS (PMO)
 ═══════════════════════════════════════════ -->
 <div class="module-hero" id="projects">
-  <span class="status-badge s-planned">● Not Started — begins 5 Aug 2026</span>
+  <span class="status-badge s-live">● Live — all 20 features shipped, PR #34, 19 Aug 2026</span>
   <h2>6 · Projects (PMO)</h2>
-  <p class="module-meta">App: <code>scale_project_management</code> · Full detail: <a href="pmo-module.html">pmo-module.html</a> · Lead &amp; Developer: Raghib · Target: 25 Aug 2026 (3-week sprint, aggressive)</p>
+  <p class="module-meta">App: <code>scale_project_management</code> · Full detail: <a href="pmo-module.html">pmo-module.html</a> · User manual: <a href="pmo-user-manual.html">pmo-user-manual.html</a> · Lead &amp; Developer: Raghib · Shipped: 19 Aug 2026 (5 → 19 Aug, 20/20 features)</p>
 
   <div class="sec-label">Significance</div>
   <p style="font-size:13.5px;">For project-based or services businesses, this is the delivery engine — turns a sold Sales Order into tracked execution: tasks, timesheets, budget burn, risk, client billing. Where Sales answers "what did we sell," Projects answers "are we actually delivering it on time and on budget."</p>
@@ -748,7 +752,7 @@
   </ol>
 
   <div class="sec-label">The Page Flow — Default ERPNext Projects, With Our Additions Threaded In</div>
-  <p style="font-size:13px;color:var(--text-3);margin-bottom:6px;">Build starts today (5 Aug) — every purple call-out below is planned, not yet live. 13 features from the Excel PMO tab plus 7 gap-identified additions found during a full PDF cross-check (see <a href="pmo-module.html">pmo-module.html</a>). This is, after Sales, the module with the largest volume of genuinely new custom build.</p>
+  <p style="font-size:13px;color:var(--text-3);margin-bottom:6px;">Built 5 → 19 Aug 2026 — all 13 features from the Excel PMO tab plus 7 gap-identified additions found during a full PDF cross-check now live (see <a href="pmo-module.html">pmo-module.html</a>'s Progress Tracker, and <a href="pmo-user-manual.html">pmo-user-manual.html</a> for the roles/logins/workflow detail). The purple call-outs below are shipped additions, not plans — only the AI layer at the end of this section (Delay Prediction, Resource Optimization, Budget Forecasting) is still ahead, and that's Veeren's team's separate track.</p>
 
   <div class="flow-block">
     <div class="flow-block-label">Default flow — Project to Invoice</div>
@@ -757,11 +761,11 @@
       <div style="flex:1;">
         <div class="flow-nav">Go to <code>Projects → Project → New</code> (or <code>New from Template</code>)</div>
         <div class="flow-detail">Set Project Name, Customer, Expected Start/End Date, Estimated Cost. <strong>Save.</strong> Native Project Template auto-generates the task tree if used.</div>
-        <div class="flow-addon planned"><span class="addon-tag">Planned</span> A Kickoff Checklist child table, role-based manday/cost budget fields, and a PMO Director sign-off workflow (Draft → Kickoff Pending → PMO Approved → Active) gate this same form before it goes Active.</div>
+        <div class="flow-addon"><span class="addon-tag">+ scale_project_management</span> A Kickoff Checklist child table, role-based manday/cost budget fields, and a PMO Director sign-off workflow (Draft → Kickoff Pending → PMO Approved → Active) gate this same form before it goes Active — live since T01.</div>
 
         <div class="concept-box">
           <h4>🔍 Watch for this — "Estimated Cost" is one number, not a budget system</h4>
-          <p>The native Project form has exactly one budget-related field: <code>estimated_costing</code>, a single Currency value. It's easy to see that field and assume budgeting is handled — it isn't. The planned <strong>Project Budget</strong> DocType (7 cost categories, 4-level approval chain) is a separate, much larger build that doesn't exist yet — see <a href="pmo-module.html">pmo-module.html</a> PMO-15.</p>
+          <p>The native Project form has exactly one budget-related field: <code>estimated_costing</code>, a single Currency value. It's easy to see that field and assume budgeting is handled — it isn't. The <strong>Project Budget</strong> DocType (7 cost categories, 4-level approval chain) is a separate, much larger build — live since T10, see <a href="pmo-module.html">pmo-module.html</a> PMO-15.</p>
         </div>
       </div>
     </div>
@@ -770,13 +774,13 @@
       <div style="flex:1;">
         <div class="flow-nav">On the Project, click <code>Tasks → New Task</code> (repeat per task), or switch to <code>Gantt / Kanban</code> view</div>
         <div class="flow-detail">Set parent/subtask, dependencies, priority, due dates. Native Gantt supports drag-to-reschedule; native Kanban Board works out of the box.</div>
-        <div class="flow-addon planned"><span class="addon-tag">Planned</span> A Checklist child table and Risk Level field on each Task; critical-path highlighting and baseline-snapshot comparison layered onto the same Gantt view; a Milestone Dashboard filtering Tasks flagged <code>is_milestone</code>.</div>
+        <div class="flow-addon"><span class="addon-tag">+ scale_project_management</span> A Checklist child table and Risk Level field on each Task; critical-path highlighting and baseline-snapshot comparison layered onto the same Gantt view; a Milestone Dashboard filtering Tasks flagged <code>is_milestone</code> — live since T05–T07 (Task) and T06 (Milestone Dashboard).</div>
 
         <div class="concept-box">
           <h4>🔍 Understand the difference — a "milestone" flag vs. a Milestone system, and Task Risk vs. the Risk Register</h4>
-          <div class="concept-row"><div class="concept-term">is_milestone</div><div class="concept-term-desc">A plain checkbox that already exists natively on Task — flags it as significant, nothing more. There is no dedicated Milestone dashboard, approval gate, or variance report today; that's a planned thin layer <em>reading</em> Tasks with this flag set, not a new source of truth.</div></div>
-          <div class="concept-row"><div class="concept-term">Task Risk Level</div><div class="concept-term-desc">Planned as a lightweight Select field (Low/Medium/High) directly on Task — for flagging one task as risky without formal process.</div></div>
-          <div class="concept-row"><div class="concept-term">Project Risk Register</div><div class="concept-term-desc">A full, separate DocType (Category, Probability, Impact, Owner, Mitigation Plan) with its own heatmap — for formally tracked, project-level risks. Heavier weight, different purpose from the Task-level flag above.</div></div>
+          <div class="concept-row"><div class="concept-term">is_milestone</div><div class="concept-term-desc">A plain checkbox that already exists natively on Task — flags it as significant, nothing more. A thin custom layer <em>reads</em> Tasks with this flag set for the Milestone Dashboard, approval gate, and variance report — not a new source of truth.</div></div>
+          <div class="concept-row"><div class="concept-term">Task Risk Level</div><div class="concept-term-desc">A lightweight Select field (Low/Medium/High) directly on Task — for flagging one task as risky without formal process.</div></div>
+          <div class="concept-row"><div class="concept-term">Project Risk Register</div><div class="concept-term-desc">A full, separate DocType (8-category Probability × Impact, Owner, Mitigation Plan) with its own heatmap — for formally tracked, project-level risks. Heavier weight, different purpose from the Task-level flag above.</div></div>
         </div>
       </div>
     </div>
@@ -785,7 +789,7 @@
       <div style="flex:1;">
         <div class="flow-nav">Go to <code>Projects → Timesheet → New</code>, linked to the Project/Task</div>
         <div class="flow-detail">Log Hours, Activity Type, Billable flag. <strong>Save</strong>, <strong>Submit</strong> for manager approval.</div>
-        <div class="flow-addon planned"><span class="addon-tag">Planned</span> A manday-guardrail script warns/blocks when logged hours exceed the role's allocated budget from step 1.</div>
+        <div class="flow-addon"><span class="addon-tag">+ scale_project_management</span> A manday-guardrail script warns when logged hours exceed the role's allocated budget from step 1 (warns, does not block); a PMO Review action (Approve/Reject/Request Changes) on top of native Submit — live since T08.</div>
       </div>
     </div>
     <div class="flow-step">
@@ -793,46 +797,46 @@
       <div style="flex:1;">
         <div class="flow-nav">From the Timesheet, click <code>Create → Sales Invoice</code></div>
         <div class="flow-detail">Native — pulls approved billable hours directly onto the invoice.</div>
-        <div class="flow-addon planned"><span class="addon-tag">Planned</span> A Monthly Billing Wizard page bulk-generates draft invoices across many projects/clients at once instead of one Timesheet at a time.</div>
+        <div class="flow-addon"><span class="addon-tag">+ scale_project_management</span> A Monthly Billing Wizard page bulk-generates draft invoices across many projects/clients at once instead of one Timesheet at a time — live since T09.</div>
       </div>
     </div>
   </div>
 
   <div class="flow-block">
-    <div class="flow-block-label">Not part of the native chain — new screens planned for this build</div>
+    <div class="flow-block-label">Not part of the native chain — new screens built for this module</div>
     <div class="flow-step">
-      <div class="flow-num">+</div>
+      <div class="flow-num">✓</div>
       <div style="flex:1;">
-        <div class="flow-nav">Planned: <code>Project Budget</code> — multi-category (Labor/Materials/Procurement/Contractors/Travel/Equipment/Misc), 4-level approval (PM → Dept Head → Finance → Management)</div>
-        <div class="flow-detail" style="color:#78350f;">No native equivalent — Project has one single "Estimated Cost" field today. The single largest gap between the original Excel scope and what the client PRD actually asks for.</div>
+        <div class="flow-nav">Built (T10): <code>Project Budget</code> — multi-category (Labor/Materials/Procurement/Contractors/Travel/Equipment/Misc), 4-level approval (PM → Dept Head → Finance → Management)</div>
+        <div class="flow-detail">No native equivalent — Project has one single "Estimated Cost" field. Was the single largest gap between the original Excel scope and what the client PRD asked for; now live with all 5 PDF-named reports.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">✓</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Built (T11): <code>Resource Allocation</code> — pooling Employees, Consultants, Contractors, Machines, Vehicles, Tools, Equipment</div>
+        <div class="flow-detail"><strong>Was the biggest gap-identified addition in the whole module</strong> — no native Resource Booking/Capacity Planning DocType exists anywhere in ERPNext, confirmed against the schema, and it had zero representation in the original Excel scope. Now live with Booking/Transfer/Replacement actions and 4 reports.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">✓</div>
+      <div style="flex:1;">
+        <div class="flow-nav">Built (T12–T13): <code>Project Risk</code> + <code>Mitigation Plan</code>, <code>Project Change Request</code></div>
+        <div class="flow-detail">8-category Probability × Impact heatmap; Change Request with an impact calculator and budget versioning — approved/rejected by the <em>client</em> via the portal, not by PMO internally. No native equivalent for either.</div>
       </div>
     </div>
     <div class="flow-step">
       <div class="flow-num">+</div>
       <div style="flex:1;">
-        <div class="flow-nav">Planned: <code>Resource Allocation</code> — pooling Employees, Consultants, Contractors, Machines, Vehicles, Tools, Equipment</div>
-        <div class="flow-detail" style="color:#78350f;"><strong>The biggest gap-identified addition in the whole module</strong> — no native Resource Booking/Capacity Planning DocType exists anywhere in ERPNext, confirmed against the schema. Had zero representation in the original Excel scope.</div>
-      </div>
-    </div>
-    <div class="flow-step">
-      <div class="flow-num">+</div>
-      <div style="flex:1;">
-        <div class="flow-nav">Planned: <code>Project Risk</code> + <code>Mitigation Plan</code>, <code>Project Change Request</code></div>
-        <div class="flow-detail" style="color:#78350f;">8-category Probability×Impact heatmap; Change Request with an impact calculator and budget versioning. No native equivalent for either.</div>
-      </div>
-    </div>
-    <div class="flow-step">
-      <div class="flow-num">+</div>
-      <div style="flex:1;">
-        <div class="flow-nav">Planned: PMO Cockpit Dashboard, Project Impact Report + NPS, Executive Dashboard (17 KPIs), Library Management, full AI layer</div>
-        <div class="flow-detail" style="color:#78350f;">Delay Prediction, Resource Optimization, Budget Forecasting, Risk Prediction, plus Planning/Task/Timesheet intelligence added after the PDF re-check.</div>
+        <div class="flow-nav">Built (T14/T15/T16/T17): PMO Cockpit Dashboard, Project Impact Report + NPS, Executive Dashboard (13 of 17 KPIs live), Library Management &nbsp;·&nbsp; Still ahead: full AI layer</div>
+        <div class="flow-detail" style="color:#78350f;">Delay Prediction, Resource Optimization, and Budget Forecasting are Veeren's team's separate AI Track (V00–V09) — not started yet, and feed the Executive Dashboard's remaining 4 KPIs (AI Project Health Score, Budget Forecast Accuracy, Resource Capacity Forecast, Top AI Recommendations) once they land.</div>
       </div>
     </div>
   </div>
 
   <div class="diff-box">
     <h4>How this differs from default ERPNext Projects</h4>
-    <p>Default ERPNext Projects gives a solid foundation — Project, Task, Timesheet, native Gantt, Kanban — confirmed directly against the schema. But it has <strong>no Risk Register, no Change Management, no cross-type Resource Booking/Capacity Planning, no multi-category Budget with an approval chain, no NPS/Impact Report, and no AI layer at all.</strong> Every one of those is a genuine custom build, not a config task — and none of it exists yet.</p>
+    <p>Default ERPNext Projects gives a solid foundation — Project, Task, Timesheet, native Gantt, Kanban — confirmed directly against the schema. Out of the box it has <strong>no Risk Register, no Change Management, no cross-type Resource Booking/Capacity Planning, no multi-category Budget with an approval chain, and no NPS/Impact Report.</strong> Every one of those was a genuine custom build, not a config task — and as of 19 Aug 2026 all of them are live (see <a href="pmo-module.html">pmo-module.html</a>). The one piece still ahead is the AI layer (Delay Prediction, Resource Optimization, Budget Forecasting) — Veeren's team's track, not started yet.</p>
   </div>
 
   <div class="ext-box">
@@ -1037,7 +1041,7 @@
     <tr><td>HR</td><td><span class="status-badge s-progress">In Progress</span></td><td><a href="#hr" class="xref-link">§3</a></td><td><a href="hr-module.html" class="xref-link">hr-module.html</a></td></tr>
     <tr><td>Accounts</td><td><span class="status-badge s-early">Early</span></td><td><a href="#accounts" class="xref-link">§4</a></td><td><a href="accounts-module.html" class="xref-link">accounts-module.html</a></td></tr>
     <tr><td>Finance</td><td><span class="status-badge s-early">Early</span></td><td><a href="#finance" class="xref-link">§5</a></td><td><a href="finance-module.html" class="xref-link">finance-module.html</a></td></tr>
-    <tr><td>Projects (PMO)</td><td><span class="status-badge s-planned">Starts today</span></td><td><a href="#projects" class="xref-link">§6</a></td><td><a href="pmo-module.html" class="xref-link">pmo-module.html</a></td></tr>
+    <tr><td>Projects (PMO)</td><td><span class="status-badge s-live">Live</span></td><td><a href="#projects" class="xref-link">§6</a></td><td><a href="pmo-module.html" class="xref-link">pmo-module.html</a> · <a href="pmo-user-manual.html" class="xref-link">pmo-user-manual.html</a></td></tr>
     <tr><td>Buying</td><td><span class="status-badge s-planned">Not started</span></td><td><a href="#buying" class="xref-link">§7</a></td><td>— not yet scoped</td></tr>
     <tr><td>Manufacturing</td><td><span class="status-badge s-planned">Not started</span></td><td><a href="#manufacturing" class="xref-link">§8</a></td><td>— not yet scoped</td></tr>
   </table>
