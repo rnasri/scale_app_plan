@@ -3,7 +3,7 @@
 **Date:** 19 Aug 2026
 **Why this doc exists:** Veeren's team is building AI features (V01–V03: Delay Prediction, Resource Optimization, Budget Forecasting) against `scale_project_management` as it stood *before* PR #34. This doc lists exactly what changed at the DocType/schema level in that PR, so the AI track's plan can account for it.
 
-**Status of the underlying code:** `PMO_T15_T17_impact_library` branch, PR **[#34](https://github.com/ehiddenbrain/scale/pull/34)** against `main` — **pushed, not yet merged.** Everything below exists on that branch; if you build against current `main` today, none of it is there yet. Confirm with Raghib whether to build against the PR branch directly or wait for merge.
+**Status of the underlying code:** PR **[#34](https://github.com/ehiddenbrain/scale/pull/34)** — **merged to `main`** (19 Aug 2026, merge commit `c7ffe8e`). Everything below is live on `main` — pull latest and it's there, no branch switching needed.
 
 ---
 
