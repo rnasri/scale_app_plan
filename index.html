@@ -93,8 +93,8 @@
 </div>
 
 <div class="update-strip">
-  <div><div class="u-label">Last Updated</div><div class="u-date">19 August 2026, morning</div></div>
-  <div class="u-note">Covers today (19 Aug) and tomorrow (20 Aug) · Next update expected ~20 Aug</div>
+  <div><div class="u-label">Last Updated</div><div class="u-date">22 August 2026</div></div>
+  <div class="u-note">Covers today (Sat 22 Aug) and the next working day (Mon 24 Aug) · Next update expected ~24 Aug</div>
 </div>
 
 <div class="track-card">
@@ -104,19 +104,17 @@
   </div>
   <div class="track-body">
     <div class="day-col today">
-      <div class="day-label">🟢 In Progress Today</div>
+      <div class="day-label">🟢 Today</div>
       <ul>
-        <li><b>WhatsApp integration</b> — building a unified inbox for incoming WhatsApp conversations.</li>
-        <li><b>WhatsApp lead capture</b> — an additional leads list from WhatsApp that can be imported directly into Sales Leads.</li>
-        <li><b>Marketing content publishing</b> — scheduling a full month's content calendar.</li>
-        <li><b>Meta (Facebook/Instagram) integration</b> in progress alongside WhatsApp.</li>
+        <li>Streamlining the <b>Ads flow</b> — removing glitches.</li>
+        <li>Streamlining the <b>WhatsApp flow</b> — removing glitches.</li>
       </ul>
     </div>
     <div class="day-col tomorrow">
-      <div class="day-label">🔵 Carried Into Tomorrow</div>
+      <div class="day-label">🔵 Monday (Next Working Day)</div>
       <ul>
-        <li>All four items above continue tomorrow — none is expected to close today; this is a multi-day integration effort.</li>
-        <li>Marketing module + WhatsApp/Meta integration remains the single largest active build on this track.</li>
+        <li>Finalizing the <b>ad calendar</b>.</li>
+        <li>Finalizing the <b>post calendar</b>.</li>
       </ul>
     </div>
   </div>
@@ -131,17 +129,16 @@
     <div class="day-col today">
       <div class="day-label">🟢 Today</div>
       <ul>
-        <li>Closed a security gap in the HR AI assistant — it could previously be tricked into creating records without user confirmation; now locked so writes only fire after an explicit confirm click.</li>
-        <li>Fixed an accuracy bug in the Appraisal assistant — it was mixing up two different score fields when answering rating questions.</li>
-        <li>Built a 10-case automated test suite validating the AI assistant's answers against real report data — all passing.</li>
+        <li><b>LinkedIn integration</b> in progress.</li>
+        <li><b>Naukri job posting integration</b> in progress.</li>
+        <li>Flow verification — testing and verifying HR's integration with other modules.</li>
       </ul>
     </div>
     <div class="day-col tomorrow">
-      <div class="day-label">🔵 Tomorrow</div>
+      <div class="day-label">🔵 Monday (Next Working Day)</div>
       <ul>
-        <li>Extend automated test coverage to the remaining AI assistant tools beyond today's 10.</li>
-        <li>Full regression pass on the AI assistant end-to-end now that the write-gate fix is in, and refresh the acceptance report.</li>
-        <li>Continue core HR module build in parallel with the AI hardening above.</li>
+        <li>All HR features tested end-to-end.</li>
+        <li><b>Survey &amp; Feedback module</b> implementation.</li>
       </ul>
     </div>
   </div>
@@ -156,17 +153,14 @@
     <div class="day-col today">
       <div class="day-label">🟢 Today</div>
       <ul>
-        <li>Shipped <b>Project Impact Report + Client NPS Survey</b> (T15) — auto-triggered feedback email when a project closes, public survey form, and an executive PDF combining goals, risk, budget, and NPS in one view.</li>
-        <li>Shipped <b>Project Library</b> (T17) — confidential client files are now tagged and visible only to the assigned project team, with a searchable library page.</li>
-        <li>Schema re-exported and merged to main — both features install cleanly on any teammate's site.</li>
+        <li>Flow verification in progress.</li>
+        <li>Project template modifications in progress.</li>
       </ul>
     </div>
     <div class="day-col tomorrow">
-      <div class="day-label">🔵 Tomorrow</div>
+      <div class="day-label">🔵 Monday (Next Working Day)</div>
       <ul>
-        <li>End-to-end regression test of the NPS survey flow and the Impact Report print format, including a real outgoing email account (today's test only confirmed emails queue correctly, not that they send).</li>
-        <li>Permission testing on the Project Library across more real-world scenarios — confirming confidential files stay hidden from the right mix of users.</li>
-        <li>All 20 planned PMO features are now complete — tomorrow is a verification day, not new feature work, before the dev-side build is considered closed.</li>
+        <li>Flow verification and project template modifications continue.</li>
       </ul>
     </div>
   </div>
@@ -181,17 +175,14 @@
     <div class="day-col today">
       <div class="day-label">🟢 Today</div>
       <ul>
-        <li>No new Accounts feature work landed today — most recent activity was the shared UI bug-fix pass with HR earlier this week.</li>
-        <li>Flow verification: confirmed the Sales Invoice → Payment → General Ledger posting chain still works correctly after the recent UI/sidebar changes.</li>
-        <li>Flow verification: Bank Reconciliation and Financial Statement filters checked against the new global workspace UI.</li>
+        <li>Integration and data flow testing with other modules.</li>
+        <li>Feature testing.</li>
       </ul>
     </div>
     <div class="day-col tomorrow">
-      <div class="day-label">🔵 Tomorrow</div>
+      <div class="day-label">🔵 Monday (Next Working Day)</div>
       <ul>
-        <li>Continue the site-wide UI streamlining pass on Accounts screens (see UI track below).</li>
-        <li>Full regression check across Chart of Accounts → Journal Entry → GL → Financial Statements once the UI pass is confirmed clean.</li>
-        <li>Resume core Accounts feature backlog.</li>
+        <li>Integration/data-flow testing and feature testing continue.</li>
       </ul>
     </div>
   </div>
@@ -206,21 +197,16 @@
     <div class="day-col today">
       <div class="day-label">🟢 Today</div>
       <ul>
-        <li>Delivered the first-tier <b>Finance AI Assistant</b> ("Scale Finance Intelligence") — a chatbot page answering questions on cash position and upcoming obligations, backed by 2 real data tools.</li>
-        <li>Built a full automated test suite (149 test cases) and an acceptance report for the assistant — then removed the test files the same day, so current test coverage needs re-confirming.</li>
-        <li>Flow verification: Budget vs Actual, Cash Flow, and Working Capital reports checked against the new global UI.</li>
+        <li>Flow verification — testing and verifying Finance's integration with other modules.</li>
       </ul>
     </div>
     <div class="day-col tomorrow">
-      <div class="day-label">🔵 Tomorrow</div>
+      <div class="day-label">🔵 Monday (Next Working Day)</div>
       <ul>
-        <li>Re-confirm test coverage for the Finance AI Assistant — the suite built today was deleted same-day; verify whether that was intentional cleanup or needs restoring.</li>
-        <li>Full regression pass on the Finance Intelligence chatbot against real Finance data before wider rollout.</li>
-        <li>Continue core Finance analytics backlog (variance, segment profitability) in parallel.</li>
+        <li>Flow verification and cross-module integration testing continue.</li>
       </ul>
     </div>
   </div>
-  <div class="track-flag">⚠ Worth a look: today's Finance AI test suite (test_assistant_tools.py + acceptance_questions.py) was added and then deleted in the same session — flagging so it doesn't get silently lost.</div>
 </div>
 
 <div class="track-card">
@@ -252,14 +238,15 @@
     <div class="day-col today">
       <div class="day-label">🟢 Today</div>
       <ul>
-        <li>Extending the "Scale Intelligence" chatbot — already live in HR and Finance — into the <b>PMO module</b> next.</li>
-        <li>Refining assistant output based on feedback: formatting and adding graphs/visuals to chatbot responses.</li>
+        <li><b>PMO module</b> — AI auto-populating new Project fields based on discussed parameters. Spans today and Monday.</li>
+        <li>Other AI flags wiring in progress.</li>
       </ul>
     </div>
     <div class="day-col tomorrow">
-      <div class="day-label">🔵 Tomorrow</div>
+      <div class="day-label">🔵 Monday (Next Working Day)</div>
       <ul>
-        <li>Both items above continue — PMO chatbot integration and the formatting/graphs feedback pass.</li>
+        <li>PMO project auto-populate feature — continues/targeted for completion.</li>
+        <li>Other AI flags wiring continues.</li>
       </ul>
     </div>
   </div>
