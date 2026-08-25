@@ -1033,6 +1033,26 @@ bench --site scale.localhost migrate</pre>
   </ol>
 </div>
 
+<hr class="section">
+<h2>Expert's Advice Track (ET)</h2>
+<p style="font-size:.9rem;">A third track alongside the Excel-scoped T00–T20 features and Veeren's AI Track (V01–V09): real, standalone gaps raised directly by the product owner as they're spotted in day-to-day use — not sourced from the original Excel/PDF scope, and not AI-dependent. Each one gets a consequence analysis against the live codebase before being built, same rigor as everything else in this module.</p>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id" style="background:#b45309;">ET-01</span>
+    <strong>Project Manager field on Project</strong>
+    <span class="task-assign">Raghib</span>
+    <span class="task-date">Mon Aug 25</span>
+  </div>
+  <div class="task-meta">Deliverable: every Project names one accountable Employee as its Project Manager, restricted to Employees actually designated for the role</div>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#ecfdf5;border-left:3px solid #10b981;"><span class="st-done">✅ Done</span> (25 Aug 2026) — new <code>project_manager</code> field (Link → Employee, required) added to Project. The Employee picker is filtered client-side to Designation = "Project Manager" (confirmed live: only 2 of the site's employees currently qualify, Rohan Kapoor and Meera Nair), and the same rule is re-checked server-side on every save (<code>project_hooks.enforce_project_manager_designation</code>) so it can't be bypassed via API or a data import — verified directly via the bench console with a non-qualifying Employee, correctly blocked. Every existing Project needed a value backfilled or it will fail save going forward on next edit; no bulk backfill was run as part of this task, by design — see the open item below. Tested end-to-end in the browser (PROJ-0001), field carries the standard "✨ New" badge.</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this exists as its own task:</span> raised directly by the product owner, not sourced from Excel/PDF. "Who is the Project Manager for this project" had no real answer before this — native ERPNext's Project doctype has no such field at all, and the only PMO-adjacent concept, the stock <code>Projects Manager</code> Role, is a blanket site-wide permission grant (currently held by 4 users), not a per-project assignment. Whoever happened to create a Project was its PM purely by human convention, never enforced anywhere.</p>
+    <p><span class="ctx-label">Consequence analysis done before building:</span> grepped the full <code>scale_project_management</code> codebase for any existing logic reading <code>Project.owner</code> as a stand-in for "the PM" — zero matches, so adding a real field carries no hidden-coupling risk. Confirmed no fieldname collision (<code>project_manager</code> unused anywhere on the bench) and that a "Project Manager" Designation record already existed, just not linked to anyone consistently (2 of the 4 Role-holders had it, 2 didn't — a pre-existing data mismatch, left alone, not silently "fixed" as part of this task). Built using the same Custom Field fixture mechanism already used for every other Project field in this app — no core Frappe/ERPNext modification.</p>
+    <p><span class="ctx-label">Explicitly not in scope for ET-01, flagged rather than assumed:</span> this field is informational only. It does not restrict who can open or edit a Project — that access is still governed by the blanket <code>Projects Manager</code>/<code>Projects User</code> roles, which currently grant read/write/create on <em>every</em> Project to anyone holding them, regardless of assignment. Wiring real per-project access control (only the assigned PM + their chain can edit) would be a separate, larger ET task if the owner wants it.</p>
+  </div>
+</div>
+
 <!-- PROGRESS TRACKER -->
 <hr class="section no-print">
 <h2 class="no-print">Progress Tracker</h2>
@@ -1060,6 +1080,7 @@ bench --site scale.localhost migrate</pre>
     <tr style="background:#fef2f2;"><td>PMO-18</td><td>AI Resource Optimization</td><td><span class="pill bpn">Recommended</span></td><td><span class="st-ns">◯ Not Started</span></td><td>AI Track V03 — depends on PMO-14</td></tr>
     <tr style="background:#fef2f2;"><td>PMO-19</td><td>AI Budget Forecasting</td><td><span class="pill bpn">Recommended</span></td><td><span class="st-ns">◯ Not Started</span></td><td>AI Track V02 — depends on PMO-15</td></tr>
     <tr style="background:#fef2f2;"><td>PMO-20</td><td>Executive Dashboard (CXO &amp; PMO View)</td><td><span class="pill bpn">Recommended</span></td><td><span class="st-done">✅ Done</span></td><td>PMO Executive Dashboard page — 12 of the PDF's 17 named metrics live (pure aggregation, no new schema), 5 honestly marked Pending (T15/AI Track) — see T16 note above.</td></tr>
+    <tr style="background:#fffbeb;"><td>ET-01</td><td>Project Manager field on Project</td><td><span class="pill" style="background:#fef3c7;color:#92400e;">Expert's Advice</span></td><td><span class="st-done">✅ Done</span></td><td>Owner-raised, not Excel/PDF-sourced. Link field to Employee, Designation-filtered picker + server-side guard — see ET-01 card above.</td></tr>
   </table>
 </div>
 
