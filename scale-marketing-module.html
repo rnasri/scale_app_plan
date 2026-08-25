@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scale Marketing Module — Implementation Plan | AIWS ERP</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.pill { display:inline-block; padding:2px 9px; border-radius:5px; font-size:.72rem; font-weight:700; }
+.pill-ootb    { background:#d1fae5; color:#065f46; }
+.pill-refine  { background:#dbeafe; color:#1e40af; }
+.pill-custom  { background:#fef3c7; color:#92400e; }
+.pill-ai      { background:#ede9fe; color:#5b21b6; }
+.pill-gap     { background:#fee2e2; color:#991b1b; }
+.bp1 { background:#fee2e2; color:#991b1b; }
+.bpn { background:#ede9fe; color:#5b21b6; }
+.st-done { color:#10b981; font-weight:700; }
+.st-wip  { color:#f59e0b; font-weight:700; }
+.st-ns   { color:#9ca3af; }
+.task-card { border:1px solid #e5e7eb; border-radius:10px; padding:16px 20px; margin-bottom:14px; page-break-inside:avoid; }
+.task-card h4 { margin:0 0 6px; font-size:.97rem; }
+.task-card .task-meta { font-size:.8rem; color:#6b7280; margin-bottom:10px; }
+.task-card .task-steps { padding-left:18px; margin:6px 0 0; }
+.task-card .task-steps li { margin-bottom:5px; font-size:.88rem; line-height:1.5; }
+.task-card .task-note  { font-size:.82rem; background:#f8fafc; border-left:3px solid #6366f1; padding:6px 10px; margin-top:10px; border-radius:0 4px 4px 0; }
+.task-context { background:#f0f9ff; border:1px solid #bae6fd; border-radius:8px; padding:12px 14px; margin:10px 0 12px; font-size:.86rem; line-height:1.6; }
+.task-context p { margin:0 0 5px; }
+.task-context p:last-child { margin:0; }
+.ctx-label { font-weight:700; color:#0369a1; }
+.task-header { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.task-id { font-weight:700; font-size:.8rem; background:#1e3a5f; color:#fff; padding:2px 8px; border-radius:4px; }
+.task-date { font-size:.78rem; color:#6b7280; }
+.task-assign { font-size:.78rem; background:#ede9fe; color:#5b21b6; padding:2px 8px; border-radius:4px; }
+.print-btn { background:#1e3a5f; color:#fff; border:none; padding:8px 20px; border-radius:6px; cursor:pointer; font-size:.85rem; margin-bottom:20px; }
+.print-btn:hover { background:#2d5580; }
+.phase-sub { color:#1e3a5f; font-weight:700; font-size:.82rem; margin:16px 0 8px; padding-bottom:4px; border-bottom:2px solid #e5e7eb; }
+.gap-box { background:#fef2f2; border:2px solid #fca5a5; border-radius:10px; padding:16px 20px; margin:16px 0; }
+.gap-box h4 { color:#991b1b; margin:0 0 8px; font-size:.95rem; }
+.decision-box { background:#f0fdf4; border:2px solid #bbf7d0; border-radius:8px; padding:14px 16px; margin:16px 0; font-size:.86rem; }
+.decision-box strong.dh { color:#166534; display:block; margin-bottom:6px; }
+@media print {
+  .sidebar, .breadcrumb, .page-header, .no-print, .page-nav, .print-btn { display:none !important; }
+  main { margin:0 !important; padding:16px 24px !important; max-width:none !important; }
+  body { font-size:10.5pt; background:#fff !important; }
+  .task-card { border:1px solid #ccc; }
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="s-title">AIWS ERP</div>
+    <div class="s-sub">Implementation Master Plan</div>
+    <span class="s-tag">Claude / implementation</span>
+  </div>
+  <nav>
+    <div class="nav-group">📋 Daily Update</div>
+    <a class="nav-link" href="index.html">Development Dashboard 🔴</a>
+
+    <div class="nav-group">Start Here</div>
+    <a class="nav-link" href="program-overview.html">Program Overview</a>
+
+    <div class="nav-group">✨ Live Showcases</div>
+    <a class="nav-link showcase" href="sales-demo-showcase.html">Sales Showcase ✨</a>
+    <a class="nav-link showcase" href="pmo-demo-showcase.html">PMO Showcase ✨</a>
+    <a class="nav-link showcase" href="hr-demo-showcase.html">HR Showcase ✨</a>
+
+    <div class="nav-group">User Manual</div>
+    <a class="nav-link" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
+    <a class="nav-link" href="pmo-user-manual.html">PMO Working Manual ✨</a>
+
+    <div class="nav-group">Module Plans</div>
+    <a class="nav-link" href="sales-module.html">Sales Module Plan</a>
+    <a class="nav-link" href="hr-module.html">HR Module Plan</a>
+    <a class="nav-link" href="accounts-module.html">Accounts Module Plan</a>
+    <a class="nav-link" href="finance-module.html">Finance Module Plan</a>
+    <a class="nav-link" href="pmo-module.html">PMO Module Plan</a>
+    <a class="nav-link active" href="scale-marketing-module.html">Scale Marketing Module Plan 🆕</a>
+
+    <div class="nav-group">Foundation</div>
+    <a class="nav-link" href="frappe-verdict.html">Frappe Capability</a>
+    <a class="nav-link" href="architecture.html">System Architecture</a>
+
+    <div class="nav-group">Development Framework</div>
+    <a class="nav-link" href="customization-guide.html">Customization Guide</a>
+    <a class="nav-link" href="developer-guide.html">Developer Workflow</a>
+
+    <div class="nav-group">Implementation</div>
+    <a class="nav-link" href="module-plan.html">All 13 Modules</a>
+    <a class="nav-link" href="sprint-plan.html">Parallel Sprint Plan</a>
+    <a class="nav-link" href="wave-1.html">Sales &amp; Marketing Detail</a>
+
+    <div class="nav-group">AI Strategy</div>
+    <a class="nav-link" href="ai-plan-strategy.html">AI Plan Strategy</a>
+
+    <div class="nav-group">Tracking</div>
+    <a class="nav-link" href="sales-tracker.html">Sales Tracker</a>
+  </nav>
+  <div class="sidebar-foot">Pixaflip × SIL · AIWS ERP<br><a href="../../index.html">← AIWS Setup portal</a></div>
+</aside>
+
+<main>
+<div class="breadcrumb">AIWS ERP <span>›</span> Scale Marketing Module Implementation Plan</div>
+
+<div class="page-header no-print">
+  <h1>Scale Marketing Module — Implementation Plan</h1>
+  <p class="subtitle">app <code>scale_sales_marketing</code> · WhatsApp (Meta Cloud API) + Meta Ads · Dev: Muhammad (WhatsApp/access control) + Archit (Ad Calendar/Boost Post) · Sales &amp; Marketing track</p>
+</div>
+
+<button class="print-btn no-print" onclick="window.print()">Print / Save as PDF</button>
+
+<div class="summary-strip no-print">
+  <div class="s-stat"><div class="sv">4</div><div class="sl">PRs Merged (37, 38, 41, 42)</div></div>
+  <div class="s-stat"><div class="sv">3</div><div class="sl">Feature Areas</div></div>
+  <div class="s-stat"><div class="sv">1</div><div class="sl">Merge Conflict Resolved</div></div>
+  <div class="s-stat"><div class="sv">25 Aug</div><div class="sl">Last Landed</div></div>
+</div>
+
+<h2 class="no-print">Module Objective</h2>
+<p>This app is the connector between Scale ERP's Lead/Customer data and two external channels: <strong>WhatsApp (Meta Cloud API)</strong> for conversational sales/support, and <strong>Meta Ads (Marketing API)</strong> for paid social lead generation. It is a distinct app from <code>scale_sales</code> (the core CRM/pipeline app) — this page tracks its own build separately, since it had no dedicated tracking page until this update.</p>
+
+<div class="gap-box">
+  <h4>⚠ This page was created retroactively</h4>
+  <p style="margin:0;font-size:.87rem;">The app existed and shipped real features (PR #37, #38) before this page did. This page was created 25 Aug 2026 once the scope grew enough (multi-number WhatsApp, access control, Meta Ads) to warrant its own tracked plan, matching the convention every other <code>scale_*</code> app already has. Earlier WhatsApp work (inbox, automations, bookings, drips) is documented here from a direct code review, not from original build notes — flag anything that reads inaccurately against what was actually built.</p>
+</div>
+
+<h2 class="no-print">Feature Area 1 — WhatsApp Core</h2>
+<p class="phase-sub">PR #37 → #38, merged 23 Aug 2026</p>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id" style="background:#166534;">M01</span>
+    <strong>WhatsApp Inbox, Automations, Bookings, Drips</strong>
+    <span class="task-assign" style="background:#d1fae5;color:#166534;">Muhammad</span>
+    <span class="task-date">Done — 23 Aug 2026</span>
+  </div>
+  <div class="task-meta">app: <code>scale_sales_marketing</code> · doctypes: Scale WhatsApp Conversation, Scale WhatsApp Message, Scale WhatsApp Appointment, Scale WhatsApp Booking Settings</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What shipped:</span> Full inbound/outbound WhatsApp messaging via the Meta Cloud API — webhook receiver, conversation threading, template-based replies (required outside the 24-hour free-text window), appointment booking flow, drip campaigns, and a scheduled reminder job. Reviewed across 2 PR rounds; found and confirmed-fixed a webhook signature fail-open bug (missing signature header was being treated as valid) before merge.</p>
+  </div>
+  <ol class="task-steps">
+    <li><code>whatsapp/webhook.py</code> — the whitelisted, guest-accessible entrypoint (<code>allow_guest=True</code>). Verifies <code>X-Hub-Signature-256</code>/<code>X-Hub-Signature</code> via HMAC (<code>hmac.compare_digest</code>) before touching the payload — fails <strong>closed</strong> if a secret is configured but the header is missing.</li>
+    <li><code>whatsapp/inbox.py</code> — desk-side API surface: <code>list_conversations</code>, <code>get_thread</code>, <code>reply</code>, <code>reply_template</code>, <code>convert_to_lead</code>.</li>
+    <li><code>whatsapp/automations.py</code>, <code>bookings.py</code>, <code>drips.py</code>, <code>scheduler.py</code> — inbound message handling, appointment booking state machine, drip sequencing, and the per-minute cron jobs (<code>process_drips</code>, <code>process_appointment_reminders</code>, <code>cleanup_sessions</code>).</li>
+  </ol>
+</div>
+
+<h2 class="no-print">Feature Area 2 — Multi-Number WhatsApp + Access Control</h2>
+<p class="phase-sub">PR #42 "Add Scale Marketing module and enhance WhatsApp integration", merged 25 Aug 2026</p>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id" style="background:#166534;">M02</span>
+    <strong>Multi-Number WhatsApp Routing</strong>
+    <span class="task-assign" style="background:#d1fae5;color:#166534;">Muhammad</span>
+    <span class="task-date">Done — 25 Aug 2026</span>
+  </div>
+  <div class="task-meta">Deliverable: a business can connect several WhatsApp numbers to one site, each tracked and permissioned separately</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this exists:</span> The original build (M01) assumed one WhatsApp number per site. A business running multiple numbers (e.g. one per region or one per brand) had no way to keep those conversations, and the staff who handle them, separate.</p>
+  </div>
+  <ol class="task-steps">
+    <li>Conversation naming now embeds the sending number: <code>wa_{phone_number_id}_{customer}</code> instead of a bare <code>wa_{customer}</code> — confirmed in <code>store.py::conversation_name()</code>.</li>
+    <li>Inbound webhook payloads route by Meta's own <code>metadata.phone_number_id</code> field — <code>is_phone_enabled()</code> checks it against the discovered/active phone list (or the configured default) and <strong>fails closed</strong> for unrecognized numbers, so a message from an unconfigured number is never silently attributed to the wrong one.</li>
+    <li>Meta Connect page can discover and enable several numbers per WABA (WhatsApp Business Account) and designate one as default sender.</li>
+  </ol>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id" style="background:#166534;">M03</span>
+    <strong>Number-Scoped Access Control</strong>
+    <span class="task-assign" style="background:#d1fae5;color:#166534;">Muhammad</span>
+    <span class="task-date">Done — 25 Aug 2026</span>
+  </div>
+  <div class="task-meta">New doctype: Scale WhatsApp Number User (user + phone_number_id) · new file: <code>whatsapp/access.py</code></div>
+  <div class="task-context">
+    <p><span class="ctx-label">Rule:</span> <strong>System Manager / Sales Manager / Administrator see every number.</strong> Anyone else only sees the numbers explicitly assigned to them via <code>Scale WhatsApp Number User</code> — an empty assignment means zero WhatsApp conversations visible (Facebook/Instagram inbox items still show, since those aren't number-scoped).</p>
+    <p><span class="ctx-label">Reviewed directly, not taken on faith:</span> this is enforced in three independent layers, not one — checked each personally before recommending merge.</p>
+  </div>
+  <ol class="task-steps">
+    <li><strong>List-level:</strong> <code>conversation_list_filters()</code> builds the actual <code>frappe.get_all</code> filter/or_filters — a restricted user's inbox query is filtered server-side, not just hidden in the UI.</li>
+    <li><strong>ORM-level:</strong> <code>permission_query_conditions</code> and <code>has_permission</code> both registered in <code>hooks.py</code> for <code>Scale WhatsApp Conversation</code> <em>and</em> <code>Scale WhatsApp Appointment</code> — this is Frappe's own native permission system, so even a raw <code>frappe.get_doc</code> respects the number scoping.</li>
+    <li><strong>API-level:</strong> every single-conversation endpoint (<code>get_thread</code>, <code>list_messages</code>, <code>reply</code>, <code>reply_template</code>, <code>convert_to_lead</code>) calls <code>assert_conversation_access()</code> before doing anything — closes the path where a restricted user could otherwise guess/enumerate a conversation name outside their assigned numbers and read or reply to it directly, bypassing the list filter.</li>
+  </ol>
+  <div class="task-note">This is a more rigorous permission pattern than some earlier findings elsewhere in this codebase (e.g. PMO's milestone-approval action, which originally had UI-only gating with no server-side check). Worth treating as the reference implementation for "how to do number/record-scoped access control" going forward.</div>
+</div>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id" style="background:#166534;">M04</span>
+    <strong>User Account Management Overhaul</strong>
+    <span class="task-assign" style="background:#d1fae5;color:#166534;">Muhammad</span>
+    <span class="task-date">Done — 25 Aug 2026</span>
+  </div>
+  <div class="task-meta">app: <code>scale_sales</code> · <code>access_control.py</code> (377-line diff) + <code>user_account_management_page.js</code> (644-line diff)</div>
+  <div class="task-context">
+    <p><span class="ctx-label">What shipped:</span> a custom role-picker replacing Frappe's own MultiCheck (which had a "Select All" flip bug), a "show password once" flow on user create/reset, and a Permissions tab covering Sales + Marketing DocTypes and Pages via Custom Role.</p>
+  </div>
+  <ol class="task-steps">
+    <li>Every sensitive endpoint (<code>create_user</code>, <code>update_user</code>, <code>set_user_roles</code>, <code>delete_user</code>, <code>create_role</code>, <code>set_role_doctype_perms</code>, <code>set_role_permission_bundle</code>, <code>set_page_role</code>) calls <code>_require_admin()</code> first — verified individually, all present, none skipped. <code>Administrator</code>/<code>Guest</code> are explicitly protected from being modified through this UI.</li>
+    <li>Generated passwords are cached client-side in <code>sessionStorage</code> only (cleared on tab close, never transmitted anywhere beyond the initial create/reset call) so an admin can re-copy credentials within the same session without re-generating — a UX convenience, not a new secret store.</li>
+    <li>Save writes <code>Has Role</code> directly rather than relying on the picker's own checkbox state, so an unchecked role reliably stays off — the bug this was built to fix.</li>
+  </ol>
+</div>
+
+<h2 class="no-print">Feature Area 3 — Meta Ad Calendar &amp; Boost Post</h2>
+<p class="phase-sub">PR #41 "Meta ad calendar, boost post, and link ad launch", merged 25 Aug 2026</p>
+
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id" style="background:#166534;">M05</span>
+    <strong>Ad Calendar + Scheduled Publishing</strong>
+    <span class="task-assign" style="background:#d1fae5;color:#166534;">Archit</span>
+    <span class="task-date">Done — 25 Aug 2026</span>
+  </div>
+  <div class="task-meta">New doctype: Scale Ad Calendar · new page: Ad Calendar View (month grid) · new cron: <code>process_due_ads</code></div>
+  <div class="task-context">
+    <p><span class="ctx-label">What shipped:</span> a month-grid calendar UI for planning ad posts, a scheduled job that auto-launches ads at their scheduled time via the Meta Marketing API, Boost Post (promote an existing Scale Social Post / calendar entry), and single-image Link Ad launch with ad-account sync on connect.</p>
+  </div>
+  <ol class="task-steps">
+    <li><code>marketing/ads/client.py</code>, <code>creative.py</code>, <code>launch.py</code> — the Marketing API layer. Reuses <code>whatsapp/oauth.py</code>'s existing token/secret storage rather than introducing a second credential mechanism.</li>
+    <li><code>process_due_ads()</code> (added to the same per-minute cron as WhatsApp's <code>process_due_posts</code>) has proper per-record isolation — <code>try/except</code> + <code>frappe.db.rollback()</code> + <code>frappe.log_error()</code> per ad, so one bad ad can't stall the rest of the scheduled batch.</li>
+    <li><code>install.py::import_meta_settings_bootstrap()</code> — a local-dev credential loader that reads from <code>sites/&lt;site&gt;/private/scale_meta_bootstrap.json</code> (explicitly git-ignored, never committed). Confirmed <strong>not</strong> wired into <code>after_migrate</code>, so it can't break a developer who doesn't have that private file.</li>
+  </ol>
+</div>
+
+<div class="decision-box">
+  <strong class="dh">✓ Merge conflict — found, analyzed, resolved</strong>
+  <p style="margin:0;">PR #41 and PR #42 were developed in parallel and both added the same new <code>"scale_sales_marketing"</code> entry to <code>apps/scale/scale/app_sidebar.py</code>'s <code>SCALE_APP_SIDEBARS</code> dict — same 3 fields on both sides, but PR #42's version additionally included a <code>path_prefixes</code> list (9 desk routes: inbox, appointments, leads, templates, bot settings, flows, meta-connect, meta-leads). Traced <code>path_prefixes</code> to <code>scale_app_sidebar.js</code> before resolving — it drives which routes highlight the Scale Marketing sidebar entry as active, so it's a real behavioral difference, not cosmetic. PR #42 merged first (landing the fuller version on <code>main</code>); when PR #41 then showed <code>CONFLICTING</code>, resolved by keeping PR #42's superset and discarding PR #41's shorter duplicate — verified via <code>bench migrate</code> (clean) before pushing the resolution and merging.</p>
+</div>
+
+<h2 class="no-print">Architecture Notes</h2>
+<ul style="font-size:.88rem;line-height:1.8;">
+  <li><strong>One token store, reused everywhere.</strong> Both WhatsApp and Meta Ads authenticate through the same <code>whatsapp/oauth.py</code> module (<code>user_token()</code>, <code>app_credentials()</code>) — no separate credential system was built for the Ads side.</li>
+  <li><strong>Permission pattern to copy for future number/record-scoped features:</strong> list-filter + native <code>permission_query_conditions</code>/<code>has_permission</code> + explicit API-level assertion, three layers, all independently verified — see M03 above.</li>
+  <li><strong>Local-dev credential bootstrap pattern:</strong> a private, git-ignored JSON file under <code>sites/&lt;site&gt;/private/</code>, loaded by an explicit manual command — never auto-run on migrate. Same shape as any future integration needing per-developer secrets.</li>
+  <li><strong>No <code>sites/apps.txt</code>, <code>apps.json</code>, or <code>common_site_config.json</code> changes in either PR</strong> — avoids the exact class of corruption this repo has been bitten by before (see <code>Claude/TECHNICAL_CONTEXT.md</code> §3).</li>
+</ul>
+
+<hr class="section no-print">
+<h2 class="no-print">Progress Tracker</h2>
+<div class="tbl-wrap no-print">
+  <table>
+    <tr><th>ID</th><th>Feature</th><th>Status</th><th>Notes</th></tr>
+    <tr><td>M01</td><td>WhatsApp Inbox / Automations / Bookings / Drips</td><td><span class="st-done">✅ Done</span></td><td>PR #37 → #38, merged 23 Aug. Webhook signature fail-open bug found and fixed before merge.</td></tr>
+    <tr><td>M02</td><td>Multi-Number WhatsApp Routing</td><td><span class="st-done">✅ Done</span></td><td>PR #42, merged 25 Aug. Fails closed for unrecognized phone_number_id.</td></tr>
+    <tr><td>M03</td><td>Number-Scoped Access Control</td><td><span class="st-done">✅ Done</span></td><td>PR #42. 3-layer enforcement, individually verified.</td></tr>
+    <tr><td>M04</td><td>User Account Management Overhaul</td><td><span class="st-done">✅ Done</span></td><td>PR #42. Every admin endpoint gated, verified individually.</td></tr>
+    <tr><td>M05</td><td>Meta Ad Calendar / Boost Post / Link Ads</td><td><span class="st-done">✅ Done</span></td><td>PR #41, merged 25 Aug. Sidebar-entry conflict with PR #42 resolved same day.</td></tr>
+  </table>
+</div>
+
+<div class="page-nav">
+  <a class="prev" href="pmo-module.html">← PMO Module Plan</a>
+  <a class="next" href="wave-1.html">Sales &amp; Marketing Detail →</a>
+</div>
+
+</main>
+</body>
+</html>
