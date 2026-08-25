@@ -1085,6 +1085,21 @@ bench --site scale.localhost migrate</pre>
   </div>
 </div>
 
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id" style="background:#b45309;">ET-04</span>
+    <strong>Project Risk surfaced on Project's Connections sidebar</strong>
+    <span class="task-assign">Raghib</span>
+    <span class="task-date">Wed Aug 26</span>
+  </div>
+  <div class="task-meta">Deliverable: opening any Project shows whether it has logged risks, with a direct link into them — closes the gap ET-03 found but didn't fix</div>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#ecfdf5;border-left:3px solid #10b981;"><span class="st-done">✅ Done</span> (26 Aug 2026) — new <code>override_doctype_dashboards</code> hook (<code>project_hooks.add_risk_to_project_dashboard</code>) adds a "Risk" group to Project's native Connections sidebar, linking to <b>Project Risk</b>. <b>Real coexistence check done before building:</b> <code>hrms</code> already overrides Project's dashboard (adds a "Claims" group) — this hook is designed to chain: each app's override function receives whatever <code>data</code> the previous one produced and must append to it, not rebuild from scratch. Followed the exact same pattern hrms itself uses (<code>data["transactions"].append(...); return data</code>). Verified live: PROJ-0001 (3 real Project Risk records) shows both "Claims" (hrms) and "Risk" (this) groups side by side, clicking "Project Risk" opens the list correctly pre-filtered to that project (confirmed via the URL's own <code>?project=PROJ-0001</code> query and "3 OF 3" result count); PROJ-0002 (zero risk records) renders the same empty group cleanly, no error.</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this exists as its own task:</span> the owner asked directly whether a link to the Risk Register had been added from the Project page after ET-03 shipped — it hadn't; ET-03 had flagged the gap but deliberately left it unfixed to avoid bundling an unrequested change. Split out as its own task once explicitly asked for.</p>
+    <p><span class="ctx-label">Scope, deliberately narrow:</span> only <b>Project Risk</b> was added, matching exactly what was asked. The same fix could extend to this app's other Project-linked doctypes (Resource Allocation, Project Budget, Project Change Request, Project Stakeholder Survey) with one more line each — flagged as a possible follow-on, not built here.</p>
+  </div>
+</div>
+
 <!-- PROGRESS TRACKER -->
 <hr class="section no-print">
 <h2 class="no-print">Progress Tracker</h2>
@@ -1115,6 +1130,7 @@ bench --site scale.localhost migrate</pre>
     <tr style="background:#fffbeb;"><td>ET-01</td><td>Project Manager field on Project</td><td><span class="pill" style="background:#fef3c7;color:#92400e;">Expert's Advice</span></td><td><span class="st-done">✅ Done</span></td><td>Owner-raised, not Excel/PDF-sourced. Link field to Employee, Designation-filtered picker + server-side guard — see ET-01 card above.</td></tr>
     <tr style="background:#fffbeb;"><td>ET-02</td><td>Major Skill on Project's Users table</td><td><span class="pill" style="background:#fef3c7;color:#92400e;">Expert's Advice</span></td><td><span class="st-done">✅ Done</span></td><td>Owner-raised, not Excel/PDF-sourced. Reuses native HRMS Employee Skill Map, clickable Link column into it from the Users grid — see ET-02 card above.</td></tr>
     <tr style="background:#fffbeb;"><td>ET-03</td><td>Key Risks Summary after Scope &amp; Objectives</td><td><span class="pill" style="background:#fef3c7;color:#92400e;">Expert's Advice</span></td><td><span class="st-done">✅ Done</span></td><td>Owner-raised, not Excel/PDF-sourced. 500-word narrative field, explicitly scoped separate from the existing Risk Register — see ET-03 card above.</td></tr>
+    <tr style="background:#fffbeb;"><td>ET-04</td><td>Project Risk in Connections sidebar</td><td><span class="pill" style="background:#fef3c7;color:#92400e;">Expert's Advice</span></td><td><span class="st-done">✅ Done</span></td><td>Owner-raised, follow-on from ET-03. override_doctype_dashboards hook, chained correctly alongside hrms's existing override — see ET-04 card above.</td></tr>
   </table>
 </div>
 
