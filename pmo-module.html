@@ -1053,6 +1053,22 @@ bench --site scale.localhost migrate</pre>
   </div>
 </div>
 
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id" style="background:#b45309;">ET-02</span>
+    <strong>Major Skill visible on Project's Users table</strong>
+    <span class="task-assign">Raghib</span>
+    <span class="task-date">Mon Aug 25</span>
+  </div>
+  <div class="task-meta">Deliverable: every project team member's top-rated skill is visible in the Users grid, linking straight through to edit it</div>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#ecfdf5;border-left:3px solid #10b981;"><span class="st-done">✅ Done</span> (25 Aug 2026) — <code>Project User</code> (Project's Users child table) gets a new <code>major_skill</code> field: a Link to that person's native HRMS <b>Employee Skill Map</b>, auto-set on every Project save by matching the row's User to an Employee via <code>user_id</code>. Blank if that Employee has no skill map — nothing is auto-created. Clicking the value in the grid opens straight into the Employee Skill Map to add or edit, per an explicit UI request to match the "arrow opens a page to fill data" pattern used elsewhere in Frappe. To make the link actually display the skill (not just the Employee ID), Employee Skill Map gets a new auto-computed <code>top_skill</code> field (the entry with the highest Proficiency rating, e.g. "Python (4/5)") set as its <code>title_field</code>, with <code>show_title_field_in_link</code> turned on via Property Setter — this changes how that record's title reads everywhere it's referenced across the whole bench, not just here, a deliberate global trade-off the owner chose over a narrower two-column layout. Verified live: added a real skill to Rohan Kapoor's (PM on PROJ-0001) Employee Skill Map, confirmed the grid cell shows "Project Management (4/5)" and its arrow opens the correct record; confirmed the 2 other pre-existing Employee Skill Map records (unrelated HR-appraisal seed data) needed the same one-time backfill save as every other computed-on-save field in this program.</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this exists as its own task:</span> raised directly by the product owner. There was no visibility into any project team member's skills from the Project page itself.</p>
+    <p><span class="ctx-label">Investigation done before building:</span> native <code>Employee</code> has no skill field at all. HRMS ships a real skill system (<b>Employee Skill Map</b> → <b>Employee Skill</b> child rows, Skill + 0–5 Proficiency rating) used for appraisals — reused here rather than inventing a second, competing skill model (this app's own Consultant Profile has a separate, simpler skill-tag pattern, but that's Consultant-specific, not Employee). <b>Real finding, flagged before building:</b> only 2 of the employees on this bench had any Employee Skill Map data at all before this task, both leftover HR-appraisal seed data — none of the actual PMO team members had a single skill entered. This is a data-entry gap, not a code gap; the owner chose to ship the wiring now rather than wait for a skill-data-entry push, so most rows will show blank until people fill theirs in. Also confirmed: <code>Project User</code>'s <code>user</code> field links to <b>User</b>, not Employee, and User has no field pointing back to Employee — so no simple one-hop <code>fetch_from</code> was possible; this needed a real server-side lookup, not just a fetch chain. Checked no other app in this bench touches <code>Project User</code> today, so this was a clean, isolated addition.</p>
+    <p><span class="ctx-label">Design choice, decided with the owner via two mockups:</span> presented two options — (1) a plain read-only skill-text column plus a separate small Link column carrying the arrow, no global side effects; (2) the Major Skill column itself as one Link field, requiring the global title change described above. Owner chose (2). Also decided: no auto-creation of empty skill maps for team members who don't have one — the cell stays genuinely blank rather than manufacturing a record, so nothing gets created as a side effect of just adding someone to a project team.</p>
+  </div>
+</div>
+
 <!-- PROGRESS TRACKER -->
 <hr class="section no-print">
 <h2 class="no-print">Progress Tracker</h2>
@@ -1081,6 +1097,7 @@ bench --site scale.localhost migrate</pre>
     <tr style="background:#fef2f2;"><td>PMO-19</td><td>AI Budget Forecasting</td><td><span class="pill bpn">Recommended</span></td><td><span class="st-ns">◯ Not Started</span></td><td>AI Track V02 — depends on PMO-15</td></tr>
     <tr style="background:#fef2f2;"><td>PMO-20</td><td>Executive Dashboard (CXO &amp; PMO View)</td><td><span class="pill bpn">Recommended</span></td><td><span class="st-done">✅ Done</span></td><td>PMO Executive Dashboard page — 12 of the PDF's 17 named metrics live (pure aggregation, no new schema), 5 honestly marked Pending (T15/AI Track) — see T16 note above.</td></tr>
     <tr style="background:#fffbeb;"><td>ET-01</td><td>Project Manager field on Project</td><td><span class="pill" style="background:#fef3c7;color:#92400e;">Expert's Advice</span></td><td><span class="st-done">✅ Done</span></td><td>Owner-raised, not Excel/PDF-sourced. Link field to Employee, Designation-filtered picker + server-side guard — see ET-01 card above.</td></tr>
+    <tr style="background:#fffbeb;"><td>ET-02</td><td>Major Skill on Project's Users table</td><td><span class="pill" style="background:#fef3c7;color:#92400e;">Expert's Advice</span></td><td><span class="st-done">✅ Done</span></td><td>Owner-raised, not Excel/PDF-sourced. Reuses native HRMS Employee Skill Map, clickable Link column into it from the Users grid — see ET-02 card above.</td></tr>
   </table>
 </div>
 
