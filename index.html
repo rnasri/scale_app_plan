@@ -28,6 +28,17 @@
 .day-col ul { margin:0; padding-left:18px; }
 .day-col li { font-size:13.5px; line-height:1.6; color:var(--text-2); margin-bottom:7px; }
 .day-col li:last-child { margin-bottom:0; }
+
+.landed-card { border:1px solid #bbf7d0; border-radius:var(--r-lg); background:#f0fdf4; box-shadow:var(--sh); margin-bottom:24px; overflow:hidden; }
+.landed-head { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; padding:14px 20px; border-bottom:1px solid #bbf7d0; background:#dcfce7; }
+.landed-head h3 { margin:0; font-size:15.5px; color:var(--green); }
+.landed-body { padding:16px 20px; }
+.landed-item { display:flex; gap:12px; padding:10px 0; border-bottom:1px dashed #bbf7d0; }
+.landed-item:last-child { border-bottom:none; padding-bottom:0; }
+.landed-item .li-tag { flex:0 0 auto; font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:.4px; background:var(--green); color:#fff; border-radius:5px; padding:3px 8px; height:fit-content; white-space:nowrap; }
+.landed-item .li-body { font-size:13.5px; color:var(--text-2); line-height:1.55; }
+.landed-item .li-body b { color:var(--navy); }
+.landed-item .li-ref { font-size:11px; color:#6b7280; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
 .track-flag { font-size:12px; background:var(--amber-bg); color:#92400e; border-top:1px solid var(--amber-bdr); padding:8px 20px; }
 </style>
 </head>
@@ -93,8 +104,37 @@
 </div>
 
 <div class="update-strip">
-  <div><div class="u-label">Last Updated</div><div class="u-date">22 August 2026</div></div>
-  <div class="u-note">Covers today (Sat 22 Aug) and the next working day (Mon 24 Aug) · Next update expected ~24 Aug</div>
+  <div><div class="u-label">Last Updated</div><div class="u-date">25 August 2026</div></div>
+  <div class="u-note">Covers today (Tue 25 Aug) and the next working day (Wed 26 Aug) · Next update expected ~26 Aug</div>
+</div>
+
+<div class="landed-card">
+  <div class="landed-head">
+    <h3>✅ Recently Landed — main sync, 25 Aug 2026</h3>
+  </div>
+  <div class="landed-body">
+    <div class="landed-item">
+      <span class="li-tag">UI</span>
+      <div class="li-body">
+        <b>Product Shell + UI Revamp merged to main.</b> The desk now hides raw Frappe/ERPNext chrome (Apps menu, Help menu, "View Website," session-default clutter) behind a proper Scale-branded shell — login screen, sidebar, forms, and navbar all restyled consistently across every module.
+        <div class="li-ref">ui-revamp → main, PR #40</div>
+      </div>
+    </div>
+    <div class="landed-item">
+      <span class="li-tag">AI</span>
+      <div class="li-body">
+        <b>Scale Intelligence framework now live across HR, Finance, Sales, and PMO.</b> A shared sidebar AI assistant ("Scale Intelligence") each module plugs into with its own scoped config — HR's assistant answers document-compliance/skill-matrix questions and drafts reminder notes; PMO's assistant additionally supports confirmed actions (approve a milestone, generate draft invoices, save a project baseline) and portfolio-level charts, gated behind an explicit confirmation step before anything is written.
+        <div class="li-ref">apps/scale/scale/intelligence_boot.py + per-app intelligence.py (scale_hr, scale_finance, scale_sales, scale_project_management)</div>
+      </div>
+    </div>
+    <div class="landed-item">
+      <span class="li-tag">PMO · AI Track</span>
+      <div class="li-body">
+        <b>AI-assisted project setup (experimental).</b> When creating a new Project, an inline suggestion (starting milestones, deliverables, estimated duration) is generated from similar past projects — read-only, never auto-writes; the PM reviews/edits/discards before saving. This is the item the AI track flagged as "in progress" on the 22 Aug update — now landed, still marked experimental pending real-world use.
+        <div class="li-ref">project_ai_assist.py, branch experiment/pmo-project-creation-ai-assist → main, PR #39</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="track-card">
@@ -217,13 +257,14 @@
     <div class="day-col today">
       <div class="day-label">🟢 Today</div>
       <ul>
-        <li>Streamlining the UI across every module — Sales, HR, Accounts, Finance, PMO — for a consistent look and feel on one global workspace shell.</li>
+        <li>Product Shell + UI revamp <b>merged to main</b> — see Recently Landed above. Every module now shares one consistent Scale-branded shell.</li>
+        <li>Polish pass: verifying the new shell renders correctly on every module's own pages, not just the ones directly touched.</li>
       </ul>
     </div>
     <div class="day-col tomorrow">
-      <div class="day-label">🔵 Tomorrow</div>
+      <div class="day-label">🔵 Wednesday (Next Working Day)</div>
       <ul>
-        <li>Continues across the remaining modules not yet streamlined.</li>
+        <li>Fix-forward on any module-specific rendering gaps the polish pass turns up.</li>
       </ul>
     </div>
   </div>
@@ -238,14 +279,14 @@
     <div class="day-col today">
       <div class="day-label">🟢 Today</div>
       <ul>
-        <li><b>PMO module</b> — AI auto-populating new Project fields based on discussed parameters. Spans today and Monday.</li>
-        <li>Other AI flags wiring in progress.</li>
+        <li><b>Scale Intelligence sidebar assistant</b> and <b>PMO project auto-populate feature</b> both <b>merged to main</b> — see Recently Landed above.</li>
+        <li>Real-world usage pass on the PMO assistant's action-confirmation flow (approve milestone, generate draft invoices, save baseline).</li>
       </ul>
     </div>
     <div class="day-col tomorrow">
-      <div class="day-label">🔵 Monday (Next Working Day)</div>
+      <div class="day-label">🔵 Wednesday (Next Working Day)</div>
       <ul>
-        <li>PMO project auto-populate feature — continues/targeted for completion.</li>
+        <li>Extending Scale Intelligence's question/action prompts based on what comes out of the usage pass.</li>
         <li>Other AI flags wiring continues.</li>
       </ul>
     </div>
