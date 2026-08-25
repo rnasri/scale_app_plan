@@ -1069,6 +1069,22 @@ bench --site scale.localhost migrate</pre>
   </div>
 </div>
 
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id" style="background:#b45309;">ET-03</span>
+    <strong>Key Risks Summary after Scope &amp; Objectives</strong>
+    <span class="task-assign">Raghib</span>
+    <span class="task-date">Wed Aug 26</span>
+  </div>
+  <div class="task-meta">Deliverable: a 500-word-max narrative risk summary on every Project, without duplicating the existing Risk Register</div>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#ecfdf5;border-left:3px solid #10b981;"><span class="st-done">✅ Done</span> (26 Aug 2026) — new <code>project_risk_summary</code> field (Text), labeled <b>"Key Risks Summary"</b> (deliberately not "Project Risk," to avoid colliding with the existing doctype name), inserted right after <code>objectives</code> — the last field of the Scope &amp; Objectives section. Capped at 500 words two ways: a live "X / 500 words" counter under the field as you type, and a server-side <code>validate</code> hook (<code>project_hooks.enforce_risk_summary_word_limit</code>) that blocks save past the limit — verified directly via the bench console (a 501-word value was correctly rejected, a real save with 18 words went through clean). Field description and its "✨ New" badge both explicitly point to the Risk Register for anything needing per-risk tracking. Live counter had one real bug caught and fixed before shipping: it duplicated on every form refresh (visible as two identical "X / 500 words" lines stacking up) since the insertion logic had no guard against running twice — fixed with a class-based existence check, same pattern <code>pmo_demo_field_badge</code> already uses.</div>
+  <div class="task-context">
+    <p><span class="ctx-label">Why this exists as its own task:</span> raised directly by the product owner — an expert-advised addition, not sourced from Excel/PDF.</p>
+    <p><span class="ctx-label">Investigation done before building — is risk already covered, would this be redundant:</span> yes, already covered, but as a different kind of information. PMO-10 / T12's <b>Project Risk</b> doctype is a full structured Risk Register (8 categories, Probability/Impact/Severity, Status, Mitigation/Contingency Plans, 4 reports) — a detailed, per-risk tracking system, not a narrative. <b>Real gap found along the way:</b> Project's own "Connections" sidebar is defined by native ERPNext's <code>project_dashboard.py</code>, which was never extended for any of this app's own doctypes (Project Risk, Resource Allocation, Project Budget, Project Change Request) — so opening a Project shows zero indication that any risks exist for it, even though the Risk Register has real data. Flagged to the owner as a separate possible fix, not bundled into this task; not done here.</p>
+    <p><span class="ctx-label">How redundancy is avoided by design, not just by convention:</span> field labeled "Key Risks Summary," not "Project Risk," to keep it visibly distinct from the doctype name. Description text on the field itself explicitly redirects anything needing tracking to the Risk Register. Positioned as a peer to Scope/Objectives/Success Criteria — all narrative fields already accepted as a different tier of information from the structured child-table/DocType data elsewhere on Project.</p>
+  </div>
+</div>
+
 <!-- PROGRESS TRACKER -->
 <hr class="section no-print">
 <h2 class="no-print">Progress Tracker</h2>
@@ -1098,6 +1114,7 @@ bench --site scale.localhost migrate</pre>
     <tr style="background:#fef2f2;"><td>PMO-20</td><td>Executive Dashboard (CXO &amp; PMO View)</td><td><span class="pill bpn">Recommended</span></td><td><span class="st-done">✅ Done</span></td><td>PMO Executive Dashboard page — 12 of the PDF's 17 named metrics live (pure aggregation, no new schema), 5 honestly marked Pending (T15/AI Track) — see T16 note above.</td></tr>
     <tr style="background:#fffbeb;"><td>ET-01</td><td>Project Manager field on Project</td><td><span class="pill" style="background:#fef3c7;color:#92400e;">Expert's Advice</span></td><td><span class="st-done">✅ Done</span></td><td>Owner-raised, not Excel/PDF-sourced. Link field to Employee, Designation-filtered picker + server-side guard — see ET-01 card above.</td></tr>
     <tr style="background:#fffbeb;"><td>ET-02</td><td>Major Skill on Project's Users table</td><td><span class="pill" style="background:#fef3c7;color:#92400e;">Expert's Advice</span></td><td><span class="st-done">✅ Done</span></td><td>Owner-raised, not Excel/PDF-sourced. Reuses native HRMS Employee Skill Map, clickable Link column into it from the Users grid — see ET-02 card above.</td></tr>
+    <tr style="background:#fffbeb;"><td>ET-03</td><td>Key Risks Summary after Scope &amp; Objectives</td><td><span class="pill" style="background:#fef3c7;color:#92400e;">Expert's Advice</span></td><td><span class="st-done">✅ Done</span></td><td>Owner-raised, not Excel/PDF-sourced. 500-word narrative field, explicitly scoped separate from the existing Risk Register — see ET-03 card above.</td></tr>
   </table>
 </div>
 
