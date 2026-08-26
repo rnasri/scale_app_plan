@@ -209,8 +209,8 @@
     <div class="task-chip pending"><span class="tid">PUR-05</span><span class="ttitle">Invoice Matching (3-way)</span><span class="tmark">⏳</span></div>
     <div class="task-chip added"><span class="tid">PUR-06</span><span class="ttitle">RFQ / Tendering</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">PUR-07</span><span class="ttitle">Approval Workflows</span><span class="tmark">✅</span></div>
-    <div class="task-chip pending"><span class="tid">PUR-08</span><span class="ttitle">Supplier Performance Mgmt</span><span class="tmark">⏳</span></div>
-    <div class="task-chip pending"><span class="tid">PUR-09</span><span class="ttitle">Contract &amp; Rate Agreement Mgmt</span><span class="tmark">⏳</span></div>
+    <div class="task-chip added"><span class="tid">PUR-08</span><span class="ttitle">Supplier Performance Mgmt</span><span class="tmark">✅</span></div>
+    <div class="task-chip added"><span class="tid">PUR-09</span><span class="ttitle">Contract &amp; Rate Agreement Mgmt</span><span class="tmark">✅</span></div>
     <div class="task-chip pending"><span class="tid">PUR-10</span><span class="ttitle">Advance Payments</span><span class="tmark">⏳</span></div>
     <div class="task-chip pending"><span class="tid">PUR-11</span><span class="ttitle">Import Management</span><span class="tmark">⏳</span></div>
     <div class="task-chip pending"><span class="tid">PUR-12</span><span class="ttitle">Purchase Budget Management</span><span class="tmark">⏳</span></div>
@@ -325,21 +325,31 @@
 </section>
 
 <section class="slide"><span class="slide-idx">12 / 21</span>
-  <div class="sec-head"><span class="sec-num">PUR-08</span><h2 style="margin:0;">Supplier Performance Management</h2><span class="status-pill planned">⚪ Planned</span></div>
-  <div class="ask-line">Continuously evaluate suppliers on quality, delivery, cost, responsiveness, and compliance.</div>
-  <div class="pending-box" style="max-width:520px;"><div class="box-label">Pending</div><ul><li>Not started — native Supplier Scorecard already exists; needs confirming its criteria set covers the PRD's full list</li></ul></div>
-  <div><span class="task-tag">Feature Map: PUR-08 — Not Started</span></div>
+  <div class="sec-head"><span class="sec-num">PUR-08</span><h2 style="margin:0;">Supplier Performance Management</h2><span class="status-pill progressed">🟢 Progressed</span></div>
+  <div class="ask-line">Continuously evaluate suppliers on quality, delivery, cost, responsiveness, compliance, documentation, and service support.</div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Added</div><ul><li>3 manual 0-100 scores on Supplier — Compliance, Documentation, Service Support — the 3 of 7 PRD criteria native Supplier Scorecard has no way to compute (its Criteria schema is formula-only against transactional data, confirmed by reading it directly, no manual scoring path exists)</li><li>New Supplier KPI Dashboard report blending native scorecard score with the 3 manual scores into one Overall KPI Score — consolidates the PRD's 4 named reports (KPI Dashboard/Vendor Ranking/Delivery Score/Quality Score) the same way Vendor Comparison did in PUR-06</li></ul></div>
+    <div class="pending-box"><div class="box-label">Confirmed Already Native</div><ul><li>Quality, Delivery, Cost, Responsiveness — all real, formula-based, computed from actual transaction history (Total Days Late, Rejected/Accepted Amount, RFQ/SQ response days) via the native Supplier Scorecard</li></ul></div>
+  </div>
+  <div><span class="task-tag">Feature Map: PUR-08 — Progressed</span></div>
+  <div class="field-chips"><span class="field-chip">scale_purchase_compliance_score</span><span class="field-chip">scale_purchase_documentation_score</span><span class="field-chip">scale_purchase_service_support_score</span></div>
   <div class="prd-tag">Purchase &amp; Procurement Management Module PRD — §6 Supplier Performance Management</div>
-  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Purchase Manager</div><div class="uc-flow">A supplier's declining scorecard automatically blocks new RFQs and POs to them until reviewed.</div></div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/query-report/Supplier KPI Dashboard" target="_blank">See the Supplier KPI Dashboard →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Purchase Manager</div><div class="uc-flow">Opens one dashboard and sees every supplier ranked by a blended score — real transaction-based performance plus the qualitative checks (compliance, paperwork, service support) no formula could ever compute.</div></div>
 </section>
 
 <section class="slide"><span class="slide-idx">13 / 21</span>
-  <div class="sec-head"><span class="sec-num">PUR-09</span><h2 style="margin:0;">Contract &amp; Rate Agreement Management</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="sec-head"><span class="sec-num">PUR-09</span><h2 style="margin:0;">Contract &amp; Rate Agreement Management</h2><span class="status-pill progressed">🟢 Progressed</span></div>
   <div class="ask-line">Manage supplier contracts, annual rate agreements, renewal schedules, and compliance from a central repository.</div>
-  <div class="pending-box" style="max-width:520px;"><div class="box-label">Pending</div><ul><li>Not started — native Blanket Order already covers agreed quantity/rate/validity; SLA/penalty/renewal-alert fields need confirming</li></ul></div>
-  <div><span class="task-tag">Feature Map: PUR-09 — Not Started</span></div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Payment Terms, SLA, Penalties fields on Blanket Order — the 3 genuinely missing PRD §7 fields (Start/Expiry Date and per-item Rate were already native)</li><li>A "Days Before" Notification firing 30 days before Expiry Date to Purchase Manager — same pattern as Stores' batch-expiry alert</li><li>New Contract Rate Agreement Dashboard report consolidating PRD §7's 3 named reports (Contract Expiry/Active Contracts/Rate Agreement Dashboard), bucketing each contract Active / Renewal Due / Expired</li></ul></div>
+    <div class="pending-box"><div class="box-label">Confirmed Already Native</div><ul><li>Start/Expiry Date and per-item Rate (Pricing Terms) on Blanket Order — checked the full field list directly, both already there</li></ul></div>
+  </div>
+  <div><span class="task-tag">Feature Map: PUR-09 — Progressed</span></div>
+  <div class="field-chips"><span class="field-chip">scale_purchase_payment_terms</span><span class="field-chip">scale_purchase_sla</span><span class="field-chip">scale_purchase_penalties</span></div>
   <div class="prd-tag">Purchase &amp; Procurement Management Module PRD — §7 Contract &amp; Rate Agreement Management</div>
-  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Procurement Executive</div><div class="uc-flow">Gets an alert 30 days before a rate agreement expires — never caught renegotiating at the last minute.</div></div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/query-report/Contract Rate Agreement Dashboard" target="_blank">See the Contract Rate Agreement Dashboard →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Procurement Executive</div><div class="uc-flow">Gets an automatic alert 30 days before a rate agreement expires — never caught renegotiating at the last minute.</div></div>
 </section>
 
 <section class="slide"><span class="slide-idx">14 / 21</span>
