@@ -330,9 +330,9 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
   <p>Confirmed native: creation from all 4 sources (Material Request/RFQ/Blanket Order/manual — all real links on Purchase Order Item), Item + Service POs, Blanket/Annual Rate Contracts, and PO Value/Delivery/Invoice/Payment Status tracking (grand_total/per_received/per_billed/status). Built the one real gap — a value-based approval Workflow (Purchase Manager → Finance → Management, on native <code>grand_total</code>, ₹5L placeholder threshold) — reusing PUR-01's exact pattern, one tier shorter. Tested live: low-value, high-value (routes through Management), and reject paths, all correct on the first migrate this time.</p>
 </div>
 <div class="task-card">
-  <div class="task-header"><span class="task-id">PUR-04</span><h4 style="margin:0;">Goods Receipt configuration</h4></div>
+  <div class="task-header"><span class="task-id">PUR-04</span><h4 style="margin:0;">Goods Receipt configuration</h4> <span class="st-done">✅ Done</span></div>
   <div class="task-meta">Effort: Low · Depends on: Stores STR-02/03 (warehouse), PUR-03</div>
-  <p>Configure Purchase Receipt against PO with incoming Quality Inspection and rejection handling.</p>
+  <p>Confirmed ~100% native against PRD §5: PO Reference, Received/Accepted/Rejected Qty, Batch Number, Warehouse, and even a dedicated <code>rejected_warehouse</code> field all already exist. The one real gap: no default for which warehouse rejected quantity lands in (checked Stock Settings and Buying Settings directly, neither has one) — wired to Stores' own "Rejected Stock" warehouse. <b>Real bug caught and fixed:</b> the header-level default alone wasn't enough — ERPNext validates <code>rejected_warehouse</code> per item row too, and a first attempt using a <code>validate</code> hook fired one step too late (native validation already ran); fixed by moving to <code>before_validate</code>. Tested live end-to-end: PO → Purchase Receipt with partial accept/reject → rejected qty confirmed landing in the correct warehouse.</p>
 </div>
 <div class="task-card">
   <div class="task-header"><span class="task-id">PUR-05</span><h4 style="margin:0;">3-way invoice match validation</h4></div>
@@ -340,9 +340,9 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
   <p>Build validate-time deviation check across PO/GRN/Invoice quantity and rate.</p>
 </div>
 <div class="task-card">
-  <div class="task-header"><span class="task-id">PUR-06</span><h4 style="margin:0;">RFQ &amp; comparison</h4></div>
+  <div class="task-header"><span class="task-id">PUR-06</span><h4 style="margin:0;">RFQ &amp; comparison</h4> <span class="st-done">✅ Done</span></div>
   <div class="task-meta">Effort: Medium</div>
-  <p>Configure RFQ modes (single/multi/online/email); confirm/extend the quotation comparison view against PRD §2's criteria.</p>
+  <p>Confirmed native: multi-vendor RFQ, Online/Email RFQ, Technical Specifications (native item description), and Price/Delivery comparison (native Supplier Quotation Comparison report). Added the 2 genuinely missing fields on Supplier Quotation — Payment Terms, Warranty — and a new <b>Vendor Comparison</b> report layering both in plus Supplier Scorecard's Quality Rating. Tested live: RFQ to 2 vendors → 2 Supplier Quotations → report correctly compared both side by side, sorted by rate.</p>
 </div>
 <div class="task-card">
   <div class="task-header"><span class="task-id">PUR-07</span><h4 style="margin:0;">Approval workflow consolidation</h4> <span class="st-done">✅ Pattern established</span></div>
