@@ -283,9 +283,9 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
   <p>Checked directly: Stock Settings already defaults to FIFO on this site from an earlier module's setup — nothing to configure.</p>
 </div>
 <div class="task-card">
-  <div class="task-header"><span class="task-id">STR-04</span><h4 style="margin:0;">Stock Entry / Receipt / Delivery configuration</h4> <span class="st-ns">Not started</span></div>
+  <div class="task-header"><span class="task-id">STR-04</span><h4 style="margin:0;">Stock Entry / Receipt / Delivery configuration</h4> <span class="st-done">✅ Confirmed working</span> <span class="st-ns">— approval workflow pending</span></div>
   <div class="task-meta">Effort: Low</div>
-  <p>Configure Stock Entry purposes and any submit-approval workflow for goods issue/receipt.</p>
+  <p>Core purposes (Material Receipt/Issue/Transfer) confirmed working via live testing. <b>Pending:</b> the Excel's own Implementation Needed column also asks for a submit-approval workflow on Stock Entry — not built yet, deliberately left for later since it's client-dependent (some clients want sign-off before issue/receipt, some don't). See "Pending / Deferred" below.</p>
 </div>
 <div class="task-card">
   <div class="task-header"><span class="task-id">STR-05</span><h4 style="margin:0;">Stock Transfer — driver/vehicle capture</h4> <span class="st-done">✅ Done</span></div>
@@ -320,8 +320,27 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
 <div class="task-card">
   <div class="task-header"><span class="task-id">STR-11</span><h4 style="margin:0;">Expiry Management</h4> <span class="st-done">✅ Done</span></div>
   <div class="task-meta">Effort: Low · P3, post-go-live · 1 new Script Report</div>
-  <p>30-day pre-expiry Notification (Batch, Days Before) + a new Expiring Batch Alert Report, both tested live against a real and a synthetic near-expiry batch. Caught and fixed the same class of ordering bug as PMO's CHRO Dashboard — the Workspace shortcut linked to the Report before it existed; fixed by creating dependencies before the Workspace.</p>
+  <p>30-day pre-expiry Notification (Batch, Days Before) + a new Expiring Batch Alert Report, both tested live against a real and a synthetic near-expiry batch. Caught and fixed the same class of ordering bug as PMO's CHRO Dashboard — the Workspace shortcut linked to the Report before it existed; fixed by creating dependencies before the Workspace. <b>Also fixed after initial ship:</b> the report was first built as a report_script-field Script Report — broken on this bench specifically (server scripts are disabled here), caught only once actually run through Frappe's real report-execution path, not just its raw SQL. Rebuilt as a standard report (real <code>.py</code> module), same pattern every native ERPNext report already uses.</p>
 </div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">STR-14</span><h4 style="margin:0;">Rich Workspace dashboard (Number Cards, Chart, Quick Access)</h4> <span class="st-done">✅ Done</span></div>
+  <div class="task-meta">Effort: Low — reused native records, nothing computed from scratch</div>
+  <p>The native <code>/app/stock</code> workspace's 3 KPI tiles (Total Stock Value, Total Warehouses, Total Active Items) and its "Warehouse wise Stock Value" chart are generic, unfiltered global records already shipped with ERPNext — confirmed directly against their query definitions before reusing them. <code>/app/scale-stock</code> now references the same records plus a renamed "Quick Access" shortcuts section, matching the native layout the rest of the team is used to.</p>
+</div>
+</div>
+
+<hr class="section no-print">
+
+<h2 class="no-print">Pending / Deferred — for a later session</h2>
+<div class="grid g2 no-print">
+  <div class="card">
+    <h4>STR-07 — Barcode / QR mobile scanner</h4>
+    <p style="font-size:13.5px;">Excel's own ask: "Add a 20-line HTML5 camera QR/Barcode scanner JS script for mobile browser usage in store rooms." Native <code>scan_barcode</code> field already works today — this is the one feature explicitly requested that isn't built yet, deliberately deprioritised in favour of the two governance DocTypes (Cycle Count Sheet, Stock Disposition Request).</p>
+  </div>
+  <div class="card">
+    <h4>STR-04 — Stock Entry submit-approval workflow</h4>
+    <p style="font-size:13.5px;">Excel's Implementation Needed column for Goods Issue/Receipt also lists "document approval workflows" alongside purpose/account configuration — not built. Judgment call: whether Issue/Receipt needs sign-off before posting is client-dependent, so left open rather than guessed at. Raise with the client alongside the warehouse-layout question below.</p>
+  </div>
 </div>
 
 <hr class="section no-print">
