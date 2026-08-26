@@ -179,8 +179,8 @@
   <div class="slide-eyebrow">Feature Alignment</div>
   <h2>13 Features. Here's Where We Stand — Honestly.</h2>
   <div class="big-nums">
-    <div class="big-num c-green"><div class="n">8</div><div class="l">Progressed</div></div>
-    <div class="big-num c-grey"><div class="n">5</div><div class="l">Planned</div></div>
+    <div class="big-num c-green"><div class="n">12</div><div class="l">Progressed</div></div>
+    <div class="big-num c-grey"><div class="n">1</div><div class="l">Planned</div></div>
     <div class="big-num c-navy"><div class="n">13</div><div class="l">Total Stores Features</div></div>
   </div>
   <div class="legend-row">
@@ -211,10 +211,10 @@
     <div class="task-chip pending"><span class="tid">STR-07</span><span class="ttitle">Barcode / QR Scanning</span><span class="tmark">⏳</span></div>
     <div class="task-chip added"><span class="tid">STR-08</span><span class="ttitle">Stock Audit / Cycle Count</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">STR-09</span><span class="ttitle">Slow &amp; Non-moving Stock</span><span class="tmark">✅</span></div>
-    <div class="task-chip pending"><span class="tid">STR-10</span><span class="ttitle">Reorder Alerts</span><span class="tmark">⏳</span></div>
-    <div class="task-chip pending"><span class="tid">STR-11</span><span class="ttitle">Batch &amp; Serial Tracking</span><span class="tmark">⏳</span></div>
-    <div class="task-chip pending"><span class="tid">STR-12</span><span class="ttitle">Expiry Management</span><span class="tmark">⏳</span></div>
-    <div class="task-chip pending"><span class="tid">STR-13</span><span class="ttitle">Min-Max Planning</span><span class="tmark">⏳</span></div>
+    <div class="task-chip added"><span class="tid">STR-10</span><span class="ttitle">Reorder Alerts</span><span class="tmark">✅</span></div>
+    <div class="task-chip added"><span class="tid">STR-11</span><span class="ttitle">Batch &amp; Serial Tracking</span><span class="tmark">✅</span></div>
+    <div class="task-chip added"><span class="tid">STR-12</span><span class="ttitle">Expiry Management</span><span class="tmark">✅</span></div>
+    <div class="task-chip added"><span class="tid">STR-13</span><span class="ttitle">Min-Max Planning</span><span class="tmark">✅</span></div>
   </div>
 </section>
 
@@ -358,39 +358,53 @@
 </section>
 
 <section class="slide"><span class="slide-idx">14 / 18</span>
-  <div class="sec-head"><span class="sec-num">STR-10</span><h2 style="margin:0;">Reorder Alerts</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="sec-head"><span class="sec-num">STR-10</span><h2 style="margin:0;">Reorder Alerts</h2><span class="status-pill progressed">🟢 Progressed</span></div>
   <div class="ask-line">Reorder levels per item/warehouse auto-raise material requests.</div>
-  <div class="pending-box" style="max-width:520px;"><div class="box-label">Pending</div><ul><li>Not started — native reorder engine, configuration only, scheduled after the two governance features above</li></ul></div>
-  <div><span class="task-tag">Feature Map: STR-10 — Not Started</span></div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Reorder level/quantity configured on two demo items against the Stores warehouse — the native engine itself needed zero custom code</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Real reorder levels per the client's own consumption patterns, once known</li></ul></div>
+  </div>
+  <div><span class="task-tag">Feature Map: STR-10 — Progressed</span></div>
   <div class="prd-tag">Scope &amp; Capability Excel, "Stores" tab — STR-10 Reorder Alerts</div>
-  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Purchase Team</div><div class="uc-flow">A material request drafts itself the moment stock drops below the reorder level — no one has to notice the gap.</div></div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/item/RM-STEEL-SHEET" target="_blank">See the reorder rule on an item →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Purchase Team</div><div class="uc-flow">A material request drafts itself the moment stock drops below the reorder level — no one has to notice the gap.</div></div>
 </section>
 
 <section class="slide"><span class="slide-idx">15 / 18</span>
-  <div class="sec-head"><span class="sec-num">STR-11</span><h2 style="margin:0;">Batch &amp; Serial Tracking</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="sec-head"><span class="sec-num">STR-11</span><h2 style="margin:0;">Batch &amp; Serial Tracking</h2><span class="status-pill progressed">🟢 Progressed</span></div>
   <div class="ask-line">Batches with manufacture/expiry dates; serials with unit-level history.</div>
-  <div class="pending-box" style="max-width:520px;"><div class="box-label">Pending</div><ul><li>Not started — native engine, needs the client to confirm which Item Groups actually require batch vs. serial tracking</li></ul></div>
-  <div><span class="task-tag">Feature Map: STR-11 — Not Started</span></div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Batch tracking enabled on a demo item and proven live — a real goods receipt auto-created a real batch through the native engine</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>The client still needs to confirm which Item Groups actually require batch vs. serial tracking</li></ul></div>
+  </div>
+  <div><span class="task-tag">Feature Map: STR-11 — Progressed</span></div>
   <div class="prd-tag">Scope &amp; Capability Excel, "Stores" tab — STR-11 Batch &amp; Serial Tracking</div>
-  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Quality Team</div><div class="uc-flow">Traces a defective unit back to its exact batch and every place that batch was used — full two-way lineage.</div></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Quality Team</div><div class="uc-flow">Traces a defective unit back to its exact batch and every place that batch was used — full two-way lineage.</div></div>
 </section>
 
 <section class="slide"><span class="slide-idx">16 / 18</span>
-  <div class="sec-head"><span class="sec-num">STR-12</span><h2 style="margin:0;">Expiry Management</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="sec-head"><span class="sec-num">STR-12</span><h2 style="margin:0;">Expiry Management</h2><span class="status-pill progressed">🟢 Progressed</span></div>
   <div class="ask-line">Expiry alerts ahead of time; expired batches blocked from issue.</div>
-  <div class="pending-box" style="max-width:520px;"><div class="box-label">Pending</div><ul><li>Not started — depends on Batch &amp; Serial Tracking (STR-11) landing first</li></ul></div>
-  <div><span class="task-tag">Feature Map: STR-12 — Not Started</span></div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Added</div><ul><li>A 30-day pre-expiry alert and a new Expiring Batch Alert Report, tested live against real batch data</li><li>Expired-batch blocking on issue is native — nothing to build</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Nothing outstanding for this feature</li></ul></div>
+  </div>
+  <div><span class="task-tag">Feature Map: STR-12 — Progressed</span></div>
   <div class="prd-tag">Scope &amp; Capability Excel, "Stores" tab — STR-12 Expiry Management</div>
-  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Stores Team</div><div class="uc-flow">Gets a 30-day warning before a batch expires, and the system physically won't let an expired batch go out the door.</div></div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/query-report/Expiring Batch Alert Report" target="_blank">See the Expiring Batch report →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Stores Team</div><div class="uc-flow">Gets a 30-day warning before a batch expires, and the system physically won't let an expired batch go out the door.</div></div>
 </section>
 
 <section class="slide"><span class="slide-idx">17 / 18</span>
-  <div class="sec-head"><span class="sec-num">STR-13</span><h2 style="margin:0;">Min-Max Planning</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="sec-head"><span class="sec-num">STR-13</span><h2 style="margin:0;">Min-Max Planning</h2><span class="status-pill progressed">🟢 Progressed</span></div>
   <div class="ask-line">Reorder level + reorder quantity per item per warehouse; safety-stock buffers.</div>
-  <div class="pending-box" style="max-width:520px;"><div class="box-label">Pending</div><ul><li>Not started — same native engine as Reorder Alerts (STR-10), extended with min/max levels</li></ul></div>
-  <div><span class="task-tag">Feature Map: STR-13 — Not Started</span></div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Same configuration as Reorder Alerts (STR-10) — the reorder level/quantity fields double as the min/replenishment levels, native, zero custom code</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Real per-item safety-stock buffers, once the client's consumption data is available</li></ul></div>
+  </div>
+  <div><span class="task-tag">Feature Map: STR-13 — Progressed</span></div>
   <div class="prd-tag">Scope &amp; Capability Excel, "Stores" tab — STR-13 Min-Max Planning</div>
-  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Purchase Team</div><div class="uc-flow">Never orders too little or over-orders — the system holds a safety-stock buffer per item automatically.</div></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Purchase Team</div><div class="uc-flow">Never orders too little or over-orders — the system holds a safety-stock buffer per item automatically.</div></div>
 </section>
 
 <!-- 18 — CLOSING -->

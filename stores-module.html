@@ -308,19 +308,19 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
   <p>Stores → Finance (Accounts Manager) approval workflow; Approve auto-posts a Material Issue Stock Entry, Reject leaves stock untouched. Tested live: approve path, reject path, and a request-time validation (added after testing surfaced it) blocking a disposal quantity that exceeds actual stock.</p>
 </div>
 <div class="task-card">
-  <div class="task-header"><span class="task-id">STR-09</span><h4 style="margin:0;">Reorder Alerts &amp; Min-Max Planning</h4> <span class="st-ns">Not started</span></div>
+  <div class="task-header"><span class="task-id">STR-09</span><h4 style="margin:0;">Reorder Alerts &amp; Min-Max Planning</h4> <span class="st-done">✅ Done</span></div>
   <div class="task-meta">Effort: Low · P3, post-go-live</div>
-  <p>Configure Item Reorder child table (reorder level/qty, min/max, safety stock) per item/warehouse.</p>
+  <p>Reorder level/qty configured on the demo Item Reorder child table (RM-STEEL-SHEET, RM-COPPER-WIRE) against Stores - AIWS. Native engine, zero custom code — confirmed by inspecting the saved rows.</p>
 </div>
 <div class="task-card">
-  <div class="task-header"><span class="task-id">STR-10</span><h4 style="margin:0;">Batch &amp; Serial Tracking</h4></div>
+  <div class="task-header"><span class="task-id">STR-10</span><h4 style="margin:0;">Batch &amp; Serial Tracking</h4> <span class="st-done">✅ Done</span></div>
   <div class="task-meta">Effort: Low · P3, post-go-live</div>
-  <p>Configure naming series for Serial No / Batch; confirm which Item Groups require serial vs. batch tracking.</p>
+  <p>Enabled batch tracking + 365-day shelf life on a demo item (CONS-LUBRICANT-OIL — has_batch_no/has_expiry_date can only be turned on before an item has any stock movement, confirmed by testing). Tested live: a Material Receipt auto-created a real Batch via the native Serial and Batch Bundle engine.</p>
 </div>
 <div class="task-card">
-  <div class="task-header"><span class="task-id">STR-11</span><h4 style="margin:0;">Expiry Management</h4></div>
+  <div class="task-header"><span class="task-id">STR-11</span><h4 style="margin:0;">Expiry Management</h4> <span class="st-done">✅ Done</span></div>
   <div class="task-meta">Effort: Low · P3, post-go-live · 1 new Script Report</div>
-  <p>Add 30-day pre-expiry Notification Rule; build Expiring Batch Alert Report.</p>
+  <p>30-day pre-expiry Notification (Batch, Days Before) + a new Expiring Batch Alert Report, both tested live against a real and a synthetic near-expiry batch. Caught and fixed the same class of ordering bug as PMO's CHRO Dashboard — the Workspace shortcut linked to the Report before it existed; fixed by creating dependencies before the Workspace.</p>
 </div>
 </div>
 
