@@ -179,8 +179,8 @@
   <div class="slide-eyebrow">Feature Alignment</div>
   <h2>16 Features. Here's Where We Stand — Honestly.</h2>
   <div class="big-nums">
-    <div class="big-num c-green"><div class="n">1</div><div class="l">Progressed</div></div>
-    <div class="big-num c-grey"><div class="n">15</div><div class="l">Planned</div></div>
+    <div class="big-num c-green"><div class="n">3</div><div class="l">Progressed</div></div>
+    <div class="big-num c-grey"><div class="n">13</div><div class="l">Planned</div></div>
     <div class="big-num c-navy"><div class="n">16</div><div class="l">Total Purchase Features</div></div>
   </div>
   <div class="legend-row">
@@ -203,12 +203,12 @@
   <p class="lede">All 16 features from the dedicated Purchase &amp; Procurement PRD (cross-checked against the Excel sheet too), one box each. The first is the entry point everything downstream depends on.</p>
   <div class="task-grid">
     <div class="task-chip added"><span class="tid">PUR-01</span><span class="ttitle">Purchase Requisition</span><span class="tmark">✅</span></div>
-    <div class="task-chip pending"><span class="tid">PUR-02</span><span class="ttitle">Supplier / Vendor Management</span><span class="tmark">⏳</span></div>
-    <div class="task-chip pending"><span class="tid">PUR-03</span><span class="ttitle">Purchase Order Management</span><span class="tmark">⏳</span></div>
+    <div class="task-chip added"><span class="tid">PUR-02</span><span class="ttitle">Supplier / Vendor Management</span><span class="tmark">✅</span></div>
+    <div class="task-chip added"><span class="tid">PUR-03</span><span class="ttitle">Purchase Order Management</span><span class="tmark">✅</span></div>
     <div class="task-chip pending"><span class="tid">PUR-04</span><span class="ttitle">Goods Receipt (GRN)</span><span class="tmark">⏳</span></div>
     <div class="task-chip pending"><span class="tid">PUR-05</span><span class="ttitle">Invoice Matching (3-way)</span><span class="tmark">⏳</span></div>
     <div class="task-chip pending"><span class="tid">PUR-06</span><span class="ttitle">RFQ / Tendering</span><span class="tmark">⏳</span></div>
-    <div class="task-chip pending"><span class="tid">PUR-07</span><span class="ttitle">Approval Workflows</span><span class="tmark">⏳</span></div>
+    <div class="task-chip added"><span class="tid">PUR-07</span><span class="ttitle">Approval Workflows</span><span class="tmark">✅</span></div>
     <div class="task-chip pending"><span class="tid">PUR-08</span><span class="ttitle">Supplier Performance Mgmt</span><span class="tmark">⏳</span></div>
     <div class="task-chip pending"><span class="tid">PUR-09</span><span class="ttitle">Contract &amp; Rate Agreement Mgmt</span><span class="tmark">⏳</span></div>
     <div class="task-chip pending"><span class="tid">PUR-10</span><span class="ttitle">Advance Payments</span><span class="tmark">⏳</span></div>
@@ -252,21 +252,31 @@
 </section>
 
 <section class="slide"><span class="slide-idx">06 / 21</span>
-  <div class="sec-head"><span class="sec-num">PUR-02</span><h2 style="margin:0;">Supplier / Vendor Management</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="sec-head"><span class="sec-num">PUR-02</span><h2 style="margin:0;">Supplier / Vendor Management</h2><span class="status-pill progressed">🟢 Progressed</span></div>
   <div class="ask-line">A centralized supplier database — company details, GST/PAN, certifications, contracts, and complete performance history.</div>
-  <div class="pending-box" style="max-width:520px;"><div class="box-label">Pending</div><ul><li>Not started — native Supplier master already covers most of the PRD's capture list; needs confirming field-by-field before assuming anything is missing</li></ul></div>
-  <div><span class="task-tag">Feature Map: PUR-02 — Not Started</span></div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Product Categories, Certifications, and Service Areas — the 3 fields genuinely missing after checking the native Supplier master field-by-field against the PRD</li></ul></div>
+    <div class="pending-box"><div class="box-label">Confirmed Already Native</div><ul><li>Company Details, GST/PAN, Bank Details, Contact Persons, Payment Terms — all already there. Contracts deliberately got no new field — Blanket Order already links to Supplier, so a duplicate field would just go stale.</li></ul></div>
+  </div>
+  <div><span class="task-tag">Feature Map: PUR-02 — Progressed</span></div>
+  <div class="field-chips"><span class="field-chip">scale_purchase_product_categories</span><span class="field-chip">scale_purchase_certifications</span><span class="field-chip">scale_purchase_service_areas</span></div>
   <div class="prd-tag">Purchase &amp; Procurement Management Module PRD — §3 Vendor Management</div>
-  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Purchase Manager</div><div class="uc-flow">Opens a supplier's record and sees their full history — every order, every delivery, every complaint — in one place.</div></div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/supplier" target="_blank">See supplier records →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Purchase Manager</div><div class="uc-flow">Opens a supplier's record and sees their full history — every order, every delivery, every complaint — in one place.</div></div>
 </section>
 
 <section class="slide"><span class="slide-idx">07 / 21</span>
-  <div class="sec-head"><span class="sec-num">PUR-03</span><h2 style="margin:0;">Purchase Order Management</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="sec-head"><span class="sec-num">PUR-03</span><h2 style="margin:0;">Purchase Order Management</h2><span class="status-pill progressed">🟢 Progressed</span></div>
   <div class="ask-line">Digitize the entire PO lifecycle from approval to closure, with value-based approval and compliance to budgets and contracts.</div>
-  <div class="pending-box" style="max-width:520px;"><div class="box-label">Pending</div><ul><li>Not started — native PO lifecycle is close to complete already; needs the same value-based approval matrix pattern as PUR-01</li></ul></div>
-  <div><span class="task-tag">Feature Map: PUR-03 — Not Started</span></div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Added</div><ul><li>A value-based approval matrix (Purchase Manager → Finance → Management on Grand Total) — the one real gap after confirming everything else native</li><li>Tested live: low-value direct approval, high-value routed through Management, and a reject path — all correct</li></ul></div>
+    <div class="pending-box"><div class="box-label">Confirmed Already Native</div><ul><li>Creation from Material Request/RFQ/Blanket Order/manual entry, Item + Service POs, Blanket/Annual Rate Contracts, and PO Value/Delivery/Invoice/Payment Status tracking — all checked directly, no gaps</li></ul></div>
+  </div>
+  <div><span class="task-tag">Feature Map: PUR-03 — Progressed</span></div>
+  <div class="field-chips"><span class="field-chip">scale_purchase_po_approval_state</span></div>
   <div class="prd-tag">Purchase &amp; Procurement Management Module PRD — §4 Purchase Order Management</div>
-  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Purchase Manager</div><div class="uc-flow">Converts an approved requisition straight into a Purchase Order, routed for approval again only if the order value needs it.</div></div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/purchase-order" target="_blank">See purchase orders →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Purchase Manager</div><div class="uc-flow">Converts an approved requisition straight into a Purchase Order, routed for approval again only if the order value needs it.</div></div>
 </section>
 
 <section class="slide"><span class="slide-idx">08 / 21</span>
@@ -297,10 +307,10 @@
 </section>
 
 <section class="slide"><span class="slide-idx">11 / 21</span>
-  <div class="sec-head"><span class="sec-num">PUR-07</span><h2 style="margin:0;">Approval Workflows</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="sec-head"><span class="sec-num">PUR-07</span><h2 style="margin:0;">Approval Workflows</h2><span class="status-pill progressed">🟢 Pattern Proven</span></div>
   <div class="ask-line">One consistent, amount- and category-based approval pattern applied across Requisition, PO, and Invoice.</div>
-  <div class="added-box" style="max-width:640px;"><div class="box-label">Already Started</div><ul><li>PUR-01's value-based workflow is the reference pattern this feature reuses for PO (PUR-03) — not a separate mechanism to build from scratch</li></ul></div>
-  <div><span class="task-tag">Feature Map: PUR-07 — Pattern established via PUR-01</span></div>
+  <div class="added-box" style="max-width:640px;"><div class="box-label">Proven Twice</div><ul><li>PUR-01 (Requisition) and PUR-03 (Purchase Order) both now run the same value-based Workflow pattern — not a separate mechanism built twice, and not just a plan on paper anymore</li></ul></div>
+  <div><span class="task-tag">Feature Map: PUR-07 — Pattern established via PUR-01 + PUR-03</span></div>
   <div class="prd-tag">Purchase &amp; Procurement Management Module PRD — cross-cutting (§1, §4)</div>
   <div class="usecase future"><div class="uc-label">Use Case — Once Extended to PO</div><div class="uc-persona">👤 Purchase Manager</div><div class="uc-flow">Every approval — requisition, order, or invoice — follows the same predictable chain, fully audited.</div></div>
 </section>
