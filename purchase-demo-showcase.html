@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The AIWS Purchase Advantage | AIWS ERP</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.deck { scroll-snap-type: y proximity; }
+.slide {
+  min-height: calc(100vh - 64px);
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 50px 64px; scroll-snap-align: start; position: relative;
+  border-bottom: 1px solid var(--border);
+}
+.slide-idx { position: absolute; top: 24px; right: 28px; font-size: 11px; font-weight: 700; color: var(--text-4); letter-spacing: .4px; }
+.slide-eyebrow { font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--purple); margin-bottom: 10px; }
+.slide h1 { font-size: 42px; line-height: 1.15; margin: 0 0 16px; max-width: 820px; }
+.slide h2 { font-size: 32px; line-height: 1.2; margin: 0 0 14px; }
+.slide .lede { font-size: 17px; color: var(--text-2); max-width: 700px; line-height: 1.5; margin-bottom: 20px; }
+.slide .cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+
+.hero-slide {
+  background: linear-gradient(135deg, #7c2d12 0%, #c2410c 55%, #ea580c 100%);
+  color: #fff; border-radius: var(--r-lg); margin: 0 0 4px;
+}
+.hero-slide .slide-eyebrow { color: rgba(255,255,255,.75); }
+.hero-slide h1 { color: #fff; font-size: 48px; max-width: 780px; }
+.hero-slide .lede { color: #fff; opacity: .9; max-width: 640px; font-size: 18px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: 30px; font-size: 14px; font-weight: 700; text-decoration: none; transition: transform .15s; }
+.btn:hover { transform: translateY(-1px); }
+.btn-white { background: #fff; color: #c2410c; }
+.btn-ghost-dark { background: rgba(255,255,255,.14); color: #fff; border: 1px solid rgba(255,255,255,.4); }
+.btn-navy { background: var(--navy); color: #fff; }
+.btn-navy:hover { background: var(--navy-light); }
+
+.big-nums { display: flex; gap: 40px; flex-wrap: wrap; margin: 10px 0 24px; }
+.big-num .n { font-size: 64px; font-weight: 900; line-height: 1; }
+.big-num .l { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--text-3); margin-top: 6px; }
+.big-num.c-green .n { color: var(--green); }
+.big-num.c-amber .n { color: var(--amber); }
+.big-num.c-grey .n { color: #94a3b8; }
+.big-num.c-navy .n { color: var(--navy); }
+.legend-row { display: flex; gap: 22px; flex-wrap: wrap; font-size: 13.5px; margin-top: 4px; }
+.legend-row span { display: inline-flex; align-items: center; gap: 6px; }
+.dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+.dot-g { background: var(--green); } .dot-a { background: var(--amber); } .dot-p { background: #cbd5e1; }
+
+.task-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; margin-top: 10px; }
+.task-chip { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; box-shadow: var(--sh); }
+.task-chip .tid { font-size: 12px; font-weight: 800; color: var(--navy); background: var(--surface-2); border-radius: 5px; padding: 2px 7px; flex-shrink: 0; }
+.task-chip .ttitle { font-size: 12.5px; color: var(--text-2); line-height: 1.35; flex: 1; }
+.task-chip .tmark { font-size: 15px; flex-shrink: 0; }
+.task-chip.added { border-left: 3px solid var(--green); }
+.task-chip.pending { border-left: 3px solid #cbd5e1; opacity: .75; }
+
+.sec-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 6px; }
+.sec-num { font-size: 12px; font-weight: 800; color: var(--text-4); }
+.status-pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 13px; border-radius: 20px; font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .4px; }
+.status-pill.progressed { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-bdr); }
+.status-pill.initiated { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-bdr); }
+.status-pill.planned { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+.ask-line { font-size: 14.5px; color: var(--text-3); margin: 8px 0 18px; max-width: 700px; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; max-width: 900px; }
+.added-box, .pending-box { border-radius: 10px; padding: 16px 18px; }
+.added-box { background: var(--green-bg); border: 1px solid var(--green-bdr); }
+.pending-box { background: var(--surface-2); border: 1px solid var(--border); }
+.added-box .box-label, .pending-box .box-label { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+.added-box .box-label { color: var(--green); }
+.pending-box .box-label { color: var(--text-4); }
+.added-box ul, .pending-box ul { margin: 0; padding-left: 18px; }
+.added-box li, .pending-box li { font-size: 13.5px; line-height: 1.55; margin-bottom: 4px; }
+.added-box li { color: #065f46; }
+.pending-box li { color: var(--text-3); }
+.rule-box { background: var(--surface-2); border: 1px solid var(--border); border-left: 4px solid var(--navy); border-radius: 8px; padding: 12px 16px; margin: 12px 0; max-width: 780px; }
+.rule-box .box-label { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--navy); margin-bottom: 7px; }
+.rule-box ul { margin: 0; padding-left: 18px; }
+.rule-box li { font-size: 13px; line-height: 1.55; margin-bottom: 3px; color: var(--text-2); }
+.task-tag { display: inline-block; font-size: 11px; font-weight: 700; color: var(--navy); background: var(--surface-2); border: 1px solid var(--border); border-radius: 5px; padding: 3px 10px; margin-top: 16px; }
+.prd-tag { display: inline-block; font-size: 10.5px; font-weight: 600; background: #e0f2fe; color: #0369a1; border-radius: 4px; padding: 3px 10px; margin-top: 10px; }
+.slide-links { margin-top: 18px; }
+.field-chips { margin-top: 10px; }
+.field-chip { display: inline-block; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10.5px; background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; border-radius: 4px; padding: 2px 7px; margin: 2px 4px 2px 0; }
+.flow-path { margin-top: 12px; font-size: 12px; color: var(--text-3); display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.flow-path .fp-step { background: var(--surface-2); border: 1px solid var(--border); border-radius: 5px; padding: 3px 9px; font-weight: 600; color: var(--text-2); }
+.flow-path .fp-arrow { color: var(--text-4); }
+
+.usecase { margin-top: 24px; padding: 16px 22px; background: var(--surface-2); border: 1px dashed var(--border-md); border-radius: 10px; max-width: 780px; }
+.usecase .uc-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--text-4); margin-bottom: 7px; }
+.usecase .uc-persona { font-size: 13px; font-weight: 700; color: var(--text-1); margin-bottom: 5px; }
+.usecase .uc-flow { font-size: 13.5px; color: var(--text-2); line-height: 1.6; }
+.usecase.future { border-style: solid; border-color: var(--amber-bdr); background: var(--amber-bg); }
+.usecase.future .uc-label, .usecase.future .uc-persona { color: #92400e; }
+.usecase.future .uc-flow { color: #78350f; }
+
+.closing-slide { background: var(--navy-dark); color: #fff; border-radius: var(--r-lg); }
+.closing-slide h2 { color: #fff; }
+.closing-slide .lede { color: rgba(255,255,255,.65); }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="s-title">AIWS ERP</div>
+    <div class="s-sub">Implementation Master Plan</div>
+    <span class="s-tag">Claude / implementation</span>
+  </div>
+  <nav>
+    <div class="nav-group">📋 Daily Update</div>
+    <a class="nav-link" href="index.html">Development Dashboard 🔴</a>
+
+    <div class="nav-group">Start Here</div>
+    <a class="nav-link" href="program-overview.html">Program Overview</a>
+
+    <div class="nav-group">✨ Live Showcases</div>
+    <a class="nav-link showcase" href="sales-demo-showcase.html">Sales Showcase ✨</a>
+    <a class="nav-link showcase" href="pmo-demo-showcase.html">PMO Showcase ✨</a>
+    <a class="nav-link showcase" href="hr-demo-showcase.html">HR Showcase ✨</a>
+    <a class="nav-link showcase" href="stores-demo-showcase.html">Stock Showcase ✨</a>
+    <a class="nav-link showcase active" href="purchase-demo-showcase.html">Purchase Showcase 🆕✨</a>
+
+    <div class="nav-group">User Manual</div>
+    <a class="nav-link" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
+    <a class="nav-link" href="pmo-user-manual.html">PMO Working Manual ✨</a>
+
+    <div class="nav-group">Module Plans</div>
+    <a class="nav-link" href="sales-module.html">Sales Module Plan</a>
+    <a class="nav-link" href="hr-module.html">HR Module Plan</a>
+    <a class="nav-link" href="accounts-module.html">Accounts Module Plan</a>
+    <a class="nav-link" href="finance-module.html">Finance Module Plan</a>
+    <a class="nav-link" href="pmo-module.html">PMO Module Plan</a>
+    <a class="nav-link" href="scale-marketing-module.html">Scale Marketing Module Plan 🆕</a>
+    <a class="nav-link" href="stores-module.html">Stores Module Plan 🆕</a>
+    <a class="nav-link" href="purchase-module.html">Purchase &amp; Procurement Module Plan 🆕</a>
+    <a class="nav-link" href="manufacturing-module.html">Manufacturing Module Plan 🆕</a>
+
+    <div class="nav-group">Foundation</div>
+    <a class="nav-link" href="frappe-verdict.html">Frappe Capability</a>
+    <a class="nav-link" href="architecture.html">System Architecture</a>
+
+    <div class="nav-group">Development Framework</div>
+    <a class="nav-link" href="customization-guide.html">Customization Guide</a>
+    <a class="nav-link" href="developer-guide.html">Developer Workflow</a>
+
+    <div class="nav-group">Implementation</div>
+    <a class="nav-link" href="module-plan.html">All 13 Modules</a>
+    <a class="nav-link" href="sprint-plan.html">Parallel Sprint Plan</a>
+    <a class="nav-link" href="wave-1.html">Sales &amp; Marketing Detail</a>
+
+    <div class="nav-group">AI Strategy</div>
+    <a class="nav-link" href="ai-plan-strategy.html">AI Plan Strategy</a>
+
+    <div class="nav-group">Tracking</div>
+    <a class="nav-link" href="sales-tracker.html">Sales Tracker</a>
+  </nav>
+  <div class="sidebar-foot">
+    Pixaflip × SIL · AIWS ERP<br>
+    <a href="../../index.html">← AIWS Setup portal</a>
+  </div>
+</aside>
+
+<main style="padding:0;max-width:none;">
+<div class="deck">
+
+<!-- 01 — HERO -->
+<section class="slide hero-slide"><span class="slide-idx" style="color:rgba(255,255,255,.5);">01 / 21</span>
+  <div class="slide-eyebrow">Live Demo Deck</div>
+  <h1>The AIWS Purchase Advantage</h1>
+  <p class="lede">Procure-to-Pay, built directly against the client's own dedicated PRD (not just the Excel scope sheet). Built on <code>feature/supply-chain-apps</code>, not yet merged. Just started — one feature live, the rest of the chain next.</p>
+  <div class="cta-row">
+    <a class="btn btn-white" href="http://scale.localhost:8000/app/scale-purchase" target="_blank">▶ Open Live Scale Purchase</a>
+    <a class="btn btn-ghost-dark" href="#scorecard">See the Scorecard ↓</a>
+  </div>
+</section>
+
+<!-- 02 — SCORECARD -->
+<section class="slide" id="scorecard"><span class="slide-idx">02 / 21</span>
+  <div class="slide-eyebrow">Feature Alignment</div>
+  <h2>16 Features. Here's Where We Stand — Honestly.</h2>
+  <div class="big-nums">
+    <div class="big-num c-green"><div class="n">1</div><div class="l">Progressed</div></div>
+    <div class="big-num c-grey"><div class="n">15</div><div class="l">Planned</div></div>
+    <div class="big-num c-navy"><div class="n">16</div><div class="l">Total Purchase Features</div></div>
+  </div>
+  <div class="legend-row">
+    <span><span class="dot dot-g"></span> <b>Progressed</b> — built and tested</span>
+    <span><span class="dot dot-p"></span> <b>Planned</b> — not started yet</span>
+  </div>
+  <div class="rule-box" style="margin-top:22px;max-width:820px;">
+    <div class="box-label">How This Deck Was Built</div>
+    <ul>
+      <li>Every status here comes from actually running the feature on the live system — not from the original plan.</li>
+      <li>Full technical detail, feature-by-feature: <a href="purchase-module.html">purchase-module.html</a>.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 03 — TASK GRID -->
+<section class="slide"><span class="slide-idx">03 / 21</span>
+  <div class="slide-eyebrow">From The Feature Map</div>
+  <h2>The Chain Starts With Purchase Requisition</h2>
+  <p class="lede">All 16 features from the dedicated Purchase &amp; Procurement PRD (cross-checked against the Excel sheet too), one box each. The first is the entry point everything downstream depends on.</p>
+  <div class="task-grid">
+    <div class="task-chip added"><span class="tid">PUR-01</span><span class="ttitle">Purchase Requisition</span><span class="tmark">✅</span></div>
+    <div class="task-chip pending"><span class="tid">PUR-02</span><span class="ttitle">Supplier / Vendor Management</span><span class="tmark">⏳</span></div>
+    <div class="task-chip pending"><span class="tid">PUR-03</span><span class="ttitle">Purchase Order Management</span><span class="tmark">⏳</span></div>
+    <div class="task-chip pending"><span class="tid">PUR-04</span><span class="ttitle">Goods Receipt (GRN)</span><span class="tmark">⏳</span></div>
+    <div class="task-chip pending"><span class="tid">PUR-05</span><span class="ttitle">Invoice Matching (3-way)</span><span class="tmark">⏳</span></div>
+    <div class="task-chip pending"><span class="tid">PUR-06</span><span class="ttitle">RFQ / Tendering</span><span class="tmark">⏳</span></div>
+    <div class="task-chip pending"><span class="tid">PUR-07</span><span class="ttitle">Approval Workflows</span><span class="tmark">⏳</span></div>
+    <div class="task-chip pending"><span class="tid">PUR-08</span><span class="ttitle">Supplier Performance Mgmt</span><span class="tmark">⏳</span></div>
+    <div class="task-chip pending"><span class="tid">PUR-09</span><span class="ttitle">Contract &amp; Rate Agreement Mgmt</span><span class="tmark">⏳</span></div>
+    <div class="task-chip pending"><span class="tid">PUR-10</span><span class="ttitle">Advance Payments</span><span class="tmark">⏳</span></div>
+    <div class="task-chip pending"><span class="tid">PUR-11</span><span class="ttitle">Import Management</span><span class="tmark">⏳</span></div>
+    <div class="task-chip pending"><span class="tid">PUR-12</span><span class="ttitle">Purchase Budget Management</span><span class="tmark">⏳</span></div>
+    <div class="task-chip pending"><span class="tid">PUR-13</span><span class="ttitle">Inventory Procurement Planning</span><span class="tmark">⏳</span></div>
+    <div class="task-chip pending"><span class="tid">PUR-14</span><span class="ttitle">Vendor Portal</span><span class="tmark">⏳</span></div>
+    <div class="task-chip pending"><span class="tid">PUR-15</span><span class="ttitle">Procurement Analytics</span><span class="tmark">⏳</span></div>
+    <div class="task-chip pending"><span class="tid">PUR-16</span><span class="ttitle">AI Procurement Copilot</span><span class="tmark">⏳</span></div>
+  </div>
+</section>
+
+<!-- 04 — RIGOR FINDING -->
+<section class="slide" id="surprise"><span class="slide-idx">04 / 21</span>
+  <div class="slide-eyebrow">Worth Knowing Before The Walkthrough</div>
+  <h2>Two Real Problems Caught In The First Feature Alone</h2>
+  <div class="added-box" style="max-width:700px;">
+    <div class="box-label">Caught During Testing, Fixed Before Anyone Saw Them</div>
+    <ul>
+      <li><b>The approval chain silently failed to save at all</b> the first time — Frappe's workflow states and actions are themselves records in their own master lists, invisibly auto-created by the Desk UI; building the workflow through code directly skipped that step until it was traced down and fixed.</li>
+      <li><b>The duplicate-requisition warning could name the request itself</b> as a duplicate of itself. Fixed with an explicit self-exclusion check.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══ 16 FEATURE SLIDES — PUR-01 to PUR-16 ═══ -->
+
+<section class="slide"><span class="slide-idx">05 / 21</span>
+  <div class="sec-head"><span class="sec-num">PUR-01</span><h2 style="margin:0;">Purchase Requisition</h2><span class="status-pill progressed">🟢 Progressed</span></div>
+  <div class="ask-line">A structured way for any department to request materials, services, or assets — with approval, budget awareness, and procurement planning before a purchase ever starts.</div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Department, Priority, Budget Reference, Estimated Value, and Justification captured on every request</li><li>Full approval chain: Department Head → Purchase Manager → Finance → Management, routing to Management only above a value threshold — tested live on both the low-value and high-value paths, plus a reject path</li><li>Soft warnings for possible duplicate requests and missing budget records — informational, never blocking</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>The value threshold (currently a placeholder) needs a real number from the client</li><li>The 4 named reports (Pending Requisitions, Department-wise PR, Budget vs Requested, PR Ageing) aren't built yet</li></ul></div>
+  </div>
+  <div><span class="task-tag">Feature Map: PUR-01 — Progressed</span></div>
+  <div class="field-chips"><span class="field-chip">scale_purchase_department</span><span class="field-chip">scale_purchase_estimated_value</span><span class="field-chip">scale_purchase_approval_state</span></div>
+  <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale Purchase</span><span class="fp-arrow">→</span><span class="fp-step">Material Request</span></div>
+  <div class="prd-tag">Purchase &amp; Procurement Management Module PRD — §1 Purchase Requisition</div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/material-request" target="_blank">See requisitions in progress →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Department Requester</div><div class="uc-flow">Raises a requisition with a justification and estimated value → it moves itself through Department, Purchase, and Finance review → only routes to Management if the value is high enough to need it.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">06 / 21</span>
+  <div class="sec-head"><span class="sec-num">PUR-02</span><h2 style="margin:0;">Supplier / Vendor Management</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">A centralized supplier database — company details, GST/PAN, certifications, contracts, and complete performance history.</div>
+  <div class="pending-box" style="max-width:520px;"><div class="box-label">Pending</div><ul><li>Not started — native Supplier master already covers most of the PRD's capture list; needs confirming field-by-field before assuming anything is missing</li></ul></div>
+  <div><span class="task-tag">Feature Map: PUR-02 — Not Started</span></div>
+  <div class="prd-tag">Purchase &amp; Procurement Management Module PRD — §3 Vendor Management</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Purchase Manager</div><div class="uc-flow">Opens a supplier's record and sees their full history — every order, every delivery, every complaint — in one place.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">07 / 21</span>
+  <div class="sec-head"><span class="sec-num">PUR-03</span><h2 style="margin:0;">Purchase Order Management</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">Digitize the entire PO lifecycle from approval to closure, with value-based approval and compliance to budgets and contracts.</div>
+  <div class="pending-box" style="max-width:520px;"><div class="box-label">Pending</div><ul><li>Not started — native PO lifecycle is close to complete already; needs the same value-based approval matrix pattern as PUR-01</li></ul></div>
+  <div><span class="task-tag">Feature Map: PUR-03 — Not Started</span></div>
+  <div class="prd-tag">Purchase &amp; Procurement Management Module PRD — §4 Purchase Order Management</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Purchase Manager</div><div class="uc-flow">Converts an approved requisition straight into a Purchase Order, routed for approval again only if the order value needs it.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">08 / 21</span>
+  <div class="sec-head"><span class="sec-num">PUR-04</span><h2 style="margin:0;">Goods Receipt (GRN)</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">Accurate recording of received materials and services, validating quantity, quality, and PO compliance.</div>
+  <div class="pending-box" style="max-width:520px;"><div class="box-label">Pending</div><ul><li>Not started — depends on <a href="stores-module.html">Stores</a>' Warehouse configuration being confirmed first (the one hard cross-module dependency)</li></ul></div>
+  <div><span class="task-tag">Feature Map: PUR-04 — Not Started</span></div>
+  <div class="prd-tag">Purchase &amp; Procurement Management Module PRD — §5 Goods Receipt</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Stores Team</div><div class="uc-flow">Receives goods against a PO, records what was accepted vs. rejected, and the stock ledger updates instantly.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">09 / 21</span>
+  <div class="sec-head"><span class="sec-num">PUR-05</span><h2 style="margin:0;">Invoice Matching (3-way)</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">Purchase Invoice validated against order and receipt — quantity and rate deviations flagged before money moves.</div>
+  <div class="pending-box" style="max-width:520px;"><div class="box-label">Pending</div><ul><li>Not started — depends on PUR-03 and PUR-04 both existing first</li></ul></div>
+  <div><span class="task-tag">Feature Map: PUR-05 — Not Started</span></div>
+  <div class="prd-tag">Excel scope sheet — Invoice Matching</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Finance Team</div><div class="uc-flow">An invoice that doesn't match its PO or receipt gets flagged automatically — no manual cross-checking three documents by hand.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">10 / 21</span>
+  <div class="sec-head"><span class="sec-num">PUR-06</span><h2 style="margin:0;">RFQ / Tendering</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">Obtain competitive quotations from multiple suppliers with transparent, side-by-side comparison.</div>
+  <div class="pending-box" style="max-width:520px;"><div class="box-label">Pending</div><ul><li>Not started — native RFQ + portal quotation submission already exist; needs confirming the comparison view covers every PRD criterion (price, delivery, payment terms, warranty, quality rating)</li></ul></div>
+  <div><span class="task-tag">Feature Map: PUR-06 — Not Started</span></div>
+  <div class="prd-tag">Purchase &amp; Procurement Management Module PRD — §2 Request for Quotation</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Procurement Executive</div><div class="uc-flow">Sends one RFQ to multiple suppliers and sees their quotes compared side by side, instead of chasing emails.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">11 / 21</span>
+  <div class="sec-head"><span class="sec-num">PUR-07</span><h2 style="margin:0;">Approval Workflows</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">One consistent, amount- and category-based approval pattern applied across Requisition, PO, and Invoice.</div>
+  <div class="added-box" style="max-width:640px;"><div class="box-label">Already Started</div><ul><li>PUR-01's value-based workflow is the reference pattern this feature reuses for PO (PUR-03) — not a separate mechanism to build from scratch</li></ul></div>
+  <div><span class="task-tag">Feature Map: PUR-07 — Pattern established via PUR-01</span></div>
+  <div class="prd-tag">Purchase &amp; Procurement Management Module PRD — cross-cutting (§1, §4)</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Extended to PO</div><div class="uc-persona">👤 Purchase Manager</div><div class="uc-flow">Every approval — requisition, order, or invoice — follows the same predictable chain, fully audited.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">12 / 21</span>
+  <div class="sec-head"><span class="sec-num">PUR-08</span><h2 style="margin:0;">Supplier Performance Management</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">Continuously evaluate suppliers on quality, delivery, cost, responsiveness, and compliance.</div>
+  <div class="pending-box" style="max-width:520px;"><div class="box-label">Pending</div><ul><li>Not started — native Supplier Scorecard already exists; needs confirming its criteria set covers the PRD's full list</li></ul></div>
+  <div><span class="task-tag">Feature Map: PUR-08 — Not Started</span></div>
+  <div class="prd-tag">Purchase &amp; Procurement Management Module PRD — §6 Supplier Performance Management</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Purchase Manager</div><div class="uc-flow">A supplier's declining scorecard automatically blocks new RFQs and POs to them until reviewed.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">13 / 21</span>
+  <div class="sec-head"><span class="sec-num">PUR-09</span><h2 style="margin:0;">Contract &amp; Rate Agreement Management</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">Manage supplier contracts, annual rate agreements, renewal schedules, and compliance from a central repository.</div>
+  <div class="pending-box" style="max-width:520px;"><div class="box-label">Pending</div><ul><li>Not started — native Blanket Order already covers agreed quantity/rate/validity; SLA/penalty/renewal-alert fields need confirming</li></ul></div>
+  <div><span class="task-tag">Feature Map: PUR-09 — Not Started</span></div>
+  <div class="prd-tag">Purchase &amp; Procurement Management Module PRD — §7 Contract &amp; Rate Agreement Management</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Procurement Executive</div><div class="uc-flow">Gets an alert 30 days before a rate agreement expires — never caught renegotiating at the last minute.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">14 / 21</span>
+  <div class="sec-head"><span class="sec-num">PUR-10</span><h2 style="margin:0;">Advance Payments</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">Advances against POs, automatically adjusted in the final invoice, with exposure visible per supplier.</div>
+  <div class="pending-box" style="max-width:520px;"><div class="box-label">Pending</div><ul><li>Not started — native advance Payment Entry already handles this; mainly a confirm-and-coordinate task with Accounts</li></ul></div>
+  <div><span class="task-tag">Feature Map: PUR-10 — Not Started</span></div>
+  <div class="prd-tag">Excel scope sheet — Advance Payments</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Confirmed</div><div class="uc-persona">👤 Finance Team</div><div class="uc-flow">Pays a supplier advance against a PO, and it auto-nets off the final invoice — no manual adjustment.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">15 / 21</span>
+  <div class="sec-head"><span class="sec-num">PUR-11</span><h2 style="margin:0;">Import Management</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">Landed cost apportionment and import documentation for cross-border procurement.</div>
+  <div class="pending-box" style="max-width:600px;"><div class="box-label">Pending</div><ul><li>Not started — <b>open question first:</b> does the client actually import materials? The Landed Cost Voucher piece is native either way; the Bill of Entry / licence tracking piece is only worth building if imports are real for this client.</li></ul></div>
+  <div><span class="task-tag">Feature Map: PUR-11 — Blocked on a client question</span></div>
+  <div class="prd-tag">Excel scope sheet — Import Management</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Confirmed</div><div class="uc-persona">👤 Procurement Executive</div><div class="uc-flow">Freight, customs, and insurance automatically spread into landed item cost; import paperwork tracked alongside the PO.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">16 / 21</span>
+  <div class="sec-head"><span class="sec-num">PUR-12</span><h2 style="margin:0;">Purchase Budget Management</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">Control procurement spending through budget allocation, monitoring, and approval workflows.</div>
+  <div class="pending-box" style="max-width:600px;"><div class="box-label">Pending</div><ul><li>Not started — PUR-01 only checks whether a Budget record exists; this feature is where real budget-vs-committed-vs-actual tracking lives, deliberately not duplicated into PUR-01</li></ul></div>
+  <div><span class="task-tag">Feature Map: PUR-12 — Not Started</span></div>
+  <div class="prd-tag">Purchase &amp; Procurement Management Module PRD — §8 Purchase Budget Management</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 CFO</div><div class="uc-flow">Sees real-time budget vs. committed vs. actual spend per department, before overspend becomes a surprise at month-end.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">17 / 21</span>
+  <div class="sec-head"><span class="sec-num">PUR-13</span><h2 style="margin:0;">Inventory Procurement Planning</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">Maintain optimal inventory levels through intelligent procurement planning — the direct link into Manufacturing.</div>
+  <div class="pending-box" style="max-width:600px;"><div class="box-label">Pending</div><ul><li>Not started — builds on <a href="stores-module.html">Stores</a>' Reorder/Min-Max engine (already live), extended with Lead Time and EOQ, and wired to Manufacturing's MRP output once that module exists</li></ul></div>
+  <div><span class="task-tag">Feature Map: PUR-13 — Not Started</span></div>
+  <div class="prd-tag">Purchase &amp; Procurement Management Module PRD — §9 Inventory Procurement Planning</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Purchase Manager</div><div class="uc-flow">A material shortfall from Production Planning turns into a draft Material Request automatically — no manual watching of stock levels.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">18 / 21</span>
+  <div class="sec-head"><span class="sec-num">PUR-14</span><h2 style="margin:0;">Vendor Portal</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">Supplier self-service — quotation submission, PO acknowledgment, invoice submission.</div>
+  <div class="pending-box" style="max-width:520px;"><div class="box-label">Pending</div><ul><li>Not started — native portal quotation submission already works; PO acknowledgment and invoice submission are standard Frappe portal patterns to extend it with</li></ul></div>
+  <div><span class="task-tag">Feature Map: PUR-14 — Not Started</span></div>
+  <div class="prd-tag">Excel scope sheet — Vendor Portal</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Vendor</div><div class="uc-flow">Logs into a self-service portal to submit a quote, acknowledge a PO, and upload an invoice — no email back-and-forth.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">19 / 21</span>
+  <div class="sec-head"><span class="sec-num">PUR-15</span><h2 style="margin:0;">Procurement Analytics</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">Procurement intelligence through advanced dashboards and KPI tracking.</div>
+  <div class="pending-box" style="max-width:520px;"><div class="box-label">Pending</div><ul><li>Not started — will feed the shared Dashboards module (Wave 4), same pattern as every other module's analytics, not a Purchase-only dashboard</li></ul></div>
+  <div><span class="task-tag">Feature Map: PUR-15 — Not Started</span></div>
+  <div class="prd-tag">Purchase &amp; Procurement Management Module PRD — §10 Procurement Analytics</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 CFO</div><div class="uc-flow">Opens one dashboard and sees spend, savings, and vendor performance trends — no manual report-building.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">20 / 21</span>
+  <div class="sec-head"><span class="sec-num">PUR-16</span><h2 style="margin:0;">AI Procurement Copilot</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">An intelligent assistant recommending suppliers, predicting shortages, and flagging unusual purchasing behaviour — plus a real-time CXO Executive Dashboard.</div>
+  <div class="pending-box" style="max-width:640px;"><div class="box-label">Pending</div><ul><li>Not started — deliberately last, since it needs real transactional data (PR/PO/GRN/Invoice) to reason over first</li><li>Same shared AI architecture as Sales/PMO's Scale Intelligence layer, not a new one — owned by the AI track, not core Purchase dev</li></ul></div>
+  <div><span class="task-tag">Feature Map: PUR-16 — Not Started, AI track</span></div>
+  <div class="prd-tag">Purchase &amp; Procurement Management Module PRD — §11 AI Procurement Copilot + Executive Dashboard</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 CFO</div><div class="uc-flow">Gets a daily procurement health summary — savings opportunities, supplier risk, and duplicate-spend flags — without asking anyone to compile it.</div></div>
+</section>
+
+<!-- 21 — CLOSING -->
+<section class="slide closing-slide"><span class="slide-idx" style="color:rgba(255,255,255,.4);">21 / 21</span>
+  <div class="slide-eyebrow" style="color:#a5b4fc;">Go Deeper</div>
+  <h2>The Technical Detail</h2>
+  <p class="lede">Every feature card in the full plan carries the same verified status shown here — feature-by-feature, with exactly what was checked and how.</p>
+  <div class="cta-row">
+    <a class="btn btn-white" href="purchase-module.html">Full Feature-by-Feature Plan →</a>
+    <a class="btn btn-ghost-dark" href="http://scale.localhost:8000/app/scale-purchase" target="_blank">Open Live Scale Purchase →</a>
+  </div>
+</section>
+
+</div>
+</main>
+</body>
+</html>

@@ -53,6 +53,7 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
     <a class="nav-link showcase" href="pmo-demo-showcase.html">PMO Showcase ✨</a>
     <a class="nav-link showcase" href="hr-demo-showcase.html">HR Showcase ✨</a>
     <a class="nav-link showcase" href="stores-demo-showcase.html">Stock Showcase 🆕✨</a>
+    <a class="nav-link showcase" href="purchase-demo-showcase.html">Purchase Showcase 🆕✨</a>
 
     <div class="nav-group">User Manual</div>
     <a class="nav-link" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
@@ -314,9 +315,9 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
 
 <div class="no-print">
 <div class="task-card">
-  <div class="task-header"><span class="task-id">PUR-01</span><h4 style="margin:0;">Purchase Requisition + approval workflow</h4></div>
+  <div class="task-header"><span class="task-id">PUR-01</span><h4 style="margin:0;">Purchase Requisition + approval workflow</h4> <span class="st-done">✅ Done</span></div>
   <div class="task-meta">Effort: Medium · Depends on: Stores STR-01 (Item master)</div>
-  <p>Configure Material Request; build Employee→Dept Head→Purchase Manager→Finance→Management workflow; add budget/stock/pending-PO validation on submit.</p>
+  <p>Native Material Request + 5 new fields (Department, Priority, Budget Reference, Estimated Value, Justification) + a Frappe Workflow matching the PRD's exact chain: Employee → Department Head → Purchase Manager → Finance → Management (value-based, ₹1L placeholder threshold — confirm real number with client). Tested live: low-value path (skips Management), high-value path (routes through Management), and a reject path — all correct, including Approved actually submitting the document. Duplicate-requisition and budget-on-file soft warnings also tested live. <b>Real bug caught and fixed:</b> Workflow States/Actions are themselves Link fields to master doctypes that the Desk UI auto-creates invisibly — creating a Workflow via the API directly threw <code>LinkValidationError</code> until those masters were created explicitly first. A second bug (the current draft's own name appearing in its "possible duplicate" list) was also caught and fixed the same session.</p>
 </div>
 <div class="task-card">
   <div class="task-header"><span class="task-id">PUR-02</span><h4 style="margin:0;">Supplier master configuration</h4></div>
