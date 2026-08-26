@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manufacturing Module — Implementation Plan | AIWS ERP</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.pill-ootb    { background:#d1fae5; color:#065f46; }
+.pill-refine  { background:#dbeafe; color:#1e40af; }
+.pill-custom  { background:#fef3c7; color:#92400e; }
+.pill-ai      { background:#ede9fe; color:#5b21b6; }
+.pill-int     { background:#fce7f3; color:#9d174d; }
+
+.bp1 { background:#fee2e2; color:#991b1b; }
+.bp2 { background:#fef3c7; color:#78350f; }
+.bp3 { background:#f0f9ff; color:#075985; }
+
+details.feat { border:1px solid #e5e7eb; border-radius:8px; margin-bottom:8px; }
+details.feat summary { cursor:pointer; padding:12px 16px; font-weight:600; font-size:.93rem; list-style:none; display:flex; align-items:center; gap:8px; }
+details.feat summary::-webkit-details-marker { display:none; }
+details.feat summary .feat-arrow { margin-left:auto; font-size:.8rem; color:#6b7280; transition:transform .2s; }
+details.feat[open] summary .feat-arrow { transform:rotate(90deg); }
+details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
+
+.task-card { border:1px solid #e5e7eb; border-radius:10px; padding:16px 20px; margin-bottom:14px; page-break-inside:avoid; }
+.task-card h4 { margin:0 0 6px; font-size:.97rem; }
+.task-card .task-meta { font-size:.8rem; color:#6b7280; margin-bottom:10px; }
+.task-header { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.task-id { font-weight:700; font-size:.8rem; background:#1e3a5f; color:#fff; padding:2px 8px; border-radius:4px; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="s-title">AIWS ERP</div>
+    <div class="s-sub">Implementation Master Plan</div>
+    <span class="s-tag">Claude / implementation</span>
+  </div>
+  <nav>
+    <div class="nav-group">📋 Daily Update</div>
+    <a class="nav-link" href="index.html">Development Dashboard 🔴</a>
+
+    <div class="nav-group">Start Here</div>
+    <a class="nav-link" href="program-overview.html">Program Overview</a>
+
+    <div class="nav-group">✨ Live Showcases</div>
+    <a class="nav-link showcase" href="sales-demo-showcase.html">Sales Showcase ✨</a>
+    <a class="nav-link showcase" href="pmo-demo-showcase.html">PMO Showcase ✨</a>
+    <a class="nav-link showcase" href="hr-demo-showcase.html">HR Showcase ✨</a>
+
+    <div class="nav-group">User Manual</div>
+    <a class="nav-link" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
+    <a class="nav-link" href="pmo-user-manual.html">PMO Working Manual ✨</a>
+
+    <div class="nav-group">Module Plans</div>
+    <a class="nav-link" href="sales-module.html">Sales Module Plan</a>
+    <a class="nav-link" href="hr-module.html">HR Module Plan</a>
+    <a class="nav-link" href="accounts-module.html">Accounts Module Plan</a>
+    <a class="nav-link" href="finance-module.html">Finance Module Plan</a>
+    <a class="nav-link" href="pmo-module.html">PMO Module Plan</a>
+    <a class="nav-link" href="scale-marketing-module.html">Scale Marketing Module Plan 🆕</a>
+    <a class="nav-link" href="stores-module.html">Stores Module Plan 🆕</a>
+    <a class="nav-link" href="purchase-module.html">Purchase &amp; Procurement Module Plan 🆕</a>
+    <a class="nav-link active" href="manufacturing-module.html">Manufacturing Module Plan 🆕</a>
+
+    <div class="nav-group">Foundation</div>
+    <a class="nav-link" href="frappe-verdict.html">Frappe Capability</a>
+    <a class="nav-link" href="architecture.html">System Architecture</a>
+
+    <div class="nav-group">Development Framework</div>
+    <a class="nav-link" href="customization-guide.html">Customization Guide</a>
+    <a class="nav-link" href="developer-guide.html">Developer Workflow</a>
+
+    <div class="nav-group">Implementation</div>
+    <a class="nav-link" href="module-plan.html">All 13 Modules</a>
+    <a class="nav-link" href="sprint-plan.html">Parallel Sprint Plan</a>
+    <a class="nav-link" href="wave-1.html">Sales &amp; Marketing Detail</a>
+
+    <div class="nav-group">AI Strategy</div>
+    <a class="nav-link" href="ai-plan-strategy.html">AI Plan Strategy</a>
+
+    <div class="nav-group">Tracking</div>
+    <a class="nav-link" href="sales-tracker.html">Sales Tracker</a>
+  </nav>
+  <div class="sidebar-foot">Pixaflip × SIL · AIWS ERP<br><a href="../../index.html">← AIWS Setup portal</a></div>
+</aside>
+
+<main>
+<div class="breadcrumb">AIWS ERP <span>›</span> Module Plans <span>›</span> Manufacturing Module Plan</div>
+
+<div class="page-header">
+  <h1>Manufacturing Module — Implementation Plan</h1>
+  <p class="subtitle">Production for <code>scale_manufacturing</code> (client scope tab name: "Production"). Not started — pre-build plan. Recommended as the <strong>third</strong> of the three new Supply Chain modules — it depends on both <a href="stores-module.html">Stores</a> and <a href="purchase-module.html">Purchase &amp; Procurement</a>, and its spec is the least mature of the three.</p>
+</div>
+
+<div class="callout cw">
+  <p><strong>Open gap, flagged before any build starts:</strong> Unlike Purchase, there is <strong>no dedicated client PRD for Manufacturing</strong> in <code>Claude/reference_from_team/</code> — only the one-line-per-feature "Production" tab in the Excel scope sheet (15 features, description + AI-enablement flag, no functional-requirements depth, no field lists, no report names). Per this project's own working rule ("verify against source PDFs/Excel — never build from a thin description if a real PRD should exist"), <strong>request a proper Manufacturing/Production PRD from the client or SIL team before Phase 2's custom pieces are built</strong> — Phase 1 (native BOM/Work Order/Job Card configuration) can safely start from the Excel description alone since it's ERPNext's best-covered native module (83% OOTB per <a href="module-plan.html">module-plan.html</a>'s own estimate).</p>
+</div>
+
+<div class="callout cg">
+  <p><strong>App:</strong> <code>scale_manufacturing</code>, own app, <code>required_apps = [..., "scale_stock", "scale_purchase"]</code> — needs both (BOM needs Items from Stores; MRP shortfalls raise Purchase Requests).</p>
+  <p><strong>Why Manufacturing goes third:</strong> Its own scope sheet says so directly — Work Orders need Items (Stores) and Production Planning's MRP raises material shortfalls as Purchase Requests (Purchase). Building it last also buys time to get the missing PRD, so the custom pieces (Phase 2/3 below) are specified properly instead of guessed from one-line descriptions.</p>
+</div>
+
+<h2 class="no-print">Module Objective</h2>
+<p class="no-print">Turn a Bill of Materials and a sales/forecast demand signal into finished goods on the shelf — with raw-material consumption, machine/labour time, and scrap all costed accurately, and no work order started without knowing whether material and capacity actually exist.</p>
+
+<div class="summary-strip">
+  <div class="s-stat"><div class="sv">15</div><div class="sl">Features</div></div>
+  <div class="s-stat"><div class="sv">~83%</div><div class="sl">OOTB (per master plan estimate)</div></div>
+  <div class="s-stat"><div class="sv">1</div><div class="sl">New Custom DocType (confirmed)</div></div>
+  <div class="s-stat"><div class="sv">⚠ No PRD</div><div class="sl">Excel one-liners only</div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     FEATURE MAP
+═══════════════════════════════════════════ -->
+<h2 class="no-print">Feature Map — All 15 Production Features</h2>
+<div class="callout ci no-print">
+  <p><strong>Source:</strong> Scope &amp; Capability Excel, "Production" tab only — one-line Feature + Description + AI-Enablement flag per row, no Frappe-support fit/gap column (unlike Stores) and no dedicated PRD (unlike Purchase). Only the first 3 rows carry an explicit Excel priority tag (P1/P2/P3); the rest is our own sequencing recommendation based on the make-to-stock flow itself: a BOM has to exist before a Work Order can be raised, raw material has to be consumed before finished goods can be output.</p>
+</div>
+
+<div class="tbl-wrap no-print">
+  <table>
+    <tr><th>#</th><th>Feature</th><th>Priority</th><th>Classification</th></tr>
+    <tr><td>01</td><td><strong>Bill of Materials (BOM)</strong></td><td><span class="pill bp1">P1</span></td><td><span class="pill pill-ootb">Native, multi-level + v16 Phantom BOM</span></td></tr>
+    <tr><td>02</td><td><strong>Process Routing</strong></td><td><span class="pill bp1">P1</span></td><td><span class="pill pill-ootb">Native Routing/Operation</span></td></tr>
+    <tr><td>03</td><td><strong>Work Orders</strong></td><td><span class="pill bp2">P2</span></td><td><span class="pill pill-ootb">Native, full lifecycle + Job Cards</span></td></tr>
+    <tr><td>04</td><td><strong>Raw Material Consumption</strong></td><td><span class="pill bp1">P1</span></td><td><span class="pill pill-ootb">Native transfer + consumption</span></td></tr>
+    <tr><td>05</td><td><strong>Finished Goods Output</strong></td><td><span class="pill bp1">P1</span></td><td><span class="pill pill-ootb">Native Manufacture Receipt</span></td></tr>
+    <tr><td>06</td><td>Production Planning (MRP)</td><td><span class="pill bp3">P3</span></td><td><span class="pill pill-ootb">Native Production Plan</span></td></tr>
+    <tr><td>07</td><td>Quality Control</td><td><span class="pill bp2">P2</span></td><td><span class="pill pill-ootb">Native Quality Inspection</span></td></tr>
+    <tr><td>08</td><td>Batch / Job Costing</td><td><span class="pill bp2">P2</span></td><td><span class="pill pill-ootb">Native Work Order costing</span></td></tr>
+    <tr><td>09</td><td>Capacity Planning</td><td><span class="pill bp2">P2</span></td><td><span class="pill pill-refine">Native + load-vs-capacity view</span></td></tr>
+    <tr><td>10</td><td>Sub-contracting</td><td><span class="pill bp2">P2</span></td><td><span class="pill pill-ootb">Native subcontracting flow</span></td></tr>
+    <tr><td>11</td><td>Machine Scheduling</td><td><span class="pill bp3">P3</span></td><td><span class="pill pill-refine">Native Workstation + custom board</span></td></tr>
+    <tr><td>12</td><td>Downtime Tracking</td><td><span class="pill bp3">P3</span></td><td><span class="pill pill-ootb">Native Downtime Entry</span></td></tr>
+    <tr><td>13</td><td>Scrap &amp; Waste Management</td><td><span class="pill bp3">P3</span></td><td><span class="pill pill-ootb">Native BOM scrap items</span></td></tr>
+    <tr><td>14</td><td>Shift Management</td><td><span class="pill bp3">P3</span></td><td><span class="pill pill-refine">Native HR shift + reporting</span></td></tr>
+    <tr><td>15</td><td>Production Reports</td><td><span class="pill bp3">P3</span></td><td><span class="pill pill-refine">Native + Dashboards assembly</span></td></tr>
+  </table>
+</div>
+
+<hr class="section no-print">
+
+<!-- ═══════════════════════════════════════════
+     PHASE PLAN
+═══════════════════════════════════════════ -->
+<h2 class="no-print">Phase-by-Phase Implementation</h2>
+<div class="callout cg no-print">
+  <p><strong>Three phases following the make-to-stock flow.</strong> Phase 1 is the BOM→Work Order→consumption→output backbone. Phase 2 is quality/costing/capacity governance. Phase 3 is scheduling/reporting polish. <strong>Do not start Phase 2's custom pieces until the missing PRD (see banner above) is obtained</strong> — Phase 1 is safe to start on the Excel description alone since it's near-100% native configuration.</p>
+</div>
+
+<div class="no-print">
+
+<h3>Phase 1 — Make-to-Stock Backbone</h3>
+
+<details class="feat" open>
+  <summary><span class="pill pill-ootb">OOTB</span> MFG-01 · Bill of Materials <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Multi-level, costed BOMs; ERPNext v16 Phantom BOMs for pass-through sub-assemblies that shouldn't be stocked as an intermediate item.</p>
+    <p><strong>What to add:</strong> Nothing structural — this is pure master-data setup once Item master (Stores STR-01) exists. Confirm with the client whether Phantom BOM applies to any of their sub-assemblies before building the BOM tree.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> MFG-02 · Process Routing <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Native Routing defines the operation sequence, workstations, and standard times — reused across products via BOM linkage.</p>
+    <p><strong>What to add:</strong> Configuration only — build the actual routing templates from the client's real process once obtained (this is part of the missing-PRD gap: routing detail needs the client's actual operation sequence, not assumptions).</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> MFG-03 · Work Orders <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Full lifecycle with material binding and per-operation Job Cards at workstations.</p>
+    <p><strong>Depends on:</strong> BOM (MFG-01) and Item/Warehouse (Stores STR-01/02) must exist first.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> MFG-04 · Raw Material Consumption <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Transfer-for-manufacture and consumption entries against the Work Order, recorded at the moment they happen — same Stock Entry mechanism Stores already configures (STR-04).</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> MFG-05 · Finished Goods Output <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Manufacture Receipt brings FG into stock with batch/serial and true cost in one motion, closing the loop back into the same Stock Ledger Stores owns.</p>
+  </div>
+</details>
+
+<h3>Phase 2 — Quality, Costing &amp; Capacity Governance</h3>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> MFG-06 · Quality Control <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Quality Inspection with templates for incoming (feeds Purchase's GRN), in-process (via Job Card), and outgoing inspection.</p>
+    <p><strong>Needs from client (missing PRD gap):</strong> actual inspection parameters/templates per product line — not specified in the Excel one-liner.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> MFG-07 · Batch / Job Costing <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Work Order costing — actual materials + operation time at workstation rates, with variance vs. standard cost visible natively.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-refine">Refine</span> MFG-08 · Capacity Planning <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Workstation capacity is native.</p>
+    <p><strong>What to add:</strong> A load-vs-capacity view and a pre-commitment "do we actually have the hours?" check before a Work Order is released — likely a Script Report over native Workstation/Job Card data, not a new DocType.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> MFG-09 · Sub-contracting <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> ERPNext's revamped subcontracting flow — material sent to vendor, finished parts received back, costs reconciled. Ties directly into <a href="purchase-module.html">Purchase</a>'s Supplier/PO flow for the vendor side.</p>
+  </div>
+</details>
+
+<h3>Phase 3 — Scheduling &amp; Reporting Polish</h3>
+
+<details class="feat">
+  <summary><span class="pill pill-refine">Refine</span> MFG-10 · Machine Scheduling <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Workstations + Job Card scheduling are native.</p>
+    <p><strong>What to add:</strong> A visual scheduling board with finite capacity — the one genuinely new UI piece in this module (comparable in shape to PMO's Gantt work). Scope depth depends on the missing PRD.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> MFG-11 · Downtime Tracking <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Downtime Entry linked to workstation/Job Card with reason codes, feeding availability &amp; OEE analysis natively.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> MFG-12 · Scrap &amp; Waste Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Scrap items in BOM plus process-loss accounting — waste is costed automatically, not a manual write-off.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-refine">Refine</span> MFG-13 · Shift Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Shift types are native, shared with <a href="hr-module.html">HR</a>.</p>
+    <p><strong>What to add:</strong> Shift-wise output/OEE reporting and handover notes — the Production-specific extension on top of HR's native shift master.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-refine">Refine</span> MFG-14 · Production Reports <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Native operational reports.</p>
+    <p><strong>What to add:</strong> Plan-vs-actual, OEE trends, and exception views — assembled in the shared Dashboards module (Wave 4), same pattern as every other module's analytics.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> MFG-15 · Production Planning (MRP) <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Production Plan built from Sales Orders or forecast, with MRP — material shortfalls become Purchase Requests automatically. This is the direct integration point into <a href="purchase-module.html">Purchase's Inventory Procurement Planning (PUR-13)</a>.</p>
+    <p style="font-size:13px;color:#666;">Sequenced last in Phase 1's logical flow (numbered 15, not 6, in the build list) because it's the one feature that needs BOM, Work Order, <em>and</em> a working Purchase Requisition flow (PUR-01) all in place before it can be tested end-to-end — it's the integration proof point across all three new modules, not a standalone config task.</p>
+  </div>
+</details>
+
+</div>
+
+<hr class="section no-print">
+
+<!-- ═══════════════════════════════════════════
+     TASK LIST
+═══════════════════════════════════════════ -->
+<h2 class="no-print">Task List</h2>
+<p class="no-print">One task per feature, in build order. No dates assigned yet (see Open Decisions) — and several tasks below are explicitly blocked on the missing PRD, not just on lead assignment.</p>
+
+<div class="no-print">
+<div class="task-card">
+  <div class="task-header"><span class="task-id">MFG-01</span><h4 style="margin:0;">BOM setup</h4></div>
+  <div class="task-meta">Effort: Medium · Depends on: Stores STR-01 (Item master)</div>
+  <p>Build multi-level BOM tree from client's actual product structure; confirm Phantom BOM usage.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">MFG-02</span><h4 style="margin:0;">Process Routing setup</h4></div>
+  <div class="task-meta">Effort: Medium · <strong>Blocked on PRD</strong> — needs client's real operation sequence</div>
+  <p>Configure Routing/Operation templates once the client's actual process flow is documented.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">MFG-03</span><h4 style="margin:0;">Work Order configuration</h4></div>
+  <div class="task-meta">Effort: Low · Depends on: MFG-01, MFG-02</div>
+  <p>Configure Work Order + Job Card at workstation level.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">MFG-04</span><h4 style="margin:0;">Raw material consumption flow</h4></div>
+  <div class="task-meta">Effort: Low · Depends on: Stores STR-04</div>
+  <p>Confirm transfer-for-manufacture and consumption entries post correctly against Work Order.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">MFG-05</span><h4 style="margin:0;">Finished Goods receipt flow</h4></div>
+  <div class="task-meta">Effort: Low</div>
+  <p>Confirm Manufacture Receipt posts batch/serial + true cost correctly to Stores' ledger.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">MFG-06</span><h4 style="margin:0;">Quality Inspection templates</h4></div>
+  <div class="task-meta">Effort: Medium · <strong>Blocked on PRD</strong> — needs client's actual QC parameters</div>
+  <p>Build incoming/in-process/outgoing inspection templates once inspection criteria are confirmed.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">MFG-07</span><h4 style="margin:0;">Work Order costing verification</h4></div>
+  <div class="task-meta">Effort: Low</div>
+  <p>Confirm actual-vs-standard cost variance reporting on Work Order.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">MFG-08</span><h4 style="margin:0;">Capacity load-vs-capacity report</h4></div>
+  <div class="task-meta">Effort: Medium · New Script Report</div>
+  <p>Build the pre-commitment capacity check before Work Order release.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">MFG-09</span><h4 style="margin:0;">Sub-contracting configuration</h4></div>
+  <div class="task-meta">Effort: Low · Depends on: Purchase PUR-02/03</div>
+  <p>Configure subcontracting flow with vendor material issue/receipt and cost reconciliation.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">MFG-10</span><h4 style="margin:0;">Machine Scheduling board</h4></div>
+  <div class="task-meta">Effort: Medium-High · <strong>Scope depends on PRD</strong> · New UI</div>
+  <p>Build a visual finite-capacity scheduling board over native Workstation/Job Card data.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">MFG-11</span><h4 style="margin:0;">Downtime Entry + OEE feed</h4></div>
+  <div class="task-meta">Effort: Low</div>
+  <p>Configure Downtime Entry reason codes; confirm OEE analysis pulls correctly.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">MFG-12</span><h4 style="margin:0;">Scrap/waste configuration</h4></div>
+  <div class="task-meta">Effort: Low</div>
+  <p>Configure scrap items in BOM; confirm process-loss GL accounting.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">MFG-13</span><h4 style="margin:0;">Shift-wise OEE reporting</h4></div>
+  <div class="task-meta">Effort: Medium · Depends on: HR shift types</div>
+  <p>Build shift-wise output/OEE report + handover notes on top of HR's native shift master.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">MFG-14</span><h4 style="margin:0;">Production reports assembly</h4></div>
+  <div class="task-meta">Effort: Medium · Feeds Wave 4 Dashboards</div>
+  <p>Plan-vs-actual, OEE trend, and exception views.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">MFG-15</span><h4 style="margin:0;">Production Planning / MRP integration test</h4></div>
+  <div class="task-meta">Effort: Medium-High · Depends on: MFG-01–05, Purchase PUR-01, Stores STR-01/09/13</div>
+  <p>End-to-end proof: Sales Order/forecast → Production Plan → MRP shortfall → auto Material Request in Purchase. This is the integration checkpoint for all three new modules.</p>
+</div>
+</div>
+
+<hr class="section no-print">
+
+<h2 class="no-print">Open Decisions</h2>
+<div class="grid g2 no-print">
+  <div class="card">
+    <h4>Request a Manufacturing/Production PRD</h4>
+    <p style="font-size:13.5px;">The single biggest open item for this module. Purchase &amp; Procurement had a 15-page PRD; Stores had a fully fit-gap-annotated Excel tab; Production has neither. Routing (MFG-02), Quality Inspection templates (MFG-06), and the Machine Scheduling board's real scope (MFG-10) all need it before Phase 2 custom work should start.</p>
+  </div>
+  <div class="card">
+    <h4>Lead &amp; start date not yet assigned</h4>
+    <p style="font-size:13.5px;">Same as Stores/Purchase — Wave 2, Lead: TBD in <a href="module-plan.html">module-plan.html</a>. Given the dependency chain, Manufacturing's real start date should trail Stores/Purchase's, not run in strict parallel with them.</p>
+  </div>
+</div>
+
+<div class="page-nav">
+  <a class="prev" href="purchase-module.html">← Purchase &amp; Procurement Module Plan</a>
+  <a class="next" href="module-plan.html">All 13 Modules →</a>
+</div>
+
+</main>
+</body>
+</html>

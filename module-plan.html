@@ -36,6 +36,9 @@
     <a class="nav-link" href="finance-module.html">Finance Module Plan</a>
     <a class="nav-link" href="pmo-module.html">PMO Module Plan</a>
     <a class="nav-link" href="scale-marketing-module.html">Scale Marketing Module Plan 🆕</a>
+    <a class="nav-link" href="stores-module.html">Stores Module Plan 🆕</a>
+    <a class="nav-link" href="purchase-module.html">Purchase &amp; Procurement Module Plan 🆕</a>
+    <a class="nav-link" href="manufacturing-module.html">Manufacturing Module Plan 🆕</a>
 
     <div class="nav-group">Foundation</div>
     <a class="nav-link" href="frappe-verdict.html">Frappe Capability</a>
@@ -106,6 +109,9 @@
   </div>
 
   <h2>Module master plan</h2>
+  <div class="callout cg">
+    <p><strong>Wave 2 internal sequencing decided (26 Aug 2026):</strong> Stores, Purchase &amp; Procurement, and Manufacturing are each their <strong>own app</strong> — <code>scale_stock</code>, <code>scale_purchase</code>, <code>scale_manufacturing</code> — not one shared app. Reason: the client's own scope sheet tags features by business type (Trading, Manufacturing, Metrics, Project), meaning different clients need different subsets — a trading/distribution client installs <code>scale_stock</code> + <code>scale_purchase</code> and skips Manufacturing entirely, same separable-by-PRD logic already used for <code>scale_accounts</code>/<code>scale_finance</code>. <code>scale_purchase</code> declares <code>required_apps = [..., "scale_stock"]</code>; <code>scale_manufacturing</code> declares both. All three still sit in Wave 2 and are not built in parallel — real data dependencies (Item/Warehouse master → procure-to-pay → make-to-stock) plus source-material readiness (Stores has a fully fit-gap-annotated Excel tab; Purchase has a dedicated 15-page client PRD; Manufacturing has neither) set the order: <strong>Stores → Purchase &amp; Procurement → Manufacturing.</strong> Full feature maps and task lists for all three: <a href="stores-module.html">Stores</a> · <a href="purchase-module.html">Purchase &amp; Procurement</a> · <a href="manufacturing-module.html">Manufacturing</a>.</p>
+  </div>
   <div class="tbl-wrap">
     <table>
       <tr>
@@ -188,56 +194,57 @@
           Scripts: SLA breach alert, AMC renewal reminder scheduler<br>
           Reports: Technician utilisation, AMC renewal pipeline, Service Revenue
         </td>
-        <td>scale_sales (service for customers); scale_supply PMO items</td>
+        <td>scale_sales (service for customers); scale_stock (spare parts)</td>
         <td>Ticket raised → SLA timer running → technician dispatched → field job closed → AMC renewal tracked.</td>
       </tr>
       <tr class="row-p2">
         <td>5</td>
-        <td><strong>Production</strong></td>
+        <td><strong><a href="stores-module.html">Stores</a></strong> <span class="badge b-w1" style="font-size:9px;">Build 1st</span></td>
         <td><span class="badge b-w2">Wave 2</span></td>
         <td>TBD</td>
-        <td><code>scale_supply</code></td>
-        <td>ERPNext Manufacturing</td>
-        <td class="td-center">83%</td>
+        <td><code>scale_stock</code></td>
+        <td>ERPNext Stock</td>
+        <td class="td-center">~95%</td>
         <td>
-          Custom DocType: Downtime Log (machine, cause, duration, shift)<br>
-          Custom fields on Work Order: OEE calculation fields<br>
-          Reports: Shift-wise OEE, Downtime Analysis, Batch Job Costing
+          Custom DocType: Cycle Count Sheet (blind counting)<br>
+          Custom DocType + Workflow: Stock Disposition Request (slow/non-moving)<br>
+          Scripts: driver/vehicle capture on transfer, mobile barcode scan
         </td>
-        <td>scale_supply stores (BOM needs Items); scale_accounts (job costing)</td>
-        <td>BOM created → Work Order raised → production tracked → finished goods stocked → batch cost computed.</td>
+        <td>F0 only — this is the foundation app</td>
+        <td>Item/Warehouse configured → stock receipt → valuation correct → transfers working → cycle count done → slow-moving alerts triggered.</td>
       </tr>
       <tr class="row-p2">
         <td>6</td>
-        <td><strong>Purchase</strong></td>
+        <td><strong><a href="purchase-module.html">Purchase &amp; Procurement</a></strong> <span class="badge b-w1" style="font-size:9px;">Build 2nd</span></td>
         <td><span class="badge b-w2">Wave 2</span></td>
         <td>TBD</td>
-        <td><code>scale_supply</code></td>
+        <td><code>scale_purchase</code></td>
         <td>ERPNext Buying</td>
         <td class="td-center">88%</td>
         <td>
           Vendor Portal: Frappe UI pages for supplier self-service (PO view, invoice upload)<br>
-          RFQ Comparison matrix: Script Report comparing quotes across suppliers<br>
-          Fixtures: Approval workflow (PR → PO), Vendor evaluation scorecard fields
+          Custom: Purchase Budget commitment layer, 3-way invoice match validation<br>
+          AI Procurement Copilot + CXO Executive Dashboard (per dedicated client PRD)
         </td>
-        <td>scale (vendor portal auth)</td>
+        <td><code>scale_stock</code> (Item/Warehouse for GRN) — <code>required_apps</code></td>
         <td>Purchase Request raised → approved → RFQ sent → quotes compared → PO created → GRN done → invoice matched.</td>
       </tr>
       <tr class="row-p2">
         <td>7</td>
-        <td><strong>Stores</strong></td>
+        <td><strong><a href="manufacturing-module.html">Manufacturing</a></strong> <span class="badge b-w1" style="font-size:9px;">Build 3rd</span></td>
         <td><span class="badge b-w2">Wave 2</span></td>
         <td>TBD</td>
-        <td><code>scale_supply</code></td>
-        <td>ERPNext Stock</td>
-        <td class="td-center">85%</td>
+        <td><code>scale_manufacturing</code></td>
+        <td>ERPNext Manufacturing</td>
+        <td class="td-center">83%</td>
         <td>
-          Scheduled job: slow-moving &amp; non-moving stock alert (configurable threshold)<br>
-          Fixtures: reorder alert rules, batch/serial tracking config, multi-warehouse setup<br>
-          Custom fields: expiry management extension on Batch DocType
+          Custom DocType: Downtime Log (machine, cause, duration, shift)<br>
+          Custom: capacity load-vs-capacity view, visual machine scheduling board<br>
+          Reports: Shift-wise OEE, Downtime Analysis, Batch Job Costing<br>
+          <span style="color:#b45309;">⚠ No dedicated client PRD yet — Excel one-liners only</span>
         </td>
-        <td>scale_supply purchase (GRN), scale_supply production (consumption)</td>
-        <td>Stock receipt → valuation correct → transfers working → cycle count done → slow-moving alerts triggered.</td>
+        <td><code>scale_stock</code> (Item for BOM) + <code>scale_purchase</code> (MRP → Material Request) — <code>required_apps</code></td>
+        <td>BOM created → Work Order raised → production tracked → finished goods stocked → batch cost computed.</td>
       </tr>
 
       <!-- Wave 1 — Uday track (Finance, Accounts) -->
@@ -254,7 +261,7 @@
           Custom fields: Cost Centre allocation rules, petty cash tracking extension<br>
           Fixtures: Chart of Accounts template, TDS/TCS rate masters, GST tax templates
         </td>
-        <td>scale_supply (sales invoices, purchase invoices feed accounts)</td>
+        <td>scale_sales (sales invoices) + scale_purchase (purchase invoices) feed accounts</td>
         <td>Sales Invoice posted → GST computed → e-Invoice generated → bank reconciliation working → trial balance correct.</td>
       </tr>
       <tr class="row-p2">
@@ -305,7 +312,7 @@
           Courier connectors: webhook receivers for Delhivery, Bluedart, Ekart<br>
           e-Way Bill: India Compliance extension
         </td>
-        <td>scale_supply stores (stock dispatch triggers logistics)</td>
+        <td>scale_stock (stock dispatch triggers logistics)</td>
         <td>Delivery note created → dispatch planned → route optimised → driver app showing trip → POD captured → courier tracking linked.</td>
       </tr>
 
@@ -411,22 +418,22 @@
       <!-- Production -->
       <rect x="260" y="182" width="162" height="38" rx="5" fill="#eff6ff" stroke="#93c5fd"/>
       <text x="341" y="197" text-anchor="middle" fill="#1e40af" font-weight="700">Production</text>
-      <text x="341" y="211" text-anchor="middle" fill="#1e40af" font-size="9">scale_supply</text>
+      <text x="341" y="211" text-anchor="middle" fill="#1e40af" font-size="9">scale_manufacturing</text>
       <!-- Purchase -->
       <rect x="438" y="182" width="162" height="38" rx="5" fill="#eff6ff" stroke="#93c5fd"/>
       <text x="519" y="197" text-anchor="middle" fill="#1e40af" font-weight="700">Purchase</text>
-      <text x="519" y="211" text-anchor="middle" fill="#1e40af" font-size="9">scale_supply</text>
+      <text x="519" y="211" text-anchor="middle" fill="#1e40af" font-size="9">scale_purchase</text>
       <!-- Stores -->
       <rect x="616" y="182" width="162" height="38" rx="5" fill="#eff6ff" stroke="#93c5fd"/>
       <text x="697" y="197" text-anchor="middle" fill="#1e40af" font-weight="700">Stores</text>
-      <text x="697" y="211" text-anchor="middle" fill="#1e40af" font-size="9">scale_supply</text>
+      <text x="697" y="211" text-anchor="middle" fill="#1e40af" font-size="9">scale_stock</text>
 
       <!-- ── Wave 3 / 4 ── -->
       <text x="430" y="264" text-anchor="middle" fill="#94a3b8" font-size="9" font-weight="700" letter-spacing="1">WAVE 3 · 4</text>
       <!-- Logistics -->
       <rect x="130" y="272" width="185" height="38" rx="5" fill="#fffbeb" stroke="#fcd34d"/>
       <text x="222" y="287" text-anchor="middle" fill="#78350f" font-weight="700">Logistics</text>
-      <text x="222" y="301" text-anchor="middle" fill="#78350f" font-size="9">scale_supply</text>
+      <text x="222" y="301" text-anchor="middle" fill="#78350f" font-size="9">scale_accounts</text>
       <!-- Dashboards -->
       <rect x="337" y="272" width="185" height="38" rx="5" fill="#fdf4ff" stroke="#e9d5ff"/>
       <text x="430" y="287" text-anchor="middle" fill="#581c87" font-weight="700">Dashboards</text>

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stores Module — Implementation Plan | AIWS ERP</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+/* ── Feature pill colours (shared convention, see sales-module.html) ── */
+.pill-ootb    { background:#d1fae5; color:#065f46; }
+.pill-refine  { background:#dbeafe; color:#1e40af; }
+.pill-custom  { background:#fef3c7; color:#92400e; }
+.pill-ai      { background:#ede9fe; color:#5b21b6; }
+.pill-int     { background:#fce7f3; color:#9d174d; }
+
+.bp1 { background:#fee2e2; color:#991b1b; }
+.bp2 { background:#fef3c7; color:#78350f; }
+.bp3 { background:#f0f9ff; color:#075985; }
+
+.st-done { color:#10b981; font-weight:700; }
+.st-wip  { color:#f59e0b; font-weight:700; }
+.st-ns   { color:#9ca3af; }
+
+details.feat { border:1px solid #e5e7eb; border-radius:8px; margin-bottom:8px; }
+details.feat summary { cursor:pointer; padding:12px 16px; font-weight:600; font-size:.93rem; list-style:none; display:flex; align-items:center; gap:8px; }
+details.feat summary::-webkit-details-marker { display:none; }
+details.feat summary .feat-arrow { margin-left:auto; font-size:.8rem; color:#6b7280; transition:transform .2s; }
+details.feat[open] summary .feat-arrow { transform:rotate(90deg); }
+details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
+
+.task-card { border:1px solid #e5e7eb; border-radius:10px; padding:16px 20px; margin-bottom:14px; page-break-inside:avoid; }
+.task-card h4 { margin:0 0 6px; font-size:.97rem; }
+.task-card .task-meta { font-size:.8rem; color:#6b7280; margin-bottom:10px; }
+.task-header { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.task-id { font-weight:700; font-size:.8rem; background:#1e3a5f; color:#fff; padding:2px 8px; border-radius:4px; }
+.task-assign { font-size:.78rem; background:#ede9fe; color:#5b21b6; padding:2px 8px; border-radius:4px; }
+
+.code-label-inline { display:inline-block; background:var(--navy); color:rgba(255,255,255,.55); font-size:10.5px; font-weight:700; padding:3px 10px; border-radius:4px 4px 0 0; text-transform:uppercase; letter-spacing:.4px; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="s-title">AIWS ERP</div>
+    <div class="s-sub">Implementation Master Plan</div>
+    <span class="s-tag">Claude / implementation</span>
+  </div>
+  <nav>
+    <div class="nav-group">📋 Daily Update</div>
+    <a class="nav-link" href="index.html">Development Dashboard 🔴</a>
+
+    <div class="nav-group">Start Here</div>
+    <a class="nav-link" href="program-overview.html">Program Overview</a>
+
+    <div class="nav-group">✨ Live Showcases</div>
+    <a class="nav-link showcase" href="sales-demo-showcase.html">Sales Showcase ✨</a>
+    <a class="nav-link showcase" href="pmo-demo-showcase.html">PMO Showcase ✨</a>
+    <a class="nav-link showcase" href="hr-demo-showcase.html">HR Showcase ✨</a>
+
+    <div class="nav-group">User Manual</div>
+    <a class="nav-link" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
+    <a class="nav-link" href="pmo-user-manual.html">PMO Working Manual ✨</a>
+
+    <div class="nav-group">Module Plans</div>
+    <a class="nav-link" href="sales-module.html">Sales Module Plan</a>
+    <a class="nav-link" href="hr-module.html">HR Module Plan</a>
+    <a class="nav-link" href="accounts-module.html">Accounts Module Plan</a>
+    <a class="nav-link" href="finance-module.html">Finance Module Plan</a>
+    <a class="nav-link" href="pmo-module.html">PMO Module Plan</a>
+    <a class="nav-link" href="scale-marketing-module.html">Scale Marketing Module Plan 🆕</a>
+    <a class="nav-link active" href="stores-module.html">Stores Module Plan 🆕</a>
+    <a class="nav-link" href="purchase-module.html">Purchase &amp; Procurement Module Plan 🆕</a>
+    <a class="nav-link" href="manufacturing-module.html">Manufacturing Module Plan 🆕</a>
+
+    <div class="nav-group">Foundation</div>
+    <a class="nav-link" href="frappe-verdict.html">Frappe Capability</a>
+    <a class="nav-link" href="architecture.html">System Architecture</a>
+
+    <div class="nav-group">Development Framework</div>
+    <a class="nav-link" href="customization-guide.html">Customization Guide</a>
+    <a class="nav-link" href="developer-guide.html">Developer Workflow</a>
+
+    <div class="nav-group">Implementation</div>
+    <a class="nav-link" href="module-plan.html">All 13 Modules</a>
+    <a class="nav-link" href="sprint-plan.html">Parallel Sprint Plan</a>
+    <a class="nav-link" href="wave-1.html">Sales &amp; Marketing Detail</a>
+
+    <div class="nav-group">AI Strategy</div>
+    <a class="nav-link" href="ai-plan-strategy.html">AI Plan Strategy</a>
+
+    <div class="nav-group">Tracking</div>
+    <a class="nav-link" href="sales-tracker.html">Sales Tracker</a>
+  </nav>
+  <div class="sidebar-foot">Pixaflip × SIL · AIWS ERP<br><a href="../../index.html">← AIWS Setup portal</a></div>
+</aside>
+
+<main>
+<div class="breadcrumb">AIWS ERP <span>›</span> Module Plans <span>›</span> Stores Module Plan</div>
+
+<div class="page-header">
+  <h1>Stores Module — Implementation Plan</h1>
+  <p class="subtitle">Inventory &amp; Warehouse Management for <code>scale_stock</code>. Not started — this is the pre-build plan (feature map + task list), same stage Sales/HR/PMO were at before their kick-off. Recommended as the <strong>first</strong> of the three new Supply Chain modules to build.</p>
+</div>
+
+<div class="callout cg">
+  <p><strong>App:</strong> <code>scale_stock</code>, own app, depends only on F0 (<code>scale</code> + ERPNext) — the base of the dependency chain. <code>scale_purchase</code> and <code>scale_manufacturing</code> both declare <code>required_apps = [..., "scale_stock"]</code>.</p>
+  <p><strong>Why Stores goes first:</strong> Item, UOM, Warehouse, and the Stock Ledger are the shared foundation every other module in the suite reads from — Sales delivery notes, Purchase goods receipts, and Manufacturing work orders all post against this same ledger. Per the source scope document (<code>_PIXAFLIP_ SCALE_ERP Modules Scope and Capability.xlsx</code>, "Stores" tab), 13 of 13 features are already fit-gap analysed line-by-line with a "Frappe Support / Standard Flow / Implementation Needed" verdict — nearly all of it is <strong>100% native ERPNext, zero custom code</strong>. It is the lowest-risk, fastest module to stand up, and Purchase's Goods Receipt and Manufacturing's BOM/Work Order both need it configured first. See <a href="purchase-module.html">Purchase &amp; Procurement</a> and <a href="manufacturing-module.html">Manufacturing</a> for how they build on top of this.</p>
+</div>
+
+<h2 class="no-print">Module Objective</h2>
+<p class="no-print">Provide a single, live, always-correct view of stock — what is on hand, where, what it's worth, and what's committed — so Sales can promise real availability, Purchase knows what to reorder, and Manufacturing can trust the raw-material numbers it plans against. Every stock-moving transaction in every other module (Delivery Note, Purchase Receipt, Stock Entry) settles here, in the same Stock Ledger, using the same Item/Warehouse masters.</p>
+
+<div class="summary-strip">
+  <div class="s-stat"><div class="sv">13</div><div class="sl">Features</div></div>
+  <div class="s-stat"><div class="sv">~95%</div><div class="sl">OOTB / Config</div></div>
+  <div class="s-stat"><div class="sv">2</div><div class="sl">New Custom DocTypes</div></div>
+  <div class="s-stat"><div class="sv">scale_stock</div><div class="sl">Custom App</div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     FEATURE MAP
+═══════════════════════════════════════════ -->
+<h2 class="no-print">Feature Map — All 13 Stores Features</h2>
+<div class="callout ci no-print">
+  <p><strong>Source:</strong> Scope &amp; Capability Excel, "Stores" tab (only module tab pre-annotated with a full Frappe-support fit/gap column by the client-side team — Production and Purchase tabs are one-line feature descriptions only). Priority (P1/P2/P3) and the "Frappe Support" verdict below are taken directly from that sheet, not invented.</p>
+</div>
+
+<div class="tbl-wrap no-print">
+  <table>
+    <tr><th>#</th><th>Feature</th><th>Priority</th><th>Classification</th><th>Criticality / Delay Risk</th></tr>
+    <tr><td>01</td><td><strong>Item Master</strong></td><td><span class="pill bp1">P1</span></td><td><span class="pill pill-ootb">100% Native</span></td><td>Low — core master data</td></tr>
+    <tr><td>02</td><td><strong>Stock Management</strong></td><td><span class="pill bp1">P1</span></td><td><span class="pill pill-ootb">100% Native</span></td><td>Low — core inventory master</td></tr>
+    <tr><td>03</td><td><strong>Multi-location / Warehouse</strong></td><td><span class="pill bp1">P1</span></td><td><span class="pill pill-ootb">100% Native</span></td><td>Low — standard tree functionality</td></tr>
+    <tr><td>04</td><td><strong>Goods Issue / Receipt</strong></td><td><span class="pill bp1">P1</span></td><td><span class="pill pill-ootb">100% Native</span></td><td>Low — core voucher movement</td></tr>
+    <tr><td>05</td><td>Inventory Valuation</td><td><span class="pill bp2">P2</span></td><td><span class="pill pill-ootb">100% Native</span></td><td>Low — native accounting engine</td></tr>
+    <tr><td>06</td><td>Stock Transfers</td><td><span class="pill bp2">P2</span></td><td><span class="pill pill-refine">Native + 15-line JS</span></td><td>Low — standard transfer flow</td></tr>
+    <tr><td>07</td><td>Barcode / QR Scanning</td><td><span class="pill bp2">P2</span></td><td><span class="pill pill-refine">Native + 20-line JS</span></td><td>Medium — device/camera calibration</td></tr>
+    <tr><td>08</td><td>Stock Audit / Cycle Count</td><td><span class="pill bp2">P2</span></td><td><span class="pill pill-custom">Native + 1 DocType</span></td><td>Low — audit variance approvals</td></tr>
+    <tr><td>09</td><td>Slow &amp; Non-moving Stock</td><td><span class="pill bp2">P2</span></td><td><span class="pill pill-custom">Native + 1 DocType + Workflow</span></td><td>Low — approval bottleneck risk only</td></tr>
+    <tr><td>10</td><td>Reorder Alerts</td><td><span class="pill bp3">P3</span></td><td><span class="pill pill-ootb">100% Native</span></td><td>Low — post-go-live</td></tr>
+    <tr><td>11</td><td>Batch &amp; Serial Tracking</td><td><span class="pill bp3">P3</span></td><td><span class="pill pill-ootb">100% Native</span></td><td>Low — post-go-live</td></tr>
+    <tr><td>12</td><td>Expiry Management</td><td><span class="pill bp3">P3</span></td><td><span class="pill pill-refine">Native + Notification + 1 Report</span></td><td>Low — post-go-live</td></tr>
+    <tr><td>13</td><td>Min-Max Planning</td><td><span class="pill bp3">P3</span></td><td><span class="pill pill-ootb">100% Native</span></td><td>Low — post-go-live</td></tr>
+  </table>
+</div>
+
+<hr class="section no-print">
+
+<!-- ═══════════════════════════════════════════
+     PHASE PLAN
+═══════════════════════════════════════════ -->
+<h2 class="no-print">Phase-by-Phase Implementation</h2>
+<div class="callout cg no-print">
+  <p><strong>Three phases.</strong> Phase 1 is pure configuration — Item/Warehouse/UOM setup, no code — and unblocks Purchase (needs Warehouse + Item to receive against) and Manufacturing (needs Item for BOM) immediately. Phase 2 adds the handful of genuinely custom pieces. Phase 3 is post-go-live polish, safe to defer.</p>
+</div>
+
+<div class="no-print">
+
+<h3>Phase 1 — Master Data &amp; Native Configuration</h3>
+<p>Everything here is configuration in the admin UI. Zero custom code. This is the critical path for every other Supply Chain module.</p>
+
+<details class="feat" open>
+  <summary><span class="pill pill-ootb">OOTB</span> STR-01 · Item Master <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> <code>Item</code>, <code>Item Group</code>, <code>UOM</code>, <code>UOM Conversion Detail</code>, <code>Item Attribute</code>/Variants, and <code>Item Supplier</code> DocTypes — one shared master record used by Stock, Purchase, Sales, Accounts, and Production simultaneously.</p>
+    <p><strong>To configure:</strong> Item Group tree per the client's product taxonomy, default UOM + conversion factors, barcodes, Item Attribute templates for variants (if any variant-based items exist), Item Price lists. Zero custom fields expected unless a client-specific attribute surfaces during build.</p>
+    <p><strong>Why it's first:</strong> Purchase Orders, BOMs, and Sales Items all resolve to this one record — get the Item Group taxonomy right before any transactional module starts, since renaming/regrouping later touches every module.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> STR-02 · Stock Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Live Stock Ledger (<code>Stock Ledger Entry</code>) with bin-level quantities (<code>Bin</code>: actual/reserved/projected qty) per Item × Warehouse. Every stock-moving transaction across every module auto-posts here.</p>
+    <p><strong>To configure:</strong> Stock Settings defaults (valuation method, auto-insert price list rate, allow negative stock — off by default). No custom code.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> STR-03 · Multi-location / Warehouse <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Warehouse tree DocType (parent group → child leaf, e.g. Plant → Building → Rack), each leaf mapped to a Stock Account, transactions post to leaf nodes and roll up to parent group in reporting automatically.</p>
+    <p><strong>To configure:</strong> Build the actual warehouse hierarchy for the client's site(s) — this needs the real facility layout, so confirm with the client before this task starts.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> STR-04 · Goods Issue / Receipt <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> <code>Stock Entry</code> (Material Issue / Material Receipt / Manufacture purposes), <code>Purchase Receipt</code>, <code>Delivery Note</code> — every one auto-creates a Stock Ledger Entry and the matching GL Entry (Stock In Hand vs. Adjustment/Expense/COGS account) on submit.</p>
+    <p><strong>To configure:</strong> Stock Entry Purpose rules, default Stock/Adjustment accounts per warehouse, submit-approval workflow if the client wants issue/receipt sign-off.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> STR-05 · Inventory Valuation <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> FIFO / Moving Average valuation per Item (Stock Settings), Landed Cost Voucher for freight/duty/insurance apportionment, and the perpetual-inventory GL engine that auto-posts Stock-in-Hand vs. COGS/Expense on every movement.</p>
+    <p><strong>To configure:</strong> Choose valuation method per Item Category with Finance sign-off (affects COGS and margin reporting — coordinate with the Accounts/Finance tracks before locking this in).</p>
+  </div>
+</details>
+
+<h3>Phase 2 — Refinement &amp; the Two Genuinely Custom Pieces</h3>
+<p>Small, native-first extensions. Only two new DocTypes in this entire module.</p>
+
+<details class="feat">
+  <summary><span class="pill pill-refine">Refine</span> STR-06 · Stock Transfers <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Approach:</strong> Native 2-step transfer using an intermediate <em>In-Transit Warehouse</em> (Stock Entry: Material Transfer → submit at source → receive/submit at destination). Add a ~15-line JS Client Script to capture <code>driver</code> and <code>vehicle</code> details on the Stock Entry form for inter-site transfers.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-refine">Refine</span> STR-07 · Barcode / QR Scanning <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Approach:</strong> Native <code>Item Barcode</code> child table + the <code>scan_barcode</code> input already present on Stock Entry / Purchase Receipt / Delivery Note / Stock Reconciliation — scanning auto-increments the matched row's qty. Add a ~20-line HTML5 camera QR/barcode scanner script for mobile-browser use in the store room (no native app, no hardware dependency required for go-live; a Bluetooth handheld scanner can be added later without any schema change).</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-custom">Custom</span> STR-08 · Stock Audit / Cycle Count <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Approach:</strong> Native <code>Stock Reconciliation</code> (with scan mode) already handles the variance-posting side. Add one custom DocType, <strong>Cycle Count Sheet</strong>, for scheduled/ABC-based blind counting — it hides the system quantity until the counter enters their physical count, then reconciles the delta into a standard Stock Reconciliation. This is the one piece the native flow doesn't cover (open counting, where the counter can see the system qty and rubber-stamp it, defeats the point of an audit).</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-custom">Custom</span> STR-09 · Slow &amp; Non-moving Stock <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Approach:</strong> Native <em>Stock Ageing</em> report (0–30 / 30–60 / 60–90 / 90+ day buckets) already identifies what's slow-moving. Add one custom DocType, <strong>Stock Disposition Request</strong>, with a standard Frappe Workflow (Stores raises → Finance approves) — approval auto-triggers a Stock Entry (Material Issue / Scrapped). This is the decision layer the native report doesn't have: someone has to actually decide discount, return, or write-off, and that decision needs an audit trail.</p>
+  </div>
+</details>
+
+<h3>Phase 3 — Post-Go-Live Traceability &amp; Planning (defer without risk)</h3>
+<p>All native, all zero custom code. Sequenced last only because the client's own scope sheet schedules them P3 — none of it blocks Purchase or Manufacturing starting.</p>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> STR-10 · Reorder Alerts <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body"><p>Native <code>Item Reorder</code> child table + the <code>reorder_item</code> scheduled job — compares projected qty against reorder level daily and auto-drafts a Material Request. Zero custom code; configure reorder level/qty/warehouse per item.</p></div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> STR-11 · Batch &amp; Serial Tracking <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body"><p>Native <code>Serial No</code> / <code>Batch</code> / <code>Serial and Batch Bundle</code> engine with full two-way lineage reporting. Configure naming series only.</p></div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-refine">Refine</span> STR-12 · Expiry Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body"><p>Native batch-expiry validation hard-blocks issue of expired stock. Add a Notification Rule (30-day pre-expiry alert) and one custom Script Report, <em>Expiring Batch Alert Report</em>.</p></div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> STR-13 · Min-Max Planning <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body"><p>Same <code>Item Reorder</code> engine as STR-10, extended with Min/Max levels and safety-stock buffers. Zero custom code.</p></div>
+</details>
+
+</div>
+
+<hr class="section no-print">
+
+<!-- ═══════════════════════════════════════════
+     TASK LIST
+═══════════════════════════════════════════ -->
+<h2 class="no-print">Task List</h2>
+<p class="no-print">One task per feature, in build order. Branch <code>feature/scale-stock</code> in <code>ehiddenbrain/scale</code>, not pushed yet. Effort is a rough T-shirt size, not a commitment.</p>
+
+<div class="no-print">
+<div class="task-card">
+  <div class="task-header"><span class="task-id">STR-01</span><h4 style="margin:0;">Item Master &amp; taxonomy setup</h4> <span class="st-done">✅ Done (demo data)</span></div>
+  <div class="task-meta">Effort: Low · Depends on: F0 (scale_stock app scaffolded) · Blocks: everything in Purchase &amp; Manufacturing</div>
+  <p>7 new Item Groups (Packing Material, Office Supplies, Capital Equipment, Maintenance Items, IT Assets, Finished Goods, Spare Parts) + 7 demo Items seeded via manual-invoke <code>demo_setup.py</code>. Placeholder taxonomy — swap for the client's real one when available.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">STR-02</span><h4 style="margin:0;">Warehouse hierarchy</h4> <span class="st-done">✅ Done (demo data)</span></div>
+  <div class="task-meta">Effort: Low · Depends on: client facility layout confirmed</div>
+  <p>Reused ERPNext's existing default company warehouse tree; added one real gap — <code>Rejected Stock - AIWS</code> — for GRN rejections and QC fails. Full client site layout still needed for the real tree.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">STR-03</span><h4 style="margin:0;">Stock Settings &amp; valuation method</h4> <span class="st-done">✅ Confirmed — no work needed</span></div>
+  <div class="task-meta">Effort: Low · Depends on: Finance sign-off on valuation method (coordinate with <a href="accounts-module.html">Accounts</a>)</div>
+  <p>Checked directly: Stock Settings already defaults to FIFO on this site from an earlier module's setup — nothing to configure.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">STR-04</span><h4 style="margin:0;">Stock Entry / Receipt / Delivery configuration</h4> <span class="st-ns">Not started</span></div>
+  <div class="task-meta">Effort: Low</div>
+  <p>Configure Stock Entry purposes and any submit-approval workflow for goods issue/receipt.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">STR-05</span><h4 style="margin:0;">Stock Transfer — driver/vehicle capture</h4> <span class="st-done">✅ Done</span></div>
+  <div class="task-meta">Effort: Low · ~15 lines JS</div>
+  <p>2 Custom Fields (Driver Name, Vehicle Number) on Stock Entry, shown only for the Material Transfer purpose, with a "✨ New" banner + field badges. Tested live.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">STR-06</span><h4 style="margin:0;">Barcode / QR scan mode</h4> <span class="st-ns">Deferred</span></div>
+  <div class="task-meta">Effort: Medium · ~20 lines JS + device testing</div>
+  <p>Deliberately deferred — the source Excel itself flags this as "available polish, not a gap" (native <code>scan_barcode</code> already works). Lower priority than the two genuinely custom DocTypes below.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">STR-07</span><h4 style="margin:0;">Cycle Count Sheet (new DocType)</h4> <span class="st-done">✅ Done</span></div>
+  <div class="task-meta">Effort: Medium · New DocType</div>
+  <p>Blind-counting DocType (<code>Generate Items</code> snapshots system qty hidden from the counter, <code>Reveal Variance</code> before submit, submit auto-creates a draft Stock Reconciliation for review). Tested live end-to-end, including a real bug caught and fixed: Float fields silently coerce an unset value to 0, so a separate <code>is_counted</code> flag was added to actually detect "never touched" rows before submit.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">STR-08</span><h4 style="margin:0;">Stock Disposition Request (new DocType + Workflow)</h4> <span class="st-done">✅ Done</span></div>
+  <div class="task-meta">Effort: Medium · New DocType + Frappe Workflow</div>
+  <p>Stores → Finance (Accounts Manager) approval workflow; Approve auto-posts a Material Issue Stock Entry, Reject leaves stock untouched. Tested live: approve path, reject path, and a request-time validation (added after testing surfaced it) blocking a disposal quantity that exceeds actual stock.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">STR-09</span><h4 style="margin:0;">Reorder Alerts &amp; Min-Max Planning</h4> <span class="st-ns">Not started</span></div>
+  <div class="task-meta">Effort: Low · P3, post-go-live</div>
+  <p>Configure Item Reorder child table (reorder level/qty, min/max, safety stock) per item/warehouse.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">STR-10</span><h4 style="margin:0;">Batch &amp; Serial Tracking</h4></div>
+  <div class="task-meta">Effort: Low · P3, post-go-live</div>
+  <p>Configure naming series for Serial No / Batch; confirm which Item Groups require serial vs. batch tracking.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">STR-11</span><h4 style="margin:0;">Expiry Management</h4></div>
+  <div class="task-meta">Effort: Low · P3, post-go-live · 1 new Script Report</div>
+  <p>Add 30-day pre-expiry Notification Rule; build Expiring Batch Alert Report.</p>
+</div>
+</div>
+
+<hr class="section no-print">
+
+<h2 class="no-print">Open Decisions</h2>
+<div class="grid g2 no-print">
+  <div class="card">
+    <h4>Lead &amp; start date not yet assigned</h4>
+    <p style="font-size:13.5px;">Per <a href="module-plan.html">module-plan.html</a>'s master table, Stores/Purchase/Manufacturing (all under <code>scale_stock</code>) are Wave 2 with "Lead: TBD." Confirm who owns this build and when F0's <code>scale_stock</code> app scaffold happens before assigning real calendar dates.</p>
+  </div>
+  <div class="card">
+    <h4>Warehouse layout needed from client</h4>
+    <p style="font-size:13.5px;">STR-02/03 can't be finalised without the client's real site/warehouse structure (single site? multiple plants? bonded/import warehouse needed for Purchase's Import Management?). Raise with the client alongside Purchase's own open questions.</p>
+  </div>
+</div>
+
+<div class="page-nav">
+  <a class="prev" href="scale-marketing-module.html">← Scale Marketing Module Plan</a>
+  <a class="next" href="purchase-module.html">Purchase &amp; Procurement Module Plan →</a>
+</div>
+
+</main>
+</body>
+</html>

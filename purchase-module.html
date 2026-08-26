@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Purchase &amp; Procurement Module — Implementation Plan | AIWS ERP</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.pill-ootb    { background:#d1fae5; color:#065f46; }
+.pill-refine  { background:#dbeafe; color:#1e40af; }
+.pill-custom  { background:#fef3c7; color:#92400e; }
+.pill-ai      { background:#ede9fe; color:#5b21b6; }
+.pill-int     { background:#fce7f3; color:#9d174d; }
+
+.bp1 { background:#fee2e2; color:#991b1b; }
+.bp2 { background:#fef3c7; color:#78350f; }
+.bp3 { background:#f0f9ff; color:#075985; }
+
+details.feat { border:1px solid #e5e7eb; border-radius:8px; margin-bottom:8px; }
+details.feat summary { cursor:pointer; padding:12px 16px; font-weight:600; font-size:.93rem; list-style:none; display:flex; align-items:center; gap:8px; }
+details.feat summary::-webkit-details-marker { display:none; }
+details.feat summary .feat-arrow { margin-left:auto; font-size:.8rem; color:#6b7280; transition:transform .2s; }
+details.feat[open] summary .feat-arrow { transform:rotate(90deg); }
+details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
+
+.task-card { border:1px solid #e5e7eb; border-radius:10px; padding:16px 20px; margin-bottom:14px; page-break-inside:avoid; }
+.task-card h4 { margin:0 0 6px; font-size:.97rem; }
+.task-card .task-meta { font-size:.8rem; color:#6b7280; margin-bottom:10px; }
+.task-header { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.task-id { font-weight:700; font-size:.8rem; background:#1e3a5f; color:#fff; padding:2px 8px; border-radius:4px; }
+
+.ai-box { background:#f5f3ff; border:1px solid #ddd6fe; border-radius:8px; padding:10px 14px; margin-top:10px; font-size:.85rem; }
+.ai-box b { color:#5b21b6; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="s-title">AIWS ERP</div>
+    <div class="s-sub">Implementation Master Plan</div>
+    <span class="s-tag">Claude / implementation</span>
+  </div>
+  <nav>
+    <div class="nav-group">📋 Daily Update</div>
+    <a class="nav-link" href="index.html">Development Dashboard 🔴</a>
+
+    <div class="nav-group">Start Here</div>
+    <a class="nav-link" href="program-overview.html">Program Overview</a>
+
+    <div class="nav-group">✨ Live Showcases</div>
+    <a class="nav-link showcase" href="sales-demo-showcase.html">Sales Showcase ✨</a>
+    <a class="nav-link showcase" href="pmo-demo-showcase.html">PMO Showcase ✨</a>
+    <a class="nav-link showcase" href="hr-demo-showcase.html">HR Showcase ✨</a>
+
+    <div class="nav-group">User Manual</div>
+    <a class="nav-link" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
+    <a class="nav-link" href="pmo-user-manual.html">PMO Working Manual ✨</a>
+
+    <div class="nav-group">Module Plans</div>
+    <a class="nav-link" href="sales-module.html">Sales Module Plan</a>
+    <a class="nav-link" href="hr-module.html">HR Module Plan</a>
+    <a class="nav-link" href="accounts-module.html">Accounts Module Plan</a>
+    <a class="nav-link" href="finance-module.html">Finance Module Plan</a>
+    <a class="nav-link" href="pmo-module.html">PMO Module Plan</a>
+    <a class="nav-link" href="scale-marketing-module.html">Scale Marketing Module Plan 🆕</a>
+    <a class="nav-link" href="stores-module.html">Stores Module Plan 🆕</a>
+    <a class="nav-link active" href="purchase-module.html">Purchase &amp; Procurement Module Plan 🆕</a>
+    <a class="nav-link" href="manufacturing-module.html">Manufacturing Module Plan 🆕</a>
+
+    <div class="nav-group">Foundation</div>
+    <a class="nav-link" href="frappe-verdict.html">Frappe Capability</a>
+    <a class="nav-link" href="architecture.html">System Architecture</a>
+
+    <div class="nav-group">Development Framework</div>
+    <a class="nav-link" href="customization-guide.html">Customization Guide</a>
+    <a class="nav-link" href="developer-guide.html">Developer Workflow</a>
+
+    <div class="nav-group">Implementation</div>
+    <a class="nav-link" href="module-plan.html">All 13 Modules</a>
+    <a class="nav-link" href="sprint-plan.html">Parallel Sprint Plan</a>
+    <a class="nav-link" href="wave-1.html">Sales &amp; Marketing Detail</a>
+
+    <div class="nav-group">AI Strategy</div>
+    <a class="nav-link" href="ai-plan-strategy.html">AI Plan Strategy</a>
+
+    <div class="nav-group">Tracking</div>
+    <a class="nav-link" href="sales-tracker.html">Sales Tracker</a>
+  </nav>
+  <div class="sidebar-foot">Pixaflip × SIL · AIWS ERP<br><a href="../../index.html">← AIWS Setup portal</a></div>
+</aside>
+
+<main>
+<div class="breadcrumb">AIWS ERP <span>›</span> Module Plans <span>›</span> Purchase &amp; Procurement Module Plan</div>
+
+<div class="page-header">
+  <h1>Purchase &amp; Procurement Module — Implementation Plan</h1>
+  <p class="subtitle">Procure-to-Pay for <code>scale_purchase</code>. Not started — pre-build plan (feature map + task list). Recommended as the <strong>second</strong> module to build, right after <a href="stores-module.html">Stores</a>.</p>
+</div>
+
+<div class="callout ci">
+  <p><strong>Naming decision:</strong> ERPNext ships this natively as the <em>"Buying"</em> module. Per the client's own scope document and PRD, we name it <strong>Purchase &amp; Procurement</strong> everywhere on the portal, in the app title, and in any client-facing material — <code>Buying</code> stays only as Frappe's internal module label under the hood.</p>
+</div>
+
+<div class="callout cg">
+  <p><strong>App:</strong> <code>scale_purchase</code>, own app, <code>required_apps = [..., "scale_stock"]</code> — declares the dependency explicitly rather than bundling into one shared app, so a trading/distribution client can install Stores + Purchase without Manufacturing.</p>
+  <p><strong>Why Purchase goes second:</strong> Its only real dependency is Stores' Item/Warehouse masters (Purchase Order → Goods Receipt has to post against something). Everything else here is self-contained. It also has the <strong>richest source material of the three new modules</strong> — a dedicated 15-page client PRD (<code>Purchase &amp; Procurement Management Module.pdf</code>, in <code>Claude/reference_from_team/</code>) in addition to the Excel scope sheet, with a fully specified AI Procurement Copilot and CXO dashboard. Manufacturing, by contrast, only has Excel one-liners — building Purchase now, while its spec is freshest and most complete, is the better use of sequencing.</p>
+</div>
+
+<h2 class="no-print">Module Objective</h2>
+<p class="no-print">Give full visibility across <strong>Purchase Requisition → Supplier Selection → Purchase Order → Goods Receipt → Invoice → Payment → Supplier Performance Analysis</strong>, so the organisation buys the right material from the right supplier at the right price, quality, and time — standardising process, reducing cost and stock-outs, and giving Purchase/Finance leadership AI-assisted procurement decisions rather than spreadsheet guesswork.</p>
+
+<div class="summary-strip">
+  <div class="s-stat"><div class="sv">14</div><div class="sl">Features</div></div>
+  <div class="s-stat"><div class="sv">2</div><div class="sl">Source Docs (PRD + Excel)</div></div>
+  <div class="s-stat"><div class="sv">3</div><div class="sl">New Custom DocTypes (core)</div></div>
+  <div class="s-stat"><div class="sv">scale_purchase</div><div class="sl">Custom App</div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     FEATURE MAP
+═══════════════════════════════════════════ -->
+<h2 class="no-print">Feature Map — 14 Purchase &amp; Procurement Features</h2>
+<div class="callout ci no-print">
+  <p><strong>Two sources merged here.</strong> The dedicated PRD (11 numbered functional sections + AI Procurement Copilot + Executive Dashboard) is the primary structure — it is the more detailed, client-approved document. The Excel scope sheet's 14-item list is folded in wherever it names something the PRD doesn't call out separately (Import Management, Advance Payments, Vendor Portal). Priority below is our own sequencing recommendation (only Excel rows 1–3 had an explicit P1/P2/P3 tag; the rest were unmarked) — grounded in "what has to exist before anything downstream can work."</p>
+</div>
+
+<div class="tbl-wrap no-print">
+  <table>
+    <tr><th>#</th><th>Feature</th><th>Priority</th><th>Classification</th><th>Source</th></tr>
+    <tr><td>01</td><td><strong>Purchase Requisition (PR)</strong></td><td><span class="pill bp1">P1</span></td><td><span class="pill pill-refine">Native + Approval Workflow</span></td><td>PRD §1 + Excel #1</td></tr>
+    <tr><td>02</td><td><strong>Supplier / Vendor Management</strong></td><td><span class="pill bp1">P1</span></td><td><span class="pill pill-ootb">Native Supplier master</span></td><td>PRD §3 + Excel #2</td></tr>
+    <tr><td>03</td><td><strong>Purchase Order Management</strong></td><td><span class="pill bp1">P1</span></td><td><span class="pill pill-ootb">Native, full lifecycle</span></td><td>PRD §4 + Excel #3</td></tr>
+    <tr><td>04</td><td><strong>Goods Receipt (GRN)</strong></td><td><span class="pill bp1">P1</span></td><td><span class="pill pill-ootb">Native Purchase Receipt</span></td><td>PRD §5 + Excel #4</td></tr>
+    <tr><td>05</td><td><strong>Invoice Matching (3-way)</strong></td><td><span class="pill bp1">P1</span></td><td><span class="pill pill-refine">Native + validation script</span></td><td>Excel #6</td></tr>
+    <tr><td>06</td><td>RFQ / Tendering</td><td><span class="pill bp2">P2</span></td><td><span class="pill pill-ootb">Native RFQ + Portal</span></td><td>PRD §2 + Excel #7</td></tr>
+    <tr><td>07</td><td>Approval Workflows</td><td><span class="pill bp2">P2</span></td><td><span class="pill pill-refine">Native Workflow, amount-based</span></td><td>PRD (cross-cutting) + Excel #9</td></tr>
+    <tr><td>08</td><td>Supplier Performance Management</td><td><span class="pill bp2">P2</span></td><td><span class="pill pill-refine">Native Scorecard</span></td><td>PRD §6 + Excel #5</td></tr>
+    <tr><td>09</td><td>Contract &amp; Rate Agreement Mgmt</td><td><span class="pill bp2">P2</span></td><td><span class="pill pill-ootb">Native Blanket Order</span></td><td>PRD §7 + Excel #8</td></tr>
+    <tr><td>10</td><td>Advance Payments</td><td><span class="pill bp2">P2</span></td><td><span class="pill pill-ootb">Native PO advances</span></td><td>Excel #11</td></tr>
+    <tr><td>11</td><td>Import Management</td><td><span class="pill bp3">P3</span></td><td><span class="pill pill-refine">Native LCV + doc tracking</span></td><td>Excel #10</td></tr>
+    <tr><td>12</td><td>Purchase Budget Management</td><td><span class="pill bp3">P3</span></td><td><span class="pill pill-custom">New: Budget tracking</span></td><td>PRD §8</td></tr>
+    <tr><td>13</td><td>Inventory Procurement Planning</td><td><span class="pill bp3">P3</span></td><td><span class="pill pill-refine">Native reorder + MRP link</span></td><td>PRD §9</td></tr>
+    <tr><td>14</td><td>Vendor Portal (self-service)</td><td><span class="pill bp3">P3</span></td><td><span class="pill pill-refine">Native portal + extension</span></td><td>Excel #12</td></tr>
+    <tr><td>15</td><td>Procurement Analytics</td><td><span class="pill bp3">P3</span></td><td><span class="pill pill-refine">Native + Script Reports</span></td><td>PRD §10 + Excel #13-14</td></tr>
+    <tr><td>16</td><td><strong>AI Procurement Copilot</strong></td><td><span class="pill bp3">P3</span></td><td><span class="pill pill-ai">AI Suite</span></td><td>PRD §11 + CXO Dashboard</td></tr>
+  </table>
+</div>
+
+<hr class="section no-print">
+
+<!-- ═══════════════════════════════════════════
+     PHASE PLAN
+═══════════════════════════════════════════ -->
+<h2 class="no-print">Phase-by-Phase Implementation</h2>
+<div class="callout cg no-print">
+  <p><strong>Three phases, following the procure-to-pay lifecycle itself:</strong> Phase 1 is the transactional backbone (nothing else matters until PR→PO→GRN→Invoice works end to end). Phase 2 is sourcing/compliance/governance layered on top. Phase 3 is planning, analytics, and the AI Copilot — genuinely valuable but not required for a first working Purchase flow.</p>
+</div>
+
+<div class="no-print">
+
+<h3>Phase 1 — Procure-to-Pay Backbone</h3>
+
+<details class="feat" open>
+  <summary><span class="pill pill-refine">Refine</span> PUR-01 · Purchase Requisition (Material Request) <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Native <code>Material Request</code> DocType (Purchase / Transfer / Manufacture / Customer Provided types), linkable to Cost Centre, Project, and Item, with a mandatory Required-By date.</p>
+    <p><strong>What to add (per PRD §1):</strong></p>
+    <ul>
+      <li>Custom fields: <code>budget_reference</code>, <code>justification</code> if not already covered by native <code>description</code>/attachments</li>
+      <li>Frappe Workflow: <strong>Employee → Department Head → Purchase Manager → Finance → Management (value-based)</strong> — matches the PRD's exact approval chain</li>
+      <li>Server-side validation on submit: available budget (needs PUR-12), existing stock (native <code>projected_qty</code> check), pending POs for the same item, minimum order quantity</li>
+    </ul>
+    <div class="ai-box"><b>AI opportunity (PRD):</b> predict material requirement from historical consumption, suggest preferred suppliers, recommend quantity, detect duplicate requisitions, predict procurement urgency. Reports: Pending Requisitions, Department-wise PR, Budget vs Requested, PR Ageing.</div>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> PUR-02 · Supplier / Vendor Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> <code>Supplier</code> master with Supplier Group, GST/PAN, Bank Details, Contact/Address, Payment Terms, and complete transaction history (POs, Receipts, Invoices) rolled up per supplier natively.</p>
+    <p><strong>What to add:</strong> Custom fields for Certifications and Service Areas if the client needs them beyond native Supplier Group + territory; confirm against PRD's "Store: Company Details / GST / PAN / Bank Details / Product Categories / Certifications / Contact Persons / Credit Terms / Payment Terms / Contracts / Service Areas" list feature-by-feature before assuming anything is missing.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> PUR-03 · Purchase Order Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Full PO lifecycle — create from Material Request / RFQ / Blanket Order / manual entry; Item and Service Purchase Orders; amendment control; received/billed status tracking; amount-based approval via Frappe Workflow.</p>
+    <p><strong>What to add:</strong> Confirm the approval matrix thresholds with the client (PRD: "Approval Matrix based on PO value") and wire as a native Workflow, same pattern as Sales Quotation's discount-based routing.</p>
+    <div class="ai-box"><b>AI opportunity (PRD):</b> recommend PO consolidation, suggest delivery schedules, detect duplicate POs, recommend order quantities, predict supplier fulfillment probability.</div>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> PUR-04 · Goods Receipt (GRN) <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> <code>Purchase Receipt</code> validated against the PO — received/accepted/rejected quantity, batch number, expiry date, target warehouse, and incoming Quality Inspection, all native. Supports partial receipt, multiple deliveries, over/under delivery.</p>
+    <p><strong>Depends on:</strong> <a href="stores-module.html">Stores</a> warehouse configuration (STR-02) must exist first — this is the one hard dependency between the two modules.</p>
+    <div class="ai-box"><b>AI opportunity (PRD):</b> predict receiving delays, detect unusual quantity variations, recommend warehouse allocation.</div>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-refine">Refine</span> PUR-05 · Invoice Matching (3-way match) <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Approach:</strong> Native <code>Purchase Invoice</code> already links to PO and Purchase Receipt. Add a <code>validate</code> server script that flags — not silently blocks — quantity and rate deviations between PO, GRN, and Invoice before payment is released, per PRD's "quantity and rate deviations flagged before money moves."</p>
+  </div>
+</details>
+
+<h3>Phase 2 — Sourcing, Compliance &amp; Governance</h3>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> PUR-06 · RFQ / Tendering <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Native <code>Request for Quotation</code> to multiple suppliers, portal self-service quotation submission, responses converting to draft <code>Supplier Quotation</code>. Native side-by-side comparison view (price, delivery, payment terms).</p>
+    <p><strong>What to add:</strong> Confirm Single/Multi-vendor/Online/Email RFQ modes all match PRD requirements; the technical-specifications and warranty/quality-rating comparison criteria in PRD §2 may need a custom comparison Script Report if native comparison doesn't surface all of them.</p>
+    <div class="ai-box"><b>AI opportunity (PRD):</b> recommend vendors, predict best supplier, detect abnormal pricing, recommend negotiation points, identify procurement risks.</div>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-refine">Refine</span> PUR-07 · Approval Workflows <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Approach:</strong> One consistent Frappe Workflow pattern (amount- and category-based routing) applied across Requisition, PO, and Invoice — not three separate mechanisms. Every transition is audited natively via Frappe's Version/Workflow log.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-refine">Refine</span> PUR-08 · Supplier Performance Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Native Supplier Scorecard — quality/delivery/responsiveness criteria, periodic standings, and standings can automatically block RFQs/POs.</p>
+    <p><strong>What to add:</strong> Confirm the scorecard's criteria set covers PRD §6's full list (Quality, Delivery, Cost, Responsiveness, Compliance, Documentation, Service Support) — extend the native scorecard's variable set rather than building a parallel DocType.</p>
+    <div class="ai-box"><b>AI opportunity (PRD):</b> predict future supplier performance, identify high-risk suppliers, recommend supplier development plans, detect performance decline.</div>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> PUR-09 · Contract &amp; Rate Agreement Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Native <code>Blanket Order</code> — agreed quantity/rate/validity, with PO releases drawing against it automatically.</p>
+    <p><strong>What to add:</strong> Confirm SLA/Penalties/Renewal-alert fields from PRD §7 exist on Blanket Order or need custom fields; a Notification Rule for contract-expiry alerts (native scheduler).</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-ootb">OOTB</span> PUR-10 · Advance Payments <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Native advance Payment Entry against a PO, auto-adjusted in the final Purchase Invoice; supplier-wise exposure visible in the standard Accounts Payable report. No new build expected — coordinate with <a href="accounts-module.html">Accounts</a>.</p>
+  </div>
+</details>
+
+<h3>Phase 3 — Planning, Compliance Extensions, Analytics &amp; AI</h3>
+
+<details class="feat">
+  <summary><span class="pill pill-refine">Refine</span> PUR-11 · Import Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Native <code>Landed Cost Voucher</code> spreads freight/customs/insurance into item cost; multi-currency PO/Invoice is native.</p>
+    <p><strong>What to add:</strong> India-specific import documentation tracking (Bill of Entry, import licences) — likely a small custom child table on Purchase Receipt or a lightweight Import Document Tracker DocType, only if the client actually imports (flag as an open question — not yet confirmed either way).</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-custom">Custom</span> PUR-12 · Purchase Budget Management <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Approach (PRD §8):</strong> Manage budgets by Department / Cost Centre / Project / Branch; track Budget, Purchase Commitments, Actual Spend, Balance Budget. ERPNext's native <code>Budget</code> DocType (against Cost Centre + Account) is close but doesn't track PO-stage <em>commitments</em> the way the PRD wants — likely needs a thin custom layer (a Script Report plus a computed "committed spend" field) rather than a full new DocType. Feeds PUR-01's requisition-time budget check.</p>
+    <div class="ai-box"><b>AI opportunity (PRD):</b> predict budget overruns, recommend budget reallocation, identify excessive purchasing.</div>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-refine">Refine</span> PUR-13 · Inventory Procurement Planning <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Approach:</strong> Builds directly on Stores' native Reorder Level / Safety Stock / Min-Max engine (STR-09/STR-13), extended with Lead Time and EOQ (Economic Order Quantity) fields, and linked to Manufacturing's MRP output (material shortfalls from Production Planning auto-raise Material Requests here — this is the direct link to <a href="manufacturing-module.html">Manufacturing</a>).</p>
+    <div class="ai-box"><b>AI opportunity (PRD):</b> demand forecasting, auto replenishment, inventory optimization, overstock detection, stock-out prediction.</div>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-refine">Refine</span> PUR-14 · Vendor Portal (self-service) <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Native portal quotation submission for RFQs.</p>
+    <p><strong>What to add:</strong> Extend the portal with PO acknowledgment and supplier invoice submission — both are standard Frappe portal/Web Form patterns, no new architecture needed.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-refine">Refine</span> PUR-15 · Procurement Analytics <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>What already works:</strong> Native spend/trend reports.</p>
+    <p><strong>What to add:</strong> Script Reports for Spend Analysis, Purchase Trend, Vendor Analysis, Price Comparison (Excel #14) — feeding the shared Dashboards module (Wave 4) rather than a Purchase-only dashboard, consistent with how every other module's analytics are structured.</p>
+  </div>
+</details>
+
+<details class="feat">
+  <summary><span class="pill pill-ai">AI</span> PUR-16 · AI Procurement Copilot + Executive (CXO) Dashboard <span class="feat-arrow">▶</span></summary>
+  <div class="feat-body">
+    <p><strong>Per PRD §11 — the Copilot should:</strong> recommend preferred suppliers based on price/quality/delivery history; predict stock shortages before they occur; identify bulk-purchasing/volume-discount opportunities; detect duplicate or unnecessary purchase requests; forecast procurement demand from historical consumption + production plans; recommend vendor negotiation points from market price trends; detect procurement fraud, duplicate invoices, and unusual purchasing behaviour; predict supplier delivery delays and suggest alternates; optimise budgets by identifying savings opportunities; provide a daily procurement health summary for the Purchase Head and CFO.</p>
+    <p><strong>Executive Dashboard (CXO View) — real-time visibility into:</strong> Total Procurement Spend, Budget vs Actual, Open PRs, Pending RFQs, POs Pending Approval, Goods in Transit, Supplier Performance Index, Purchase Cycle Time, Inventory Replenishment Status, Cost Savings Achieved, Contract Renewal Alerts, Top Supplier Risks, Procurement Compliance Score, AI Procurement Health Score, Top AI Recommendations.</p>
+    <p style="font-size:13px;color:#666;">Same pattern as Sales' AI layer (<code>ai_utils.py</code> single entry point, owned by Veeren's AI track) and PMO's Scale Intelligence sidebar assistant — this is not a new AI architecture, it's the same one extended with Purchase-scoped tools/prompts once the transactional data (PR/PO/GRN/Invoice) exists to reason over.</p>
+  </div>
+</details>
+
+</div>
+
+<hr class="section no-print">
+
+<!-- ═══════════════════════════════════════════
+     TASK LIST
+═══════════════════════════════════════════ -->
+<h2 class="no-print">Task List</h2>
+<p class="no-print">One task per feature group, in build order. No dates assigned yet (see Open Decisions).</p>
+
+<div class="no-print">
+<div class="task-card">
+  <div class="task-header"><span class="task-id">PUR-01</span><h4 style="margin:0;">Purchase Requisition + approval workflow</h4></div>
+  <div class="task-meta">Effort: Medium · Depends on: Stores STR-01 (Item master)</div>
+  <p>Configure Material Request; build Employee→Dept Head→Purchase Manager→Finance→Management workflow; add budget/stock/pending-PO validation on submit.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">PUR-02</span><h4 style="margin:0;">Supplier master configuration</h4></div>
+  <div class="task-meta">Effort: Low</div>
+  <p>Confirm Supplier master fields against PRD §3's full list; add any missing custom fields (Certifications, Service Areas).</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">PUR-03</span><h4 style="margin:0;">Purchase Order lifecycle + approval matrix</h4></div>
+  <div class="task-meta">Effort: Medium · Depends on: PUR-01</div>
+  <p>Configure PO creation from PR/RFQ/Blanket Order/manual; build value-based approval Workflow.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">PUR-04</span><h4 style="margin:0;">Goods Receipt configuration</h4></div>
+  <div class="task-meta">Effort: Low · Depends on: Stores STR-02/03 (warehouse), PUR-03</div>
+  <p>Configure Purchase Receipt against PO with incoming Quality Inspection and rejection handling.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">PUR-05</span><h4 style="margin:0;">3-way invoice match validation</h4></div>
+  <div class="task-meta">Effort: Medium · New server script · Depends on: PUR-04</div>
+  <p>Build validate-time deviation check across PO/GRN/Invoice quantity and rate.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">PUR-06</span><h4 style="margin:0;">RFQ &amp; comparison</h4></div>
+  <div class="task-meta">Effort: Medium</div>
+  <p>Configure RFQ modes (single/multi/online/email); confirm/extend the quotation comparison view against PRD §2's criteria.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">PUR-07</span><h4 style="margin:0;">Approval workflow consolidation</h4></div>
+  <div class="task-meta">Effort: Low</div>
+  <p>Single consistent Workflow pattern applied to Requisition/PO/Invoice.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">PUR-08</span><h4 style="margin:0;">Supplier Scorecard extension</h4></div>
+  <div class="task-meta">Effort: Low-Medium</div>
+  <p>Extend native Supplier Scorecard's criteria set to match PRD §6 fully; confirm RFQ/PO auto-block on low standing.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">PUR-09</span><h4 style="margin:0;">Blanket Order / Contract fields</h4></div>
+  <div class="task-meta">Effort: Low</div>
+  <p>Confirm SLA/Penalty/Renewal fields; add contract-expiry Notification Rule.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">PUR-10</span><h4 style="margin:0;">Advance payment configuration</h4></div>
+  <div class="task-meta">Effort: Low · Coordinate with Accounts</div>
+  <p>Confirm advance Payment Entry → Invoice auto-adjustment flow; supplier exposure report.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">PUR-11</span><h4 style="margin:0;">Import documentation (conditional)</h4></div>
+  <div class="task-meta">Effort: Low-Medium · <strong>Open question: does the client import?</strong></div>
+  <p>If yes: build a lightweight Import Document Tracker (BOE, licences); Landed Cost Voucher is already native.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">PUR-12</span><h4 style="margin:0;">Purchase Budget tracking</h4></div>
+  <div class="task-meta">Effort: Medium · Thin custom layer over native Budget</div>
+  <p>Add PO-stage commitment tracking on top of native Budget DocType; Script Report for Budget vs Actual.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">PUR-13</span><h4 style="margin:0;">Inventory procurement planning link</h4></div>
+  <div class="task-meta">Effort: Medium · Depends on: Stores STR-09/13, Manufacturing MFG Production Planning</div>
+  <p>Extend Reorder/Min-Max with Lead Time + EOQ; wire MRP shortfall output from Manufacturing into Material Request creation.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">PUR-14</span><h4 style="margin:0;">Vendor Portal extension</h4></div>
+  <div class="task-meta">Effort: Low-Medium</div>
+  <p>Add PO acknowledgment + supplier invoice submission to the existing RFQ portal.</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">PUR-15</span><h4 style="margin:0;">Procurement analytics reports</h4></div>
+  <div class="task-meta">Effort: Medium</div>
+  <p>Spend Analysis, Purchase Trend, Vendor Analysis, Price Comparison Script Reports, feeding Dashboards (Wave 4).</p>
+</div>
+<div class="task-card">
+  <div class="task-header"><span class="task-id">PUR-16</span><h4 style="margin:0;">AI Procurement Copilot + CXO Dashboard</h4></div>
+  <div class="task-meta">Effort: High · Owner: AI track (Veeren) · Depends on: PUR-01 through PUR-10 live with real data</div>
+  <p>Full PRD §11 feature set + Executive Dashboard. Same AI architecture as Sales/PMO's Scale Intelligence layer.</p>
+</div>
+</div>
+
+<hr class="section no-print">
+
+<h2 class="no-print">Open Decisions</h2>
+<div class="grid g2 no-print">
+  <div class="card">
+    <h4>Lead &amp; start date not yet assigned</h4>
+    <p style="font-size:13.5px;">Same as Stores/Manufacturing — Wave 2, Lead: TBD in <a href="module-plan.html">module-plan.html</a>.</p>
+  </div>
+  <div class="card">
+    <h4>Does the client actually import materials?</h4>
+    <p style="font-size:13.5px;">PUR-11 (Import Management) is scoped in both Excel and general PRD context, but no client confirmation yet that cross-border procurement is real for this client. Confirm before committing build time — this is the one feature genuinely at risk of being scoped-but-unneeded.</p>
+  </div>
+</div>
+
+<div class="page-nav">
+  <a class="prev" href="stores-module.html">← Stores Module Plan</a>
+  <a class="next" href="manufacturing-module.html">Manufacturing Module Plan →</a>
+</div>
+
+</main>
+</body>
+</html>

@@ -36,6 +36,9 @@
     <a class="nav-link" href="finance-module.html">Finance Module Plan</a>
     <a class="nav-link" href="pmo-module.html">PMO Module Plan</a>
     <a class="nav-link" href="scale-marketing-module.html">Scale Marketing Module Plan 🆕</a>
+    <a class="nav-link" href="stores-module.html">Stores Module Plan 🆕</a>
+    <a class="nav-link" href="purchase-module.html">Purchase &amp; Procurement Module Plan 🆕</a>
+    <a class="nav-link" href="manufacturing-module.html">Manufacturing Module Plan 🆕</a>
 
     <div class="nav-group">Foundation</div>
     <a class="nav-link" href="frappe-verdict.html">Frappe Capability</a>
@@ -93,7 +96,9 @@
         <li><code>ehiddenbrain/scale</code> — team collaboration repo (bench root + <code>scale</code> F0 app inside <code>apps/scale/</code>)</li>
         <li><code>ehiddenbrain/scale_accounts</code></li>
         <li><code>ehiddenbrain/scale_sales</code></li>
-        <li><code>ehiddenbrain/scale_supply</code></li>
+        <li><code>ehiddenbrain/scale_stock</code></li>
+        <li><code>ehiddenbrain/scale_purchase</code></li>
+        <li><code>ehiddenbrain/scale_manufacturing</code></li>
         <li><code>ehiddenbrain/scale_hr</code></li>
       </ul>
       <p class="muted">Request access from the Platform lead (Ud) before starting. Custom app repos are created per module as development begins.</p>
@@ -529,7 +534,9 @@ bench --site scale.localhost run-tests --app scale_sales -v</code></pre>
       <tr><td><code>scale_sales</code></td><td>Sales (19 features) + CRM bridge + Marketing (33 features)</td><td>Wave 1</td><td><strong>Raghib</strong></td><td>scale owner</td></tr>
       <tr><td><code>scale_accounts</code></td><td>Finance + Accounts (15+15 features) — one app, two sub-tracks. Includes India Compliance / GST hooks.</td><td>Wave 1</td><td><strong>Uday</strong></td><td>scale owner</td></tr>
       <tr><td><code>scale_hr</code></td><td>Human Resources (23 features) + PMO (14 features)</td><td>Wave 1</td><td><strong>Vandana</strong></td><td>scale owner</td></tr>
-      <tr><td><code>scale_supply</code></td><td>Buying, Inventory, Production, Purchase, Stores</td><td>Wave 2</td><td>TBD (Uday + Vandana free from Sep)</td><td>scale owner</td></tr>
+      <tr><td><code>scale_stock</code></td><td>Stores / Inventory — foundation app, build 1st</td><td>Wave 2</td><td>TBD</td><td>scale owner</td></tr>
+      <tr><td><code>scale_purchase</code></td><td>Purchase &amp; Procurement — build 2nd, <code>required_apps</code> = scale_stock</td><td>Wave 2</td><td>TBD</td><td>scale owner</td></tr>
+      <tr><td><code>scale_manufacturing</code></td><td>Manufacturing / Production — build 3rd, <code>required_apps</code> = scale_stock + scale_purchase</td><td>Wave 2</td><td>TBD</td><td>scale owner</td></tr>
       <tr><td><em>BI / Dashboards</em></td><td>Dashboards, Survey — app name TBD</td><td>Wave 4</td><td>TBD</td><td>all owners</td></tr>
     </table>
   </div>
