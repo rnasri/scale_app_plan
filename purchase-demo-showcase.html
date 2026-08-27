@@ -167,7 +167,7 @@
 <section class="slide hero-slide"><span class="slide-idx" style="color:rgba(255,255,255,.5);">01 / 21</span>
   <div class="slide-eyebrow">Live Demo Deck</div>
   <h1>The AIWS Purchase Advantage</h1>
-  <p class="lede">Procure-to-Pay, built directly against the client's own dedicated PRD (not just the Excel scope sheet). Built on <code>feature/supply-chain-apps</code>, not yet merged. 9 of 16 features live — the full Requisition → Order → Receipt → Invoice-Match chain works end to end.</p>
+  <p class="lede">Procure-to-Pay, built directly against the client's own dedicated PRD (not just the Excel scope sheet). Built on <code>feature/supply-chain-apps</code>, not yet merged. 10 of 16 features live — the full Requisition → Order → Receipt → Invoice-Match → Advance-Payment chain works end to end.</p>
   <div class="cta-row">
     <a class="btn btn-white" href="http://scale.localhost:8000/app/scale-purchase" target="_blank">▶ Open Live Scale Purchase</a>
     <a class="btn btn-ghost-dark" href="#scorecard">See the Scorecard ↓</a>
@@ -179,8 +179,8 @@
   <div class="slide-eyebrow">Feature Alignment</div>
   <h2>16 Features. Here's Where We Stand — Honestly.</h2>
   <div class="big-nums">
-    <div class="big-num c-green"><div class="n">9</div><div class="l">Progressed</div></div>
-    <div class="big-num c-grey"><div class="n">7</div><div class="l">Planned</div></div>
+    <div class="big-num c-green"><div class="n">10</div><div class="l">Progressed</div></div>
+    <div class="big-num c-grey"><div class="n">6</div><div class="l">Planned</div></div>
     <div class="big-num c-navy"><div class="n">16</div><div class="l">Total Purchase Features</div></div>
   </div>
   <div class="legend-row">
@@ -211,7 +211,7 @@
     <div class="task-chip added"><span class="tid">PUR-07</span><span class="ttitle">Approval Workflows</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">PUR-08</span><span class="ttitle">Supplier Performance Mgmt</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">PUR-09</span><span class="ttitle">Contract &amp; Rate Agreement Mgmt</span><span class="tmark">✅</span></div>
-    <div class="task-chip pending"><span class="tid">PUR-10</span><span class="ttitle">Advance Payments</span><span class="tmark">⏳</span></div>
+    <div class="task-chip added"><span class="tid">PUR-10</span><span class="ttitle">Advance Payments</span><span class="tmark">✅</span></div>
     <div class="task-chip pending"><span class="tid">PUR-11</span><span class="ttitle">Import Management</span><span class="tmark">⏳</span></div>
     <div class="task-chip pending"><span class="tid">PUR-12</span><span class="ttitle">Purchase Budget Management</span><span class="tmark">⏳</span></div>
     <div class="task-chip pending"><span class="tid">PUR-13</span><span class="ttitle">Inventory Procurement Planning</span><span class="tmark">⏳</span></div>
@@ -357,12 +357,15 @@
 </section>
 
 <section class="slide"><span class="slide-idx">14 / 21</span>
-  <div class="sec-head"><span class="sec-num">PUR-10</span><h2 style="margin:0;">Advance Payments</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="sec-head"><span class="sec-num">PUR-10</span><h2 style="margin:0;">Advance Payments</h2><span class="status-pill progressed">🟢 Progressed</span></div>
   <div class="ask-line">Advances against POs, automatically adjusted in the final invoice, with exposure visible per supplier.</div>
-  <div class="pending-box" style="max-width:520px;"><div class="box-label">Pending</div><ul><li>Not started — native advance Payment Entry already handles this; mainly a confirm-and-coordinate task with Accounts</li></ul></div>
-  <div><span class="task-tag">Feature Map: PUR-10 — Not Started</span></div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Fixed</div><ul><li>Every new Purchase Invoice now starts with "Auto-Allocate Advances" pre-ticked — the system already had this exact capability, it just wasn't switched on by default, so advances sat unallocated unless someone remembered to tick a box every time</li></ul></div>
+    <div class="pending-box"><div class="box-label">Confirmed Already Native</div><ul><li>Paying a supplier an advance against a PO, and the standard Accounts Payable report showing that supplier's true exposure (billed, paid, outstanding) — both worked correctly with no changes needed</li></ul></div>
+  </div>
+  <div><span class="task-tag">Feature Map: PUR-10 — Progressed</span></div>
   <div class="prd-tag">Excel scope sheet — Advance Payments</div>
-  <div class="usecase future"><div class="uc-label">Use Case — Once Confirmed</div><div class="uc-persona">👤 Finance Team</div><div class="uc-flow">Pays a supplier advance against a PO, and it auto-nets off the final invoice — no manual adjustment.</div></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Finance Team</div><div class="uc-flow">Pays a supplier advance against a PO, and it now auto-nets off the final invoice with no manual adjustment step — exactly what was promised, not just what the system happened to support.</div></div>
 </section>
 
 <section class="slide"><span class="slide-idx">15 / 21</span>
