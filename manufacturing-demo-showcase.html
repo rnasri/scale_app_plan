@@ -169,7 +169,7 @@
 <section class="slide hero-slide"><span class="slide-idx" style="color:rgba(255,255,255,.5);">01 / 20</span>
   <div class="slide-eyebrow">Live Demo Deck</div>
   <h1>The AIWS Manufacturing Advantage</h1>
-  <p class="lede">Make-to-stock, built on the third and last of the three new Supply Chain apps — depends on <a href="stores-module.html" style="color:#fff;">Stores</a> and <a href="purchase-module.html" style="color:#fff;">Purchase</a>, both now done. Built on <code>feature/supply-chain-apps</code>, not yet merged. 7 of 15 features live — Phase 1's full BOM → Work Order → consumption → output chain confirmed end to end, plus cost variance, a real capacity-load report, and a full sub-contracting round-trip, all on top.</p>
+  <p class="lede">Make-to-stock, built on the third and last of the three new Supply Chain apps — depends on <a href="stores-module.html" style="color:#fff;">Stores</a> and <a href="purchase-module.html" style="color:#fff;">Purchase</a>, both now done. Built on <code>feature/supply-chain-apps</code>, not yet merged. 8 of 15 features live — Phase 1's full BOM → Work Order → consumption → output chain confirmed end to end, plus cost variance, a real capacity-load report, a full sub-contracting round-trip, and a new cross-machine scheduling board.</p>
   <div class="cta-row">
     <a class="btn btn-white" href="http://scale.localhost:8000/app/scale-manufacturing" target="_blank">▶ Open Live Scale Manufacturing</a>
     <a class="btn btn-ghost-dark" href="#scorecard">See the Scorecard ↓</a>
@@ -181,9 +181,9 @@
   <div class="slide-eyebrow">Feature Alignment</div>
   <h2>15 Features. Here's Where We Stand — Honestly.</h2>
   <div class="big-nums">
-    <div class="big-num c-green"><div class="n">7</div><div class="l">Progressed</div></div>
+    <div class="big-num c-green"><div class="n">8</div><div class="l">Progressed</div></div>
     <div class="big-num c-amber"><div class="n">2</div><div class="l">Blocked on PRD</div></div>
-    <div class="big-num c-grey"><div class="n">6</div><div class="l">Planned</div></div>
+    <div class="big-num c-grey"><div class="n">5</div><div class="l">Planned</div></div>
     <div class="big-num c-navy"><div class="n">15</div><div class="l">Total Manufacturing Features</div></div>
   </div>
   <div class="legend-row">
@@ -216,7 +216,7 @@
     <div class="task-chip added"><span class="tid">MFG-07</span><span class="ttitle">Batch / Job Costing</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">MFG-08</span><span class="ttitle">Capacity Planning</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">MFG-09</span><span class="ttitle">Sub-contracting</span><span class="tmark">✅</span></div>
-    <div class="task-chip pending"><span class="tid">MFG-10</span><span class="ttitle">Machine Scheduling</span><span class="tmark">⏳</span></div>
+    <div class="task-chip added"><span class="tid">MFG-10</span><span class="ttitle">Machine Scheduling</span><span class="tmark">✅</span></div>
     <div class="task-chip pending"><span class="tid">MFG-11</span><span class="ttitle">Downtime Tracking</span><span class="tmark">⏳</span></div>
     <div class="task-chip pending"><span class="tid">MFG-12</span><span class="ttitle">Scrap &amp; Waste Management</span><span class="tmark">⏳</span></div>
     <div class="task-chip pending"><span class="tid">MFG-13</span><span class="ttitle">Shift Management</span><span class="tmark">⏳</span></div>
@@ -349,12 +349,16 @@
 </section>
 
 <section class="slide"><span class="slide-idx">14 / 20</span>
-  <div class="sec-head"><span class="sec-num">MFG-10</span><h2 style="margin:0;">Machine Scheduling</h2><span class="status-pill planned">⚪ Planned</span></div>
-  <div class="ask-line">A visual finite-capacity scheduling board across machines/workstations.</div>
-  <div class="pending-box" style="max-width:600px;"><div class="box-label">Pending</div><ul><li>Not started — the one genuinely new UI piece in this module (comparable in shape to PMO's Gantt work); real scope depth depends on the still-missing PRD</li></ul></div>
-  <div><span class="task-tag">Feature Map: MFG-10 — Not Started</span></div>
+  <div class="sec-head"><span class="sec-num">MFG-10</span><h2 style="margin:0;">Machine Scheduling</h2><span class="status-pill progressed">🟢 Progressed</span></div>
+  <div class="ask-line">See every machine's schedule at a glance, not one Job Card at a time.</div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Confirmed Live First</div><ul><li>Job Card and Work Order already ship native Gantt views — including working drag-to-reschedule and a generic Workstation filter — a real correction to the plan's own assumption that scheduling visuals didn't exist yet</li></ul></div>
+    <div class="pending-box"><div class="box-label">Real Gap, Now Closed</div><ul><li>New <b>Machine Schedule Board</b> page — the native Gantt is one flat list with no way to tell which machine a bar belongs to; the new board groups Job Cards into one lane per Workstation, filterable by date range and machine, color-coded by status. Built on Frappe's own bundled Gantt library, zero new dependencies</li></ul></div>
+  </div>
+  <div><span class="task-tag">Feature Map: MFG-10 — Progressed</span></div>
   <div class="prd-tag">Excel scope sheet — Production tab (no dedicated PRD exists for this module)</div>
-  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Shop Floor Supervisor</div><div class="uc-flow">Sees every machine's schedule at a glance and reschedules a delayed job with a drag, not a spreadsheet.</div></div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/machine-schedule-board" target="_blank">See the Machine Schedule Board →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Shop Floor Supervisor</div><div class="uc-flow">Sees every machine's schedule at a glance and reschedules a delayed job with a drag, not a spreadsheet.</div></div>
 </section>
 
 <section class="slide"><span class="slide-idx">15 / 20</span>

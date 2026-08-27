@@ -111,7 +111,7 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
 <p class="no-print">Turn a Bill of Materials and a sales/forecast demand signal into finished goods on the shelf — with raw-material consumption, machine/labour time, and scrap all costed accurately, and no work order started without knowing whether material and capacity actually exist.</p>
 
 <div class="summary-strip">
-  <div class="s-stat"><div class="sv">7 / 15</div><div class="sl">Features Done</div></div>
+  <div class="s-stat"><div class="sv">8 / 15</div><div class="sl">Features Done</div></div>
   <div class="s-stat"><div class="sv">~83%</div><div class="sl">OOTB (per master plan estimate)</div></div>
   <div class="s-stat"><div class="sv">1</div><div class="sl">New Script Report So Far (Phase 1 was 100% Native)</div></div>
   <div class="s-stat"><div class="sv">⚠ No PRD</div><div class="sl">Excel one-liners only — MFG-02/06 blocked</div></div>
@@ -233,10 +233,10 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
 <h3>Phase 3 — Scheduling &amp; Reporting Polish</h3>
 
 <details class="feat">
-  <summary><span class="pill pill-refine">Refine</span> MFG-10 · Machine Scheduling <span class="feat-arrow">▶</span></summary>
+  <summary><span class="pill pill-custom">Custom</span> MFG-10 · Machine Scheduling <span class="feat-arrow">▶</span></summary>
   <div class="feat-body">
-    <p><strong>What already works:</strong> Workstations + Job Card scheduling are native.</p>
-    <p><strong>What to add:</strong> A visual scheduling board with finite capacity — the one genuinely new UI piece in this module (comparable in shape to PMO's Gantt work). Scope depth depends on the missing PRD.</p>
+    <p><strong>What already works:</strong> Job Card and Work Order both ship native Gantt views, including drag-to-reschedule and a generic Workstation filter — confirmed live, a real correction to the plan's assumption that scheduling visuals were entirely missing.</p>
+    <p><strong>What was added:</strong> A new <b>Machine Schedule Board</b> page — the one genuine gap native coverage didn't close: the stock Gantt is a single flat list with no way to tell which machine a bar belongs to. The new board groups Job Cards into one Gantt lane per Workstation, filterable by date range and workstation, color-coded by status.</p>
   </div>
 </details>
 
@@ -335,9 +335,9 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
   <p>Confirmed live end-to-end on ERPNext's revamped subcontracting flow: a finished good flagged <code>is_sub_contracted_item</code>, linked via a Subcontracting BOM to its raw-material BOM and a service item, ordered on a subcontracted Purchase Order, converted to a Subcontracting Order (auto-computing 2 raw units needed per finished good from the BOM), raw material transferred to a genuinely separate supplier warehouse via a "Send to Subcontractor" Stock Entry, and received back via Subcontracting Receipt with cost correctly reconciled as service charge + consumed raw material (₹100 + ₹40 = ₹140) — exactly matching the BOM + PO rate inputs, no manual cost entry anywhere in the chain. Zero code needed. <b>Two real API gotchas caught live, don't affect real Desk usage:</b> the finished good's <code>is_sub_contracted_item</code> flag isn't implied by anything else and must be set explicitly; and the transfer Stock Entry's item row needs an explicit <code>subcontracted_item</code> link back to the finished good or the system can't match it against the Subcontracting Order's own Raw Materials Supplied table — the Desk UI sets this automatically when a user picks the SCO, so only a script inserting the Stock Entry directly via the API hits it.</p>
 </div>
 <div class="task-card">
-  <div class="task-header"><span class="task-id">MFG-10</span><h4 style="margin:0;">Machine Scheduling board</h4></div>
-  <div class="task-meta">Effort: Medium-High · <strong>Scope depends on PRD</strong> · New UI</div>
-  <p>Build a visual finite-capacity scheduling board over native Workstation/Job Card data.</p>
+  <div class="task-header"><span class="task-id">MFG-10</span><h4 style="margin:0;">Machine Scheduling board</h4> <span class="st-done">✅ Done</span></div>
+  <div class="task-meta">Effort: Medium · New UI (custom Desk Page)</div>
+  <p>Confirmed live first that ERPNext already ships native Gantt views for both Job Card and Work Order — including working drag-to-reschedule and a generic Workstation filter, both verified in the browser — a real correction to the plan's assumption that scheduling visuals didn't exist yet. <b>Real defect found in native config, doesn't break anything:</b> Job Card's own calendar/gantt config (<code>job_card_calendar.js</code>) references <code>subject</code>/<code>color</code>/<code>allDay</code>/<code>progress</code> fields that don't exist anywhere on the Job Card doctype — confirmed by dumping its full fieldlist. Verified live it still renders correctly regardless, since Frappe falls back to the doctype's <code>title_field</code> for the bar label and silently no-ops on the missing color/progress fields — a harmless dead reference, not a functional bug. The one real gap native coverage left open: the stock Gantt is a single flat list with no way to tell which machine a bar belongs to. Built a new <b>Machine Schedule Board</b> page (reusing Frappe's own bundled <code>frappe-gantt</code> library, same technique the native views use, zero new dependencies) that groups Job Cards into one Gantt lane per Workstation — filterable by date range and Workstation, colored by status (Open/In Progress/On Hold/Completed/Cancelled). Tested live with 2 workstations and overlapping job cards: correct per-machine grouping, correct status coloring, Workstation filter correctly narrows to a single machine's lane. Bar-click navigation to the Job Card form was checked against the native Gantt view too for a fair comparison — both have the same real-world limit of frappe-gantt's thin-bar click target on short-duration jobs; not a regression introduced here.</p>
 </div>
 <div class="task-card">
   <div class="task-header"><span class="task-id">MFG-11</span><h4 style="margin:0;">Downtime Entry + OEE feed</h4></div>
@@ -372,7 +372,7 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
 <div class="grid g2 no-print">
   <div class="card">
     <h4>Request a Manufacturing/Production PRD</h4>
-    <p style="font-size:13.5px;">The single biggest open item for this module. Purchase &amp; Procurement had a 15-page PRD; Stores had a fully fit-gap-annotated Excel tab; Production has neither. Routing (MFG-02), Quality Inspection templates (MFG-06), and the Machine Scheduling board's real scope (MFG-10) all need it before Phase 2 custom work should start.</p>
+    <p style="font-size:13.5px;">The single biggest open item for this module. Purchase &amp; Procurement had a 15-page PRD; Stores had a fully fit-gap-annotated Excel tab; Production has neither. Routing (MFG-02) and Quality Inspection templates (MFG-06) both need it before Phase 2 custom work should start. (The Machine Scheduling board, MFG-10, turned out not to need it — the real gap was small and self-evident once native Gantt coverage was checked directly.)</p>
   </div>
   <div class="card">
     <h4>Lead &amp; start date not yet assigned</h4>
