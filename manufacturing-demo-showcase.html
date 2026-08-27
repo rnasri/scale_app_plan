@@ -169,7 +169,7 @@
 <section class="slide hero-slide"><span class="slide-idx" style="color:rgba(255,255,255,.5);">01 / 20</span>
   <div class="slide-eyebrow">Live Demo Deck</div>
   <h1>The AIWS Manufacturing Advantage</h1>
-  <p class="lede">Make-to-stock, built on the third and last of the three new Supply Chain apps — depends on <a href="stores-module.html" style="color:#fff;">Stores</a> and <a href="purchase-module.html" style="color:#fff;">Purchase</a>, both now done. Built on <code>feature/supply-chain-apps</code>, not yet merged. 10 of 15 features live — Phase 1's full BOM → Work Order → consumption → output chain confirmed end to end, plus cost variance, a real capacity-load report, a full sub-contracting round-trip, a new cross-machine scheduling board, native downtime tracking, and automatic scrap costing.</p>
+  <p class="lede">Make-to-stock, built on the third and last of the three new Supply Chain apps — depends on <a href="stores-module.html" style="color:#fff;">Stores</a> and <a href="purchase-module.html" style="color:#fff;">Purchase</a>, both now done. Built on <code>feature/supply-chain-apps</code>, not yet merged. 11 of 15 features live — Phase 1's full BOM → Work Order → consumption → output chain confirmed end to end, plus cost variance, a real capacity-load report, a full sub-contracting round-trip, a new cross-machine scheduling board, native downtime tracking, automatic scrap costing, and shift-wise production reporting.</p>
   <div class="cta-row">
     <a class="btn btn-white" href="http://scale.localhost:8000/app/scale-manufacturing" target="_blank">▶ Open Live Scale Manufacturing</a>
     <a class="btn btn-ghost-dark" href="#scorecard">See the Scorecard ↓</a>
@@ -181,9 +181,9 @@
   <div class="slide-eyebrow">Feature Alignment</div>
   <h2>15 Features. Here's Where We Stand — Honestly.</h2>
   <div class="big-nums">
-    <div class="big-num c-green"><div class="n">10</div><div class="l">Progressed</div></div>
+    <div class="big-num c-green"><div class="n">11</div><div class="l">Progressed</div></div>
     <div class="big-num c-amber"><div class="n">2</div><div class="l">Blocked on PRD</div></div>
-    <div class="big-num c-grey"><div class="n">3</div><div class="l">Planned</div></div>
+    <div class="big-num c-grey"><div class="n">2</div><div class="l">Planned</div></div>
     <div class="big-num c-navy"><div class="n">15</div><div class="l">Total Manufacturing Features</div></div>
   </div>
   <div class="legend-row">
@@ -219,7 +219,7 @@
     <div class="task-chip added"><span class="tid">MFG-10</span><span class="ttitle">Machine Scheduling</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">MFG-11</span><span class="ttitle">Downtime Tracking</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">MFG-12</span><span class="ttitle">Scrap &amp; Waste Management</span><span class="tmark">✅</span></div>
-    <div class="task-chip pending"><span class="tid">MFG-13</span><span class="ttitle">Shift Management</span><span class="tmark">⏳</span></div>
+    <div class="task-chip added"><span class="tid">MFG-13</span><span class="ttitle">Shift Management</span><span class="tmark">✅</span></div>
     <div class="task-chip pending"><span class="tid">MFG-14</span><span class="ttitle">Production Reports</span><span class="tmark">⏳</span></div>
     <div class="task-chip pending"><span class="tid">MFG-15</span><span class="ttitle">Production Planning (MRP)</span><span class="tmark">⏳</span></div>
   </div>
@@ -387,12 +387,16 @@
 </section>
 
 <section class="slide"><span class="slide-idx">17 / 20</span>
-  <div class="sec-head"><span class="sec-num">MFG-13</span><h2 style="margin:0;">Shift Management</h2><span class="status-pill planned">⚪ Planned</span></div>
-  <div class="ask-line">See output and OEE broken down by shift, with clean handover notes.</div>
-  <div class="pending-box" style="max-width:600px;"><div class="box-label">Pending</div><ul><li>Not started — Shift types are native, shared with <a href="hr-module.html">HR</a>; the genuine gap is shift-wise output/OEE reporting and handover notes on top</li></ul></div>
-  <div><span class="task-tag">Feature Map: MFG-13 — Not Started</span></div>
+  <div class="sec-head"><span class="sec-num">MFG-13</span><h2 style="margin:0;">Shift Management</h2><span class="status-pill progressed">🟢 Progressed</span></div>
+  <div class="ask-line">See output broken down by shift, with clean handover notes.</div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Confirmed Live First</div><ul><li>Shift Type / Shift Assignment are genuinely native (shared with <a href="hr-module.html">HR</a>) — but there's zero linkage anywhere to production data: no shift field exists on Job Card, Job Card Time Log, or Downtime Entry</li></ul></div>
+    <div class="pending-box"><div class="box-label">Real Gap, Now Closed — No New Fields Needed</div><ul><li>New <b>Shift Production Report</b> buckets existing Job Card and Downtime timestamps into each Shift's own time window — including overnight shifts crossing midnight — plus a new <b>Shift Handover Note</b> for the outgoing supervisor's notes</li></ul></div>
+  </div>
+  <div><span class="task-tag">Feature Map: MFG-13 — Progressed</span></div>
   <div class="prd-tag">Excel scope sheet — Production tab (no dedicated PRD exists for this module)</div>
-  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Shift Supervisor</div><div class="uc-flow">Hands over to the next shift with a clean record of what happened and what's outstanding — not a verbal summary.</div></div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/query-report/Shift Production Report" target="_blank">See the Shift Production Report →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Shift Supervisor</div><div class="uc-flow">Hands over to the next shift with a clean record of what happened and what's outstanding — not a verbal summary.</div></div>
 </section>
 
 <section class="slide"><span class="slide-idx">18 / 20</span>

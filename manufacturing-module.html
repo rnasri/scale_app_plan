@@ -111,7 +111,7 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
 <p class="no-print">Turn a Bill of Materials and a sales/forecast demand signal into finished goods on the shelf — with raw-material consumption, machine/labour time, and scrap all costed accurately, and no work order started without knowing whether material and capacity actually exist.</p>
 
 <div class="summary-strip">
-  <div class="s-stat"><div class="sv">10 / 15</div><div class="sl">Features Done</div></div>
+  <div class="s-stat"><div class="sv">11 / 15</div><div class="sl">Features Done</div></div>
   <div class="s-stat"><div class="sv">~83%</div><div class="sl">OOTB (per master plan estimate)</div></div>
   <div class="s-stat"><div class="sv">1</div><div class="sl">New Script Report So Far (Phase 1 was 100% Native)</div></div>
   <div class="s-stat"><div class="sv">⚠ No PRD</div><div class="sl">Excel one-liners only — MFG-02/06 blocked</div></div>
@@ -256,10 +256,10 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
 </details>
 
 <details class="feat">
-  <summary><span class="pill pill-refine">Refine</span> MFG-13 · Shift Management <span class="feat-arrow">▶</span></summary>
+  <summary><span class="pill pill-custom">Custom</span> MFG-13 · Shift Management <span class="feat-arrow">▶</span></summary>
   <div class="feat-body">
-    <p><strong>What already works:</strong> Shift types are native, shared with <a href="hr-module.html">HR</a>.</p>
-    <p><strong>What to add:</strong> Shift-wise output/OEE reporting and handover notes — the Production-specific extension on top of HR's native shift master.</p>
+    <p><strong>What already works:</strong> Shift Type / Shift Assignment are native, shared with <a href="hr-module.html">HR</a> — confirmed live there's zero linkage anywhere to production data: no shift field exists on Job Card, Job Card Time Log, or Downtime Entry.</p>
+    <p><strong>What was added:</strong> A new <b>Shift Production Report</b> that buckets existing Job Card Time Log and Downtime Entry timestamps into each Shift Type's time-of-day window — including overnight shifts that cross midnight — with zero new fields on those doctypes, plus a new <b>Shift Handover Note</b> DocType for the outgoing supervisor's notes.</p>
   </div>
 </details>
 
@@ -351,9 +351,9 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
   <p>Confirmed live: a BOM Scrap Item (1 unit, ₹10 estimated rate) auto-populated into a real Manufacture Stock Entry with zero manual entry, landed correctly in the Work Order's Scrap Warehouse, and the finished good's cost came out correctly netted (₹200 raw material − ₹10 scrap value = ₹190), not the full raw-material cost. Zero code needed. <b>Real correction, consistent with a pattern already found in MFG-01:</b> a brand-new scrap item's BOM-level "rate" is only an estimate for the BOM's own <code>scrap_material_cost</code> display — it does <em>not</em> carry through as the real transaction's valuation rate. A scrap item still needs its own real stock/valuation history (or <code>Allow Zero Valuation Rate</code>) before a live Manufacture entry will value it correctly, same "typed rate ≠ real valuation" rule already documented for BOM costing. Also confirmed the Work Order needs an explicit <b>Scrap Warehouse</b> set, or the scrap row has no target warehouse and the entry is blocked — a real setup requirement, not a bug.</p>
 </div>
 <div class="task-card">
-  <div class="task-header"><span class="task-id">MFG-13</span><h4 style="margin:0;">Shift-wise OEE reporting</h4></div>
+  <div class="task-header"><span class="task-id">MFG-13</span><h4 style="margin:0;">Shift-wise OEE reporting</h4> <span class="st-done">✅ Done</span></div>
   <div class="task-meta">Effort: Medium · Depends on: HR shift types</div>
-  <p>Build shift-wise output/OEE report + handover notes on top of HR's native shift master.</p>
+  <p>Confirmed live first that Shift Type / Shift Assignment are genuinely native (shared with HR) but carry zero linkage to production data anywhere — no shift field exists on Job Card, Job Card Time Log, or Downtime Entry. That's the real gap this closes, without adding any new fields to those doctypes. New <b>Shift Production Report</b> buckets Job Card Time Log and Downtime Entry timestamps into each Shift Type's own time-of-day window (start_time/end_time), including overnight shifts that cross midnight, aggregating output qty and downtime hours per Shift × Workstation. Tested live with a real day shift (06:00–14:00) and a midnight-crossing night shift (22:00–06:00) on the same Workstation: a 5-unit Job Card logged at 08:00 and a 3-unit Job Card logged at 23:00 landed in the correct day/night buckets respectively, and a downtime event at 23:30 correctly landed in the night bucket too — confirming the overnight-wrap logic works, not just the simple case. New <b>Shift Handover Note</b> DocType (Workstation, Shift, Handover Date, Handed Over By/To, Output Summary, Pending Items, Notes) gives the outgoing supervisor a simple log for the next shift, since native Frappe has no handover mechanism of any kind. <b>One precision on the plan's wording:</b> this report computes output and downtime by shift, not a full OEE percentage — same boundary already established in MFG-11, full OEE stays out of scope for MFG-14/Wave 4 Dashboards.</p>
 </div>
 <div class="task-card">
   <div class="task-header"><span class="task-id">MFG-14</span><h4 style="margin:0;">Production reports assembly</h4></div>
