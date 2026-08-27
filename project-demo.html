@@ -45,6 +45,44 @@
 .feature-links a { display:inline-flex; align-items:center; gap:5px; background:#f3f4f6; border:1px solid #e5e7eb; border-radius:6px; padding:5px 12px; font-size:.8rem; font-family:monospace; color:#1e3a5f; text-decoration:none; }
 .feature-links a:hover { background:#e5e7eb; border-color:#cbd5e1; }
 .feature-links a b { color:#7c3aed; font-family: -apple-system, sans-serif; font-weight: 600; }
+
+/* ── Visual components for the Feature Showcase ── */
+.flow-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:14px 0; }
+.flow-box { flex:1; min-width:130px; border-radius:10px; padding:12px 10px; text-align:center; }
+.flow-box .fb-icon { font-size:1.3rem; display:block; margin-bottom:4px; }
+.flow-box .fb-label { font-weight:700; font-size:.82rem; }
+.flow-box .fb-sub { font-size:.72rem; opacity:.8; margin-top:2px; }
+.flow-arrow { font-size:1.2rem; color:#9ca3af; flex-shrink:0; }
+.flow-box.raw { background:#f3f4f6; border:1.5px solid #d1d5db; color:#374151; }
+.flow-box.process { background:#ede9fe; border:1.5px solid #c4b5fd; color:#5b21b6; }
+.flow-box.output { background:#d1fae5; border:1.5px solid #6ee7b7; color:#065f46; }
+.flow-box.scrap { background:#fee2e2; border:1.5px solid #fca5a5; color:#991b1b; }
+.flow-box.supplier { background:#fef3c7; border:1.5px solid #fcd34d; color:#92400e; }
+
+.timeline-wrap { margin:34px 0 10px; }
+.timeline { position:relative; height:10px; border-radius:6px; background:#e5e7eb; }
+.timeline-seg { position:absolute; top:0; bottom:0; border-radius:6px; }
+.timeline-marker { position:absolute; top:-24px; font-size:.7rem; font-weight:700; white-space:nowrap; transform:translateX(-50%); }
+.timeline-marker::after { content:''; position:absolute; left:50%; top:18px; width:2px; height:8px; background:#9ca3af; }
+.timeline-labels { display:flex; justify-content:space-between; font-size:.7rem; color:#6b7280; margin-top:6px; }
+
+.bar-compare { margin:14px 0; }
+.bar-row { display:flex; align-items:center; gap:10px; margin-bottom:7px; }
+.bar-row .bar-label { width:130px; font-size:.78rem; font-weight:600; color:#374151; flex-shrink:0; text-align:right; }
+.bar-track { flex:1; height:20px; background:#f3f4f6; border-radius:5px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:5px; display:flex; align-items:center; justify-content:flex-end; padding-right:8px; font-size:.7rem; font-weight:700; color:#fff; white-space:nowrap; }
+
+.workflow-steps { display:flex; align-items:center; gap:2px; margin:16px 0; flex-wrap:wrap; }
+.wf-step { flex:1; min-width:95px; text-align:center; padding:10px 6px; border-radius:8px; font-size:.75rem; font-weight:700; }
+.wf-arrow { color:#9ca3af; font-size:1.1rem; padding:0 2px; }
+
+.compare-cards { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:14px 0; }
+@media (max-width: 640px) { .compare-cards { grid-template-columns:1fr; } }
+.compare-card { border-radius:10px; padding:14px 16px; border:2px solid; }
+.compare-card h5 { margin:0 0 8px; font-size:.88rem; }
+.compare-row { display:flex; justify-content:space-between; gap:8px; font-size:.78rem; padding:5px 0; border-bottom:1px dashed rgba(0,0,0,.1); }
+.compare-row:last-child { border-bottom:none; }
+.compare-row .cr-val { font-weight:700; text-align:right; }
 </style>
 </head>
 <body>
@@ -231,6 +269,13 @@
   <div class="feature-item">
     <h4>Single-level Bill of Materials <span class="complexity-badge complexity-simple">Simple</span></h4>
     <p>The most basic manufacturing question: <i>what does this product need to be built?</i> A BOM is just a recipe — one finished good, a list of raw materials, and how much of each. This is the BOM the Apex Manufacturing story itself runs on: Pump Assembly A1 needs Steel Sheet, Copper Wire, and Ball Bearings.</p>
+    <div class="flow-row">
+      <div class="flow-box raw"><span class="fb-icon">🧱</span><span class="fb-label">Raw Materials</span><span class="fb-sub">Steel Sheet · Copper Wire · Ball Bearing</span></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box process"><span class="fb-icon">📋</span><span class="fb-label">BOM Recipe</span><span class="fb-sub">fixed quantities of each</span></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box output"><span class="fb-icon">🔧</span><span class="fb-label">Pump Assembly A1</span><span class="fb-sub">finished good</span></div>
+    </div>
     <div class="feature-links">
       <a href="http://scale.localhost:8000/app/bom/BOM-FG-PUMP-ASSEMBLY-A1-001" target="_blank"><b>Open →</b> BOM-FG-PUMP-ASSEMBLY-A1-001</a>
     </div>
@@ -239,6 +284,35 @@
   <div class="feature-item">
     <h4>Multi-level BOM (a BOM inside a BOM) <span class="complexity-badge complexity-medium">Medium</span></h4>
     <p>Real products are rarely built from raw material in one step — they're built from <i>sub-assemblies</i>, which are themselves built from raw material. Here, "Motor Housing Assembly" is its own small BOM (Steel Sheet + Copper Wire), and it's then used as one ingredient in a second, alternate recipe for the very same Pump Assembly A1. Open it and notice the Motor Housing line already shows a real, non-zero cost — that cost rolled up automatically from its own BOM underneath, nothing typed in by hand.</p>
+    <svg viewBox="0 0 620 230" style="width:100%;max-width:620px;display:block;margin:16px auto;" xmlns="http://www.w3.org/2000/svg">
+      <!-- Steel Sheet + Copper Wire -> Motor Housing Assembly -->
+      <line x1="130" y1="160" x2="230" y2="95" stroke="#c4b5fd" stroke-width="2"/>
+      <line x1="290" y1="160" x2="245" y2="95" stroke="#c4b5fd" stroke-width="2"/>
+      <!-- Motor Housing Assembly -> Pump Assembly A1 -->
+      <line x1="270" y1="65" x2="320" y2="20" stroke="#6ee7b7" stroke-width="2"/>
+      <!-- Ball Bearing -> Pump Assembly A1 (direct, skips the sub-assembly level) -->
+      <line x1="480" y1="160" x2="360" y2="20" stroke="#6ee7b7" stroke-width="2"/>
+
+      <rect x="330" y="0" width="180" height="42" rx="8" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1.5"/>
+      <text x="420" y="18" text-anchor="middle" font-size="11" font-weight="700" fill="#065f46">🔧 Pump Assembly A1</text>
+      <text x="420" y="33" text-anchor="middle" font-size="9.5" fill="#047857">Level 0 · this BOM · finished good</text>
+
+      <rect x="200" y="65" width="170" height="46" rx="8" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1.5"/>
+      <text x="285" y="85" text-anchor="middle" font-size="11" font-weight="700" fill="#5b21b6">⚙️ Motor Housing Assembly</text>
+      <text x="285" y="100" text-anchor="middle" font-size="9.5" fill="#7c3aed">Level 1 · sub-assembly · ₹144.14</text>
+
+      <rect x="55" y="160" width="150" height="46" rx="8" fill="#f3f4f6" stroke="#d1d5db" stroke-width="1.5"/>
+      <text x="130" y="180" text-anchor="middle" font-size="11" font-weight="700" fill="#374151">🧱 Steel Sheet</text>
+      <text x="130" y="195" text-anchor="middle" font-size="9.5" fill="#6b7280">Level 2 · raw material</text>
+
+      <rect x="215" y="160" width="150" height="46" rx="8" fill="#f3f4f6" stroke="#d1d5db" stroke-width="1.5"/>
+      <text x="290" y="180" text-anchor="middle" font-size="11" font-weight="700" fill="#374151">🔌 Copper Wire</text>
+      <text x="290" y="195" text-anchor="middle" font-size="9.5" fill="#6b7280">Level 2 · raw material</text>
+
+      <rect x="405" y="160" width="150" height="46" rx="8" fill="#f3f4f6" stroke="#d1d5db" stroke-width="1.5"/>
+      <text x="480" y="180" text-anchor="middle" font-size="11" font-weight="700" fill="#374151">⚪ Ball Bearing ×2</text>
+      <text x="480" y="195" text-anchor="middle" font-size="9.5" fill="#6b7280">Level 2 · raw material (used directly)</text>
+    </svg>
     <div class="feature-links">
       <a href="http://scale.localhost:8000/app/bom/BOM-MOTOR-HOUSING-ASSY-001" target="_blank"><b>Open →</b> The sub-assembly's own BOM</a>
       <a href="http://scale.localhost:8000/app/bom/BOM-FG-PUMP-ASSEMBLY-A1-002" target="_blank"><b>Open →</b> The parent BOM using it</a>
@@ -248,6 +322,15 @@
   <div class="feature-item">
     <h4>Downtime Tracking <span class="complexity-badge complexity-simple">Simple</span></h4>
     <p>Machines break down — this is just a log of when a specific workstation stopped, why, and for how long. Nothing clever here on its own, but it's the raw data that feeds the Downtime Analysis report, so a manager can see which machine is costing the most stopped time over a month, not just today.</p>
+    <div class="timeline-wrap">
+      <div class="timeline">
+        <div class="timeline-seg" style="left:0%;width:37%;background:#6ee7b7;"></div>
+        <div class="timeline-seg" style="left:37%;width:26%;background:#f87171;"></div>
+        <div class="timeline-seg" style="left:63%;width:37%;background:#6ee7b7;"></div>
+        <div class="timeline-marker" style="left:50%;color:#991b1b;">🛑 Stopped — 75 min<br><span style="font-weight:400;">Unplanned maintenance</span></div>
+      </div>
+      <div class="timeline-labels"><span>Assembly Line 2 running</span><span>Running resumed</span></div>
+    </div>
     <div class="feature-links">
       <a href="http://scale.localhost:8000/app/downtime-entry/DT-00002" target="_blank"><b>Open →</b> DT-00002 (75-minute unplanned stop)</a>
     </div>
@@ -256,6 +339,16 @@
   <div class="feature-item">
     <h4>Scrap &amp; Waste Costing <span class="complexity-badge complexity-medium">Medium</span></h4>
     <p>Not every gram of raw material becomes a sellable product — some becomes scrap (offcuts, rejects). This entry shows a real production run where, alongside the finished Pump Assembly, a genuine scrap by-product (steel offcut) was also recorded — and the finished good's cost is automatically netted for it, so the "true" cost per unit already accounts for what was thrown away, not just what was used.</p>
+    <div class="flow-row">
+      <div class="flow-box raw"><span class="fb-icon">🧱</span><span class="fb-label">Raw Materials</span><span class="fb-sub">per the BOM</span></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box process"><span class="fb-icon">🏭</span><span class="fb-label">Manufacture Entry</span><span class="fb-sub">MAT-STE-00005</span></div>
+      <span class="flow-arrow">→</span>
+      <div style="flex:1;min-width:130px;display:flex;flex-direction:column;gap:6px;">
+        <div class="flow-box output" style="min-width:0;"><span class="fb-icon">🔧</span><span class="fb-label">Pump Assembly A1</span><span class="fb-sub">finished good, cost netted</span></div>
+        <div class="flow-box scrap" style="min-width:0;"><span class="fb-icon">🗑️</span><span class="fb-label">Steel Offcut — 3 kg</span><span class="fb-sub">scrap by-product</span></div>
+      </div>
+    </div>
     <div class="feature-links">
       <a href="http://scale.localhost:8000/app/stock-entry/MAT-STE-00005" target="_blank"><b>Open →</b> MAT-STE-00005 (Manufacture entry with scrap)</a>
     </div>
@@ -264,6 +357,13 @@
   <div class="feature-item">
     <h4>Sub-contracting — outsourced manufacturing <span class="complexity-badge complexity-complex">Complex</span></h4>
     <p>Sometimes a step of production is done by a supplier, not in-house. Here, an "Impeller Assembly" is subcontracted to a real supplier: raw material (Copper Wire) is sent <i>out</i> to them, they charge a service fee for the machining work, and the finished part comes back <i>in</i> — landing in stock at a cost that's automatically the sum of the raw material consumed plus the service charge, with nothing manually calculated. This is the full chain: subcontracted Purchase Order → Subcontracting Order → raw material sent out → finished good received back.</p>
+    <div class="flow-row">
+      <div class="flow-box raw"><span class="fb-icon">🔌</span><span class="fb-label">Our Factory</span><span class="fb-sub">sends Copper Wire · ₹155.54</span></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box supplier"><span class="fb-icon">🏭</span><span class="fb-label">Precision Components India</span><span class="fb-sub">machining service · ₹500.00</span></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box output"><span class="fb-icon">⚙️</span><span class="fb-label">Impeller Assembly</span><span class="fb-sub">received back · ₹655.54 total</span></div>
+    </div>
     <div class="feature-links">
       <a href="http://scale.localhost:8000/app/purchase-order/PUR-ORD-2026-00006" target="_blank"><b>Open →</b> The subcontracted Purchase Order</a>
       <a href="http://scale.localhost:8000/app/subcontracting-order/SC-ORD-2026-00001" target="_blank"><b>Open →</b> The Subcontracting Order (see its own Connections tab for the full chain)</a>
@@ -278,6 +378,15 @@
   <div class="feature-item">
     <h4>Batch Tracking with Expiry <span class="complexity-badge complexity-simple">Simple</span></h4>
     <p>For any item with a shelf life, each incoming lot gets its own "batch" — a way to trace exactly which delivery a unit came from, and when it expires. This batch of Lubricant Oil is deliberately set to expire in about 3 weeks, so it shows up on the Expiring Batch Alert Report and would trigger a real 30-day advance reminder — the same mechanism a food, chemical, or pharma business relies on to never sell (or use) something past its date.</p>
+    <div class="timeline-wrap">
+      <div class="timeline">
+        <div class="timeline-seg" style="left:0%;width:100%;background:#a7f3d0;"></div>
+        <div class="timeline-seg" style="left:92%;width:8%;background:#fca5a5;"></div>
+        <div class="timeline-marker" style="left:92%;color:#065f46;">📅 Today</div>
+        <div class="timeline-marker" style="left:98%;color:#991b1b;">⚠️ Expires<br>in 20 days</div>
+      </div>
+      <div class="timeline-labels"><span>Manufactured 345 days ago</span><span>30-day alert window →</span></div>
+    </div>
     <div class="feature-links">
       <a href="http://scale.localhost:8000/app/batch/LUBOIL-DEMO-01" target="_blank"><b>Open →</b> Batch LUBOIL-DEMO-01</a>
       <a href="http://scale.localhost:8000/app/query-report/Expiring Batch Alert Report" target="_blank"><b>Open →</b> Expiring Batch Alert Report</a>
@@ -287,6 +396,17 @@
   <div class="feature-item">
     <h4>Cycle Count with a Real Variance <span class="complexity-badge complexity-medium">Medium</span></h4>
     <p>A cycle count is a spot-check: someone physically counts what's on the shelf and compares it to what the system thinks is there. This one shows a genuine shortage — the system expected 541 kg of Steel Sheet, the physical count found 533 kg — and submitting the count automatically raised a real, draft Stock Reconciliation to correct the system quantity. Nobody had to remember to do that step separately.</p>
+    <div class="bar-compare">
+      <div class="bar-row">
+        <span class="bar-label">System says</span>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:#94a3b8;">541 kg</div></div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Physically counted</span>
+        <div class="bar-track"><div class="bar-fill" style="width:98.5%;background:#f59e0b;">533 kg</div></div>
+      </div>
+    </div>
+    <p style="margin:-4px 0 10px;font-size:.8rem;color:#b45309;font-weight:700;">⚠️ 8 kg variance → draft Stock Reconciliation auto-created</p>
     <div class="feature-links">
       <a href="http://scale.localhost:8000/app/cycle-count-sheet/CCS-2026-00004" target="_blank"><b>Open →</b> CCS-2026-00004 (8 kg shortage found)</a>
     </div>
@@ -295,6 +415,15 @@
   <div class="feature-item">
     <h4>Stock Disposition — writing off damaged goods <span class="complexity-badge complexity-medium">Medium</span></h4>
     <p>When stock is damaged and needs to be written off, it shouldn't just be quietly deleted — it goes through an approval step first (Draft → Pending Approval → Approved). Once approved here, the system automatically created the actual stock-issue transaction that removes it from inventory — the approval and the inventory correction are two different concerns, kept properly separate.</p>
+    <div class="workflow-steps">
+      <div class="wf-step" style="background:#f3f4f6;color:#374151;">📝 Draft</div>
+      <span class="wf-arrow">→</span>
+      <div class="wf-step" style="background:#fef3c7;color:#92400e;">⏳ Pending Approval</div>
+      <span class="wf-arrow">→</span>
+      <div class="wf-step" style="background:#d1fae5;color:#065f46;">✅ Approved</div>
+      <span class="wf-arrow">→</span>
+      <div class="wf-step" style="background:#ede9fe;color:#5b21b6;">📦 Stock Issued (auto)</div>
+    </div>
     <div class="feature-links">
       <a href="http://scale.localhost:8000/app/stock-disposition-request/SDR-2026-00003" target="_blank"><b>Open →</b> SDR-2026-00003 (Approved, auto-issued)</a>
     </div>
@@ -308,6 +437,20 @@
   <div class="feature-item">
     <h4>RFQ &amp; Vendor Comparison <span class="complexity-badge complexity-simple">Simple</span></h4>
     <p>Before buying, it's normal to ask more than one supplier for a price. Here, the same Ball Bearing order was sent to two real suppliers — Precision Components India quoted a higher price but better payment terms and a full year's warranty; SteelCraft Industries quoted cheaper but with less favourable terms. The Vendor Comparison report lays both quotes side by side, so the choice is made on total value, not price alone.</p>
+    <div class="compare-cards">
+      <div class="compare-card" style="background:#fffbeb;border-color:#fcd34d;">
+        <h5 style="color:#92400e;">Precision Components India</h5>
+        <div class="compare-row"><span>Rate</span><span class="cr-val">₹115 / unit</span></div>
+        <div class="compare-row"><span>Payment Terms</span><span class="cr-val">50% Adv / 50% Net 15</span></div>
+        <div class="compare-row"><span>Warranty</span><span class="cr-val" style="color:#065f46;">12 months 🏆</span></div>
+      </div>
+      <div class="compare-card" style="background:#eff6ff;border-color:#93c5fd;">
+        <h5 style="color:#1e40af;">SteelCraft Industries</h5>
+        <div class="compare-row"><span>Rate</span><span class="cr-val" style="color:#065f46;">₹108 / unit 🏆</span></div>
+        <div class="compare-row"><span>Payment Terms</span><span class="cr-val">Net 15</span></div>
+        <div class="compare-row"><span>Warranty</span><span class="cr-val">6 months</span></div>
+      </div>
+    </div>
     <div class="feature-links">
       <a href="http://scale.localhost:8000/app/request-for-quotation/PUR-RFQ-2026-00002" target="_blank"><b>Open →</b> The RFQ sent to both suppliers</a>
       <a href="http://scale.localhost:8000/app/query-report/Vendor Comparison" target="_blank"><b>Open →</b> Vendor Comparison report</a>
@@ -317,6 +460,24 @@
   <div class="feature-item">
     <h4>Supplier Performance Scoring <span class="complexity-badge complexity-medium">Medium</span></h4>
     <p>Two different kinds of supplier scoring, blended into one view. Delivery performance is scored automatically from real transaction history (a native scorecard) — nobody enters that by hand. But things like compliance paperwork or documentation quality have no transaction trail to compute from, so those are captured manually instead. The Supplier KPI Dashboard blends both into one ranking.</p>
+    <div class="bar-compare">
+      <div class="bar-row">
+        <span class="bar-label">Delivery <span style="font-weight:400;color:#9ca3af;">(auto)</span></span>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:#2563eb;">Scored from transactions</div></div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Compliance <span style="font-weight:400;color:#9ca3af;">(manual)</span></span>
+        <div class="bar-track"><div class="bar-fill" style="width:88%;background:#7c3aed;">88</div></div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Documentation <span style="font-weight:400;color:#9ca3af;">(manual)</span></span>
+        <div class="bar-track"><div class="bar-fill" style="width:92%;background:#7c3aed;">92</div></div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Service Support <span style="font-weight:400;color:#9ca3af;">(manual)</span></span>
+        <div class="bar-track"><div class="bar-fill" style="width:76%;background:#7c3aed;">76</div></div>
+      </div>
+    </div>
     <div class="feature-links">
       <a href="http://scale.localhost:8000/app/supplier-scorecard/Precision Components India" target="_blank"><b>Open →</b> The automatic Supplier Scorecard</a>
       <a href="http://scale.localhost:8000/app/supplier/Precision Components India" target="_blank"><b>Open →</b> The Supplier record (see the manual scores)</a>
@@ -327,6 +488,15 @@
   <div class="feature-item">
     <h4>Contract &amp; Rate Agreement <span class="complexity-badge complexity-medium">Medium</span></h4>
     <p>For a supplier you buy from regularly, it's common to lock in a rate and terms for a full year rather than renegotiating every order. This Blanket Order does exactly that with SteelCraft Industries — a fixed rate, defined payment terms, an SLA, and a penalty clause for late delivery — and it's deliberately set to expire in about a month, so it demonstrates the automatic renewal reminder a real procurement team would rely on to never let a good rate lapse unnoticed.</p>
+    <div class="timeline-wrap">
+      <div class="timeline">
+        <div class="timeline-seg" style="left:0%;width:100%;background:#bfdbfe;"></div>
+        <div class="timeline-seg" style="left:93%;width:7%;background:#fca5a5;"></div>
+        <div class="timeline-marker" style="left:93%;color:#1e40af;">📅 Today</div>
+        <div class="timeline-marker" style="left:99%;color:#991b1b;">🔔 Renews<br>in 25 days</div>
+      </div>
+      <div class="timeline-labels"><span>Contract started 335 days ago</span><span>30-day renewal alert window →</span></div>
+    </div>
     <div class="feature-links">
       <a href="http://scale.localhost:8000/app/blanket-order/MFG-BLR-2026-00001" target="_blank"><b>Open →</b> MFG-BLR-2026-00001</a>
     </div>
@@ -335,6 +505,20 @@
   <div class="feature-item">
     <h4>Advance Payment <span class="complexity-badge complexity-simple">Simple</span></h4>
     <p>Some suppliers want part of the payment upfront, before they ship. This shows a real Purchase Order with an advance payment made against it — and the advance auto-allocates against the eventual invoice by default, rather than someone having to remember to manually apply it later (that manual step is exactly what native ERPNext left you to do until this was fixed).</p>
+    <div class="bar-compare">
+      <div class="bar-row">
+        <span class="bar-label">PO Total</span>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:#94a3b8;">₹11,500</div></div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Advance Paid</span>
+        <div class="bar-track"><div class="bar-fill" style="width:43.5%;background:#059669;">₹5,000</div></div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Balance Due</span>
+        <div class="bar-track"><div class="bar-fill" style="width:56.5%;background:#d97706;">₹6,500</div></div>
+      </div>
+    </div>
     <div class="feature-links">
       <a href="http://scale.localhost:8000/app/purchase-order/PUR-ORD-2026-00007" target="_blank"><b>Open →</b> The Purchase Order</a>
       <a href="http://scale.localhost:8000/app/payment-entry/ACC-PAY-2026-00006" target="_blank"><b>Open →</b> The advance Payment Entry</a>
