@@ -169,7 +169,7 @@
 <section class="slide hero-slide"><span class="slide-idx" style="color:rgba(255,255,255,.5);">01 / 20</span>
   <div class="slide-eyebrow">Live Demo Deck</div>
   <h1>The AIWS Manufacturing Advantage</h1>
-  <p class="lede">Make-to-stock, built on the third and last of the three new Supply Chain apps — depends on <a href="stores-module.html" style="color:#fff;">Stores</a> and <a href="purchase-module.html" style="color:#fff;">Purchase</a>, both now done. Built on <code>feature/supply-chain-apps</code>, not yet merged. 4 of 15 features live — Phase 1's full BOM → Work Order → consumption → output chain confirmed end to end, with zero custom code needed.</p>
+  <p class="lede">Make-to-stock, built on the third and last of the three new Supply Chain apps — depends on <a href="stores-module.html" style="color:#fff;">Stores</a> and <a href="purchase-module.html" style="color:#fff;">Purchase</a>, both now done. Built on <code>feature/supply-chain-apps</code>, not yet merged. 5 of 15 features live — Phase 1's full BOM → Work Order → consumption → output chain confirmed end to end, plus actual-vs-standard cost variance, all with zero custom code needed.</p>
   <div class="cta-row">
     <a class="btn btn-white" href="http://scale.localhost:8000/app/scale-manufacturing" target="_blank">▶ Open Live Scale Manufacturing</a>
     <a class="btn btn-ghost-dark" href="#scorecard">See the Scorecard ↓</a>
@@ -181,9 +181,9 @@
   <div class="slide-eyebrow">Feature Alignment</div>
   <h2>15 Features. Here's Where We Stand — Honestly.</h2>
   <div class="big-nums">
-    <div class="big-num c-green"><div class="n">4</div><div class="l">Progressed</div></div>
+    <div class="big-num c-green"><div class="n">5</div><div class="l">Progressed</div></div>
     <div class="big-num c-amber"><div class="n">2</div><div class="l">Blocked on PRD</div></div>
-    <div class="big-num c-grey"><div class="n">9</div><div class="l">Planned</div></div>
+    <div class="big-num c-grey"><div class="n">8</div><div class="l">Planned</div></div>
     <div class="big-num c-navy"><div class="n">15</div><div class="l">Total Manufacturing Features</div></div>
   </div>
   <div class="legend-row">
@@ -213,7 +213,7 @@
     <div class="task-chip added"><span class="tid">MFG-04</span><span class="ttitle">Raw Material Consumption</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">MFG-05</span><span class="ttitle">Finished Goods Output</span><span class="tmark">✅</span></div>
     <div class="task-chip blocked"><span class="tid">MFG-06</span><span class="ttitle">Quality Control</span><span class="tmark">⏸</span></div>
-    <div class="task-chip pending"><span class="tid">MFG-07</span><span class="ttitle">Batch / Job Costing</span><span class="tmark">⏳</span></div>
+    <div class="task-chip added"><span class="tid">MFG-07</span><span class="ttitle">Batch / Job Costing</span><span class="tmark">✅</span></div>
     <div class="task-chip pending"><span class="tid">MFG-08</span><span class="ttitle">Capacity Planning</span><span class="tmark">⏳</span></div>
     <div class="task-chip pending"><span class="tid">MFG-09</span><span class="ttitle">Sub-contracting</span><span class="tmark">⏳</span></div>
     <div class="task-chip pending"><span class="tid">MFG-10</span><span class="ttitle">Machine Scheduling</span><span class="tmark">⏳</span></div>
@@ -310,12 +310,16 @@
 </section>
 
 <section class="slide"><span class="slide-idx">11 / 20</span>
-  <div class="sec-head"><span class="sec-num">MFG-07</span><h2 style="margin:0;">Batch / Job Costing</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="sec-head"><span class="sec-num">MFG-07</span><h2 style="margin:0;">Batch / Job Costing</h2><span class="status-pill progressed">🟢 Progressed</span></div>
   <div class="ask-line">See exactly what a production run actually cost — materials plus labour time — versus what it should have cost.</div>
-  <div class="pending-box" style="max-width:600px;"><div class="box-label">Pending</div><ul><li>Not started — native Work Order costing (actual materials + operation time at workstation rates, with variance vs. standard) is confirmed available; next session confirms it live the same way MFG-01/03/04/05 were</li></ul></div>
-  <div><span class="task-tag">Feature Map: MFG-07 — Not Started</span></div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Confirmed Live</div><ul><li>A real ₹600/hour workstation, a 60-minute planned operation, and a Job Card logging 90 actual minutes — planned cost (₹600) and actual cost (₹900) both computed correctly and sit side by side on the Work Order, a genuine ₹300 overrun visible the moment the Job Card is submitted</li></ul></div>
+    <div class="pending-box"><div class="box-label">One Precision</div><ul><li>There's no dedicated "variance" field or report — it's two real numbers on the same document that get compared, not an automatic percentage. Worth knowing before demoing this as a single number</li></ul></div>
+  </div>
+  <div><span class="task-tag">Feature Map: MFG-07 — Progressed</span></div>
   <div class="prd-tag">Excel scope sheet — Production tab (no dedicated PRD exists for this module)</div>
-  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Cost Accountant</div><div class="uc-flow">Sees actual-vs-standard cost variance on every Work Order — no manual costing spreadsheet.</div></div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/work-order" target="_blank">See Work Orders →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Cost Accountant</div><div class="uc-flow">Sees actual-vs-standard cost variance on every Work Order — no manual costing spreadsheet.</div></div>
 </section>
 
 <section class="slide"><span class="slide-idx">12 / 20</span>

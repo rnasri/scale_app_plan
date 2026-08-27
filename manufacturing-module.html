@@ -111,7 +111,7 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
 <p class="no-print">Turn a Bill of Materials and a sales/forecast demand signal into finished goods on the shelf — with raw-material consumption, machine/labour time, and scrap all costed accurately, and no work order started without knowing whether material and capacity actually exist.</p>
 
 <div class="summary-strip">
-  <div class="s-stat"><div class="sv">4 / 15</div><div class="sl">Features Done</div></div>
+  <div class="s-stat"><div class="sv">5 / 15</div><div class="sl">Features Done</div></div>
   <div class="s-stat"><div class="sv">~83%</div><div class="sl">OOTB (per master plan estimate)</div></div>
   <div class="s-stat"><div class="sv">0</div><div class="sl">Custom Code So Far — Phase 1 Confirmed 100% Native</div></div>
   <div class="s-stat"><div class="sv">⚠ No PRD</div><div class="sl">Excel one-liners only — MFG-02/06 blocked</div></div>
@@ -320,9 +320,9 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
   <p>Build incoming/in-process/outgoing inspection templates once inspection criteria are confirmed.</p>
 </div>
 <div class="task-card">
-  <div class="task-header"><span class="task-id">MFG-07</span><h4 style="margin:0;">Work Order costing verification</h4></div>
+  <div class="task-header"><span class="task-id">MFG-07</span><h4 style="margin:0;">Work Order costing verification</h4> <span class="st-done">✅ Done</span></div>
   <div class="task-meta">Effort: Low</div>
-  <p>Confirm actual-vs-standard cost variance reporting on Work Order.</p>
+  <p>Confirmed live with a real Workstation (₹600/hour), a BOM with one costed operation (60 planned minutes), and a Job Card logging 90 actual minutes: Work Order's <code>planned_operating_cost</code> (₹600) and <code>actual_operating_cost</code> (₹900) both computed correctly and sit side by side on the same document — a genuine ₹300 cost overrun, visible the moment the Job Card is submitted. One precision on the plan's own wording: there's no dedicated "variance" field or report — it's two real numbers on the same doc that a report/reviewer subtracts themselves, not a computed percentage shown automatically. <b>Real API gotcha caught live, doesn't affect real usage:</b> Work Order's <code>operations</code>/<code>required_items</code> tables do NOT auto-populate from <code>bom_no</code> on a plain insert — the Desk UI itself fires the whitelisted <code>get_items_and_operations_from_bom()</code> call the moment a user picks a BOM, so a real user never hits this; it only bit a script inserting a Work Order directly via the API.</p>
 </div>
 <div class="task-card">
   <div class="task-header"><span class="task-id">MFG-08</span><h4 style="margin:0;">Capacity load-vs-capacity report</h4></div>
