@@ -111,7 +111,7 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
 <p class="no-print">Turn a Bill of Materials and a sales/forecast demand signal into finished goods on the shelf — with raw-material consumption, machine/labour time, and scrap all costed accurately, and no work order started without knowing whether material and capacity actually exist.</p>
 
 <div class="summary-strip">
-  <div class="s-stat"><div class="sv">8 / 15</div><div class="sl">Features Done</div></div>
+  <div class="s-stat"><div class="sv">9 / 15</div><div class="sl">Features Done</div></div>
   <div class="s-stat"><div class="sv">~83%</div><div class="sl">OOTB (per master plan estimate)</div></div>
   <div class="s-stat"><div class="sv">1</div><div class="sl">New Script Report So Far (Phase 1 was 100% Native)</div></div>
   <div class="s-stat"><div class="sv">⚠ No PRD</div><div class="sl">Excel one-liners only — MFG-02/06 blocked</div></div>
@@ -243,7 +243,8 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
 <details class="feat">
   <summary><span class="pill pill-ootb">OOTB</span> MFG-11 · Downtime Tracking <span class="feat-arrow">▶</span></summary>
   <div class="feat-body">
-    <p><strong>What already works:</strong> Downtime Entry linked to workstation/Job Card with reason codes, feeding availability &amp; OEE analysis natively.</p>
+    <p><strong>What already works:</strong> Downtime Entry (Workstation + Operator, 7 preset reason codes + Other, auto-computed downtime duration) feeding a native Downtime Analysis report and dashboard chart.</p>
+    <p><strong>One precision on the plan's wording:</strong> Downtime Entry links to Workstation and Employee only — there's no Job Card link on this doctype at all, despite the plan's "workstation/Job Card" phrasing. And there's no native "OEE" computation anywhere in the manufacturing module (zero references, checked directly) — what exists is downtime/availability reporting, not a full Availability×Performance×Quality OEE metric. That gap is already correctly captured separately under MFG-13/14.</p>
   </div>
 </details>
 
@@ -340,9 +341,9 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
   <p>Confirmed live first that ERPNext already ships native Gantt views for both Job Card and Work Order — including working drag-to-reschedule and a generic Workstation filter, both verified in the browser — a real correction to the plan's assumption that scheduling visuals didn't exist yet. <b>Real defect found in native config, doesn't break anything:</b> Job Card's own calendar/gantt config (<code>job_card_calendar.js</code>) references <code>subject</code>/<code>color</code>/<code>allDay</code>/<code>progress</code> fields that don't exist anywhere on the Job Card doctype — confirmed by dumping its full fieldlist. Verified live it still renders correctly regardless, since Frappe falls back to the doctype's <code>title_field</code> for the bar label and silently no-ops on the missing color/progress fields — a harmless dead reference, not a functional bug. The one real gap native coverage left open: the stock Gantt is a single flat list with no way to tell which machine a bar belongs to. Built a new <b>Machine Schedule Board</b> page (reusing Frappe's own bundled <code>frappe-gantt</code> library, same technique the native views use, zero new dependencies) that groups Job Cards into one Gantt lane per Workstation — filterable by date range and Workstation, colored by status (Open/In Progress/On Hold/Completed/Cancelled). Tested live with 2 workstations and overlapping job cards: correct per-machine grouping, correct status coloring, Workstation filter correctly narrows to a single machine's lane. Bar-click navigation to the Job Card form was checked against the native Gantt view too for a fair comparison — both have the same real-world limit of frappe-gantt's thin-bar click target on short-duration jobs; not a regression introduced here.</p>
 </div>
 <div class="task-card">
-  <div class="task-header"><span class="task-id">MFG-11</span><h4 style="margin:0;">Downtime Entry + OEE feed</h4></div>
+  <div class="task-header"><span class="task-id">MFG-11</span><h4 style="margin:0;">Downtime Entry + OEE feed</h4> <span class="st-done">✅ Done</span></div>
   <div class="task-meta">Effort: Low</div>
-  <p>Configure Downtime Entry reason codes; confirm OEE analysis pulls correctly.</p>
+  <p>Confirmed live: a Downtime Entry against a real Workstation with a preset reason code ("Machine malfunction") correctly auto-computed its own duration (45 minutes, from/to time diff) on save, and immediately showed up correctly in the native <b>Downtime Analysis</b> Script Report (0.75 hours, workstation-scoped filter honored) with its bar chart aggregating downtime by machine. Zero code needed. <b>Real precision, not a gap:</b> confirmed by dumping the doctype's full fieldlist that Downtime Entry links to Workstation + Employee only, no Job Card field exists at all, correcting the plan's "workstation/Job Card" phrasing. Also confirmed there is no native "OEE" computation anywhere in the manufacturing module (grepped for it directly, zero hits) — what's native is downtime/availability reporting, not a full Availability×Performance×Quality OEE metric; that real gap is already tracked separately under MFG-13 (Shift-wise OEE) and MFG-14 (OEE trends, Wave 4 Dashboards), not duplicated here.</p>
 </div>
 <div class="task-card">
   <div class="task-header"><span class="task-id">MFG-12</span><h4 style="margin:0;">Scrap/waste configuration</h4></div>
