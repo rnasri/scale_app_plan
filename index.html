@@ -270,16 +270,15 @@
     <div class="day-col today">
       <div class="day-label">🟢 Today</div>
       <ul>
-        <li><b><code>scale_stock</code> — 11 of 12 features live</b> (only barcode/QR scan deferred). <b><code>scale_purchase</code> — 13 of 16 features live</b>, effectively done for now (PUR-13 parked pending Manufacturing's MRP output). <b><code>scale_manufacturing</code> — 12 of 15 features live</b>: full BOM → Work Order → consumption → output chain, cost variance, a real capacity-load report, a full sub-contracting round-trip (MFG-09), a new cross-machine scheduling board (MFG-10), native downtime tracking (MFG-11), automatic scrap costing (MFG-12), shift-wise production reporting (MFG-13), and a full native reporting suite now surfaced (MFG-14) all confirmed live today. All three built on one shared branch, <code>feature/supply-chain-apps</code>, not yet merged.</li>
+        <li><b><code>scale_stock</code> — 11 of 12 features live</b> (only barcode/QR scan deferred). <b><code>scale_purchase</code> — 13 of 16 features live</b>, effectively done (PUR-16 is AI-track-deferred; PUR-13 now unblocked, see below). <b><code>scale_manufacturing</code> — 13 of 15 features live, the entire plan done</b> except two items permanently parked on the missing Manufacturing PRD (MFG-02/06). Today's last feature, <b>MFG-15 (Production Planning/MRP)</b>, confirmed live the full cross-app chain: a Sales Order shortfall → Production Plan → native MRP engine → a real, submitted Purchase-type Material Request — the exact integration proof point across all three Supply Chain apps.</li>
         <li>Several real bugs and native-coverage gaps caught and fixed along the way — see <a href="stores-demo-showcase.html">Stock Showcase ✨</a>, <a href="purchase-demo-showcase.html">Purchase Showcase ✨</a>, and <a href="manufacturing-demo-showcase.html">Manufacturing Showcase ✨</a>.</li>
-        <li>Next up in Manufacturing: MFG-15 Production Planning (MRP) — the last Manufacturing feature, and the one that unblocks Purchase's parked PUR-13.</li>
+        <li><b>Purchase's PUR-13 (Inventory Procurement Planning) is now unblocked</b> — it was parked waiting for exactly the MRP output MFG-15 just proved works. Not yet built; next real Purchase session should pick it up first.</li>
       </ul>
     </div>
     <div class="day-col tomorrow">
       <div class="day-label">🔵 Tomorrow</div>
       <ul>
-        <li>Manufacturing build finishes with MFG-15 — see <a href="manufacturing-module.html">Manufacturing plan 🆕</a>. MFG-02/06 stay blocked on the missing PRD (only remaining gaps once MFG-15 lands).</li>
-        <li>Purchase's last open item (PUR-13 Inventory Procurement Planning) unblocks once MFG-15 has real MRP output to link to.</li>
+        <li>All three Supply Chain apps (<code>scale_stock</code>/<code>scale_purchase</code>/<code>scale_manufacturing</code>) are functionally complete on <code>feature/supply-chain-apps</code> — remaining items are PUR-13 (now unblocked, not yet built), PUR-16 (AI-track-deferred), and MFG-02/06 (blocked on the missing Manufacturing PRD). This is the natural point to revisit the "one PR once all 3 modules are complete" plan with the owner.</li>
       </ul>
     </div>
   </div>

@@ -399,10 +399,10 @@
 </section>
 
 <section class="slide"><span class="slide-idx">17 / 21</span>
-  <div class="sec-head"><span class="sec-num">PUR-13</span><h2 style="margin:0;">Inventory Procurement Planning</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="sec-head"><span class="sec-num">PUR-13</span><h2 style="margin:0;">Inventory Procurement Planning</h2><span class="status-pill planned">🔓 Unblocked</span></div>
   <div class="ask-line">Maintain optimal inventory levels through intelligent procurement planning — the direct link into Manufacturing.</div>
-  <div class="pending-box" style="max-width:600px;"><div class="box-label">Deliberately Parked</div><ul><li>Builds on <a href="stores-module.html">Stores</a>' Reorder/Min-Max engine (already live), extended with Lead Time and EOQ, and wired to Manufacturing's MRP output — that MRP link is the real blocker, not the Lead Time/EOQ part. Explicitly parked until the Manufacturing module exists, not skipped by accident — every other Purchase feature not blocked on Manufacturing has been built first (PUR-14/15 both done; only PUR-16, the AI track, is left)</li></ul></div>
-  <div><span class="task-tag">Feature Map: PUR-13 — Parked (waiting on Manufacturing)</span></div>
+  <div class="pending-box" style="max-width:640px;"><div class="box-label">Was Deliberately Parked — Blocker Now Cleared</div><ul><li>Builds on <a href="stores-module.html">Stores</a>' Reorder/Min-Max engine (already live), extended with Lead Time and EOQ, and wired to Manufacturing's MRP output. That MRP link was the real blocker, not the Lead Time/EOQ part — and it's now confirmed live: Manufacturing's MFG-15 proved a Sales Order shortfall correctly flows through Production Plan → MRP → a real Purchase-type Material Request in "Pending" status. Not yet built here — the next Purchase session should pick this up first</li></ul></div>
+  <div><span class="task-tag">Feature Map: PUR-13 — Unblocked, ready to resume</span></div>
   <div class="prd-tag">Purchase &amp; Procurement Management Module PRD — §9 Inventory Procurement Planning</div>
   <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Purchase Manager</div><div class="uc-flow">A material shortfall from Production Planning turns into a draft Material Request automatically — no manual watching of stock levels.</div></div>
 </section>

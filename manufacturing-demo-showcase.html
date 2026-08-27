@@ -169,7 +169,7 @@
 <section class="slide hero-slide"><span class="slide-idx" style="color:rgba(255,255,255,.5);">01 / 20</span>
   <div class="slide-eyebrow">Live Demo Deck</div>
   <h1>The AIWS Manufacturing Advantage</h1>
-  <p class="lede">Make-to-stock, built on the third and last of the three new Supply Chain apps — depends on <a href="stores-module.html" style="color:#fff;">Stores</a> and <a href="purchase-module.html" style="color:#fff;">Purchase</a>, both now done. Built on <code>feature/supply-chain-apps</code>, not yet merged. 12 of 15 features live — Phase 1's full BOM → Work Order → consumption → output chain confirmed end to end, plus cost variance, a real capacity-load report, a full sub-contracting round-trip, a new cross-machine scheduling board, native downtime tracking, automatic scrap costing, shift-wise production reporting, and a full native reporting suite now surfaced.</p>
+  <p class="lede">Make-to-stock, built on the third and last of the three new Supply Chain apps — depends on <a href="stores-module.html" style="color:#fff;">Stores</a> and <a href="purchase-module.html" style="color:#fff;">Purchase</a>, both now done. Built on <code>feature/supply-chain-apps</code>, not yet merged. 13 of 15 features live — the entire plan is done except two items permanently parked on a missing PRD. The Sales Order → Production Plan → MRP → Purchase Requisition chain across all three Supply Chain apps is confirmed live end to end.</p>
   <div class="cta-row">
     <a class="btn btn-white" href="http://scale.localhost:8000/app/scale-manufacturing" target="_blank">▶ Open Live Scale Manufacturing</a>
     <a class="btn btn-ghost-dark" href="#scorecard">See the Scorecard ↓</a>
@@ -181,9 +181,9 @@
   <div class="slide-eyebrow">Feature Alignment</div>
   <h2>15 Features. Here's Where We Stand — Honestly.</h2>
   <div class="big-nums">
-    <div class="big-num c-green"><div class="n">12</div><div class="l">Progressed</div></div>
+    <div class="big-num c-green"><div class="n">13</div><div class="l">Progressed</div></div>
     <div class="big-num c-amber"><div class="n">2</div><div class="l">Blocked on PRD</div></div>
-    <div class="big-num c-grey"><div class="n">1</div><div class="l">Planned</div></div>
+    <div class="big-num c-grey"><div class="n">0</div><div class="l">Planned</div></div>
     <div class="big-num c-navy"><div class="n">15</div><div class="l">Total Manufacturing Features</div></div>
   </div>
   <div class="legend-row">
@@ -221,7 +221,7 @@
     <div class="task-chip added"><span class="tid">MFG-12</span><span class="ttitle">Scrap &amp; Waste Management</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">MFG-13</span><span class="ttitle">Shift Management</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">MFG-14</span><span class="ttitle">Production Reports</span><span class="tmark">✅</span></div>
-    <div class="task-chip pending"><span class="tid">MFG-15</span><span class="ttitle">Production Planning (MRP)</span><span class="tmark">⏳</span></div>
+    <div class="task-chip added"><span class="tid">MFG-15</span><span class="ttitle">Production Planning (MRP)</span><span class="tmark">✅</span></div>
   </div>
 </section>
 
@@ -413,12 +413,13 @@
 </section>
 
 <section class="slide"><span class="slide-idx">19 / 20</span>
-  <div class="sec-head"><span class="sec-num">MFG-15</span><h2 style="margin:0;">Production Planning (MRP)</h2><span class="status-pill planned">⚪ Planned</span></div>
-  <div class="ask-line">Turn a sales forecast into a production plan — and a production plan's material shortfall into an automatic purchase request.</div>
-  <div class="pending-box" style="max-width:680px;"><div class="box-label">Pending — The Real Integration Checkpoint</div><ul><li>Not started — deliberately last in the build order (numbered 15, not 6) because it needs BOM, Work Order, <em>and</em> a working Purchase Requisition flow all in place first</li><li>Native Production Plan + MRP is confirmed available; this is the direct link into <a href="purchase-module.html">Purchase's Inventory Procurement Planning (PUR-13)</a> — completing this feature is also what unblocks PUR-13, which is currently parked waiting on exactly this</li></ul></div>
-  <div><span class="task-tag">Feature Map: MFG-15 — Not Started, cross-module integration proof point</span></div>
+  <div class="sec-head"><span class="sec-num">MFG-15</span><h2 style="margin:0;">Production Planning (MRP)</h2><span class="status-pill progressed">🟢 Progressed</span></div>
+  <div class="ask-line">Turn a sales order into a production plan — and a production plan's material shortfall into an automatic purchase request.</div>
+  <div class="added-box" style="max-width:720px;"><div class="box-label">Confirmed Live — The Real Integration Checkpoint, Proven End To End</div><ul><li>A Sales Order for 5 finished goods (needing 10 raw-material units via the BOM, with deliberately only 2 in stock) → a Production Plan raised from it → the native MRP engine correctly computed an 8-unit shortfall → a real, submittable Material Request created and submitted, landing in "Pending" status — the exact native doctype and state Purchase's own PUR-01 flow already consumes</li><li>Last feature in the entire 15-item Manufacturing plan — deliberately sequenced last (numbered 15, not 6) because it needed BOM, Work Order, and a working Purchase Requisition flow all in place first, all three now done</li><li><b>Completing this directly unblocks Purchase's own PUR-13</b> (Inventory Procurement Planning), which was parked waiting on exactly this</li></ul></div>
+  <div><span class="task-tag">Feature Map: MFG-15 — Progressed, cross-module integration proof point confirmed</span></div>
   <div class="prd-tag">Excel scope sheet — Production tab (no dedicated PRD exists for this module)</div>
-  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Purchase Manager</div><div class="uc-flow">A material shortfall from Production Planning turns into a draft Material Request automatically — no manual watching of stock levels, and no manual re-keying into Purchase.</div></div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/production-plan" target="_blank">See Production Plans →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Purchase Manager</div><div class="uc-flow">A material shortfall from Production Planning turns into a draft Material Request automatically — no manual watching of stock levels, and no manual re-keying into Purchase.</div></div>
 </section>
 
 <!-- 20 — CLOSING -->
