@@ -365,9 +365,9 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
   <p>Confirmed live, not just assumed: advance Payment Entry against a PO works natively (updates <code>Purchase Order.advance_paid</code> correctly on submit), and the standard Accounts Payable report correctly shows supplier-wise exposure once an invoice picks the advance up. <b>Real gap found:</b> "auto-adjusted in the final invoice" is not actually automatic out of the box — Purchase Invoice's own "Set Advances and Allocate (FIFO)" checkbox (<code>allocate_advances_automatically</code>) defaults to <em>unticked</em>, so a fresh invoice against that PO leaves the advance completely unallocated (0 rows in the Advances table, outstanding shows the full amount) unless someone manually ticks it or clicks "Get Advances Paid" every single time. Confirmed with a live A/B test: identical invoice, only that one field differed. Fixed with a Property Setter flipping the field's own default — no new field, no new code path — so every new Purchase Invoice now starts pre-ticked and the advance auto-pulls exactly as the PRD describes. Tested live end-to-end: PO → advance Payment Entry → new invoice (no manual step) → advance auto-allocated, outstanding correctly reduced on submit, and the standard Accounts Payable report showed the right invoiced/paid/outstanding split for the supplier.</p>
 </div>
 <div class="task-card">
-  <div class="task-header"><span class="task-id">PUR-11</span><h4 style="margin:0;">Import documentation (conditional)</h4></div>
-  <div class="task-meta">Effort: Low-Medium · <strong>Open question: does the client import?</strong></div>
-  <p>If yes: build a lightweight Import Document Tracker (BOE, licences); Landed Cost Voucher is already native.</p>
+  <div class="task-header"><span class="task-id">PUR-11</span><h4 style="margin:0;">Import documentation</h4> <span class="st-done">✅ Done</span></div>
+  <div class="task-meta">Effort: Low · Owner confirmed the client does import</div>
+  <p>The plan originally assumed this would need a new custom DocType/child table for Bill of Entry tracking — wrong, confirmed by reading the actual schema. <code>india_compliance</code> (already installed on this bench for GST/PAN elsewhere, PUR-02) ships a full, submittable native <b>Bill of Entry</b> doctype: BOE No./Date, Port Code, Bill of Lading No., and a complete per-item customs duty/GST breakdown, linked back to Purchase Invoice via "Get Items From Purchase Invoice." Landed Cost Voucher (freight/customs/insurance into item cost) and multi-currency PO/Invoice were already confirmed native, as planned. <b>The one real gap, confirmed by grepping the entire codebase for "import licence/license":</b> zero hits anywhere — nothing tracked import licences (Advance Authorization/EPCG/DFIA) at all. Added 3 fields (Type/No./Validity) directly on the native Bill of Entry rather than a new DocType, matching this app's own "extend native, don't build parallel" convention throughout. Tested live end-to-end: a real Bill of Entry created against a real submitted Purchase Invoice, with GST tax rows and customs accounts, all 3 new fields saving and persisting correctly.</p>
 </div>
 <div class="task-card">
   <div class="task-header"><span class="task-id">PUR-12</span><h4 style="margin:0;">Purchase Budget tracking</h4></div>
@@ -403,10 +403,6 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
   <div class="card">
     <h4>Lead &amp; start date not yet assigned</h4>
     <p style="font-size:13.5px;">Same as Stores/Manufacturing — Wave 2, Lead: TBD in <a href="module-plan.html">module-plan.html</a>.</p>
-  </div>
-  <div class="card">
-    <h4>Does the client actually import materials?</h4>
-    <p style="font-size:13.5px;">PUR-11 (Import Management) is scoped in both Excel and general PRD context, but no client confirmation yet that cross-border procurement is real for this client. Confirm before committing build time — this is the one feature genuinely at risk of being scoped-but-unneeded.</p>
   </div>
 </div>
 
