@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The AIWS Manufacturing Advantage | AIWS ERP</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.deck { scroll-snap-type: y proximity; }
+.slide {
+  min-height: calc(100vh - 64px);
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 50px 64px; scroll-snap-align: start; position: relative;
+  border-bottom: 1px solid var(--border);
+}
+.slide-idx { position: absolute; top: 24px; right: 28px; font-size: 11px; font-weight: 700; color: var(--text-4); letter-spacing: .4px; }
+.slide-eyebrow { font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--purple); margin-bottom: 10px; }
+.slide h1 { font-size: 42px; line-height: 1.15; margin: 0 0 16px; max-width: 820px; }
+.slide h2 { font-size: 32px; line-height: 1.2; margin: 0 0 14px; }
+.slide .lede { font-size: 17px; color: var(--text-2); max-width: 700px; line-height: 1.5; margin-bottom: 20px; }
+.slide .cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+
+.hero-slide {
+  background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 55%, #7c3aed 100%);
+  color: #fff; border-radius: var(--r-lg); margin: 0 0 4px;
+}
+.hero-slide .slide-eyebrow { color: rgba(255,255,255,.75); }
+.hero-slide h1 { color: #fff; font-size: 48px; max-width: 780px; }
+.hero-slide .lede { color: #fff; opacity: .9; max-width: 640px; font-size: 18px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: 30px; font-size: 14px; font-weight: 700; text-decoration: none; transition: transform .15s; }
+.btn:hover { transform: translateY(-1px); }
+.btn-white { background: #fff; color: #6d28d9; }
+.btn-ghost-dark { background: rgba(255,255,255,.14); color: #fff; border: 1px solid rgba(255,255,255,.4); }
+.btn-navy { background: var(--navy); color: #fff; }
+.btn-navy:hover { background: var(--navy-light); }
+
+.big-nums { display: flex; gap: 40px; flex-wrap: wrap; margin: 10px 0 24px; }
+.big-num .n { font-size: 64px; font-weight: 900; line-height: 1; }
+.big-num .l { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--text-3); margin-top: 6px; }
+.big-num.c-green .n { color: var(--green); }
+.big-num.c-amber .n { color: var(--amber); }
+.big-num.c-grey .n { color: #94a3b8; }
+.big-num.c-navy .n { color: var(--navy); }
+.legend-row { display: flex; gap: 22px; flex-wrap: wrap; font-size: 13.5px; margin-top: 4px; }
+.legend-row span { display: inline-flex; align-items: center; gap: 6px; }
+.dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+.dot-g { background: var(--green); } .dot-a { background: var(--amber); } .dot-p { background: #cbd5e1; }
+
+.task-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; margin-top: 10px; }
+.task-chip { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; box-shadow: var(--sh); }
+.task-chip .tid { font-size: 12px; font-weight: 800; color: var(--navy); background: var(--surface-2); border-radius: 5px; padding: 2px 7px; flex-shrink: 0; }
+.task-chip .ttitle { font-size: 12.5px; color: var(--text-2); line-height: 1.35; flex: 1; }
+.task-chip .tmark { font-size: 15px; flex-shrink: 0; }
+.task-chip.added { border-left: 3px solid var(--green); }
+.task-chip.pending { border-left: 3px solid #cbd5e1; opacity: .75; }
+.task-chip.blocked { border-left: 3px solid var(--amber); }
+
+.sec-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 6px; }
+.sec-num { font-size: 12px; font-weight: 800; color: var(--text-4); }
+.status-pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 13px; border-radius: 20px; font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .4px; }
+.status-pill.progressed { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-bdr); }
+.status-pill.initiated { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-bdr); }
+.status-pill.planned { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+.ask-line { font-size: 14.5px; color: var(--text-3); margin: 8px 0 18px; max-width: 700px; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; max-width: 900px; }
+.added-box, .pending-box { border-radius: 10px; padding: 16px 18px; }
+.added-box { background: var(--green-bg); border: 1px solid var(--green-bdr); }
+.pending-box { background: var(--surface-2); border: 1px solid var(--border); }
+.added-box .box-label, .pending-box .box-label { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+.added-box .box-label { color: var(--green); }
+.pending-box .box-label { color: var(--text-4); }
+.added-box ul, .pending-box ul { margin: 0; padding-left: 18px; }
+.added-box li, .pending-box li { font-size: 13.5px; line-height: 1.55; margin-bottom: 4px; }
+.added-box li { color: #065f46; }
+.pending-box li { color: var(--text-3); }
+.rule-box { background: var(--surface-2); border: 1px solid var(--border); border-left: 4px solid var(--navy); border-radius: 8px; padding: 12px 16px; margin: 12px 0; max-width: 780px; }
+.rule-box .box-label { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--navy); margin-bottom: 7px; }
+.rule-box ul { margin: 0; padding-left: 18px; }
+.rule-box li { font-size: 13px; line-height: 1.55; margin-bottom: 3px; color: var(--text-2); }
+.task-tag { display: inline-block; font-size: 11px; font-weight: 700; color: var(--navy); background: var(--surface-2); border: 1px solid var(--border); border-radius: 5px; padding: 3px 10px; margin-top: 16px; }
+.prd-tag { display: inline-block; font-size: 10.5px; font-weight: 600; background: #e0f2fe; color: #0369a1; border-radius: 4px; padding: 3px 10px; margin-top: 10px; }
+.slide-links { margin-top: 18px; display: flex; gap: 12px; flex-wrap: wrap; }
+.field-chips { margin-top: 10px; }
+.field-chip { display: inline-block; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10.5px; background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; border-radius: 4px; padding: 2px 7px; margin: 2px 4px 2px 0; }
+.flow-path { margin-top: 12px; font-size: 12px; color: var(--text-3); display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.flow-path .fp-step { background: var(--surface-2); border: 1px solid var(--border); border-radius: 5px; padding: 3px 9px; font-weight: 600; color: var(--text-2); }
+.flow-path .fp-arrow { color: var(--text-4); }
+
+.usecase { margin-top: 24px; padding: 16px 22px; background: var(--surface-2); border: 1px dashed var(--border-md); border-radius: 10px; max-width: 780px; }
+.usecase .uc-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--text-4); margin-bottom: 7px; }
+.usecase .uc-persona { font-size: 13px; font-weight: 700; color: var(--text-1); margin-bottom: 5px; }
+.usecase .uc-flow { font-size: 13.5px; color: var(--text-2); line-height: 1.6; }
+.usecase.future { border-style: solid; border-color: var(--amber-bdr); background: var(--amber-bg); }
+.usecase.future .uc-label, .usecase.future .uc-persona { color: #92400e; }
+.usecase.future .uc-flow { color: #78350f; }
+
+.closing-slide { background: var(--navy-dark); color: #fff; border-radius: var(--r-lg); }
+.closing-slide h2 { color: #fff; }
+.closing-slide .lede { color: rgba(255,255,255,.65); }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="s-title">AIWS ERP</div>
+    <div class="s-sub">Implementation Master Plan</div>
+    <span class="s-tag">Claude / implementation</span>
+  </div>
+  <nav>
+    <div class="nav-group">📋 Daily Update</div>
+    <a class="nav-link" href="index.html">Development Dashboard 🔴</a>
+
+    <div class="nav-group">Start Here</div>
+    <a class="nav-link" href="program-overview.html">Program Overview</a>
+
+    <div class="nav-group">✨ Live Showcases</div>
+    <a class="nav-link showcase" href="sales-demo-showcase.html">Sales Showcase ✨</a>
+    <a class="nav-link showcase" href="pmo-demo-showcase.html">PMO Showcase ✨</a>
+    <a class="nav-link showcase" href="hr-demo-showcase.html">HR Showcase ✨</a>
+    <a class="nav-link showcase" href="stores-demo-showcase.html">Stock Showcase ✨</a>
+    <a class="nav-link showcase" href="purchase-demo-showcase.html">Purchase Showcase ✨</a>
+    <a class="nav-link showcase active" href="manufacturing-demo-showcase.html">Manufacturing Showcase 🆕✨</a>
+
+    <div class="nav-group">User Manual</div>
+    <a class="nav-link" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
+    <a class="nav-link" href="pmo-user-manual.html">PMO Working Manual ✨</a>
+
+    <div class="nav-group">Module Plans</div>
+    <a class="nav-link" href="sales-module.html">Sales Module Plan</a>
+    <a class="nav-link" href="hr-module.html">HR Module Plan</a>
+    <a class="nav-link" href="accounts-module.html">Accounts Module Plan</a>
+    <a class="nav-link" href="finance-module.html">Finance Module Plan</a>
+    <a class="nav-link" href="pmo-module.html">PMO Module Plan</a>
+    <a class="nav-link" href="scale-marketing-module.html">Scale Marketing Module Plan 🆕</a>
+    <a class="nav-link" href="stores-module.html">Stores Module Plan 🆕</a>
+    <a class="nav-link" href="purchase-module.html">Purchase &amp; Procurement Module Plan 🆕</a>
+    <a class="nav-link" href="manufacturing-module.html">Manufacturing Module Plan 🆕</a>
+
+    <div class="nav-group">Foundation</div>
+    <a class="nav-link" href="frappe-verdict.html">Frappe Capability</a>
+    <a class="nav-link" href="architecture.html">System Architecture</a>
+
+    <div class="nav-group">Development Framework</div>
+    <a class="nav-link" href="customization-guide.html">Customization Guide</a>
+    <a class="nav-link" href="developer-guide.html">Developer Workflow</a>
+
+    <div class="nav-group">Implementation</div>
+    <a class="nav-link" href="module-plan.html">All 13 Modules</a>
+    <a class="nav-link" href="sprint-plan.html">Parallel Sprint Plan</a>
+    <a class="nav-link" href="wave-1.html">Sales &amp; Marketing Detail</a>
+
+    <div class="nav-group">AI Strategy</div>
+    <a class="nav-link" href="ai-plan-strategy.html">AI Plan Strategy</a>
+
+    <div class="nav-group">Tracking</div>
+    <a class="nav-link" href="sales-tracker.html">Sales Tracker</a>
+  </nav>
+  <div class="sidebar-foot">
+    Pixaflip × SIL · AIWS ERP<br>
+    <a href="../../index.html">← AIWS Setup portal</a>
+  </div>
+</aside>
+
+<main style="padding:0;max-width:none;">
+<div class="deck">
+
+<!-- 01 — HERO -->
+<section class="slide hero-slide"><span class="slide-idx" style="color:rgba(255,255,255,.5);">01 / 20</span>
+  <div class="slide-eyebrow">Live Demo Deck</div>
+  <h1>The AIWS Manufacturing Advantage</h1>
+  <p class="lede">Make-to-stock, built on the third and last of the three new Supply Chain apps — depends on <a href="stores-module.html" style="color:#fff;">Stores</a> and <a href="purchase-module.html" style="color:#fff;">Purchase</a>, both now done. Built on <code>feature/supply-chain-apps</code>, not yet merged. 4 of 15 features live — Phase 1's full BOM → Work Order → consumption → output chain confirmed end to end, with zero custom code needed.</p>
+  <div class="cta-row">
+    <a class="btn btn-white" href="http://scale.localhost:8000/app/scale-manufacturing" target="_blank">▶ Open Live Scale Manufacturing</a>
+    <a class="btn btn-ghost-dark" href="#scorecard">See the Scorecard ↓</a>
+  </div>
+</section>
+
+<!-- 02 — SCORECARD -->
+<section class="slide" id="scorecard"><span class="slide-idx">02 / 20</span>
+  <div class="slide-eyebrow">Feature Alignment</div>
+  <h2>15 Features. Here's Where We Stand — Honestly.</h2>
+  <div class="big-nums">
+    <div class="big-num c-green"><div class="n">4</div><div class="l">Progressed</div></div>
+    <div class="big-num c-amber"><div class="n">2</div><div class="l">Blocked on PRD</div></div>
+    <div class="big-num c-grey"><div class="n">9</div><div class="l">Planned</div></div>
+    <div class="big-num c-navy"><div class="n">15</div><div class="l">Total Manufacturing Features</div></div>
+  </div>
+  <div class="legend-row">
+    <span><span class="dot dot-g"></span> <b>Progressed</b> — built and tested</span>
+    <span><span class="dot dot-a"></span> <b>Blocked on PRD</b> — mechanism confirmed native, real templates need the client's actual data</span>
+    <span><span class="dot dot-p"></span> <b>Planned</b> — not started yet</span>
+  </div>
+  <div class="rule-box" style="margin-top:22px;max-width:820px;">
+    <div class="box-label">How This Deck Was Built</div>
+    <ul>
+      <li>Every status here comes from actually running the feature on the live system — not from the original plan.</li>
+      <li>Unlike Purchase, this module has no dedicated client PRD — only a thin one-line-per-feature Excel scope sheet. That's flagged honestly wherever it blocks real work, not glossed over.</li>
+      <li>Full technical detail, feature-by-feature: <a href="manufacturing-module.html">manufacturing-module.html</a>.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 03 — TASK GRID -->
+<section class="slide"><span class="slide-idx">03 / 20</span>
+  <div class="slide-eyebrow">From The Feature Map</div>
+  <h2>The Chain Starts With Bill of Materials</h2>
+  <p class="lede">All 15 features from the Excel scope sheet's "Production" tab, one box each. The first is the entry point everything downstream depends on.</p>
+  <div class="task-grid">
+    <div class="task-chip added"><span class="tid">MFG-01</span><span class="ttitle">Bill of Materials</span><span class="tmark">✅</span></div>
+    <div class="task-chip blocked"><span class="tid">MFG-02</span><span class="ttitle">Process Routing</span><span class="tmark">⏸</span></div>
+    <div class="task-chip added"><span class="tid">MFG-03</span><span class="ttitle">Work Orders</span><span class="tmark">✅</span></div>
+    <div class="task-chip added"><span class="tid">MFG-04</span><span class="ttitle">Raw Material Consumption</span><span class="tmark">✅</span></div>
+    <div class="task-chip added"><span class="tid">MFG-05</span><span class="ttitle">Finished Goods Output</span><span class="tmark">✅</span></div>
+    <div class="task-chip blocked"><span class="tid">MFG-06</span><span class="ttitle">Quality Control</span><span class="tmark">⏸</span></div>
+    <div class="task-chip pending"><span class="tid">MFG-07</span><span class="ttitle">Batch / Job Costing</span><span class="tmark">⏳</span></div>
+    <div class="task-chip pending"><span class="tid">MFG-08</span><span class="ttitle">Capacity Planning</span><span class="tmark">⏳</span></div>
+    <div class="task-chip pending"><span class="tid">MFG-09</span><span class="ttitle">Sub-contracting</span><span class="tmark">⏳</span></div>
+    <div class="task-chip pending"><span class="tid">MFG-10</span><span class="ttitle">Machine Scheduling</span><span class="tmark">⏳</span></div>
+    <div class="task-chip pending"><span class="tid">MFG-11</span><span class="ttitle">Downtime Tracking</span><span class="tmark">⏳</span></div>
+    <div class="task-chip pending"><span class="tid">MFG-12</span><span class="ttitle">Scrap &amp; Waste Management</span><span class="tmark">⏳</span></div>
+    <div class="task-chip pending"><span class="tid">MFG-13</span><span class="ttitle">Shift Management</span><span class="tmark">⏳</span></div>
+    <div class="task-chip pending"><span class="tid">MFG-14</span><span class="ttitle">Production Reports</span><span class="tmark">⏳</span></div>
+    <div class="task-chip pending"><span class="tid">MFG-15</span><span class="ttitle">Production Planning (MRP)</span><span class="tmark">⏳</span></div>
+  </div>
+</section>
+
+<!-- 04 — RIGOR FINDING -->
+<section class="slide" id="surprise"><span class="slide-idx">04 / 20</span>
+  <div class="slide-eyebrow">Worth Knowing Before The Walkthrough</div>
+  <h2>Two Real Corrections To The Plan, Found On Day One</h2>
+  <div class="added-box" style="max-width:720px;">
+    <div class="box-label">Caught While Confirming Phase 1, Fixed Before Anyone Saw Them</div>
+    <ul>
+      <li><b>"Phantom BOM" doesn't exist on this system's actual version.</b> The plan assumed a newer ERPNext feature (pass-through sub-assemblies that skip stocking an intermediate item) — grepped the entire manufacturing module directly, zero references anywhere. If the client genuinely needs it, that's a version upgrade, not something buildable on top.</li>
+      <li><b>A brand-new item's BOM cost silently shows zero</b> until it has a real stock transaction — the system prices Bill of Materials from an item's actual buying history by default, not whatever number is typed into the form. Confirmed live and documented so it isn't mistaken for a bug during setup.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══ 15 FEATURE SLIDES — MFG-01 to MFG-15 ═══ -->
+
+<section class="slide"><span class="slide-idx">05 / 20</span>
+  <div class="sec-head"><span class="sec-num">MFG-01</span><h2 style="margin:0;">Bill of Materials</h2><span class="status-pill progressed">🟢 Progressed</span></div>
+  <div class="ask-line">Define exactly what goes into a finished product — multi-level, fully costed.</div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Confirmed Live</div><ul><li>A real 2-level BOM (raw material → sub-assembly → finished good) — the sub-assembly's own cost rolled up correctly into the finished good's cost automatically</li><li>No code needed — this is pure master-data configuration once Items exist</li></ul></div>
+    <div class="pending-box"><div class="box-label">Real Correction To The Plan</div><ul><li>"Phantom BOM" (v16 feature) doesn't exist on this system's ERPNext version — confirm with the client whether that matters before assuming it's available</li></ul></div>
+  </div>
+  <div><span class="task-tag">Feature Map: MFG-01 — Progressed</span></div>
+  <div class="prd-tag">Excel scope sheet — Production tab (no dedicated PRD exists for this module)</div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/bom" target="_blank">See Bills of Materials →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Production Planner</div><div class="uc-flow">Builds a product structure once — raw materials, sub-assemblies, quantities — and every Work Order raised against it inherits the correct cost automatically.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">06 / 20</span>
+  <div class="sec-head"><span class="sec-num">MFG-02</span><h2 style="margin:0;">Process Routing</h2><span class="status-pill planned">⏸ Blocked on PRD</span></div>
+  <div class="ask-line">Define the sequence of operations, workstations, and standard times for making a product.</div>
+  <div class="pending-box" style="max-width:640px;"><div class="box-label">Blocked, Not Skipped</div><ul><li>The Routing mechanism itself is confirmed native (same as every other Phase 1 piece) — what's missing is the client's actual operation sequence, which doesn't exist in any source document yet</li><li>This is the single biggest open item for the whole module — see the plan's own flagged gap</li></ul></div>
+  <div><span class="task-tag">Feature Map: MFG-02 — Blocked on missing Manufacturing PRD</span></div>
+  <div class="prd-tag">Excel scope sheet — Production tab (no dedicated PRD exists for this module)</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Unblocked</div><div class="uc-persona">👤 Production Planner</div><div class="uc-flow">Defines the real operation sequence once, reused automatically across every product that shares it.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">07 / 20</span>
+  <div class="sec-head"><span class="sec-num">MFG-03</span><h2 style="margin:0;">Work Orders</h2><span class="status-pill progressed">🟢 Progressed</span></div>
+  <div class="ask-line">Release a production order that knows exactly what materials it needs.</div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Confirmed Live</div><ul><li>Raised against the same 2-level BOM — the material requirement correctly exploded all the way down to the raw-material level (not just the immediate sub-assembly)</li></ul></div>
+    <div class="pending-box"><div class="box-label">Confirmed Already Native</div><ul><li>Full lifecycle with per-operation Job Cards at workstations — didn't end up needing Routing (MFG-02) to raise or work a basic Work Order</li></ul></div>
+  </div>
+  <div><span class="task-tag">Feature Map: MFG-03 — Progressed</span></div>
+  <div class="prd-tag">Excel scope sheet — Production tab (no dedicated PRD exists for this module)</div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/work-order" target="_blank">See Work Orders →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Shop Floor Supervisor</div><div class="uc-flow">Releases a Work Order and immediately knows exactly what raw material to pull — the system worked it out from the BOM automatically, multiple levels deep.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">08 / 20</span>
+  <div class="sec-head"><span class="sec-num">MFG-04</span><h2 style="margin:0;">Raw Material Consumption</h2><span class="status-pill progressed">🟢 Progressed</span></div>
+  <div class="ask-line">Record exactly what was actually consumed making a product, the moment it happens.</div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Confirmed Live</div><ul><li>A Manufacture-type stock entry against the Work Order correctly pulled the sub-assembly out of stock</li></ul></div>
+    <div class="pending-box"><div class="box-label">Confirmed Already Native</div><ul><li>Same stock-movement mechanism Stores already configures — reused as-is, nothing new built</li></ul></div>
+  </div>
+  <div><span class="task-tag">Feature Map: MFG-04 — Progressed</span></div>
+  <div class="prd-tag">Excel scope sheet — Production tab (no dedicated PRD exists for this module)</div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/stock-entry" target="_blank">See Stock Entries →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Shop Floor Operator</div><div class="uc-flow">Records material consumption against the Work Order as it happens — stock levels update immediately, no end-of-day reconciliation.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">09 / 20</span>
+  <div class="sec-head"><span class="sec-num">MFG-05</span><h2 style="margin:0;">Finished Goods Output</h2><span class="status-pill progressed">🟢 Progressed</span></div>
+  <div class="ask-line">Bring finished product into stock with its true, actual cost — not a standard estimate.</div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Confirmed Live</div><ul><li>In the same transaction as consumption — the finished good landed in the target warehouse with the right quantity, and the Work Order closed itself out correctly (status: Completed)</li></ul></div>
+    <div class="pending-box"><div class="box-label">Confirmed Already Native</div><ul><li>Closes the loop straight back into Stores' own Stock Ledger — one system of record, not two</li></ul></div>
+  </div>
+  <div><span class="task-tag">Feature Map: MFG-05 — Progressed</span></div>
+  <div class="prd-tag">Excel scope sheet — Production tab (no dedicated PRD exists for this module)</div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Stores Team</div><div class="uc-flow">Finished goods appear in stock the moment production completes, already costed correctly — ready to sell or ship, no separate receiving step.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">10 / 20</span>
+  <div class="sec-head"><span class="sec-num">MFG-06</span><h2 style="margin:0;">Quality Control</h2><span class="status-pill planned">⏸ Blocked on PRD</span></div>
+  <div class="ask-line">Inspect incoming materials, in-process work, and outgoing finished goods against real quality standards.</div>
+  <div class="pending-box" style="max-width:640px;"><div class="box-label">Blocked, Not Skipped</div><ul><li>Native Quality Inspection templates for incoming/in-process/outgoing all exist and are confirmed available — what's missing is the client's actual inspection parameters per product line</li></ul></div>
+  <div><span class="task-tag">Feature Map: MFG-06 — Blocked on missing Manufacturing PRD</span></div>
+  <div class="prd-tag">Excel scope sheet — Production tab (no dedicated PRD exists for this module)</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Unblocked</div><div class="uc-persona">👤 Quality Inspector</div><div class="uc-flow">Inspects against the client's real acceptance criteria at each stage — incoming, in-process, outgoing — not a generic checklist.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">11 / 20</span>
+  <div class="sec-head"><span class="sec-num">MFG-07</span><h2 style="margin:0;">Batch / Job Costing</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">See exactly what a production run actually cost — materials plus labour time — versus what it should have cost.</div>
+  <div class="pending-box" style="max-width:600px;"><div class="box-label">Pending</div><ul><li>Not started — native Work Order costing (actual materials + operation time at workstation rates, with variance vs. standard) is confirmed available; next session confirms it live the same way MFG-01/03/04/05 were</li></ul></div>
+  <div><span class="task-tag">Feature Map: MFG-07 — Not Started</span></div>
+  <div class="prd-tag">Excel scope sheet — Production tab (no dedicated PRD exists for this module)</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Cost Accountant</div><div class="uc-flow">Sees actual-vs-standard cost variance on every Work Order — no manual costing spreadsheet.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">12 / 20</span>
+  <div class="sec-head"><span class="sec-num">MFG-08</span><h2 style="margin:0;">Capacity Planning</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">Know whether there's actually enough machine/labour capacity before committing to a Work Order.</div>
+  <div class="pending-box" style="max-width:600px;"><div class="box-label">Pending</div><ul><li>Not started — Workstation capacity is native; the genuine gap is a load-vs-capacity view and a pre-commitment check, likely a Script Report over native data, not a new DocType</li></ul></div>
+  <div><span class="task-tag">Feature Map: MFG-08 — Not Started</span></div>
+  <div class="prd-tag">Excel scope sheet — Production tab (no dedicated PRD exists for this module)</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Production Planner</div><div class="uc-flow">Checks whether the hours actually exist before releasing a Work Order — no over-committing the shop floor.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">13 / 20</span>
+  <div class="sec-head"><span class="sec-num">MFG-09</span><h2 style="margin:0;">Sub-contracting</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">Send material to a vendor, get finished parts back, with costs reconciled correctly.</div>
+  <div class="pending-box" style="max-width:600px;"><div class="box-label">Pending</div><ul><li>Not started — native ERPNext subcontracting flow is confirmed available; ties directly into <a href="purchase-module.html">Purchase</a>'s Supplier/PO flow for the vendor side, both now done</li></ul></div>
+  <div><span class="task-tag">Feature Map: MFG-09 — Not Started</span></div>
+  <div class="prd-tag">Excel scope sheet — Production tab (no dedicated PRD exists for this module)</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Purchase Manager</div><div class="uc-flow">Sends raw material to a subcontractor and receives finished parts back, with costs reconciled automatically against the Purchase Order.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">14 / 20</span>
+  <div class="sec-head"><span class="sec-num">MFG-10</span><h2 style="margin:0;">Machine Scheduling</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">A visual finite-capacity scheduling board across machines/workstations.</div>
+  <div class="pending-box" style="max-width:600px;"><div class="box-label">Pending</div><ul><li>Not started — the one genuinely new UI piece in this module (comparable in shape to PMO's Gantt work); real scope depth depends on the still-missing PRD</li></ul></div>
+  <div><span class="task-tag">Feature Map: MFG-10 — Not Started</span></div>
+  <div class="prd-tag">Excel scope sheet — Production tab (no dedicated PRD exists for this module)</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Shop Floor Supervisor</div><div class="uc-flow">Sees every machine's schedule at a glance and reschedules a delayed job with a drag, not a spreadsheet.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">15 / 20</span>
+  <div class="sec-head"><span class="sec-num">MFG-11</span><h2 style="margin:0;">Downtime Tracking</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">Track why a machine wasn't running, feeding real availability and OEE numbers.</div>
+  <div class="pending-box" style="max-width:600px;"><div class="box-label">Pending</div><ul><li>Not started — native Downtime Entry with reason codes, linked to workstation/Job Card, is confirmed available</li></ul></div>
+  <div><span class="task-tag">Feature Map: MFG-11 — Not Started</span></div>
+  <div class="prd-tag">Excel scope sheet — Production tab (no dedicated PRD exists for this module)</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Shop Floor Supervisor</div><div class="uc-flow">Logs why a machine stopped in seconds, feeding a real OEE number instead of a guess.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">16 / 20</span>
+  <div class="sec-head"><span class="sec-num">MFG-12</span><h2 style="margin:0;">Scrap &amp; Waste Management</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">Cost process waste automatically instead of writing it off by hand.</div>
+  <div class="pending-box" style="max-width:600px;"><div class="box-label">Pending</div><ul><li>Not started — native scrap items in BOM plus process-loss accounting are confirmed available</li></ul></div>
+  <div><span class="task-tag">Feature Map: MFG-12 — Not Started</span></div>
+  <div class="prd-tag">Excel scope sheet — Production tab (no dedicated PRD exists for this module)</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Cost Accountant</div><div class="uc-flow">Sees process waste costed automatically as part of the Work Order — never a manual write-off.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">17 / 20</span>
+  <div class="sec-head"><span class="sec-num">MFG-13</span><h2 style="margin:0;">Shift Management</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">See output and OEE broken down by shift, with clean handover notes.</div>
+  <div class="pending-box" style="max-width:600px;"><div class="box-label">Pending</div><ul><li>Not started — Shift types are native, shared with <a href="hr-module.html">HR</a>; the genuine gap is shift-wise output/OEE reporting and handover notes on top</li></ul></div>
+  <div><span class="task-tag">Feature Map: MFG-13 — Not Started</span></div>
+  <div class="prd-tag">Excel scope sheet — Production tab (no dedicated PRD exists for this module)</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Shift Supervisor</div><div class="uc-flow">Hands over to the next shift with a clean record of what happened and what's outstanding — not a verbal summary.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">18 / 20</span>
+  <div class="sec-head"><span class="sec-num">MFG-14</span><h2 style="margin:0;">Production Reports</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">Plan-vs-actual, OEE trends, and exceptions in one place.</div>
+  <div class="pending-box" style="max-width:600px;"><div class="box-label">Pending</div><ul><li>Not started — assembled in the shared Dashboards module (Wave 4), same pattern as every other module's analytics, not a Manufacturing-only dashboard</li></ul></div>
+  <div><span class="task-tag">Feature Map: MFG-14 — Not Started</span></div>
+  <div class="prd-tag">Excel scope sheet — Production tab (no dedicated PRD exists for this module)</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Plant Manager</div><div class="uc-flow">Opens one dashboard and sees plan-vs-actual and OEE trends — no manual report-building.</div></div>
+</section>
+
+<section class="slide"><span class="slide-idx">19 / 20</span>
+  <div class="sec-head"><span class="sec-num">MFG-15</span><h2 style="margin:0;">Production Planning (MRP)</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="ask-line">Turn a sales forecast into a production plan — and a production plan's material shortfall into an automatic purchase request.</div>
+  <div class="pending-box" style="max-width:680px;"><div class="box-label">Pending — The Real Integration Checkpoint</div><ul><li>Not started — deliberately last in the build order (numbered 15, not 6) because it needs BOM, Work Order, <em>and</em> a working Purchase Requisition flow all in place first</li><li>Native Production Plan + MRP is confirmed available; this is the direct link into <a href="purchase-module.html">Purchase's Inventory Procurement Planning (PUR-13)</a> — completing this feature is also what unblocks PUR-13, which is currently parked waiting on exactly this</li></ul></div>
+  <div><span class="task-tag">Feature Map: MFG-15 — Not Started, cross-module integration proof point</span></div>
+  <div class="prd-tag">Excel scope sheet — Production tab (no dedicated PRD exists for this module)</div>
+  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Purchase Manager</div><div class="uc-flow">A material shortfall from Production Planning turns into a draft Material Request automatically — no manual watching of stock levels, and no manual re-keying into Purchase.</div></div>
+</section>
+
+<!-- 20 — CLOSING -->
+<section class="slide closing-slide"><span class="slide-idx" style="color:rgba(255,255,255,.4);">20 / 20</span>
+  <div class="slide-eyebrow" style="color:#c4b5fd;">Go Deeper</div>
+  <h2>The Technical Detail</h2>
+  <p class="lede">Every feature card in the full plan carries the same verified status shown here — feature-by-feature, with exactly what was checked and how.</p>
+  <div class="cta-row">
+    <a class="btn btn-white" href="manufacturing-module.html">Full Feature-by-Feature Plan →</a>
+    <a class="btn btn-ghost-dark" href="http://scale.localhost:8000/app/scale-manufacturing" target="_blank">Open Live Scale Manufacturing →</a>
+  </div>
+</section>
+
+</div>
+</main>
+</body>
+</html>

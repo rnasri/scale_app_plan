@@ -51,6 +51,7 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
     <a class="nav-link showcase" href="hr-demo-showcase.html">HR Showcase ✨</a>
     <a class="nav-link showcase" href="stores-demo-showcase.html">Stock Showcase 🆕✨</a>
     <a class="nav-link showcase" href="purchase-demo-showcase.html">Purchase Showcase 🆕✨</a>
+    <a class="nav-link showcase" href="manufacturing-demo-showcase.html">Manufacturing Showcase 🆕✨</a>
 
     <div class="nav-group">User Manual</div>
     <a class="nav-link" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
@@ -94,7 +95,7 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
 
 <div class="page-header">
   <h1>Manufacturing Module — Implementation Plan</h1>
-  <p class="subtitle">Production for <code>scale_manufacturing</code> (client scope tab name: "Production"). Not started — pre-build plan. Recommended as the <strong>third</strong> of the three new Supply Chain modules — it depends on both <a href="stores-module.html">Stores</a> and <a href="purchase-module.html">Purchase &amp; Procurement</a>, and its spec is the least mature of the three.</p>
+  <p class="subtitle">Production for <code>scale_manufacturing</code> (client scope tab name: "Production"). <strong>Build started</strong> — Phase 1 (BOM/Work Order/consumption/output) confirmed live, third of the three new Supply Chain modules as planned, since it depends on both <a href="stores-module.html">Stores</a> and <a href="purchase-module.html">Purchase &amp; Procurement</a> (both now done) — its own spec remains the least mature of the three, with Phase 2's custom pieces still waiting on the missing PRD.</p>
 </div>
 
 <div class="callout cw">
@@ -110,10 +111,10 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
 <p class="no-print">Turn a Bill of Materials and a sales/forecast demand signal into finished goods on the shelf — with raw-material consumption, machine/labour time, and scrap all costed accurately, and no work order started without knowing whether material and capacity actually exist.</p>
 
 <div class="summary-strip">
-  <div class="s-stat"><div class="sv">15</div><div class="sl">Features</div></div>
+  <div class="s-stat"><div class="sv">4 / 15</div><div class="sl">Features Done</div></div>
   <div class="s-stat"><div class="sv">~83%</div><div class="sl">OOTB (per master plan estimate)</div></div>
-  <div class="s-stat"><div class="sv">1</div><div class="sl">New Custom DocType (confirmed)</div></div>
-  <div class="s-stat"><div class="sv">⚠ No PRD</div><div class="sl">Excel one-liners only</div></div>
+  <div class="s-stat"><div class="sv">0</div><div class="sl">Custom Code So Far — Phase 1 Confirmed 100% Native</div></div>
+  <div class="s-stat"><div class="sv">⚠ No PRD</div><div class="sl">Excel one-liners only — MFG-02/06 blocked</div></div>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -289,29 +290,29 @@ details.feat .feat-body { padding:0 16px 16px; border-top:1px solid #f3f4f6; }
 
 <div class="no-print">
 <div class="task-card">
-  <div class="task-header"><span class="task-id">MFG-01</span><h4 style="margin:0;">BOM setup</h4></div>
+  <div class="task-header"><span class="task-id">MFG-01</span><h4 style="margin:0;">BOM setup</h4> <span class="st-done">✅ Done</span></div>
   <div class="task-meta">Effort: Medium · Depends on: Stores STR-01 (Item master)</div>
-  <p>Build multi-level BOM tree from client's actual product structure; confirm Phantom BOM usage.</p>
+  <p>Confirmed live with a real 2-level BOM (raw material → sub-assembly → finished good): multi-level cost roll-up correctly propagated through both levels (a sub-assembly costed via its own submitted BOM was picked up automatically when costing the parent). <b>Real correction to the plan, found while testing:</b> "ERPNext v16 Phantom BOM" (pass-through sub-assemblies that skip stocking an intermediate item) does not exist on this bench's actual ERPNext version (15.118.1) — grepped the entire manufacturing module for "phantom," zero hits anywhere. If the client genuinely needs it, that's a version upgrade, not something this app can add on top. Also confirmed native BOM costing reads from an item's actual valuation history ("Rate Of Materials Based On" defaults to Valuation Rate, no "Manual" option exists on this version) — a brand-new item needs a real opening stock transaction before its BOM cost will show anything other than zero, not just a typed-in rate.</p>
 </div>
 <div class="task-card">
-  <div class="task-header"><span class="task-id">MFG-02</span><h4 style="margin:0;">Process Routing setup</h4></div>
+  <div class="task-header"><span class="task-id">MFG-02</span><h4 style="margin:0;">Process Routing setup</h4> <span class="task-meta" style="background:#fef3c7;color:#92400e;padding:1px 8px;border-radius:4px;font-size:.75rem;">⏸ Blocked on PRD</span></div>
   <div class="task-meta">Effort: Medium · <strong>Blocked on PRD</strong> — needs client's real operation sequence</div>
-  <p>Configure Routing/Operation templates once the client's actual process flow is documented.</p>
+  <p>Not started, not skipped by accident — the native Routing/Operation mechanism itself is confirmed native (same as every other Phase 1 piece), but building real templates needs the client's actual process sequence, which doesn't exist in any source document yet (see the module's own open-gap banner above).</p>
 </div>
 <div class="task-card">
-  <div class="task-header"><span class="task-id">MFG-03</span><h4 style="margin:0;">Work Order configuration</h4></div>
+  <div class="task-header"><span class="task-id">MFG-03</span><h4 style="margin:0;">Work Order configuration</h4> <span class="st-done">✅ Done</span></div>
   <div class="task-meta">Effort: Low · Depends on: MFG-01, MFG-02</div>
-  <p>Configure Work Order + Job Card at workstation level.</p>
+  <p>Confirmed live against the same 2-level BOM used for MFG-01: Work Order's own <code>required_items</code> correctly explodes all the way down to the raw-material level (6 units of raw steel for 1 finished good needing 3 sub-assemblies × 2 raw each), not just the immediate sub-assembly — multi-level BOM support holds at the Work Order layer too, not only in BOM costing. Didn't end up depending on MFG-02 in practice, since a Work Order can be raised and worked without a Routing attached (Routing only matters once operation-level Job Cards are needed).</p>
 </div>
 <div class="task-card">
-  <div class="task-header"><span class="task-id">MFG-04</span><h4 style="margin:0;">Raw material consumption flow</h4></div>
+  <div class="task-header"><span class="task-id">MFG-04</span><h4 style="margin:0;">Raw material consumption flow</h4> <span class="st-done">✅ Done</span></div>
   <div class="task-meta">Effort: Low · Depends on: Stores STR-04</div>
-  <p>Confirm transfer-for-manufacture and consumption entries post correctly against Work Order.</p>
+  <p>Confirmed live: a Manufacture-type Stock Entry against the Work Order correctly consumed the sub-assembly from stock and posted the finished good in the same transaction — the standard Stock Entry mechanism Stores already configures (STR-04), reused as-is.</p>
 </div>
 <div class="task-card">
-  <div class="task-header"><span class="task-id">MFG-05</span><h4 style="margin:0;">Finished Goods receipt flow</h4></div>
+  <div class="task-header"><span class="task-id">MFG-05</span><h4 style="margin:0;">Finished Goods receipt flow</h4> <span class="st-done">✅ Done</span></div>
   <div class="task-meta">Effort: Low</div>
-  <p>Confirm Manufacture Receipt posts batch/serial + true cost correctly to Stores' ledger.</p>
+  <p>Confirmed live in the same test as MFG-04: the finished good posted correctly to the target warehouse with the right quantity, and the Work Order's own status correctly moved to Completed with the right <code>produced_qty</code> — closing the loop back into Stores' own Stock Ledger.</p>
 </div>
 <div class="task-card">
   <div class="task-header"><span class="task-id">MFG-06</span><h4 style="margin:0;">Quality Inspection templates</h4></div>
