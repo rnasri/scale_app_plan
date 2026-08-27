@@ -167,7 +167,7 @@
 <section class="slide hero-slide"><span class="slide-idx" style="color:rgba(255,255,255,.5);">01 / 21</span>
   <div class="slide-eyebrow">Live Demo Deck</div>
   <h1>The AIWS Purchase Advantage</h1>
-  <p class="lede">Procure-to-Pay, built directly against the client's own dedicated PRD (not just the Excel scope sheet). Built on <code>feature/supply-chain-apps</code>, not yet merged. 12 of 16 features live — the full Requisition → Order → Receipt → Invoice-Match → Advance-Payment → Import → Budget chain works end to end.</p>
+  <p class="lede">Procure-to-Pay, built directly against the client's own dedicated PRD (not just the Excel scope sheet). Built on <code>feature/supply-chain-apps</code>, not yet merged. 13 of 16 features live — the full Requisition → Order → Receipt → Invoice-Match → Advance-Payment → Import → Budget → Vendor-Portal chain works end to end.</p>
   <div class="cta-row">
     <a class="btn btn-white" href="http://scale.localhost:8000/app/scale-purchase" target="_blank">▶ Open Live Scale Purchase</a>
     <a class="btn btn-ghost-dark" href="#scorecard">See the Scorecard ↓</a>
@@ -179,8 +179,8 @@
   <div class="slide-eyebrow">Feature Alignment</div>
   <h2>16 Features. Here's Where We Stand — Honestly.</h2>
   <div class="big-nums">
-    <div class="big-num c-green"><div class="n">12</div><div class="l">Progressed</div></div>
-    <div class="big-num c-grey"><div class="n">4</div><div class="l">Planned</div></div>
+    <div class="big-num c-green"><div class="n">13</div><div class="l">Progressed</div></div>
+    <div class="big-num c-grey"><div class="n">3</div><div class="l">Planned</div></div>
     <div class="big-num c-navy"><div class="n">16</div><div class="l">Total Purchase Features</div></div>
   </div>
   <div class="legend-row">
@@ -215,7 +215,7 @@
     <div class="task-chip added"><span class="tid">PUR-11</span><span class="ttitle">Import Management</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">PUR-12</span><span class="ttitle">Purchase Budget Management</span><span class="tmark">✅</span></div>
     <div class="task-chip pending"><span class="tid">PUR-13</span><span class="ttitle">Inventory Procurement Planning</span><span class="tmark">⏳</span></div>
-    <div class="task-chip pending"><span class="tid">PUR-14</span><span class="ttitle">Vendor Portal</span><span class="tmark">⏳</span></div>
+    <div class="task-chip added"><span class="tid">PUR-14</span><span class="ttitle">Vendor Portal</span><span class="tmark">✅</span></div>
     <div class="task-chip pending"><span class="tid">PUR-15</span><span class="ttitle">Procurement Analytics</span><span class="tmark">⏳</span></div>
     <div class="task-chip pending"><span class="tid">PUR-16</span><span class="ttitle">AI Procurement Copilot</span><span class="tmark">⏳</span></div>
   </div>
@@ -396,19 +396,22 @@
 <section class="slide"><span class="slide-idx">17 / 21</span>
   <div class="sec-head"><span class="sec-num">PUR-13</span><h2 style="margin:0;">Inventory Procurement Planning</h2><span class="status-pill planned">⚪ Planned</span></div>
   <div class="ask-line">Maintain optimal inventory levels through intelligent procurement planning — the direct link into Manufacturing.</div>
-  <div class="pending-box" style="max-width:600px;"><div class="box-label">Pending</div><ul><li>Not started — builds on <a href="stores-module.html">Stores</a>' Reorder/Min-Max engine (already live), extended with Lead Time and EOQ, and wired to Manufacturing's MRP output once that module exists</li></ul></div>
-  <div><span class="task-tag">Feature Map: PUR-13 — Not Started</span></div>
+  <div class="pending-box" style="max-width:600px;"><div class="box-label">Deliberately Parked</div><ul><li>Builds on <a href="stores-module.html">Stores</a>' Reorder/Min-Max engine (already live), extended with Lead Time and EOQ, and wired to Manufacturing's MRP output — that MRP link is the real blocker, not the Lead Time/EOQ part. Explicitly parked until the Manufacturing module exists, not skipped by accident — every other Purchase feature not blocked on Manufacturing has been built first (PUR-14/15 next)</li></ul></div>
+  <div><span class="task-tag">Feature Map: PUR-13 — Parked (waiting on Manufacturing)</span></div>
   <div class="prd-tag">Purchase &amp; Procurement Management Module PRD — §9 Inventory Procurement Planning</div>
   <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Purchase Manager</div><div class="uc-flow">A material shortfall from Production Planning turns into a draft Material Request automatically — no manual watching of stock levels.</div></div>
 </section>
 
 <section class="slide"><span class="slide-idx">18 / 21</span>
-  <div class="sec-head"><span class="sec-num">PUR-14</span><h2 style="margin:0;">Vendor Portal</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="sec-head"><span class="sec-num">PUR-14</span><h2 style="margin:0;">Vendor Portal</h2><span class="status-pill progressed">🟢 Progressed</span></div>
   <div class="ask-line">Supplier self-service — quotation submission, PO acknowledgment, invoice submission.</div>
-  <div class="pending-box" style="max-width:520px;"><div class="box-label">Pending</div><ul><li>Not started — native portal quotation submission already works; PO acknowledgment and invoice submission are standard Frappe portal patterns to extend it with</li></ul></div>
-  <div><span class="task-tag">Feature Map: PUR-14 — Not Started</span></div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Added</div><ul><li>A real "Acknowledge This Order" page suppliers can use on their own Purchase Orders — timestamped automatically</li><li>A real "Submit Your Invoice" page — the system did have something that looked similar already, but it was wired so it could never actually be used by an outside vendor (see right)</li><li>Every submission is checked server-side against the supplier's own account — one vendor can never see or act on another vendor's orders or invoices, tested live with two separate real vendor logins</li></ul></div>
+    <div class="pending-box"><div class="box-label">Real Issue Found</div><ul><li>The existing "Make Purchase Invoice" button on a vendor's order page was switched on by a permission only <em>internal staff</em> ever hold — meaning it silently never appeared for any actual outside vendor. Fixed by building the two dedicated pages above instead of patching the broken button</li></ul></div>
+  </div>
+  <div><span class="task-tag">Feature Map: PUR-14 — Progressed</span></div>
   <div class="prd-tag">Excel scope sheet — Vendor Portal</div>
-  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Vendor</div><div class="uc-flow">Logs into a self-service portal to submit a quote, acknowledge a PO, and upload an invoice — no email back-and-forth.</div></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Vendor</div><div class="uc-flow">Logs into a self-service portal to submit a quote, acknowledge a PO, and upload an invoice — no email back-and-forth.</div></div>
 </section>
 
 <section class="slide"><span class="slide-idx">19 / 21</span>
