@@ -169,7 +169,7 @@
 <section class="slide hero-slide"><span class="slide-idx" style="color:rgba(255,255,255,.5);">01 / 20</span>
   <div class="slide-eyebrow">Live Demo Deck</div>
   <h1>The AIWS Manufacturing Advantage</h1>
-  <p class="lede">Make-to-stock, built on the third and last of the three new Supply Chain apps — depends on <a href="stores-module.html" style="color:#fff;">Stores</a> and <a href="purchase-module.html" style="color:#fff;">Purchase</a>, both now done. Built on <code>feature/supply-chain-apps</code>, not yet merged. 6 of 15 features live — Phase 1's full BOM → Work Order → consumption → output chain confirmed end to end, plus cost variance and a real capacity-load report on top.</p>
+  <p class="lede">Make-to-stock, built on the third and last of the three new Supply Chain apps — depends on <a href="stores-module.html" style="color:#fff;">Stores</a> and <a href="purchase-module.html" style="color:#fff;">Purchase</a>, both now done. Built on <code>feature/supply-chain-apps</code>, not yet merged. 7 of 15 features live — Phase 1's full BOM → Work Order → consumption → output chain confirmed end to end, plus cost variance, a real capacity-load report, and a full sub-contracting round-trip, all on top.</p>
   <div class="cta-row">
     <a class="btn btn-white" href="http://scale.localhost:8000/app/scale-manufacturing" target="_blank">▶ Open Live Scale Manufacturing</a>
     <a class="btn btn-ghost-dark" href="#scorecard">See the Scorecard ↓</a>
@@ -181,9 +181,9 @@
   <div class="slide-eyebrow">Feature Alignment</div>
   <h2>15 Features. Here's Where We Stand — Honestly.</h2>
   <div class="big-nums">
-    <div class="big-num c-green"><div class="n">6</div><div class="l">Progressed</div></div>
+    <div class="big-num c-green"><div class="n">7</div><div class="l">Progressed</div></div>
     <div class="big-num c-amber"><div class="n">2</div><div class="l">Blocked on PRD</div></div>
-    <div class="big-num c-grey"><div class="n">7</div><div class="l">Planned</div></div>
+    <div class="big-num c-grey"><div class="n">6</div><div class="l">Planned</div></div>
     <div class="big-num c-navy"><div class="n">15</div><div class="l">Total Manufacturing Features</div></div>
   </div>
   <div class="legend-row">
@@ -215,7 +215,7 @@
     <div class="task-chip blocked"><span class="tid">MFG-06</span><span class="ttitle">Quality Control</span><span class="tmark">⏸</span></div>
     <div class="task-chip added"><span class="tid">MFG-07</span><span class="ttitle">Batch / Job Costing</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">MFG-08</span><span class="ttitle">Capacity Planning</span><span class="tmark">✅</span></div>
-    <div class="task-chip pending"><span class="tid">MFG-09</span><span class="ttitle">Sub-contracting</span><span class="tmark">⏳</span></div>
+    <div class="task-chip added"><span class="tid">MFG-09</span><span class="ttitle">Sub-contracting</span><span class="tmark">✅</span></div>
     <div class="task-chip pending"><span class="tid">MFG-10</span><span class="ttitle">Machine Scheduling</span><span class="tmark">⏳</span></div>
     <div class="task-chip pending"><span class="tid">MFG-11</span><span class="ttitle">Downtime Tracking</span><span class="tmark">⏳</span></div>
     <div class="task-chip pending"><span class="tid">MFG-12</span><span class="ttitle">Scrap &amp; Waste Management</span><span class="tmark">⏳</span></div>
@@ -336,12 +336,16 @@
 </section>
 
 <section class="slide"><span class="slide-idx">13 / 20</span>
-  <div class="sec-head"><span class="sec-num">MFG-09</span><h2 style="margin:0;">Sub-contracting</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="sec-head"><span class="sec-num">MFG-09</span><h2 style="margin:0;">Sub-contracting</h2><span class="status-pill progressed">🟢 Progressed</span></div>
   <div class="ask-line">Send material to a vendor, get finished parts back, with costs reconciled correctly.</div>
-  <div class="pending-box" style="max-width:600px;"><div class="box-label">Pending</div><ul><li>Not started — native ERPNext subcontracting flow is confirmed available; ties directly into <a href="purchase-module.html">Purchase</a>'s Supplier/PO flow for the vendor side, both now done</li></ul></div>
-  <div><span class="task-tag">Feature Map: MFG-09 — Not Started</span></div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Confirmed Live</div><ul><li>Full round-trip: subcontracted Purchase Order → Subcontracting Order (auto-computed 2 raw units needed per finished good from the BOM) → raw material sent to a genuinely separate supplier warehouse → Subcontracting Receipt back, with cost correctly reconciled as service charge + consumed raw material (₹100 + ₹40 = ₹140), no manual cost entry anywhere</li><li>Ties directly into <a href="purchase-module.html">Purchase</a>'s Supplier/PO flow for the vendor side, both now done</li></ul></div>
+    <div class="pending-box"><div class="box-label">Two Real API Gotchas, Don't Affect Desk Usage</div><ul><li>A finished good's "sub-contracted item" flag must be set explicitly — nothing else implies it</li><li>The material-transfer entry needs an explicit link back to the finished good or the system can't match it against the order's own supplied-materials table — the Desk UI sets this automatically, only a direct API script hits it</li></ul></div>
+  </div>
+  <div><span class="task-tag">Feature Map: MFG-09 — Progressed</span></div>
   <div class="prd-tag">Excel scope sheet — Production tab (no dedicated PRD exists for this module)</div>
-  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Purchase Manager</div><div class="uc-flow">Sends raw material to a subcontractor and receives finished parts back, with costs reconciled automatically against the Purchase Order.</div></div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/subcontracting-order" target="_blank">See Subcontracting Orders →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Purchase Manager</div><div class="uc-flow">Sends raw material to a subcontractor and receives finished parts back, with costs reconciled automatically against the Purchase Order.</div></div>
 </section>
 
 <section class="slide"><span class="slide-idx">14 / 20</span>

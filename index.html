@@ -270,16 +270,16 @@
     <div class="day-col today">
       <div class="day-label">🟢 Today</div>
       <ul>
-        <li><b><code>scale_stock</code> — 11 of 12 features live</b> (only barcode/QR scan deferred). <b><code>scale_purchase</code> — 13 of 16 features live</b>, effectively done for now — the full Requisition → Order → Receipt → Invoice-Match → Advance-Payment → Import → Budget → Vendor-Portal → Analytics chain works end to end. Both built on one shared branch, <code>feature/supply-chain-apps</code>, not yet merged.</li>
-        <li>Several real bugs and native-coverage gaps caught and fixed along the way — see <a href="stores-demo-showcase.html">Stock Showcase ✨</a> and <a href="purchase-demo-showcase.html">Purchase Showcase ✨</a>.</li>
-        <li><b>Starting <code>scale_manufacturing</code></b> next — the third and last of the Supply Chain apps, on the same branch.</li>
+        <li><b><code>scale_stock</code> — 11 of 12 features live</b> (only barcode/QR scan deferred). <b><code>scale_purchase</code> — 13 of 16 features live</b>, effectively done for now (PUR-13 parked pending Manufacturing's MRP output). <b><code>scale_manufacturing</code> — 7 of 15 features live</b>: full BOM → Work Order → consumption → output chain, cost variance, a real capacity-load report, and a full sub-contracting round-trip (MFG-09) all confirmed live today. All three built on one shared branch, <code>feature/supply-chain-apps</code>, not yet merged.</li>
+        <li>Several real bugs and native-coverage gaps caught and fixed along the way — see <a href="stores-demo-showcase.html">Stock Showcase ✨</a>, <a href="purchase-demo-showcase.html">Purchase Showcase ✨</a>, and <a href="manufacturing-demo-showcase.html">Manufacturing Showcase ✨</a>.</li>
+        <li>Next up in Manufacturing: MFG-10 Machine Scheduling board (new UI, scope depends on the module's missing PRD).</li>
       </ul>
     </div>
     <div class="day-col tomorrow">
       <div class="day-label">🔵 Tomorrow</div>
       <ul>
-        <li>Manufacturing build continues — see <a href="manufacturing-module.html">Manufacturing plan 🆕</a> (15 features planned; native BOM/Work Order/Job Card config can start immediately, no dedicated client PRD exists yet for this module so custom pieces will need one requested).</li>
-        <li>Remaining Purchase items (PUR-13 Inventory Procurement Planning) unblock once Manufacturing has real output to link to.</li>
+        <li>Manufacturing build continues through MFG-10–MFG-15 — see <a href="manufacturing-module.html">Manufacturing plan 🆕</a>. MFG-02/06 stay blocked on the missing PRD; MFG-13 (Shift OEE) depends on HR's shift types.</li>
+        <li>Remaining Purchase item (PUR-13 Inventory Procurement Planning) unblocks once Manufacturing's MRP (MFG-15) has real output to link to.</li>
       </ul>
     </div>
   </div>
