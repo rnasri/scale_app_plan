@@ -78,7 +78,7 @@
 .rule-box li { font-size: 13px; line-height: 1.55; margin-bottom: 3px; color: var(--text-2); }
 .task-tag { display: inline-block; font-size: 11px; font-weight: 700; color: var(--navy); background: var(--surface-2); border: 1px solid var(--border); border-radius: 5px; padding: 3px 10px; margin-top: 16px; }
 .prd-tag { display: inline-block; font-size: 10.5px; font-weight: 600; background: #e0f2fe; color: #0369a1; border-radius: 4px; padding: 3px 10px; margin-top: 10px; }
-.slide-links { margin-top: 18px; }
+.slide-links { margin-top: 18px; display: flex; gap: 12px; flex-wrap: wrap; }
 .field-chips { margin-top: 10px; }
 .field-chip { display: inline-block; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10.5px; background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; border-radius: 4px; padding: 2px 7px; margin: 2px 4px 2px 0; }
 .flow-path { margin-top: 12px; font-size: 12px; color: var(--text-3); display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
@@ -302,6 +302,7 @@
   <div><span class="task-tag">Feature Map: PUR-05 — Progressed</span></div>
   <div class="field-chips"><span class="field-chip">scale_purchase_match_status</span><span class="field-chip">scale_purchase_match_notes</span></div>
   <div class="prd-tag">Excel scope sheet — Invoice Matching (no dedicated PDF section exists)</div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/purchase-invoice" target="_blank">See purchase invoices →</a></div>
   <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Finance Team</div><div class="uc-flow">An invoice that doesn't match its PO or receipt gets flagged automatically the moment it's saved — no manual cross-checking three documents by hand, and nothing gets silently blocked from being reviewed.</div></div>
 </section>
 
@@ -365,6 +366,7 @@
   </div>
   <div><span class="task-tag">Feature Map: PUR-10 — Progressed</span></div>
   <div class="prd-tag">Excel scope sheet — Advance Payments</div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/purchase-invoice" target="_blank">See purchase invoices →</a></div>
   <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Finance Team</div><div class="uc-flow">Pays a supplier advance against a PO, and it now auto-nets off the final invoice with no manual adjustment step — exactly what was promised, not just what the system happened to support.</div></div>
 </section>
 
@@ -378,6 +380,7 @@
   <div><span class="task-tag">Feature Map: PUR-11 — Progressed</span></div>
   <div class="field-chips"><span class="field-chip">scale_purchase_import_licence_type</span><span class="field-chip">scale_purchase_import_licence_no</span><span class="field-chip">scale_purchase_import_licence_validity</span></div>
   <div class="prd-tag">Excel scope sheet — Import Management</div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/bill-of-entry" target="_blank">See Bills of Entry →</a></div>
   <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Procurement Executive</div><div class="uc-flow">Freight, customs, and insurance automatically spread into landed item cost; import paperwork and licence details tracked together, in one place, alongside the PO.</div></div>
 </section>
 
@@ -390,6 +393,7 @@
   </div>
   <div><span class="task-tag">Feature Map: PUR-12 — Progressed</span></div>
   <div class="prd-tag">Purchase &amp; Procurement Management Module PRD — §8 Purchase Budget Management</div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/query-report/Purchase Budget vs Actual" target="_blank">See the Purchase Budget vs Actual report →</a></div>
   <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 CFO</div><div class="uc-flow">Sees real-time budget vs. committed vs. actual spend per department, before overspend becomes a surprise at month-end.</div></div>
 </section>
 
@@ -411,6 +415,10 @@
   </div>
   <div><span class="task-tag">Feature Map: PUR-14 — Progressed</span></div>
   <div class="prd-tag">Excel scope sheet — Vendor Portal</div>
+  <div class="slide-links">
+    <a class="btn btn-navy" href="http://scale.localhost:8000/po-acknowledgement" target="_blank">See the PO Acknowledgment page →</a>
+    <a class="btn btn-navy" href="http://scale.localhost:8000/submit-supplier-invoice" target="_blank">See the Submit Supplier Invoice page →</a>
+  </div>
   <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Vendor</div><div class="uc-flow">Logs into a self-service portal to submit a quote, acknowledge a PO, and upload an invoice — no email back-and-forth.</div></div>
 </section>
 
