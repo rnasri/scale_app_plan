@@ -167,7 +167,7 @@
 <section class="slide hero-slide"><span class="slide-idx" style="color:rgba(255,255,255,.5);">01 / 21</span>
   <div class="slide-eyebrow">Live Demo Deck</div>
   <h1>The AIWS Purchase Advantage</h1>
-  <p class="lede">Procure-to-Pay, built directly against the client's own dedicated PRD (not just the Excel scope sheet). Built on <code>feature/supply-chain-apps</code>, not yet merged. Just started — one feature live, the rest of the chain next.</p>
+  <p class="lede">Procure-to-Pay, built directly against the client's own dedicated PRD (not just the Excel scope sheet). Built on <code>feature/supply-chain-apps</code>, not yet merged. 9 of 16 features live — the full Requisition → Order → Receipt → Invoice-Match chain works end to end.</p>
   <div class="cta-row">
     <a class="btn btn-white" href="http://scale.localhost:8000/app/scale-purchase" target="_blank">▶ Open Live Scale Purchase</a>
     <a class="btn btn-ghost-dark" href="#scorecard">See the Scorecard ↓</a>
@@ -179,8 +179,8 @@
   <div class="slide-eyebrow">Feature Alignment</div>
   <h2>16 Features. Here's Where We Stand — Honestly.</h2>
   <div class="big-nums">
-    <div class="big-num c-green"><div class="n">5</div><div class="l">Progressed</div></div>
-    <div class="big-num c-grey"><div class="n">11</div><div class="l">Planned</div></div>
+    <div class="big-num c-green"><div class="n">9</div><div class="l">Progressed</div></div>
+    <div class="big-num c-grey"><div class="n">7</div><div class="l">Planned</div></div>
     <div class="big-num c-navy"><div class="n">16</div><div class="l">Total Purchase Features</div></div>
   </div>
   <div class="legend-row">
@@ -206,7 +206,7 @@
     <div class="task-chip added"><span class="tid">PUR-02</span><span class="ttitle">Supplier / Vendor Management</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">PUR-03</span><span class="ttitle">Purchase Order Management</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">PUR-04</span><span class="ttitle">Goods Receipt (GRN)</span><span class="tmark">✅</span></div>
-    <div class="task-chip pending"><span class="tid">PUR-05</span><span class="ttitle">Invoice Matching (3-way)</span><span class="tmark">⏳</span></div>
+    <div class="task-chip added"><span class="tid">PUR-05</span><span class="ttitle">Invoice Matching (3-way)</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">PUR-06</span><span class="ttitle">RFQ / Tendering</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">PUR-07</span><span class="ttitle">Approval Workflows</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">PUR-08</span><span class="ttitle">Supplier Performance Mgmt</span><span class="tmark">✅</span></div>
@@ -293,12 +293,16 @@
 </section>
 
 <section class="slide"><span class="slide-idx">09 / 21</span>
-  <div class="sec-head"><span class="sec-num">PUR-05</span><h2 style="margin:0;">Invoice Matching (3-way)</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="sec-head"><span class="sec-num">PUR-05</span><h2 style="margin:0;">Invoice Matching (3-way)</h2><span class="status-pill progressed">🟢 Progressed</span></div>
   <div class="ask-line">Purchase Invoice validated against order and receipt — quantity and rate deviations flagged before money moves.</div>
-  <div class="pending-box" style="max-width:520px;"><div class="box-label">Pending</div><ul><li>Not started — depends on PUR-03 and PUR-04 both existing first</li></ul></div>
-  <div><span class="task-tag">Feature Map: PUR-05 — Not Started</span></div>
-  <div class="prd-tag">Excel scope sheet — Invoice Matching</div>
-  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Finance Team</div><div class="uc-flow">An invoice that doesn't match its PO or receipt gets flagged automatically — no manual cross-checking three documents by hand.</div></div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Every invoice is automatically checked against its Purchase Order and Goods Receipt on save — a Match Status (Matched / Flagged) and a plain-language deviation note appear right on the invoice, no manual cross-checking three documents by hand</li><li>Catches two things: the price billed differs from what was ordered/received, or more is being billed than was actually received (billing less than received is normal partial billing, not flagged)</li></ul></div>
+    <div class="pending-box"><div class="box-label">Real Issue Found &amp; Fixed</div><ul><li>The system already had a native price check, but it was set to hard-<em>stop</em> the invoice outright on any mismatch — the opposite of the "flag it, don't block it" behaviour this feature needed. Reset to a warning, so finance sees the flag but the invoice can still be saved for review</li></ul></div>
+  </div>
+  <div><span class="task-tag">Feature Map: PUR-05 — Progressed</span></div>
+  <div class="field-chips"><span class="field-chip">scale_purchase_match_status</span><span class="field-chip">scale_purchase_match_notes</span></div>
+  <div class="prd-tag">Excel scope sheet — Invoice Matching (no dedicated PDF section exists)</div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Finance Team</div><div class="uc-flow">An invoice that doesn't match its PO or receipt gets flagged automatically the moment it's saved — no manual cross-checking three documents by hand, and nothing gets silently blocked from being reviewed.</div></div>
 </section>
 
 <section class="slide"><span class="slide-idx">10 / 21</span>
