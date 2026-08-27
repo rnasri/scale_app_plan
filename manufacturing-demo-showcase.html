@@ -169,7 +169,7 @@
 <section class="slide hero-slide"><span class="slide-idx" style="color:rgba(255,255,255,.5);">01 / 20</span>
   <div class="slide-eyebrow">Live Demo Deck</div>
   <h1>The AIWS Manufacturing Advantage</h1>
-  <p class="lede">Make-to-stock, built on the third and last of the three new Supply Chain apps — depends on <a href="stores-module.html" style="color:#fff;">Stores</a> and <a href="purchase-module.html" style="color:#fff;">Purchase</a>, both now done. Built on <code>feature/supply-chain-apps</code>, not yet merged. 11 of 15 features live — Phase 1's full BOM → Work Order → consumption → output chain confirmed end to end, plus cost variance, a real capacity-load report, a full sub-contracting round-trip, a new cross-machine scheduling board, native downtime tracking, automatic scrap costing, and shift-wise production reporting.</p>
+  <p class="lede">Make-to-stock, built on the third and last of the three new Supply Chain apps — depends on <a href="stores-module.html" style="color:#fff;">Stores</a> and <a href="purchase-module.html" style="color:#fff;">Purchase</a>, both now done. Built on <code>feature/supply-chain-apps</code>, not yet merged. 12 of 15 features live — Phase 1's full BOM → Work Order → consumption → output chain confirmed end to end, plus cost variance, a real capacity-load report, a full sub-contracting round-trip, a new cross-machine scheduling board, native downtime tracking, automatic scrap costing, shift-wise production reporting, and a full native reporting suite now surfaced.</p>
   <div class="cta-row">
     <a class="btn btn-white" href="http://scale.localhost:8000/app/scale-manufacturing" target="_blank">▶ Open Live Scale Manufacturing</a>
     <a class="btn btn-ghost-dark" href="#scorecard">See the Scorecard ↓</a>
@@ -181,9 +181,9 @@
   <div class="slide-eyebrow">Feature Alignment</div>
   <h2>15 Features. Here's Where We Stand — Honestly.</h2>
   <div class="big-nums">
-    <div class="big-num c-green"><div class="n">11</div><div class="l">Progressed</div></div>
+    <div class="big-num c-green"><div class="n">12</div><div class="l">Progressed</div></div>
     <div class="big-num c-amber"><div class="n">2</div><div class="l">Blocked on PRD</div></div>
-    <div class="big-num c-grey"><div class="n">2</div><div class="l">Planned</div></div>
+    <div class="big-num c-grey"><div class="n">1</div><div class="l">Planned</div></div>
     <div class="big-num c-navy"><div class="n">15</div><div class="l">Total Manufacturing Features</div></div>
   </div>
   <div class="legend-row">
@@ -220,7 +220,7 @@
     <div class="task-chip added"><span class="tid">MFG-11</span><span class="ttitle">Downtime Tracking</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">MFG-12</span><span class="ttitle">Scrap &amp; Waste Management</span><span class="tmark">✅</span></div>
     <div class="task-chip added"><span class="tid">MFG-13</span><span class="ttitle">Shift Management</span><span class="tmark">✅</span></div>
-    <div class="task-chip pending"><span class="tid">MFG-14</span><span class="ttitle">Production Reports</span><span class="tmark">⏳</span></div>
+    <div class="task-chip added"><span class="tid">MFG-14</span><span class="ttitle">Production Reports</span><span class="tmark">✅</span></div>
     <div class="task-chip pending"><span class="tid">MFG-15</span><span class="ttitle">Production Planning (MRP)</span><span class="tmark">⏳</span></div>
   </div>
 </section>
@@ -400,12 +400,16 @@
 </section>
 
 <section class="slide"><span class="slide-idx">18 / 20</span>
-  <div class="sec-head"><span class="sec-num">MFG-14</span><h2 style="margin:0;">Production Reports</h2><span class="status-pill planned">⚪ Planned</span></div>
-  <div class="ask-line">Plan-vs-actual, OEE trends, and exceptions in one place.</div>
-  <div class="pending-box" style="max-width:600px;"><div class="box-label">Pending</div><ul><li>Not started — assembled in the shared Dashboards module (Wave 4), same pattern as every other module's analytics, not a Manufacturing-only dashboard</li></ul></div>
-  <div><span class="task-tag">Feature Map: MFG-14 — Not Started</span></div>
+  <div class="sec-head"><span class="sec-num">MFG-14</span><h2 style="margin:0;">Production Reports</h2><span class="status-pill progressed">🟢 Progressed</span></div>
+  <div class="ask-line">Plan-vs-actual and exceptions in one place, without hunting for reports.</div>
+  <div class="two-col">
+    <div class="added-box"><div class="box-label">Confirmed Live — Far More Native Than Expected</div><ul><li>A full manufacturing reporting suite already covers plan-vs-actual (Work Order Summary, BOM Variance Report), trends (Production Analytics), and exceptions (Cost of Poor Quality, Process Loss Report) — none of it new code, just surfaced as Reports-card links in this module's own workspace for the first time, verified live</li></ul></div>
+    <div class="pending-box"><div class="box-label">Deliberately Not Built</div><ul><li>An "OEE trend" chart — no native OEE metric exists anywhere (confirmed at MFG-11), and a defensible one needs client-specific inputs no source document defines. Same missing-PRD class as MFG-02/06, not a Wave 4 timing gate</li></ul></div>
+  </div>
+  <div><span class="task-tag">Feature Map: MFG-14 — Progressed</span></div>
   <div class="prd-tag">Excel scope sheet — Production tab (no dedicated PRD exists for this module)</div>
-  <div class="usecase future"><div class="uc-label">Use Case — Once Built</div><div class="uc-persona">👤 Plant Manager</div><div class="uc-flow">Opens one dashboard and sees plan-vs-actual and OEE trends — no manual report-building.</div></div>
+  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/app/scale-manufacturing" target="_blank">See the Reports card →</a></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Plant Manager</div><div class="uc-flow">Opens the module's own Reports card and sees plan-vs-actual, trends, and exceptions — no digging through ERPNext's generic Manufacturing module to find them.</div></div>
 </section>
 
 <section class="slide"><span class="slide-idx">19 / 20</span>
