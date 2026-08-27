@@ -30,6 +30,21 @@
 .cmd-block { background:var(--navy-dark); color:#e2e8f0; border-radius:10px; padding:16px 20px; font-family:monospace; font-size:.85rem; line-height:1.9; overflow-x:auto; margin:14px 0; white-space:pre-wrap; }
 .cmd-block .cmt { color:#94a3b8; }
 .cmd-block .num { color:#fbbf24; font-weight:700; }
+
+.complexity-badge { display:inline-block; padding:2px 10px; border-radius:20px; font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.4px; margin-left:6px; vertical-align:middle; }
+.complexity-simple { background:#d1fae5; color:#065f46; }
+.complexity-medium { background:#fef3c7; color:#92400e; }
+.complexity-complex { background:#fce7f3; color:#9d174d; }
+
+.module-lede { font-size:.95rem; color:#4b5563; line-height:1.6; margin-bottom:18px; }
+
+.feature-item { border:1px solid #e5e7eb; border-radius:10px; padding:16px 20px; margin-bottom:14px; }
+.feature-item h4 { margin:0 0 8px; font-size:1rem; display:flex; align-items:center; flex-wrap:wrap; gap:2px; }
+.feature-item p { margin:0 0 10px; line-height:1.6; font-size:.92rem; color:#374151; }
+.feature-links { display:flex; flex-wrap:wrap; gap:8px; }
+.feature-links a { display:inline-flex; align-items:center; gap:5px; background:#f3f4f6; border:1px solid #e5e7eb; border-radius:6px; padding:5px 12px; font-size:.8rem; font-family:monospace; color:#1e3a5f; text-decoration:none; }
+.feature-links a:hover { background:#e5e7eb; border-color:#cbd5e1; }
+.feature-links a b { color:#7c3aed; font-family: -apple-system, sans-serif; font-weight: 600; }
 </style>
 </head>
 <body>
@@ -202,6 +217,129 @@
 <span class="num">5.</span> bench --site &lt;site&gt; execute scale_purchase.demo_project_seed.run
   </div>
   <p>Every script is idempotent (safe to re-run), manual-invoke only (never wired into <code>after_install</code>/<code>after_migrate</code> — a fresh site migrating for the first time doesn't have the masters this assumes, the same reason every other demo seed in this codebase stays manual), and independently safe: each app commits only its own data at its own end, so one script failing partway can't corrupt another app's data. Shipped as its own small, separately-reviewable PR — <code>feature/connected-demo-data</code> — after the three new Supply Chain apps (Stock/Purchase/Manufacturing) land, since this depends on all of them existing.</p>
+</div>
+
+<div class="chapter" style="border-color:#7c3aed;border-width:2px;">
+  <h2><span class="ch-badge" style="background:#7c3aed;">5</span> Feature Showcase — Every Concept, Simple to Complex</h2>
+  <p>Everything above tells <i>one</i> project's story. The records below are different — each is a standalone, self-contained example built specifically to explain one manufacturing, stock, or purchase concept on its own, in plain language, with a real record to open. They don't belong to the Apex Manufacturing project (a couple could, most deliberately don't) — think of this as a walk-through library, not a second story. Start at the top of each module and work down; each one gets a little more involved than the last.</p>
+</div>
+
+<div class="chapter">
+  <h2 style="color:#6d28d9;">🏭 Manufacturing</h2>
+  <p class="module-lede">The build order below mirrors how a real manufacturing team actually grows into the module — starting from "can I describe what a product is made of" and ending at "can I outsource part of production and still trust the costing."</p>
+
+  <div class="feature-item">
+    <h4>Single-level Bill of Materials <span class="complexity-badge complexity-simple">Simple</span></h4>
+    <p>The most basic manufacturing question: <i>what does this product need to be built?</i> A BOM is just a recipe — one finished good, a list of raw materials, and how much of each. This is the BOM the Apex Manufacturing story itself runs on: Pump Assembly A1 needs Steel Sheet, Copper Wire, and Ball Bearings.</p>
+    <div class="feature-links">
+      <a href="http://scale.localhost:8000/app/bom/BOM-FG-PUMP-ASSEMBLY-A1-001" target="_blank"><b>Open →</b> BOM-FG-PUMP-ASSEMBLY-A1-001</a>
+    </div>
+  </div>
+
+  <div class="feature-item">
+    <h4>Multi-level BOM (a BOM inside a BOM) <span class="complexity-badge complexity-medium">Medium</span></h4>
+    <p>Real products are rarely built from raw material in one step — they're built from <i>sub-assemblies</i>, which are themselves built from raw material. Here, "Motor Housing Assembly" is its own small BOM (Steel Sheet + Copper Wire), and it's then used as one ingredient in a second, alternate recipe for the very same Pump Assembly A1. Open it and notice the Motor Housing line already shows a real, non-zero cost — that cost rolled up automatically from its own BOM underneath, nothing typed in by hand.</p>
+    <div class="feature-links">
+      <a href="http://scale.localhost:8000/app/bom/BOM-MOTOR-HOUSING-ASSY-001" target="_blank"><b>Open →</b> The sub-assembly's own BOM</a>
+      <a href="http://scale.localhost:8000/app/bom/BOM-FG-PUMP-ASSEMBLY-A1-002" target="_blank"><b>Open →</b> The parent BOM using it</a>
+    </div>
+  </div>
+
+  <div class="feature-item">
+    <h4>Downtime Tracking <span class="complexity-badge complexity-simple">Simple</span></h4>
+    <p>Machines break down — this is just a log of when a specific workstation stopped, why, and for how long. Nothing clever here on its own, but it's the raw data that feeds the Downtime Analysis report, so a manager can see which machine is costing the most stopped time over a month, not just today.</p>
+    <div class="feature-links">
+      <a href="http://scale.localhost:8000/app/downtime-entry/DT-00002" target="_blank"><b>Open →</b> DT-00002 (75-minute unplanned stop)</a>
+    </div>
+  </div>
+
+  <div class="feature-item">
+    <h4>Scrap &amp; Waste Costing <span class="complexity-badge complexity-medium">Medium</span></h4>
+    <p>Not every gram of raw material becomes a sellable product — some becomes scrap (offcuts, rejects). This entry shows a real production run where, alongside the finished Pump Assembly, a genuine scrap by-product (steel offcut) was also recorded — and the finished good's cost is automatically netted for it, so the "true" cost per unit already accounts for what was thrown away, not just what was used.</p>
+    <div class="feature-links">
+      <a href="http://scale.localhost:8000/app/stock-entry/MAT-STE-00005" target="_blank"><b>Open →</b> MAT-STE-00005 (Manufacture entry with scrap)</a>
+    </div>
+  </div>
+
+  <div class="feature-item">
+    <h4>Sub-contracting — outsourced manufacturing <span class="complexity-badge complexity-complex">Complex</span></h4>
+    <p>Sometimes a step of production is done by a supplier, not in-house. Here, an "Impeller Assembly" is subcontracted to a real supplier: raw material (Copper Wire) is sent <i>out</i> to them, they charge a service fee for the machining work, and the finished part comes back <i>in</i> — landing in stock at a cost that's automatically the sum of the raw material consumed plus the service charge, with nothing manually calculated. This is the full chain: subcontracted Purchase Order → Subcontracting Order → raw material sent out → finished good received back.</p>
+    <div class="feature-links">
+      <a href="http://scale.localhost:8000/app/purchase-order/PUR-ORD-2026-00006" target="_blank"><b>Open →</b> The subcontracted Purchase Order</a>
+      <a href="http://scale.localhost:8000/app/subcontracting-order/SC-ORD-2026-00001" target="_blank"><b>Open →</b> The Subcontracting Order (see its own Connections tab for the full chain)</a>
+    </div>
+  </div>
+</div>
+
+<div class="chapter">
+  <h2 style="color:#0e7490;">📦 Stock</h2>
+  <p class="module-lede">Stock underpins both Manufacturing and Purchase — Item and Warehouse masters, batch/expiry tracking, and physical counting are the foundation everything else in this demo depends on.</p>
+
+  <div class="feature-item">
+    <h4>Batch Tracking with Expiry <span class="complexity-badge complexity-simple">Simple</span></h4>
+    <p>For any item with a shelf life, each incoming lot gets its own "batch" — a way to trace exactly which delivery a unit came from, and when it expires. This batch of Lubricant Oil is deliberately set to expire in about 3 weeks, so it shows up on the Expiring Batch Alert Report and would trigger a real 30-day advance reminder — the same mechanism a food, chemical, or pharma business relies on to never sell (or use) something past its date.</p>
+    <div class="feature-links">
+      <a href="http://scale.localhost:8000/app/batch/LUBOIL-DEMO-01" target="_blank"><b>Open →</b> Batch LUBOIL-DEMO-01</a>
+      <a href="http://scale.localhost:8000/app/query-report/Expiring Batch Alert Report" target="_blank"><b>Open →</b> Expiring Batch Alert Report</a>
+    </div>
+  </div>
+
+  <div class="feature-item">
+    <h4>Cycle Count with a Real Variance <span class="complexity-badge complexity-medium">Medium</span></h4>
+    <p>A cycle count is a spot-check: someone physically counts what's on the shelf and compares it to what the system thinks is there. This one shows a genuine shortage — the system expected 541 kg of Steel Sheet, the physical count found 533 kg — and submitting the count automatically raised a real, draft Stock Reconciliation to correct the system quantity. Nobody had to remember to do that step separately.</p>
+    <div class="feature-links">
+      <a href="http://scale.localhost:8000/app/cycle-count-sheet/CCS-2026-00004" target="_blank"><b>Open →</b> CCS-2026-00004 (8 kg shortage found)</a>
+    </div>
+  </div>
+
+  <div class="feature-item">
+    <h4>Stock Disposition — writing off damaged goods <span class="complexity-badge complexity-medium">Medium</span></h4>
+    <p>When stock is damaged and needs to be written off, it shouldn't just be quietly deleted — it goes through an approval step first (Draft → Pending Approval → Approved). Once approved here, the system automatically created the actual stock-issue transaction that removes it from inventory — the approval and the inventory correction are two different concerns, kept properly separate.</p>
+    <div class="feature-links">
+      <a href="http://scale.localhost:8000/app/stock-disposition-request/SDR-2026-00003" target="_blank"><b>Open →</b> SDR-2026-00003 (Approved, auto-issued)</a>
+    </div>
+  </div>
+</div>
+
+<div class="chapter">
+  <h2 style="color:#b45309;">🛒 Purchase</h2>
+  <p class="module-lede">From asking suppliers for a quote through to actually paying them — the procurement side of the same story, but as its own set of examples so each piece can be explained on its own.</p>
+
+  <div class="feature-item">
+    <h4>RFQ &amp; Vendor Comparison <span class="complexity-badge complexity-simple">Simple</span></h4>
+    <p>Before buying, it's normal to ask more than one supplier for a price. Here, the same Ball Bearing order was sent to two real suppliers — Precision Components India quoted a higher price but better payment terms and a full year's warranty; SteelCraft Industries quoted cheaper but with less favourable terms. The Vendor Comparison report lays both quotes side by side, so the choice is made on total value, not price alone.</p>
+    <div class="feature-links">
+      <a href="http://scale.localhost:8000/app/request-for-quotation/PUR-RFQ-2026-00002" target="_blank"><b>Open →</b> The RFQ sent to both suppliers</a>
+      <a href="http://scale.localhost:8000/app/query-report/Vendor Comparison" target="_blank"><b>Open →</b> Vendor Comparison report</a>
+    </div>
+  </div>
+
+  <div class="feature-item">
+    <h4>Supplier Performance Scoring <span class="complexity-badge complexity-medium">Medium</span></h4>
+    <p>Two different kinds of supplier scoring, blended into one view. Delivery performance is scored automatically from real transaction history (a native scorecard) — nobody enters that by hand. But things like compliance paperwork or documentation quality have no transaction trail to compute from, so those are captured manually instead. The Supplier KPI Dashboard blends both into one ranking.</p>
+    <div class="feature-links">
+      <a href="http://scale.localhost:8000/app/supplier-scorecard/Precision Components India" target="_blank"><b>Open →</b> The automatic Supplier Scorecard</a>
+      <a href="http://scale.localhost:8000/app/supplier/Precision Components India" target="_blank"><b>Open →</b> The Supplier record (see the manual scores)</a>
+      <a href="http://scale.localhost:8000/app/query-report/Supplier KPI Dashboard" target="_blank"><b>Open →</b> Supplier KPI Dashboard</a>
+    </div>
+  </div>
+
+  <div class="feature-item">
+    <h4>Contract &amp; Rate Agreement <span class="complexity-badge complexity-medium">Medium</span></h4>
+    <p>For a supplier you buy from regularly, it's common to lock in a rate and terms for a full year rather than renegotiating every order. This Blanket Order does exactly that with SteelCraft Industries — a fixed rate, defined payment terms, an SLA, and a penalty clause for late delivery — and it's deliberately set to expire in about a month, so it demonstrates the automatic renewal reminder a real procurement team would rely on to never let a good rate lapse unnoticed.</p>
+    <div class="feature-links">
+      <a href="http://scale.localhost:8000/app/blanket-order/MFG-BLR-2026-00001" target="_blank"><b>Open →</b> MFG-BLR-2026-00001</a>
+    </div>
+  </div>
+
+  <div class="feature-item">
+    <h4>Advance Payment <span class="complexity-badge complexity-simple">Simple</span></h4>
+    <p>Some suppliers want part of the payment upfront, before they ship. This shows a real Purchase Order with an advance payment made against it — and the advance auto-allocates against the eventual invoice by default, rather than someone having to remember to manually apply it later (that manual step is exactly what native ERPNext left you to do until this was fixed).</p>
+    <div class="feature-links">
+      <a href="http://scale.localhost:8000/app/purchase-order/PUR-ORD-2026-00007" target="_blank"><b>Open →</b> The Purchase Order</a>
+      <a href="http://scale.localhost:8000/app/payment-entry/ACC-PAY-2026-00006" target="_blank"><b>Open →</b> The advance Payment Entry</a>
+    </div>
+  </div>
 </div>
 
 </main>
