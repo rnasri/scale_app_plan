@@ -164,7 +164,7 @@
 
 <div class="chapter">
   <h2><span class="ch-badge" style="background:#2563eb;">2</span> The Flow, Module by Module</h2>
-  <p><b>PMO (the hub).</b> The Project is created first — customer Apex Manufacturing Co, a Project Manager and 2-person team from the existing HR roster, four Tasks (Procure → Produce → QC → Dispatch), a Project Risk flagging steel price volatility, a Timesheet entry, and an Expense Claim for a supplier quality audit visit.</p>
+  <p><b>PMO (the hub).</b> The Project is created first — customer Apex Manufacturing Co, a Project Manager and a 3-person team from the existing HR roster (including QA Engineer Vikram Singh, assigned directly to the QC Task — the closest existing profile match to a manufacturing quality role), four Tasks (Procure → Produce → QC → Dispatch), a Project Risk flagging steel price volatility, an Issue logging a real cosmetic-defect finding from the first production batch (traced to Assembly Line 1 die wear, resolved before dispatch), Timesheets, a Quality Inspector budget line, and an Expense Claim for a supplier quality audit visit.</p>
   <p><b>Sales.</b> A Quotation for 250 units is raised, walked through Sales' own discount-approval workflow, and converted into a real Sales Order — the commercial trigger for everything downstream.</p>
   <p><b>Manufacturing.</b> A real multi-item Bill of Materials is built for Pump Assembly A1 (steel sheet, copper wire, ball bearings). A Production Plan pulls the Sales Order through ERPNext's own native MRP engine, which computes a genuine raw-material shortfall against Stock's existing baseline — not a fabricated number. A Work Order is raised and submitted, which automatically creates its own Job Card, logged with a real Time Log against a real employee.</p>
   <p><b>Purchase.</b> The MRP-generated Material Request is converted into a Purchase Order with a new supplier, SteelCraft Industries, walked through Purchase's own approval workflow. Goods Receipt deliberately includes a small rejected-quantity line (showing the automatic Rejected Warehouse default), and the Purchase Invoice carries a deliberate rate deviation — automatically flagged by the 3-way match check, never blocked. A Payment Entry closes the loop.</p>
@@ -193,9 +193,9 @@
   <!-- PMO node (top) -->
   <rect x="400" y="40" width="200" height="80" rx="12" fill="#eef2ff" stroke="#4338ca" stroke-width="1.5"/>
   <text x="500" y="62" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4338ca">PMO — the hub</text>
-  <text x="500" y="80" text-anchor="middle" font-size="10.5" fill="#3730a3">4 Tasks · Timesheet</text>
-  <text x="500" y="94" text-anchor="middle" font-size="10.5" fill="#3730a3">Project Risk · Expense Claim</text>
-  <text x="500" y="108" text-anchor="middle" font-size="10.5" fill="#3730a3">PM: Rohan Kapoor</text>
+  <text x="500" y="80" text-anchor="middle" font-size="10.5" fill="#3730a3">4 Tasks · Timesheets · Issue</text>
+  <text x="500" y="94" text-anchor="middle" font-size="10.5" fill="#3730a3">Project Risk · Budget · Expense Claim</text>
+  <text x="500" y="108" text-anchor="middle" font-size="10.5" fill="#3730a3">PM: Rohan Kapoor · QA: Vikram Singh</text>
 
   <!-- Sales node (upper left) -->
   <rect x="115" y="105" width="215" height="80" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
@@ -233,7 +233,8 @@
   <p>Everything below is real, clickable, and already seeded. Open <code>/app/project/PROJ-0025</code> and start here:</p>
   <ol class="click-path">
     <li>Open the Project. Point out the <b>PMO Approved</b> workflow state, the <b>Project Manager</b> field, and the <b>Key Risks Summary</b> — this is a real project, not a demo shell.</li>
-    <li>Scroll to <b>Connections</b>. This is the whole point: one native ERPNext tab, zero custom code, showing every module's real linked records grouped by type — <b>Project</b> (Task, Timesheet), <b>Material</b> (Material Request, BOM, Stock Entry), <b>Sales</b> (Sales Order), <b>Purchase</b> (Purchase Order, Receipt, Invoice), <b>Manufacture</b> (Work Order), <b>Risk</b>.</li>
+    <li>Scroll to <b>Connections</b>. This is the whole point: one native ERPNext tab, zero custom code, showing every module's real linked records grouped by type — <b>Project</b> (Task, Timesheet, Issue), <b>Material</b> (Material Request, BOM, Stock Entry), <b>Sales</b> (Sales Order), <b>Purchase</b> (Purchase Order, Receipt, Invoice), <b>Manufacture</b> (Work Order), <b>Risk</b>.</li>
+    <li>Click <b>Issue</b> → a real QC finding from the first production batch, raised by Vikram Singh (the QA Engineer assigned to the QC Task), traced back to the same Assembly Line 1 die wear behind the Downtime Entry in the Feature Showcase below, and closed <b>Resolved</b> before dispatch — one paragraph that ties the PMO, Manufacturing, and HR stories together.</li>
     <li>Click <b>Sales Order</b> → show the real 250-unit order to Apex Manufacturing Co, submitted, tagged to this exact project.</li>
     <li>Click <b>BOM</b> → show the real multi-item bill of materials and its live costed total — not a placeholder.</li>
     <li>Click <b>Work Order</b> → open its <b>Job Card</b> from the Connections tab there too — show the real Time Log logged against a real employee.</li>
