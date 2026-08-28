@@ -175,10 +175,11 @@
   <p><b>Manufacturing.</b> A real multi-item Bill of Materials is built for Pump Assembly A1 (steel sheet, copper wire, ball bearings). A Production Plan pulls the Sales Order through Scale's own native MRP engine, which computes a genuine raw-material shortfall against Stock's existing baseline — not a fabricated number. A Work Order is raised and submitted, which automatically creates its own Job Card, logged with a real Time Log against a real employee.</p>
   <p><b>Purchase.</b> The MRP-generated Material Request is converted into a Purchase Order with a new supplier, SteelCraft Industries, walked through Purchase's own approval workflow. Goods Receipt deliberately includes a small rejected-quantity line (showing the automatic Rejected Warehouse default), and the Purchase Invoice carries a deliberate rate deviation — automatically flagged by the 3-way match check, never blocked. A Payment Entry closes the loop.</p>
   <p><b>Stock.</b> A baseline raw-material receipt exists before any of this starts — deliberately modest, so the shortfall Manufacturing's MRP finds is real, not staged.</p>
+  <p><b>HR.</b> Four real touchpoints on the same 4 team members already on this project: Vikram Singh (QA) gets a Recognition Entry for the QC catch behind the Issue above; Karan Bhatt takes approved leave that overlaps the production window; a new Manufacturing Engineer hire, Ananya Verma, is mid-onboarding — the one HR record with a genuine <code>project</code> field, set directly to PROJ-0025; and Rohan Kapoor gets a 360 Performance Feedback from Meera Nair citing his leadership of the order, riding the same Appraisal Cycle machinery HR already runs company-wide rather than a one-off for this demo.</p>
 </div>
 
 <div class="mindmap-wrap">
-<svg viewBox="0 0 1000 620" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mind map of the connected project across modules">
+<svg viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mind map of the connected project across modules">
   <defs>
     <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#94a3b8"/></marker>
   </defs>
@@ -189,6 +190,10 @@
   <line x1="500" y1="310" x2="780" y2="180" stroke="#cbd5e1" stroke-width="2"/>
   <line x1="500" y1="310" x2="220" y2="470" stroke="#cbd5e1" stroke-width="2"/>
   <line x1="500" y1="310" x2="780" y2="470" stroke="#cbd5e1" stroke-width="2"/>
+  <!-- HR spoke — dashed on purpose: connects via a real project field on
+       Employee Onboarding, but Project's Connections tab is a fixed list
+       of doctypes that doesn't include it yet (see chapter 3, step 10) -->
+  <line x1="500" y1="388" x2="500" y2="550" stroke="#f9a8d4" stroke-width="2" stroke-dasharray="6,4"/>
 
   <!-- center hub -->
   <a href="http://scale.localhost:8000/app/project/PROJ-0025" target="_blank">
@@ -243,6 +248,15 @@
   <text x="777" y="493" text-anchor="middle" font-size="10.5" fill="#92400e">Supplier: SteelCraft Industries</text>
   <text x="777" y="507" text-anchor="middle" font-size="10.5" fill="#92400e">Department: Purchase - AIWS</text>
   </a>
+
+  <!-- HR node (bottom center) -->
+  <a href="http://scale.localhost:8000/app/employee-onboarding/HR-EMP-ONB-2026-00002" target="_blank">
+  <rect x="390" y="550" width="220" height="90" rx="12" fill="#fdf2f8" stroke="#db2777" stroke-width="1.5"/>
+  <text x="500" y="572" text-anchor="middle" font-size="12.5" font-weight="700" fill="#be185d">HR</text>
+  <text x="500" y="590" text-anchor="middle" font-size="10.5" fill="#9d174d">Recognition · Leave · 360 Feedback</text>
+  <text x="500" y="604" text-anchor="middle" font-size="10.5" fill="#9d174d">Employee Onboarding → real project field</text>
+  <text x="500" y="618" text-anchor="middle" font-size="10.5" fill="#9d174d">Team: Rohan · Meera · Karan · Vikram</text>
+  </a>
 </svg>
 </div>
 
@@ -259,12 +273,13 @@
     <li>Click <b>Material Request</b> (<a class="inline-open" href="http://scale.localhost:8000/app/material-request/MAT-MR-2026-00009" target="_blank">Open →</a>) → explain this was <i>not typed in by hand</i> — it's the output of Scale's own native MRP engine, run against the Sales Order, computing a genuine shortfall.</li>
     <li>Click <b>Purchase Order</b> (<a class="inline-open" href="http://scale.localhost:8000/app/purchase-order/PUR-ORD-2026-00005" target="_blank">Open →</a>) → then its own Connections tab to reach the <a class="inline-open" href="http://scale.localhost:8000/app/purchase-receipt/PR-26-00002" target="_blank">Goods Receipt</a> and <a class="inline-open" href="http://scale.localhost:8000/app/purchase-invoice/PINV-26-00004" target="_blank">Purchase Invoice</a> — point out the rejected-quantity line and the automatic 3-way match flag on the invoice (<span class="real-record">Flagged — rate 92.0 vs PO rate 85.0</span>), both real built features, not staged for the demo.</li>
     <li>Close the loop back at the <a class="inline-open" href="http://scale.localhost:8000/app/project/PROJ-0025" target="_blank">Project</a> — every one of those documents is reachable from the single record you started at.</li>
+    <li><b>HR, from the employee side.</b> Worth saying plainly: this doesn't show up in the Connections tab above — Project's Connections list is a fixed set of doctypes Scale ships (Task/Timesheet/Issue, Sales/Purchase/Manufacture), and HR isn't one of them today. Only <b>Employee Onboarding</b> carries a genuine <code>project</code> field, the same class of link everything else in this walkthrough uses; the other three connect through the 4 employees already on this project's team instead. Open them directly: <a class="inline-open" href="http://scale.localhost:8000/app/scale-hr-recognition-entry/SHR-REC-00245" target="_blank">Recognition Entry →</a> (Vikram Singh, the QC catch behind the Issue above), <a class="inline-open" href="http://scale.localhost:8000/app/leave-application/HR-LAP-2026-00006" target="_blank">Leave Application →</a> (Karan Bhatt, overlapping the production window), <a class="inline-open" href="http://scale.localhost:8000/app/employee-onboarding/HR-EMP-ONB-2026-00002" target="_blank">Employee Onboarding →</a> (Ananya Verma, Manufacturing Engineer, project set directly), and <a class="inline-open" href="http://scale.localhost:8000/app/employee-performance-feedback/HR-PF-2026-00246" target="_blank">360 Feedback →</a> (Meera Nair reviewing Rohan Kapoor's leadership of the order, off the real <a class="inline-open" href="http://scale.localhost:8000/app/appraisal/HR-APR-2026-00003" target="_blank">Appraisal →</a> record it belongs to).</li>
   </ol>
 </div>
 
 <div class="chapter">
   <h2><span class="ch-badge" style="background:#7c3aed;">4</span> How This Was Built — Purely Data, Zero Code Changes</h2>
-  <p>The connection mechanism is <code>Project.project</code> — a field Scale already ships on Sales Order, Purchase Order/Receipt/Invoice, Stock Entry, Work Order, Job Card, BOM, Payment Entry, and Expense Claim. Setting it consistently on every record is the entire trick; the Connections tab and its grouping already exist natively. Nothing was added to the schema, no new doctypes, no new hooks — this is a pure data-seeding exercise, one small script per app.</p>
+  <p>The connection mechanism is <code>Project.project</code> — a field Scale already ships on Sales Order, Purchase Order/Receipt/Invoice, Stock Entry, Work Order, Job Card, BOM, Payment Entry, Expense Claim, and (as of this session) Employee Onboarding. Setting it consistently on every record is the entire trick; the Connections tab and its grouping already exist natively — except for HR, where that fixed list doesn't include Employee Onboarding yet, so that one link is real but not yet Connections-visible (see chapter 3, step 10). Nothing was added to the schema, no new doctypes, no new hooks — this is a pure data-seeding exercise, one small script per app.</p>
   <div class="cmd-block">
 <span class="cmt"># Run once, in this exact order — each step depends on data the previous one creates</span>
 <span class="num">1.</span> bench --site &lt;site&gt; execute scale_project_management.demo_project_seed.run
@@ -272,8 +287,9 @@
 <span class="num">3.</span> bench --site &lt;site&gt; execute scale_stock.demo_project_seed.run
 <span class="num">4.</span> bench --site &lt;site&gt; execute scale_manufacturing.demo_project_seed.run
 <span class="num">5.</span> bench --site &lt;site&gt; execute scale_purchase.demo_project_seed.run
+<span class="num">6.</span> bench --site &lt;site&gt; execute scale_hr.demo_project_seed.run
   </div>
-  <p>Every script is idempotent (safe to re-run), manual-invoke only (never wired into <code>after_install</code>/<code>after_migrate</code> — a fresh site migrating for the first time doesn't have the masters this assumes, the same reason every other demo seed in this codebase stays manual), and independently safe: each app commits only its own data at its own end, so one script failing partway can't corrupt another app's data. Shipped as its own small, separately-reviewable PR — <code>feature/connected-demo-data</code> — after the three new Supply Chain apps (Stock/Purchase/Manufacturing) land, since this depends on all of them existing.</p>
+  <p>Every script is idempotent (safe to re-run), manual-invoke only (never wired into <code>after_install</code>/<code>after_migrate</code> — a fresh site migrating for the first time doesn't have the masters this assumes, the same reason every other demo seed in this codebase stays manual), and independently safe: each app commits only its own data at its own end, so one script failing partway can't corrupt another app's data. HR's own script (step 6) additionally reuses this bench's existing Appraisal Cycle/Template rather than creating a second one, and deliberately never submits its Employee Onboarding record — that doctype's own <code>on_submit()</code> auto-creates a decoy Project and silently overwrites the real one, a gotcha caught by reading the controller before building rather than after. Shipped as its own small, separately-reviewable PR — <code>feature/connected-demo-data</code> — after the three new Supply Chain apps (Stock/Purchase/Manufacturing) land, since this depends on all of them existing.</p>
 </div>
 
 <div class="chapter" style="border-color:#7c3aed;border-width:2px;">
