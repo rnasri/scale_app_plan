@@ -44,6 +44,12 @@
 .feature-links { display:flex; flex-wrap:wrap; gap:8px; }
 .feature-links a { display:inline-flex; align-items:center; gap:5px; background:#f3f4f6; border:1px solid #e5e7eb; border-radius:6px; padding:5px 12px; font-size:.8rem; font-family:monospace; color:#1e3a5f; text-decoration:none; }
 .feature-links a:hover { background:#e5e7eb; border-color:#cbd5e1; }
+.record-link { text-decoration:none; }
+.record-link:hover .real-record { background:#e0e7ff; border-color:#a5b4fc; }
+.inline-open { display:inline-flex; align-items:center; gap:3px; background:#eef2ff; border:1px solid #c7d2fe; border-radius:5px; padding:1px 8px; font-size:.78rem; font-family:monospace; color:#3730a3; text-decoration:none; white-space:nowrap; }
+.inline-open:hover { background:#e0e7ff; border-color:#a5b4fc; }
+.mindmap-wrap a { cursor:pointer; }
+.mindmap-wrap a:hover rect, .mindmap-wrap a:hover circle { stroke-width:2.5; }
 .feature-links a b { color:#7c3aed; font-family: -apple-system, sans-serif; font-weight: 600; }
 
 /* ── Visual components for the Feature Showcase ── */
@@ -159,7 +165,7 @@
 <div class="chapter">
   <h2><span class="ch-badge" style="background:#1e3a5f;">1</span> The Story</h2>
   <p><b>Apex Manufacturing Co</b>, an existing industrial customer, places a bulk order for <b>250 units of Pump Assembly A1</b> — a precision pump used in their water-treatment line expansion. Fulfilling it touches every part of the business: Sales books the order, PMO runs it as a real project with its own risks and budget, Manufacturing builds a Bill of Materials and runs it through Production Planning to see what's short, Purchase closes that shortfall with a new supplier, and Stock receives, tracks, and feeds the raw material back into production.</p>
-  <p>Every record below is real and already live on this bench — not mocked, not a slide. The project is <span class="real-record">PROJ-0025 · Apex Manufacturing — Pump Assembly A1 Bulk Order</span>, and every module's data is tagged to it the same way ERPNext tags any project-linked transaction — which is what makes the <b>Connections tab</b> on the Project record able to show all of it in one place, natively, with nothing custom built to make it work.</p>
+  <p>Every record below is real and already live on this bench — not mocked, not a slide. The project is <a class="record-link" href="http://scale.localhost:8000/app/project/PROJ-0025" target="_blank"><span class="real-record">PROJ-0025 · Apex Manufacturing — Pump Assembly A1 Bulk Order</span></a>, and every module's data is tagged to it the same way ERPNext tags any project-linked transaction — which is what makes the <b>Connections tab</b> on the Project record able to show all of it in one place, natively, with nothing custom built to make it work.</p>
 </div>
 
 <div class="chapter">
@@ -185,62 +191,74 @@
   <line x1="500" y1="310" x2="780" y2="470" stroke="#cbd5e1" stroke-width="2"/>
 
   <!-- center hub -->
+  <a href="http://scale.localhost:8000/app/project/PROJ-0025" target="_blank">
   <circle cx="500" cy="310" r="78" fill="#1e3a5f"/>
   <text x="500" y="298" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">PROJ-0025</text>
   <text x="500" y="316" text-anchor="middle" fill="#fff" font-size="10.5">Apex Manufacturing —</text>
   <text x="500" y="330" text-anchor="middle" fill="#fff" font-size="10.5">Pump Assembly A1</text>
+  </a>
 
   <!-- PMO node (top) -->
+  <a href="http://scale.localhost:8000/app/project/PROJ-0025" target="_blank">
   <rect x="400" y="40" width="200" height="80" rx="12" fill="#eef2ff" stroke="#4338ca" stroke-width="1.5"/>
   <text x="500" y="62" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4338ca">PMO — the hub</text>
   <text x="500" y="80" text-anchor="middle" font-size="10.5" fill="#3730a3">4 Tasks · Timesheets · Issue</text>
   <text x="500" y="94" text-anchor="middle" font-size="10.5" fill="#3730a3">Project Risk · Budget · Expense Claim</text>
   <text x="500" y="108" text-anchor="middle" font-size="10.5" fill="#3730a3">PM: Rohan Kapoor · QA: Vikram Singh</text>
+  </a>
 
   <!-- Sales node (upper left) -->
+  <a href="http://scale.localhost:8000/app/sales-order/SAL-ORD-2026-00003" target="_blank">
   <rect x="115" y="105" width="215" height="80" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
   <text x="222" y="127" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1d4ed8">Sales</text>
   <text x="222" y="145" text-anchor="middle" font-size="10.5" fill="#1e40af">Quotation → Sales Order</text>
   <text x="222" y="159" text-anchor="middle" font-size="10.5" fill="#1e40af">250 × Pump Assembly A1</text>
   <text x="222" y="173" text-anchor="middle" font-size="10.5" fill="#1e40af">Customer: Apex Manufacturing Co</text>
+  </a>
 
   <!-- Manufacturing node (upper right) -->
+  <a href="http://scale.localhost:8000/app/work-order/MFG-WO-2026-00001" target="_blank">
   <rect x="665" y="105" width="225" height="80" rx="12" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5"/>
   <text x="777" y="127" text-anchor="middle" font-size="12.5" font-weight="700" fill="#6d28d9">Manufacturing</text>
   <text x="777" y="145" text-anchor="middle" font-size="10.5" fill="#5b21b6">BOM → Production Plan (MRP)</text>
   <text x="777" y="159" text-anchor="middle" font-size="10.5" fill="#5b21b6">Work Order → Job Card</text>
   <text x="777" y="173" text-anchor="middle" font-size="10.5" fill="#5b21b6">Real shortfall computed live</text>
+  </a>
 
   <!-- Stock node (lower left) -->
+  <a href="http://scale.localhost:8000/app/stock-entry/MAT-STE-00004" target="_blank">
   <rect x="80" y="425" width="215" height="80" rx="12" fill="#ecfeff" stroke="#0891b2" stroke-width="1.5"/>
   <text x="187" y="447" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0e7490">Stock</text>
   <text x="187" y="465" text-anchor="middle" font-size="10.5" fill="#155e75">Baseline raw-material receipt</text>
   <text x="187" y="479" text-anchor="middle" font-size="10.5" fill="#155e75">Steel · Copper Wire · Bearings</text>
   <text x="187" y="493" text-anchor="middle" font-size="10.5" fill="#155e75">Deliberately short — real MRP gap</text>
+  </a>
 
   <!-- Purchase node (lower right) -->
+  <a href="http://scale.localhost:8000/app/purchase-order/PUR-ORD-2026-00005" target="_blank">
   <rect x="655" y="425" width="245" height="90" rx="12" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
   <text x="777" y="447" text-anchor="middle" font-size="12.5" font-weight="700" fill="#b45309">Purchase</text>
   <text x="777" y="465" text-anchor="middle" font-size="10.5" fill="#92400e">Material Request → PO → GRN</text>
   <text x="777" y="479" text-anchor="middle" font-size="10.5" fill="#92400e">Invoice (3-way match flag) → Payment</text>
   <text x="777" y="493" text-anchor="middle" font-size="10.5" fill="#92400e">Supplier: SteelCraft Industries</text>
   <text x="777" y="507" text-anchor="middle" font-size="10.5" fill="#92400e">Department: Purchase - AIWS</text>
+  </a>
 </svg>
 </div>
 
 <div class="chapter">
   <h2><span class="ch-badge" style="background:#059669;">3</span> The Live Click-Path — Walking a Client Through It</h2>
-  <p>Everything below is real, clickable, and already seeded. Open <code>/app/project/PROJ-0025</code> and start here:</p>
+  <p>Everything below is real, clickable, and already seeded. Open the <a class="record-link" href="http://scale.localhost:8000/app/project/PROJ-0025" target="_blank"><span class="real-record">PROJ-0025</span></a> Project and start here:</p>
   <ol class="click-path">
-    <li>Open the Project. Point out the <b>PMO Approved</b> workflow state, the <b>Project Manager</b> field, and the <b>Key Risks Summary</b> — this is a real project, not a demo shell.</li>
+    <li>Open the <a class="inline-open" href="http://scale.localhost:8000/app/project/PROJ-0025" target="_blank">Open →</a> Project. Point out the <b>PMO Approved</b> workflow state, the <b>Project Manager</b> field, and the <b>Key Risks Summary</b> — this is a real project, not a demo shell.</li>
     <li>Scroll to <b>Connections</b>. This is the whole point: one native ERPNext tab, zero custom code, showing every module's real linked records grouped by type — <b>Project</b> (Task, Timesheet, Issue), <b>Material</b> (Material Request, BOM, Stock Entry), <b>Sales</b> (Sales Order), <b>Purchase</b> (Purchase Order, Receipt, Invoice), <b>Manufacture</b> (Work Order), <b>Risk</b>.</li>
-    <li>Click <b>Issue</b> → a real QC finding from the first production batch, raised by Vikram Singh (the QA Engineer assigned to the QC Task), traced back to the same Assembly Line 1 die wear behind the Downtime Entry in the Feature Showcase below, and closed <b>Resolved</b> before dispatch — one paragraph that ties the PMO, Manufacturing, and HR stories together.</li>
-    <li>Click <b>Sales Order</b> → show the real 250-unit order to Apex Manufacturing Co, submitted, tagged to this exact project.</li>
-    <li>Click <b>BOM</b> → show the real multi-item bill of materials and its live costed total — not a placeholder.</li>
-    <li>Click <b>Work Order</b> → open its <b>Job Card</b> from the Connections tab there too — show the real Time Log logged against a real employee.</li>
-    <li>Click <b>Material Request</b> → explain this was <i>not typed in by hand</i> — it's the output of ERPNext's own MRP engine, run against the Sales Order, computing a genuine shortfall.</li>
-    <li>Click <b>Purchase Order</b> → then its own Connections tab to reach the Goods Receipt and Purchase Invoice — point out the rejected-quantity line and the automatic 3-way match flag on the invoice (<span class="real-record">Flagged — rate 92.0 vs PO rate 85.0</span>), both real built features, not staged for the demo.</li>
-    <li>Close the loop back at the Project — every one of those documents is reachable from the single record you started at.</li>
+    <li>Click <b>Issue</b> (<a class="inline-open" href="http://scale.localhost:8000/app/issue/ISS-2026-00001" target="_blank">Open →</a>) → a real QC finding from the first production batch, raised by Vikram Singh (the QA Engineer assigned to the QC Task), traced back to the same Assembly Line 1 die wear behind the Downtime Entry in the Feature Showcase below, and closed <b>Resolved</b> before dispatch — one paragraph that ties the PMO, Manufacturing, and HR stories together.</li>
+    <li>Click <b>Sales Order</b> (<a class="inline-open" href="http://scale.localhost:8000/app/sales-order/SAL-ORD-2026-00003" target="_blank">Open →</a>) → show the real 250-unit order to Apex Manufacturing Co, submitted, tagged to this exact project.</li>
+    <li>Click <b>BOM</b> (<a class="inline-open" href="http://scale.localhost:8000/app/bom/BOM-FG-PUMP-ASSEMBLY-A1-001" target="_blank">Open →</a>) → show the real multi-item bill of materials and its live costed total — not a placeholder.</li>
+    <li>Click <b>Work Order</b> (<a class="inline-open" href="http://scale.localhost:8000/app/work-order/MFG-WO-2026-00001" target="_blank">Open →</a>) → open its <b>Job Card</b> from the Connections tab there too — show the real Time Log logged against a real employee.</li>
+    <li>Click <b>Material Request</b> (<a class="inline-open" href="http://scale.localhost:8000/app/material-request/MAT-MR-2026-00009" target="_blank">Open →</a>) → explain this was <i>not typed in by hand</i> — it's the output of ERPNext's own MRP engine, run against the Sales Order, computing a genuine shortfall.</li>
+    <li>Click <b>Purchase Order</b> (<a class="inline-open" href="http://scale.localhost:8000/app/purchase-order/PUR-ORD-2026-00005" target="_blank">Open →</a>) → then its own Connections tab to reach the <a class="inline-open" href="http://scale.localhost:8000/app/purchase-receipt/PR-26-00002" target="_blank">Goods Receipt</a> and <a class="inline-open" href="http://scale.localhost:8000/app/purchase-invoice/PINV-26-00004" target="_blank">Purchase Invoice</a> — point out the rejected-quantity line and the automatic 3-way match flag on the invoice (<span class="real-record">Flagged — rate 92.0 vs PO rate 85.0</span>), both real built features, not staged for the demo.</li>
+    <li>Close the loop back at the <a class="inline-open" href="http://scale.localhost:8000/app/project/PROJ-0025" target="_blank">Project</a> — every one of those documents is reachable from the single record you started at.</li>
   </ol>
 </div>
 
