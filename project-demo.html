@@ -311,7 +311,7 @@
 
 <div class="chapter" style="border-color:#7c3aed;border-width:2px;">
   <h2><span class="ch-badge" style="background:#7c3aed;">5</span> Feature Showcase — Every Concept, Simple to Complex</h2>
-  <p>Everything above tells <i>one</i> project's story. The records below are different — each is a standalone, self-contained example built specifically to explain one manufacturing, stock, or purchase concept on its own, in plain language, with a real record to open. They don't belong to the Apex Manufacturing project (a couple could, most deliberately don't) — think of this as a walk-through library, not a second story. Start at the top of each module and work down; each one gets a little more involved than the last.</p>
+  <p>Everything above tells <i>one</i> project's story. The records below are different — each is a standalone, self-contained example built specifically to explain one concept on its own, in plain language, with a real record to open — Manufacturing, Stock, and Purchase first, then HR, Accounts, and Finance. They don't belong to the Apex Manufacturing project (a couple could, most deliberately don't) — think of this as a walk-through library, not a second story. Start at the top of each module and work down; each one gets a little more involved than the last.</p>
 </div>
 
 <div class="chapter">
@@ -574,6 +574,203 @@
     <div class="feature-links">
       <a href="http://scale.localhost:8000/app/purchase-order/PUR-ORD-2026-00007" target="_blank"><b>Open →</b> The Purchase Order</a>
       <a href="http://scale.localhost:8000/app/payment-entry/ACC-PAY-2026-00006" target="_blank"><b>Open →</b> The advance Payment Entry</a>
+    </div>
+  </div>
+</div>
+
+<div class="chapter">
+  <h2 style="color:#be185d;">👥 HR</h2>
+  <p class="module-lede">Same reasoning as Manufacturing/Stock/Purchase's own library above — standalone, self-contained examples of what scale_hr actually does day to day. Two reuse the same 4-person cast this demo already introduced (a succession map for the Project Manager role they hold makes the showcase feel like one coherent story, not disconnected test data); the third is a real record that already existed on this bench before this page did.</p>
+
+  <div class="feature-item">
+    <h4>Employee Grievance <span class="complexity-badge complexity-simple">Simple</span></h4>
+    <p>A workplace concern, tracked from raised to resolved rather than handled off the record. Vikram Singh (QA) flagged a PPE gap on Assembly Line 1 — the same line already carrying a die-wear downtime stop in the Manufacturing showcase above — as a near-miss before it became an actual safety incident. Raised against the Production department, not a person, and closed with a real fix on record, not just marked done.</p>
+    <div class="workflow-steps">
+      <div class="wf-step" style="background:#f3f4f6;color:#374151;">📝 Open</div>
+      <span class="wf-arrow">→</span>
+      <div class="wf-step" style="background:#fef3c7;color:#92400e;">🔍 Investigated</div>
+      <span class="wf-arrow">→</span>
+      <div class="wf-step" style="background:#d1fae5;color:#065f46;">✅ Resolved</div>
+    </div>
+    <p style="margin:-4px 0 10px;font-size:.85rem;color:#374151;"><b>Fix on record:</b> floor stores reorder point raised for safety consumables; a weekly PPE stock check added to shift handover.</p>
+    <div class="feature-links">
+      <a href="http://scale.localhost:8000/app/employee-grievance/HR-GRIEV-2026-00001" target="_blank"><b>Open →</b> HR-GRIEV-2026-00001</a>
+    </div>
+  </div>
+
+  <div class="feature-item">
+    <h4>Succession Planning <span class="complexity-badge complexity-medium">Medium</span></h4>
+    <p>PMO's own project-risk review flagged something worth taking seriously: Project Manager is a single-threaded role on this bench — no documented backup if Rohan Kapoor were unavailable. A Talent Pool groups the delivery-track employees worth developing; a Succession Map turns that into an actual plan against the specific critical role, with two real candidates at genuinely different readiness — not a fabricated "everyone's ready" story.</p>
+    <div class="compare-cards">
+      <div class="compare-card" style="background:#fffbeb;border-color:#fcd34d;">
+        <h5 style="color:#92400e;">Karan Bhatt — Business Analyst</h5>
+        <div class="compare-row"><span>Readiness</span><span class="cr-val">1–2 Years</span></div>
+        <div class="compare-row"><span>Development need</span><span class="cr-val" style="text-align:right;font-weight:400;">Live PM assignment on a smaller project</span></div>
+      </div>
+      <div class="compare-card" style="background:#eff6ff;border-color:#93c5fd;">
+        <h5 style="color:#1e40af;">Vikram Singh — QA Engineer</h5>
+        <div class="compare-row"><span>Readiness</span><span class="cr-val">Development Needed</span></div>
+        <div class="compare-row"><span>Development need</span><span class="cr-val" style="text-align:right;font-weight:400;">Structured PM/stakeholder training</span></div>
+      </div>
+    </div>
+    <div class="feature-links">
+      <a href="http://scale.localhost:8000/app/scale-hr-talent-pool/Delivery Leadership Bench" target="_blank"><b>Open →</b> Talent Pool — Delivery Leadership Bench</a>
+      <a href="http://scale.localhost:8000/app/scale-hr-succession-map/Project Manager — Succession" target="_blank"><b>Open →</b> Succession Map — Project Manager</a>
+    </div>
+  </div>
+
+  <div class="feature-item">
+    <h4>Employee Offboarding <span class="complexity-badge complexity-complex">Complex</span></h4>
+    <p>The mirror of the Employee Onboarding built for this demo's HR leg — same underlying Boarding Controller, run in reverse. This one already existed on this bench before this page did, so it's shown exactly as it stands, not staged for the demo: 5 clearance activities auto-generated as real Tasks (document handover, IT access revocation, asset recovery, exit interview, final finance/HR clearance) — all 5 still genuinely <b>Overdue</b>, <code>boarding_status</code> still <b>Pending</b>. A real, unresolved offboarding is a more honest demo of the mechanism than a fabricated tidy one.</p>
+    <div class="workflow-steps">
+      <div class="wf-step" style="background:#fee2e2;color:#991b1b;font-size:.68rem;">📄 Docs &amp; Handover</div>
+      <span class="wf-arrow">→</span>
+      <div class="wf-step" style="background:#fee2e2;color:#991b1b;font-size:.68rem;">🔒 Revoke IT Access</div>
+      <span class="wf-arrow">→</span>
+      <div class="wf-step" style="background:#fee2e2;color:#991b1b;font-size:.68rem;">💻 Recover Assets</div>
+      <span class="wf-arrow">→</span>
+      <div class="wf-step" style="background:#fee2e2;color:#991b1b;font-size:.68rem;">🗣️ Exit Interview</div>
+      <span class="wf-arrow">→</span>
+      <div class="wf-step" style="background:#fee2e2;color:#991b1b;font-size:.68rem;">✔️ Final Clearance</div>
+    </div>
+    <p style="margin:-4px 0 10px;font-size:.8rem;color:#991b1b;font-weight:700;">⚠️ All 5 activities Overdue — a real stalled offboarding, not staged</p>
+    <div class="feature-links">
+      <a href="http://scale.localhost:8000/app/employee-separation/HR-EMP-SEP-2026-00001" target="_blank"><b>Open →</b> HR-EMP-SEP-2026-00001</a>
+    </div>
+  </div>
+</div>
+
+<div class="chapter">
+  <h2 style="color:#047857;">💰 Accounts</h2>
+  <p class="module-lede">scale_account ships zero custom doctypes of its own — every example below is native ERPNext accounting, already live on this bench from real earlier work (Phase 4's asset seed, the current fiscal year's Budget, and every GL Entry this whole demo has posted). Nothing new was seeded for this section; it's shown exactly as it already stood.</p>
+
+  <div class="feature-item">
+    <h4>Automated Asset Depreciation <span class="complexity-badge complexity-simple">Simple</span></h4>
+    <p>A Fixed Asset depreciates on its own schedule — no one should have to remember to post that Journal Entry every month. This laptop's Straight-Line depreciation schedule has already posted 4 real monthly entries, and scale_account's own customization auto-approves depreciation Journal Entries specifically (every other Journal Entry on this bench still needs manual approval) — confirmed live via the actual hook, not assumed.</p>
+    <div class="flow-row">
+      <div class="flow-box raw"><span class="fb-icon">💻</span><span class="fb-label">Fixed Asset</span><span class="fb-sub">₹1,20,000 · Straight-Line</span></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box process"><span class="fb-icon">📅</span><span class="fb-label">Depreciation Schedule</span><span class="fb-sub">monthly, automatic</span></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box output"><span class="fb-icon">✅</span><span class="fb-label">Journal Entry</span><span class="fb-sub">auto-approved, no manual step</span></div>
+    </div>
+    <div class="feature-links">
+      <a href="http://scale.localhost:8000/app/asset/ACC-ASS-2026-00001" target="_blank"><b>Open →</b> The Asset (Partially Depreciated)</a>
+      <a href="http://scale.localhost:8000/app/journal-entry/ACC-JV-2026-00007" target="_blank"><b>Open →</b> A real auto-approved depreciation entry</a>
+    </div>
+  </div>
+
+  <div class="feature-item">
+    <h4>Budget vs Actual by Cost Center <span class="complexity-badge complexity-medium">Medium</span></h4>
+    <p>A Budget only means something once it's compared against what actually got spent. This is the real FY2026-27 Budget on the same Cost Center (<span class="real-record">Main - AIWS</span>) every module in this whole connected demo posts against — the Actual bars below are computed live from real GL Entries, not typed in for the demo.</p>
+    <div class="bar-compare">
+      <div class="bar-row">
+        <span class="bar-label">Office Rent — Budget</span>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:#94a3b8;">₹6,00,000</div></div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Office Rent — Actual</span>
+        <div class="bar-track"><div class="bar-fill" style="width:8.3%;background:#2563eb;">₹50,000</div></div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Admin Exp. — Budget</span>
+        <div class="bar-track"><div class="bar-fill" style="width:40%;background:#94a3b8;">₹2,40,000</div></div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Admin Exp. — Actual</span>
+        <div class="bar-track"><div class="bar-fill" style="width:10.8%;background:#2563eb;">₹65,000</div></div>
+      </div>
+    </div>
+    <div class="feature-links">
+      <a href="http://scale.localhost:8000/app/budget/BUDGET-2026-00001" target="_blank"><b>Open →</b> BUDGET-2026-00001</a>
+    </div>
+  </div>
+
+  <div class="feature-item">
+    <h4>Owner MIS Snapshot <span class="complexity-badge complexity-complex">Complex</span></h4>
+    <p>The flagship Accounts report — a single owner-facing consolidation pulling from GL Entry, Budget, and Cost Center across every module at once, rather than an owner having to open Sales, Purchase, and Accounts separately and mentally add it up. Every transaction this entire connected demo has posted (all 7 modules' worth) feeds this report live — it's the one place all of it rolls up into a single number an owner would actually look at.</p>
+    <div class="feature-links">
+      <a href="http://scale.localhost:8000/app/query-report/Scale Owner MIS Snapshot" target="_blank"><b>Open →</b> Scale Owner MIS Snapshot report</a>
+    </div>
+  </div>
+</div>
+
+<div class="chapter">
+  <h2 style="color:#0369a1;">📈 Finance</h2>
+  <p class="module-lede">scale_finance is a genuinely different kind of module from everything else in this demo — company-level strategic finance (loans, government schemes, capital investment decisions), not transaction processing tied to one customer order. All 6 of its own doctypes sat at zero records anywhere on this bench before this section — every example below is new, real, and independently verified live, not staged.</p>
+
+  <div class="feature-item">
+    <h4>MSME Credit Guarantee Scheme <span class="complexity-badge complexity-simple">Simple</span></h4>
+    <p>A real government MSME benefit — a credit guarantee that reduces the collateral a lender would otherwise demand on a working-capital loan. The Scheme record holds the eligibility rules once; an Application against it tracks one company's actual claim, including the document checklist a real disbursement would be gated on.</p>
+    <div class="workflow-steps">
+      <div class="wf-step" style="background:#f3f4f6;color:#374151;">📝 Applied</div>
+      <span class="wf-arrow">→</span>
+      <div class="wf-step" style="background:#fef3c7;color:#92400e;">🔍 Under Review</div>
+      <span class="wf-arrow">→</span>
+      <div class="wf-step" style="background:#d1fae5;color:#065f46;">✅ Approved</div>
+    </div>
+    <p style="margin:-4px 0 10px;font-size:.85rem;color:#374151;">₹15,00,000 guarantee cover approved · 3 of 4 required documents submitted, guarantee fee due on disbursement.</p>
+    <div class="feature-links">
+      <a href="http://scale.localhost:8000/app/scale-msme-application/SMA-2026-00001" target="_blank"><b>Open →</b> SMA-2026-00001</a>
+    </div>
+  </div>
+
+  <div class="feature-item">
+    <h4>Loan Liability &amp; EMI Schedule <span class="complexity-badge complexity-medium">Medium</span></h4>
+    <p>A real term loan funding this bench's own raw-material procurement scale-up (partially covered by the MSME guarantee above), with a genuine month-by-month amortization schedule — principal and interest split per installment, not just one lump "loan amount." Deliberately mid-life, not freshly disbursed: 3 EMIs already paid, one sitting <b>Overdue</b> right now, one still upcoming — a real loan has installments in every state at once, not a tidy all-paid or all-pending story.</p>
+    <div class="workflow-steps">
+      <div class="wf-step" style="background:#d1fae5;color:#065f46;font-size:.7rem;">May — Paid</div>
+      <span class="wf-arrow">→</span>
+      <div class="wf-step" style="background:#d1fae5;color:#065f46;font-size:.7rem;">Jun — Paid</div>
+      <span class="wf-arrow">→</span>
+      <div class="wf-step" style="background:#d1fae5;color:#065f46;font-size:.7rem;">Jul — Paid</div>
+      <span class="wf-arrow">→</span>
+      <div class="wf-step" style="background:#fee2e2;color:#991b1b;font-size:.7rem;">Aug — Overdue</div>
+      <span class="wf-arrow">→</span>
+      <div class="wf-step" style="background:#f3f4f6;color:#374151;font-size:.7rem;">Sep — Pending</div>
+    </div>
+    <div class="bar-compare">
+      <div class="bar-row">
+        <span class="bar-label">Principal</span>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:#94a3b8;">₹15,00,000</div></div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Outstanding</span>
+        <div class="bar-track"><div class="bar-fill" style="width:87.9%;background:#d97706;">₹13,18,629</div></div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Paid down</span>
+        <div class="bar-track"><div class="bar-fill" style="width:12.1%;background:#059669;">₹1,81,371</div></div>
+      </div>
+    </div>
+    <div class="feature-links">
+      <a href="http://scale.localhost:8000/app/scale-loan-liability/SLL-2026-00001" target="_blank"><b>Open →</b> SLL-2026-00001</a>
+    </div>
+  </div>
+
+  <div class="feature-item">
+    <h4>Investment Proposal ROI Comparison <span class="complexity-badge complexity-complex">Complex</span></h4>
+    <p>Two real capex/investment decisions competing for the same capital — a CNC automation upgrade for the shop floor, and rolling out the AI-Assisted Project Setup PMO feature more broadly. Both approved, both feed straight into scale_finance's own native <b>ROI by Initiative</b> report — confirmed live, not assumed: the report reads this exact doctype directly.</p>
+    <div class="compare-cards">
+      <div class="compare-card" style="background:#f5f3ff;border-color:#c4b5fd;">
+        <h5 style="color:#5b21b6;">Assembly Line 2 — CNC Automation</h5>
+        <div class="compare-row"><span>Proposed Amount</span><span class="cr-val">₹25,00,000</span></div>
+        <div class="compare-row"><span>ROI</span><span class="cr-val">32%</span></div>
+        <div class="compare-row"><span>IRR</span><span class="cr-val">24%</span></div>
+        <div class="compare-row"><span>Payback</span><span class="cr-val">18 months</span></div>
+      </div>
+      <div class="compare-card" style="background:#ecfdf5;border-color:#6ee7b7;">
+        <h5 style="color:#065f46;">AI-Assisted Project Setup — Phase 2</h5>
+        <div class="compare-row"><span>Proposed Amount</span><span class="cr-val">₹6,00,000</span></div>
+        <div class="compare-row"><span>ROI</span><span class="cr-val" style="color:#065f46;">45% 🏆</span></div>
+        <div class="compare-row"><span>IRR</span><span class="cr-val" style="color:#065f46;">38% 🏆</span></div>
+        <div class="compare-row"><span>Payback</span><span class="cr-val" style="color:#065f46;">10 months 🏆</span></div>
+      </div>
+    </div>
+    <div class="feature-links">
+      <a href="http://scale.localhost:8000/app/scale-investment-proposal/SIP-2026-00001" target="_blank"><b>Open →</b> SIP-2026-00001 (CNC Automation)</a>
+      <a href="http://scale.localhost:8000/app/scale-investment-proposal/SIP-2026-00002" target="_blank"><b>Open →</b> SIP-2026-00002 (AI-Assisted Setup)</a>
+      <a href="http://scale.localhost:8000/app/query-report/ROI by Initiative" target="_blank"><b>Open →</b> ROI by Initiative report</a>
     </div>
   </div>
 </div>
