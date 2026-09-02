@@ -219,7 +219,7 @@
 
 <div class="persona-card">
 <h3><span class="persona-badge">3 / 5</span> Employee (project team member)</h3>
-<p><b>Today:</b> full raw Desk, every doctype&#8217;s generic list view, nothing filtered to "my work."</p>
+<p><b>Today:</b> more broken than it looks. It's not just that the Desk is undifferentiated — Phase 0 (§7) found the real seeded team members holding bare <code>Employee</code> (nothing else) have <i>zero permission</i> on Project and Task at all. They're listed as project team members but can't open the Project or touch their own Task today. Fixing this is Phase 4a, a hard prerequisite before any of the UI below can work.</p>
 <p><b>Research validation:</b> §2.1 and §2.6 converge tightly on the owner&#8217;s original framing — assigned work only, no reports, no settings, no visibility into anyone else&#8217;s data. This is the market-standard shape for the lowest-privilege tier, not a cut corner.</p>
 <p><b>Proposed landing — "My Work":</b> assigned Projects as cards (from <code>Project.users</code> where <code>user = session user</code>); a combined "My Tasks" list spanning all assigned projects with due date and a fast per-row status control (§2.4 — explicit control, not drag-only, since this list has no single Kanban board home); a "Log Time" shortcut; a "Request Material" shortcut.</p>
 <p><b>Task status updates:</b> a fast dropdown/segmented control per row in the flat list; Kanban drag-and-drop stays available inside a single project&#8217;s own board, per §2.4.</p>
@@ -250,7 +250,7 @@
 <tr><th>Persona</th><th>Frappe user_type</th><th>Roles held today</th><th>New Role needed?</th><th>Landing mechanism</th></tr>
 <tr><td>System Admin</td><td>System User</td><td>Administrator / System Manager</td><td><span class="pill pill-exist">No — reuse existing</span></td><td>Content-adaptive Home workspace (§2.8a)</td></tr>
 <tr><td>Project Manager</td><td>System User</td><td>Projects Manager / PMO Director</td><td><span class="pill pill-exist">No — reuse existing</span></td><td>Content-adaptive Console landing (§2.8a)</td></tr>
-<tr><td>Employee</td><td>System User</td><td>native <code>Projects User</code> (currently unverified as actually restrictive — Phase 0 check)</td><td><span class="pill pill-new">Possibly — confirm in Phase 0</span> before inventing a new name</td><td>Content-adaptive "My Work" landing (§2.8a)</td></tr>
+<tr><td>Employee</td><td>System User</td><td>bare <code>Employee</code> today — confirmed <span class="pill pill-gap">zero Project/Task access</span> (Phase 0 Finding 2)</td><td><span class="pill pill-new">No new role name</span> — grant native <code>Projects User</code>, then scope with <code>has_permission</code>/<code>permission_query_conditions</code> (Phase 4a)</td><td>Content-adaptive "My Work" landing (§2.8a)</td></tr>
 <tr><td>Consultant <span class="pill pill-parked">Parked</span></td><td>Website User</td><td>none today</td><td><span class="pill pill-new">Yes — "PMO Consultant Portal"</span>, scoping <code>has_permission</code>/<code>permission_query_conditions</code></td><td><code>get_website_user_home_page</code> hook (§2.8b)</td></tr>
 <tr><td>Contractor <span class="pill pill-parked">Parked</span></td><td>Website User</td><td>none today</td><td><span class="pill pill-new">Yes — "PMO Contractor Portal"</span>, same pattern</td><td><code>get_website_user_home_page</code> hook (§2.8b)</td></tr>
 </table>
@@ -278,8 +278,11 @@
 
 <h2 id="phases">7. Phase-Wise Implementation Plan</h2>
 <div class="phase-box">
-<h4>Phase 0 — Audit &amp; Confirm (no code)</h4>
-<p>Confirm exactly what native <code>Projects User</code> currently restricts (or doesn&#8217;t); confirm the native Timesheet detail grid&#8217;s weekly-entry capability against §2.7&#8217;s target shape; produce a short findings note appended to this doc. <b>Owner confirms persona scope against Open Questions (§8) before Phase 1 code starts.</b></p>
+<h4>Phase 0 — Audit &amp; Confirm (no code) <span class="pill pill-exist">DONE — 2 Sep 2026</span></h4>
+<p><b>Finding 1 — native <code>Projects User</code> is unusable as-is, in both directions.</b> Read every DocPerm row shipped by ERPNext core directly: on Project and Task, <code>Projects User</code> is the only role with any access at all, and it's completely unscoped — full read/write/create/delete on <i>every</i> Project/Task in the system, no <code>if_owner</code>, no user-permission restriction. Confirmed against live bench data too: zero <code>User Permission</code> records scope Project to anyone, and only 3 accounts (2 admin/test accounts, 1 real test employee) hold the role at all — not the actual team.</p>
+<p><b>Finding 2 — real team members can't see their own work today.</b> Checked three genuine rank-and-file team members already in the seed data (Ananya Desai, Farah Khan, Karan Bhatt — role: bare <code>Employee</code>, nothing else, exactly this persona). Cross-referenced against the DocPerm table: <code>Employee</code> has zero permission on Project (an explicit <code>read: None</code> row) and zero permission on Task at all. They're listed in <code>Project.users</code> as team members but structurally cannot open that Project or touch their own Task today — a missing base grant, not a missing UI. Timesheet is fine as-is (<code>Employee</code> already has read/write/create there).</p>
+<p><b>Finding 3 — no native weekly timesheet grid exists.</b> <code>Timesheet.time_logs</code> (Timesheet Detail child table) is a flat add-a-row-at-a-time table (<code>from_time</code>/<code>to_time</code>/<code>hours</code>/<code>project</code>/<code>task</code>) — no day-of-week matrix UI anywhere in <code>erpnext</code> or <code>hrms</code>. Unlike the Task view-switcher or RAG fields, the §2.7 weekly-grid UX is genuinely new frontend work, not a surfacing job — flagged honestly rather than assumed as cheap as the rest of Phase 4.</p>
+<div class="callout gap"><b>Consequence for Phase 4:</b> granting <code>Projects User</code> alone would fix "can't see anything" by wildly overshooting into "can see everything," directly contradicting the Employee persona's core promise (§4.3, validated in §2.1/§2.6). Correct fix, reusing a pattern already in this codebase (T17/File's <code>has_permission</code> + <code>permission_query_conditions</code>): grant <code>Projects User</code> to Employees who are project team members, then scope Project/Task reads/writes to rows where the session user is actually a team member — no new DocType, no schema change. Added as an explicit prerequisite step, Phase 4a below, rather than folded silently into Phase 4's UI work.</div>
 </div>
 <div class="phase-box">
 <h4>Phase 1 — Admin tiles</h4>
@@ -293,9 +296,13 @@
 <h4>Phase 3 — PM project-open revamp</h4>
 <p>Role-conditional client-script layout on the existing Project form; no schema change. <span class="pill pill-exist">Milestone RAG-on-Gantt fix already done</span> — landed ahead of the rest of this phase (OQ5), remaining Phase 3 work is the layout revamp itself.</p>
 </div>
+<div class="phase-box" style="background:#fef2f2;border-color:#fecaca;">
+<h4 style="color:#991b1b;">Phase 4a — Permission prerequisite <span class="pill pill-gap">New, found in Phase 0</span></h4>
+<p>Not optional, not UI: grant <code>Projects User</code> to Employees who are project team members (e.g. wired into the same <code>Project</code> save hook that already links major skill on team-add), then scope Project/Task access with <code>has_permission</code> + <code>permission_query_conditions</code> restricting reads/writes to rows where the session user is actually a team member — the T17/File pattern, reused not reinvented. Must land before any Phase 4 UI, since today the target users can't open their own Project or Task at all.</p>
+</div>
 <div class="phase-box">
 <h4>Phase 4 — Employee "My Work"</h4>
-<p>Landing view, quick task-status control, quick material-request entry, weekly timesheet grid.</p>
+<p>Landing view, quick task-status control, quick material-request entry, weekly timesheet grid — the grid specifically is new frontend work (Phase 0 Finding 3), not a reuse of an existing native component.</p>
 </div>
 <div class="phase-box" style="background:#f3f4f6;border-color:#d1d5db;">
 <h4 style="color:#4b5563;">Parked — Future Implementation Phase: Consultant / Contractor portal login</h4>
