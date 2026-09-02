@@ -1108,6 +1108,29 @@ bench --site scale.localhost migrate</pre>
   </div>
 </div>
 
+<div class="task-card">
+  <div class="task-header">
+    <span class="task-id" style="background:#b45309;">ET-05</span>
+    <strong>PMO Kickoff &amp; Governance section — layout + Project Manager display + auto-numbered Project Code</strong>
+    <span class="task-assign">Raghib</span>
+    <span class="task-date">Tue Sep 1–2</span>
+  </div>
+  <div class="task-meta">Deliverable: Project Manager reads as a name not a docname, the section lays out as 3 clean paired rows, and every new Project gets a real code automatically</div>
+  <div style="margin:8px 0 12px;padding:8px 12px;border-radius:6px;font-size:.85rem;background:#fffbeb;border-left:3px solid #f59e0b;"><span class="st-done">✅ Done, tested live</span> — <b>not yet pushed</b>, parked on branch <code>PMO_sme_chnages_phase2</code> (<code>scale-bench</code>), awaiting explicit go-ahead per this track's standing push rule. Three changes, bundled as one task the way it was actually requested and delivered:
+  <br><br>
+  <b>1. Project Manager now shows the person's name, not the raw Employee ID.</b> Root cause traced, not guessed: Employee already has <code>title_field=employee_name</code> natively, but Frappe only renders that title inside an editable Link input when the target doctype also carries <code>show_title_field_in_link=1</code> — it didn't. Fixed with a Property Setter, applied idempotently on every <code>after_migrate</code> (<code>project_hooks.ensure_employee_link_title</code>), so any teammate's own migrate picks it up automatically. Clicking into the field for editing still shows the normal searchable ID-based picker — nothing lost. <b>Flagged explicitly, not silently scoped:</b> this is a bench-wide display change — every Employee Link field anywhere (Timesheet, Expense Claim, etc.) now shows the person's name instead of the raw docname, not just this one field. The now-redundant companion <code>project_manager_name</code> field from ET-01 (only ever a workaround for this exact display gap) is hidden from the form now that the Link itself shows the name directly.
+  <br><br>
+  <b>2. Section reorganized into 3 paired rows</b> — Business Unit / Sponsor, Project Code / Project Manager, Contract Value / Methodology — per explicit layout request, via <code>insert_after</code> chaining across the section's two columns.
+  <br><br>
+  <b>3. Project Code now auto-generates on creation</b> — <code>{3-letter Company abbreviation}-{MMYY}-{sequence}</code>, sequence resets every month (e.g. <code>AIW-0926-003</code> for AIWS Technologies' 3rd project created in Sep 2026). Wired as a <code>before_insert</code> hook (<code>project_hooks.generate_project_code</code>); only fires when the field is blank, so GrowSmart's own imported <code>SVPL/…</code> codes are never touched — verified by re-running <code>scale_project_management.growsmart_seed.run</code> after this change with zero overwrites. Tested live end-to-end: created two real test Projects, got <code>AIW-0926-001</code> then <code>AIW-0926-002</code> (sequence increments correctly), then deleted both test records.
+  </div>
+  <div class="task-context">
+    <p><span class="ctx-label">Real bug found and fixed mid-task, not assumed away:</span> the field was first shipped <code>read_only</code> (system-generated, shouldn't be hand-edited) — but Frappe hides empty read-only fields from the form entirely. Since most existing Projects predate this feature and have a blank Project Code, the whole 3-row pairing broke for almost every one of them: Project Code vanished and Project Manager visually landed next to Contract Value instead, one row off. Caught because the owner checked PROJ-0001 specifically and reported the pairing looked wrong. Fixed by dropping <code>read_only</code> so the field always renders (blank input when unset) — pairing now holds regardless of whether a Project predates the auto-generated code.</p>
+    <p><span class="ctx-label">A second real puzzle traced to ground before concluding it was a genuine bug:</span> after the Property Setter and field-order fixes were confirmed correct on the server (checked directly via <code>frappe.get_meta()</code> and the raw <code>getdoctype</code> API response — both correct), the browser still wasn't rendering the change. Root cause: a stale Frappe service worker cache, not a real defect — unregistering it and clearing Cache Storage resolved it. Documented so a future "I made the change but the browser won't show it" report on this bench starts here instead of re-diagnosing from scratch.</p>
+    <p><span class="ctx-label">Why bundled as one task instead of three:</span> all three were requested together in the same conversation thread against the same section of the same page, and the layout/display fixes are small enough that splitting them into separate ET numbers would fragment one coherent "fix this section" ask into artificial pieces — same judgment ET-01 already used when it folded the Manager Name companion field into the same task as the PM field itself.</p>
+  </div>
+</div>
+
 <!-- PROGRESS TRACKER -->
 <hr class="section no-print">
 <h2 class="no-print">Progress Tracker</h2>
@@ -1139,6 +1162,7 @@ bench --site scale.localhost migrate</pre>
     <tr style="background:#fffbeb;"><td>ET-02</td><td>Major Skill on Project's Users table</td><td><span class="pill" style="background:#fef3c7;color:#92400e;">Expert's Advice</span></td><td><span class="st-done">✅ Done</span></td><td>Owner-raised, not Excel/PDF-sourced. Reuses native HRMS Employee Skill Map, clickable Link column into it from the Users grid — see ET-02 card above.</td></tr>
     <tr style="background:#fffbeb;"><td>ET-03</td><td>Key Risks Summary after Scope &amp; Objectives</td><td><span class="pill" style="background:#fef3c7;color:#92400e;">Expert's Advice</span></td><td><span class="st-done">✅ Done</span></td><td>Owner-raised, not Excel/PDF-sourced. 500-word narrative field, explicitly scoped separate from the existing Risk Register — see ET-03 card above.</td></tr>
     <tr style="background:#fffbeb;"><td>ET-04</td><td>Project Risk in Connections sidebar</td><td><span class="pill" style="background:#fef3c7;color:#92400e;">Expert's Advice</span></td><td><span class="st-done">✅ Done</span></td><td>Owner-raised, follow-on from ET-03. override_doctype_dashboards hook, chained correctly alongside hrms's existing override — see ET-04 card above.</td></tr>
+    <tr style="background:#fffbeb;"><td>ET-05</td><td>PMO Kickoff section layout + PM display + auto Project Code</td><td><span class="pill" style="background:#fef3c7;color:#92400e;">Expert's Advice</span></td><td><span class="st-done">✅ Done, tested</span> — <span style="color:#b45309;font-weight:700;">not pushed</span></td><td>Owner-raised. show_title_field_in_link Property Setter (bench-wide), 3-row section pairing, auto-numbered Project Code (Company-MMYY-seq). Parked on branch <code>PMO_sme_chnages_phase2</code> — see ET-05 card above.</td></tr>
   </table>
 </div>
 
