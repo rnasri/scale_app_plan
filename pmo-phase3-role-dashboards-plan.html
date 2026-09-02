@@ -211,7 +211,7 @@
 <div class="persona-card">
 <h3><span class="persona-badge">2 / 5</span> Project Manager</h3>
 <p><b>Today:</b> same raw Desk as everyone else. The existing PMO Cockpit Dashboard (§3.2) is portfolio-wide utilization/billing metrics — useful, but not "my projects, at a glance."</p>
-<p><b>Proposed landing:</b> a portfolio card grid — one card per project where this user is <code>project_manager</code> (populated bench-wide since ET-01/ET-05) — name, start/end date, RAG colour, % progress, open/overdue task count. Click-through to the project.</p>
+<p><b>Proposed landing — "My Projects" (decided, OQ1):</b> a new tab in the existing Console tab bar (alongside Overview/Cockpit/Executive/Intelligence, defined in <code>console.py</code>), set as the PM's default landing. A portfolio card grid — one card per project where this user is <code>project_manager</code> (populated bench-wide since ET-01/ET-05) — name, start/end date, RAG colour, % progress, open/overdue task count. Click-through to the project. This is the researched, market-competitive shape from §2.2 (Monday.com-style RAG card grid), not a plain list — it's the piece of this plan that's actually meant to feel different from stock ERPNext. A small "View Cockpit →" link sits on the page for discoverability; the two views stay functionally separate (see OQ1 decision below).</p>
 <p><b>Proposed project-open view (PM-specific, not Admin&#8217;s):</b> the dense Kickoff &amp; Governance section collapses below the fold or into its own tab; Tasks come forward with the view-switcher (List/Kanban/Gantt) prominent, plus a quick-add row above the list (§2.3 — title, optional assignee/date, one keystroke to create) sitting alongside the existing full "New Task" form for when real detail is needed.</p>
 <div class="callout my-call"><b>My call:</b> build this as a genuinely distinct, role-conditional client-script layout on the <i>same</i> Project/Task DocTypes (à la <code>demo_ui.js</code>&#8217;s existing per-field conditionals) — not a second Project form or a duplicate Page. Validated against §2.1–§2.3; the underlying schema doesn&#8217;t change.</div>
 <div class="callout gap"><b>Bundled fix, flagged not hidden:</b> the milestone RAG-on-Gantt bug (§3.5, item 5) will be directly visible in exactly this revamped view — recommend fixing it as part of Phase 3 rather than shipping a "clean" Gantt that still has this known defect. See <a href="#openq">Open Question 5</a>.</div>
@@ -286,8 +286,8 @@
 <p>Lowest risk, purely additive: 3–4 top-of-Home tiles (§4, Admin). No permission changes.</p>
 </div>
 <div class="phase-box">
-<h4>Phase 2 — PM portfolio landing</h4>
-<p>Card grid reusing existing RAG/progress fields; additive Page/Console content only.</p>
+<h4>Phase 2 — PM portfolio landing <span class="pill pill-exist">Approach decided (OQ1)</span></h4>
+<p>New "My Projects" tab added to the existing Console tab bar (<code>console.py</code>), set as the PM's default landing — <b>stand-alone from PMO Cockpit Dashboard, cross-linked, not merged.</b> Card grid reusing existing RAG/progress fields; additive Page/Console content only, zero changes to Cockpit's own shipped code.</p>
 </div>
 <div class="phase-box">
 <h4>Phase 3 — PM project-open revamp</h4>
@@ -304,7 +304,7 @@
 <p>Phases 0–4 are the active sequence for this implementation round. Every phase follows the standing ET-track discipline: build → test live in the browser → commit locally → <b>hold every push, code and docs, until explicitly told to push.</b></p>
 
 <h2 id="openq">8. Open Questions for the Owner</h2>
-<div class="oq-row"><span class="oq-num">1</span><div>The PMO Cockpit Dashboard already exists for PM/Director (§3.2) — should Phase 2&#8217;s portfolio card grid extend/link from it, or stand alone as a separate landing view?</div></div>
+<div class="oq-row"><span class="oq-num">1</span><div><span class="pill pill-exist">RESOLVED — 2 Sep 2026</span> The PMO Cockpit Dashboard already exists for PM/Director (§3.2) — should Phase 2&#8217;s portfolio card grid extend/link from it, or stand alone as a separate landing view? <b>Decision: stand-alone.</b> Cockpit is an ops/billing KPI snapshot; the new "My Projects" grid is a project-picker — different job-to-be-done for the same audience, and merging them would push Cockpit back toward the dense/uniform problem this whole track exists to fix. Built as a new Console tab, PM's default landing, cross-linked with a "View Cockpit →" link — zero changes to Cockpit's own shipped code. See §4.2 and §7 Phase 2.</div></div>
 <div class="oq-row"><span class="oq-num">2</span><div>Should the Employee landing include a "My Approvals" tile for delegated reviews, or is that explicitly out of scope (today, approvals are PM/Director-only)?</div></div>
 <div class="oq-row"><span class="oq-num">3</span><div><span class="pill pill-parked">Parked</span> For Consultant: what should a logged-in session actually let them do — status-only visibility into their own engagement, or something transactional (submit a deliverable, respond to a review)? Nothing like this exists today. Not blocking Phases 0–4 — revisit when this phase is picked up.</div></div>
 <div class="oq-row"><span class="oq-num">4</span><div><span class="pill pill-parked">Parked</span> Should Contractor login be built alongside Consultant, or deferred further still? Not blocking Phases 0–4 — revisit when this phase is picked up.</div></div>
