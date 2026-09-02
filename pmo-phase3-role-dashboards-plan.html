@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PMO Phase 3 — Role-Based Views: Research &amp; Implementation Plan | AIWS ERP</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  body { max-width: 980px; margin: 0 auto; padding: 32px 28px 80px; }
+  .draft-banner { background:#fef3c7; border:2px solid #f59e0b; border-radius:10px; padding:14px 18px; margin-bottom:26px; font-size:.88rem; color:#78350f; }
+  .draft-banner b { color:#92400e; }
+  h1 { font-size:1.65rem; margin-bottom:4px; }
+  .subtitle { color:#6b7280; font-size:.95rem; margin-bottom:22px; }
+  .meta-row { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:28px; }
+  .meta-chip { background:#eef2ff; color:#3730a3; border-radius:6px; padding:4px 10px; font-size:.78rem; font-weight:600; }
+  h2 { font-size:1.25rem; margin:40px 0 12px; padding-bottom:8px; border-bottom:2px solid #e5e7eb; color:#1e3a5f; }
+  h3 { font-size:1.02rem; margin:24px 0 10px; color:#1e3a5f; }
+  h4 { font-size:.92rem; margin:16px 0 6px; }
+  p { line-height:1.65; font-size:.92rem; }
+  ul, ol { line-height:1.65; font-size:.92rem; }
+  table { width:100%; border-collapse:collapse; margin:14px 0; font-size:.85rem; }
+  th, td { border:1px solid #e5e7eb; padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#f8fafc; font-weight:700; color:#374151; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .pill { display:inline-block; padding:2px 9px; border-radius:5px; font-size:.72rem; font-weight:700; }
+  .pill-exist  { background:#d1fae5; color:#065f46; }
+  .pill-new    { background:#fef3c7; color:#92400e; }
+  .pill-gap    { background:#fee2e2; color:#991b1b; }
+  .pill-defer  { background:#f3f4f6; color:#6b7280; }
+  details.rsrch { border:1px solid #e5e7eb; border-radius:8px; margin-bottom:10px; }
+  details.rsrch summary { cursor:pointer; padding:12px 16px; font-weight:600; font-size:.9rem; list-style:none; display:flex; align-items:center; gap:8px; }
+  details.rsrch summary::-webkit-details-marker { display:none; }
+  details.rsrch summary .arrow { margin-left:auto; font-size:.8rem; color:#6b7280; transition:transform .2s; }
+  details.rsrch[open] summary .arrow { transform:rotate(90deg); }
+  details.rsrch .body { padding:0 16px 16px; border-top:1px solid #f3f4f6; font-size:.87rem; line-height:1.6; }
+  .src { font-size:.76rem; color:#6b7280; margin-top:6px; }
+  .src a { color:#3b82f6; }
+  .persona-card { border:1px solid #e5e7eb; border-radius:10px; padding:18px 22px; margin-bottom:20px; }
+  .persona-card h3 { margin-top:0; display:flex; align-items:center; gap:10px; }
+  .persona-badge { font-size:.7rem; background:#1e3a5f; color:#fff; padding:2px 9px; border-radius:4px; font-weight:700; }
+  .callout { border-left:4px solid #6366f1; background:#f5f6ff; padding:10px 14px; margin:12px 0; font-size:.86rem; border-radius:0 6px 6px 0; }
+  .callout.my-call { border-left-color:#059669; background:#ecfdf5; }
+  .callout.open-q { border-left-color:#dc2626; background:#fef2f2; }
+  .callout.gap { border-left-color:#f59e0b; background:#fffbeb; }
+  .phase-box { border:1px solid #dbeafe; background:#f0f9ff; border-radius:8px; padding:14px 18px; margin-bottom:14px; }
+  .phase-box h4 { margin:0 0 6px; color:#0369a1; }
+  .oq-num { display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; background:#dc2626; color:#fff; font-size:.75rem; font-weight:700; margin-right:8px; flex-shrink:0; }
+  .oq-row { display:flex; align-items:flex-start; margin-bottom:12px; }
+  code { background:#f3f4f6; padding:1px 6px; border-radius:4px; font-size:.85em; }
+  .toc { background:#f8fafc; border:1px solid #e5e7eb; border-radius:10px; padding:16px 22px; margin-bottom:30px; font-size:.86rem; }
+  .toc a { color:#1e3a5f; text-decoration:none; }
+  .toc a:hover { text-decoration:underline; }
+  .toc ol { margin:6px 0 0; }
+</style>
+</head>
+<body>
+
+<div class="draft-banner">
+  <b>Draft — not yet linked from site navigation.</b> This page is intentionally standalone (per explicit instruction) until the plan below is reviewed and phased work actually begins. It documents external research, an audit of what already exists in <code>scale_project_management</code>, and a phase-wise build plan — no code has shipped yet.
+</div>
+
+<h1>PMO Phase 3 — Role-Based Views &amp; Dashboards</h1>
+<div class="subtitle">Research &amp; Implementation Plan · Expert&#8217;s Advice (ET) Track, Phase 3</div>
+<div class="meta-row">
+  <span class="meta-chip">Branch: PMO_ET_phase3_role_dashboards</span>
+  <span class="meta-chip">Status: Research complete, awaiting owner review</span>
+  <span class="meta-chip">2 Sep 2026</span>
+  <span class="meta-chip">Companion: pmo-module.html, ET_task_track</span>
+</div>
+
+<div class="toc">
+  <b>Contents</b>
+  <ol>
+    <li><a href="#summary">Executive Summary &amp; Guardrails</a></li>
+    <li><a href="#research">Research — What the Market Actually Does</a></li>
+    <li><a href="#audit">Current State Audit (grounded in the live codebase)</a></li>
+    <li><a href="#personas">Persona-by-Persona Plan</a></li>
+    <li><a href="#permissions">Permission / Role Change Matrix</a></li>
+    <li><a href="#deviation">Where This Does / Doesn&#8217;t Deviate from Frappe &amp; ERPNext Core</a></li>
+    <li><a href="#phases">Phase-Wise Implementation Plan</a></li>
+    <li><a href="#openq">Open Questions for the Owner</a></li>
+  </ol>
+</div>
+
+<h2 id="summary">1. Executive Summary &amp; Guardrails</h2>
+<p>Today, every logged-in user of Scale PMO — Administrator, Project Manager, or a regular Employee added to a project — sees the exact same dense, uniform Frappe/ERPNext Desk. There is no role-shaped landing page, no "my work" view, and no distinction between a person who owns the whole portfolio and a person who just needs to update one task and log four hours.</p>
+<p>This plan is <b>not</b> a feature push. It is a presentation-layer revamp: showing the PMO module's existing capability differently to five distinct audiences, validated against how the market's most successful project tools (Asana, Monday.com, ClickUp, Linear, Basecamp, Procore) actually differentiate their own Admin / Manager / Contributor / Guest experiences. The underlying data model changes required are intentionally minimal.</p>
+<p><b>Guardrails set for this track, carried through every section below:</b></p>
+<ul>
+  <li>Minimise DocType and structural changes — extend the existing Console/Product-Shell architecture, don&#8217;t invent a parallel one.</li>
+  <li>Admin keeps the current default Project form exactly as-is. The Project Manager view is where the real redesign happens.</li>
+  <li>Explicitly flag anywhere the plan deviates from vanilla Frappe/ERPNext conventions — see <a href="#deviation">§6</a>.</li>
+  <li>Five personas in scope: <b>System Admin, Project Manager, Employee</b> (project team member), <b>Consultant, Contractor</b>.</li>
+  <li>Standing ET-track rule continues: build → test live → commit locally → hold every push (code and docs) until the owner explicitly says so.</li>
+</ul>
+
+<h2 id="research">2. Research — What the Market Actually Does</h2>
+<p>Direct scraping of paywalled/app-only product UIs wasn&#8217;t always possible, so research leaned on vendor documentation, comparison sites, community forums (Reddit, Asana&#8217;s own product forum), and UX-pattern write-ups (LogRocket, Eleken) alongside direct product docs. Findings are grouped by the specific question they answer.</p>
+
+<details class="rsrch" open>
+<summary>2.1 — The three-tier Admin / Manager / Contributor split is near-universal <span class="arrow">▸</span></summary>
+<div class="body">
+<p>ProWorkflow documents this explicitly: Administrators are "super users" with full settings access; Project Managers get project oversight but not account setup, and only see projects they&#8217;re assigned to manage; Team Members see only their own assigned projects/tasks, can&#8217;t run reports, and have no settings access. This exact three-way split — not two, not five — recurs across every tool researched. It directly supports the three internal personas already scoped (Admin / PM / Employee) without needing a fourth internal tier.</p>
+<div class="src">Sources: <a href="https://help.proworkflow.com/en/articles/4038640-what-are-the-differences-between-the-administrator-project-manager-and-team-member-roles" target="_blank">ProWorkflow Help Center</a>, <a href="https://asana.com/resources/project-management-software-buyers-guide" target="_blank">Asana Buyer&#8217;s Guide</a></div>
+</div>
+</details>
+
+<details class="rsrch">
+<summary>2.2 — Portfolio-first landing for Managers, RAG-coloured card grids <span class="arrow">▸</span></summary>
+<div class="body">
+<p>Monday.com&#8217;s dashboards consolidate multiple boards into one view specifically so managers can see "what&#8217;s stuck, who&#8217;s overloaded, what&#8217;s at risk" without opening each project — a stated 2026 industry expectation, not a nice-to-have. Portfolio-dashboard write-ups converge on the same card shape: project name, start/end date, red/amber/green status colour, and a progress bar, in a grid a manager scans in seconds. This maps almost exactly onto what the owner described independently, and onto data this app already computes (see <a href="#audit">§3</a> — RAG status is not new work here).</p>
+<div class="src">Sources: <a href="https://zapier.com/blog/monday-vs-asana/" target="_blank">Zapier: Asana vs Monday</a>, <a href="https://teamhood.com/project-management/project-portfolio-dashboard/" target="_blank">Teamhood: Project Portfolio Dashboard Guide</a></div>
+</div>
+</details>
+
+<details class="rsrch">
+<summary>2.3 — Two speeds of task creation: quick-add vs. detailed pane <span class="arrow">▸</span></summary>
+<div class="body">
+<p>Linear is repeatedly cited as faster than Asana or ClickUp specifically because actions that take 3–4 clicks elsewhere happen in a keystroke or two — a deliberate "type a title, hit enter" quick-add, with full detail (assignee, sub-tasks, custom fields, links) available but not mandatory up front. Asana's own philosophy is described the same way: "you create a task, assign it, set a date, and it shows up in the right places" — fast by default, not by removing capability. ClickUp is the counter-example: maximum control at task-creation time, at the cost of a cluttered, slower flow. This validates the owner&#8217;s instinct directly — a quick-add row above the task list, with the existing full "New Task" form still available for when detail is actually needed, rather than forcing the detailed form every time.</p>
+<div class="src">Sources: <a href="https://justtalkingtech.medium.com/linear-vs-asana-vs-clickup-i-migrated-twice-heres-the-one-i-d-actually-pick-today-28149210d398" target="_blank">Linear vs Asana vs ClickUp (Medium)</a>, <a href="https://gmelius.com/blog/asana-vs-clickup" target="_blank">Gmelius: Asana vs ClickUp</a></div>
+</div>
+</details>
+
+<details class="rsrch">
+<summary>2.4 — Status changes: offer drag-and-drop <i>and</i> an explicit control, not drag-only <span class="arrow">▸</span></summary>
+<div class="body">
+<p>Drag-and-drop is the right pattern specifically when spatial position carries meaning — a Kanban board is the textbook case. But UX-pattern guidance is consistent that drag alone is the wrong choice when the list is long, dense, or better expressed as an explicit control — in those cases a status dropdown or an explicit "move to" action should sit alongside the drag gesture, not replace it. This matters directly for the Employee persona&#8217;s "My Tasks" list, which spans multiple projects and has no natural single Kanban board home — an explicit per-row status control is the correct primary mechanism there, with Kanban drag-drop staying available inside a single project&#8217;s own task board.</p>
+<div class="src">Sources: <a href="https://blog.logrocket.com/ux-design/drag-and-drop-ui-examples/" target="_blank">LogRocket: Drag-and-drop UI patterns</a>, <a href="https://www.saasui.design/blog/saas-drag-and-drop-reordering-ux-patterns" target="_blank">SaaS UI Design: Drag-and-drop patterns</a></div>
+</div>
+</details>
+
+<details class="rsrch">
+<summary>2.5 — External collaborators get a hard-scoped "Guest" tier, never the internal view <span class="arrow">▸</span></summary>
+<div class="body">
+<p>Asana&#8217;s Guest model is explicit: anyone outside the company email domain is a Guest by definition, sees only the specific project(s) shared with them, and is offered a binary "Can edit" / "Can comment" permission at share-time — never the full workspace. Procore&#8217;s construction-specific pattern is stricter still: merely being tagged as the "Responsible Contractor" on an item grants <i>no</i> automatic visibility — a contractor has to be explicitly added to a distribution list or workflow to see anything at all. Both examples independently validate a hard-scoped, opt-in visibility model for Consultant/Contractor rather than a lighter version of the internal Desk — directly relevant since this app currently has no login concept for either at all (see <a href="#audit">§3</a>).</p>
+<div class="src">Sources: <a href="https://asana.com/inside-asana/guest-accounts-asana-for-clients-contractors-and-consultants" target="_blank">Asana: Guest Accounts</a>, <a href="https://support.procore.com/products/online/user-guide/project-level/rfi/permissions" target="_blank">Procore: RFI/Submittal Permissions</a></div>
+</div>
+</details>
+
+<details class="rsrch">
+<summary>2.6 — Minimalism is a legitimate, deliberate design choice for the lowest-privilege tier <span class="arrow">▸</span></summary>
+<div class="body">
+<p>Basecamp&#8217;s stated philosophy is "one perfect way to work" over infinite configurability — it deliberately omits features other tools treat as standard (online/offline indicators, typing indicators, read receipts) because they conflict with the product&#8217;s async, low-noise intent. Reviews consistently describe it as "minimal yet complete," reducing onboarding time specifically because there&#8217;s nothing extra to learn. This validates the owner&#8217;s framing for the Employee persona — "not other options needed" is a defensible, researched design position for the lowest-privilege tier, not corner-cutting.</p>
+<div class="src">Source: <a href="https://www.proofhub.com/articles/basecamp-review" target="_blank">ProofHub: Basecamp Review</a></div>
+</div>
+</details>
+
+<details class="rsrch">
+<summary>2.7 — Timesheets: retrospective weekly grid, not a bare stopwatch <span class="arrow">▸</span></summary>
+<div class="body">
+<p>Harvest&#8217;s "Week" view — fill in hours across projects for the whole week at once, editable in place — is called out as the workflow for people who log time at end-of-day or end-of-week rather than in real time, which is the realistic pattern for a project team member doing PMO admin as a secondary task. Toggl, despite being praised for the best raw UX of any time tracker, is criticised for lacking a week view at all, only a scrollable day view — a useful negative data point. This favours a weekly-grid timesheet layout for the Employee persona over a single-entry-at-a-time form.</p>
+<div class="src">Source: <a href="https://apploye.com/blog/harvest-vs-toggl/" target="_blank">Apploye: Harvest vs Toggl comparison</a></div>
+</div>
+</details>
+
+<details class="rsrch">
+<summary>2.8 — Frappe/ERPNext-native mechanics for role-based landing pages <span class="arrow">▸</span></summary>
+<div class="body">
+<p>Read directly from this bench&#8217;s own <code>frappe/website/utils.py</code> (not just forum claims): Frappe resolves a logged-in user&#8217;s <i>website</i> home page through a defined chain — first <code>Role.home_page</code> (checked by iterating <code>frappe.get_roles()</code> and taking the first match), then a <code>role_home_page</code> hook (a dict of <code>{role: [route]}</code> in <code>hooks.py</code>), then a <code>get_website_user_home_page</code> method hook, then a global fallback. The community forum thread <a href="https://discuss.frappe.io/t/default-home-page-route-of-role/69073" target="_blank">"Default Home Page route of Role"</a> flags a real, reproducible gotcha: when a user holds multiple roles that each define a <code>home_page</code>, the role Frappe checks first is effectively unordered — the result is non-deterministic for any user with more than one role-based home page defined. <b>This rules out <code>Role.home_page</code> as the mechanism for this plan</b> — every real user in this system (PM, Employee) holds multiple roles. The safer levers, used below: (a) for Desk users (Admin/PM/Employee), a <i>content-adaptive shell</i> — one landing surface that renders different tiles based on <code>frappe.get_roles()</code> server-side, the same pattern the existing Product Shell already uses (see <a href="#audit">§3</a>) — rather than a role-keyed redirect; (b) for portal/Website Users (Consultant/Contractor), the <code>get_website_user_home_page</code> hook is the correct, deterministic, one-hook-one-function mechanism, since it resolves per-user rather than per-role-in-arbitrary-order.</p>
+<div class="src">Sources: own read of <code>apps/frappe/frappe/website/utils.py:100-165</code>; <a href="https://discuss.frappe.io/t/default-home-page-route-of-role/69073" target="_blank">Frappe Forum: Default Home Page route of Role</a>; <a href="https://discuss.frappe.io/t/role-based-custom-workspace-for-client/125368" target="_blank">Frappe Forum: Role-Based Custom Workspace for Client</a></div>
+</div>
+</details>
+
+<h2 id="audit">3. Current State Audit (grounded in the live codebase, not assumption)</h2>
+<p>Before proposing anything, the actual state of <code>scale_project_management</code> and the shared <code>scale</code> mother-app was read directly — several findings below reshape the plan materially.</p>
+
+<h3>3.1 Role landscape today</h3>
+<table>
+<tr><th>Role</th><th>Where it&#8217;s wired in this app</th><th>Notes</th></tr>
+<tr><td><code>Administrator</code> / <code>System Manager</code></td><td>Full Desk, bypasses role checks</td><td>Target for the "Admin" persona</td></tr>
+<tr><td><code>PMO Director</code></td><td>PMO Cockpit &amp; Executive Dashboard access, consultant review</td><td>Senior oversight, adjacent to PM persona</td></tr>
+<tr><td><code>Projects Manager</code></td><td>PMO Cockpit Dashboard access</td><td>Target for the "Project Manager" persona</td></tr>
+<tr><td><code>Department Head</code></td><td>3rd stage of budget approval workflow</td><td><span class="pill pill-gap">0 holders</span> — pre-existing parked design gap, see §3.5</td></tr>
+<tr><td><code>Accounts Manager</code></td><td>Budget/billing doctype permissions</td><td>Not directly in scope here</td></tr>
+<tr><td>Native ERPNext <code>Projects User</code> / <code>Projects Manager</code></td><td><b>Zero references</b> in this app&#8217;s own fixtures</td><td>Broad, bench-wide roles inherited from ERPNext core — not customised for PMO specifically; needs a Phase 0 check on what they actually restrict today before being relied on for the Employee persona</td></tr>
+</table>
+
+<h3>3.2 Two dashboards already exist — and neither is what&#8217;s being asked for</h3>
+<p><b>PMO Cockpit Dashboard</b> (Page, role-gated to Projects Manager + PMO Director) shows aggregate portfolio metrics: Active Projects, Planned/Actual/Billed Mandays, Utilization %, Missing Logsheets. <b>PMO Executive Dashboard</b> (senior/exec audience) shows a similar shape one level up: Total Active Projects, On-Time Delivery %, Budget Planned vs. Actual, Resource Utilization, Task/Milestone completion, High-Risk/Delayed project counts, Timesheet Compliance, NPS.</p>
+<div class="callout">Both are <b>number-tile KPI pages</b> — neither is a per-project card grid with a start date, end date, progress bar, and click-through into the project. This confirms the Phase 2 proposal below is genuinely additive, not a duplicate of what&#8217;s already built.</div>
+
+<h3>3.3 The extension point already exists: Scale Console + Product Shell</h3>
+<p>This bench already runs a custom chrome layer (<code>apps/scale/scale/product_shell.py</code>) that hides raw Frappe/ERPNext UI, replaces the Home workspace with app tiles, and gives each Scale app its own "Console" — a tab bar (Overview / Cockpit / Executive / Intelligence for Projects, defined in <code>scale_project_management/console.py</code>) plus labelled content sections (<code>pos</code>, <code>ops</code>, <code>cmd</code>, <code>links</code>). <b>This is the correct place to build role-adaptive landing content</b> — extending an existing, house-standard mechanism, not inventing a parallel one.</p>
+
+<h3>3.4 Things already built that this plan should reuse, not reinvent</h3>
+<ul>
+  <li><b>Native Task view-switching</b> (List / Kanban / Gantt / Calendar) already ships with ERPNext core, plus a custom <code>task_list.js</code> for this app&#8217;s Gantt/RAG rendering — "let the PM switch task views easily" is mostly a <i>surfacing/default-view</i> job, not new engineering.</li>
+  <li><b><code>pmo_rag_status</code> / <code>color</code></b> fields, already computed on Project and Task — the exact Red/Amber/Green signal the research (§2.2) says the market uses for card grids. No new computation needed for the PM portfolio view.</li>
+  <li><b>Material Request Item.project</b> — the native ERPNext child-row field an Employee&#8217;s "material/resource request" flow should prefill. <span class="pill pill-gap">Finding</span>: the field lives on the child row, not the parent <code>Material Request</code> document — a quick-entry helper needs to write it at that level, not assume a parent-level project link exists.</li>
+</ul>
+
+<h3>3.5 Real gaps found — new ground, not a re-skin</h3>
+<ul>
+  <li><span class="pill pill-gap">Gap</span> <b>Consultant Profile and Contractor Profile are pure records today, with no login at all.</b> A prospective consultant submits the public <code>consultant-signup</code> Web Form, a PMO Director reviews and approves the profile — and that&#8217;s the entire lifecycle. There is no User account, no portal session, nothing a consultant or contractor can log into. Giving them a real login is genuinely new surface area, not a re-skin of something that already half-exists.</li>
+  <li><span class="pill pill-gap">Gap</span> <b>No Employee-facing minimal view exists anywhere in this app.</b> Contrast with HR: <code>scale_hr</code> deliberately does <i>not</i> build a custom employee self-service UI — it reuses HRMS&#8217;s own native <code>/hrms</code> Progressive Web App for ESS/MSS (confirmed in <code>ess_mss_demo.py</code>), matching this project&#8217;s "never fork" convention. ERPNext Projects has no equivalent native PWA to point to, so this piece has to be genuinely built, not just wired up.</li>
+</ul>
+<div class="callout gap"><b>Cross-reference — 4 previously-parked PMO design gaps intersect with this work</b> (from an earlier audit, on hold pending owner input): (2) internal approval actions like <code>approve_timesheet</code> are role-gated in the UI only, with no server-side check; (3) the Department Head role above has zero holders, breaking budget-approval stage 3; (4) employee-to-project assignment runs through 4 uncoupled mechanisms (<code>Project.users</code>, Resource Allocation, Task <code>_assign</code>, unguarded <code>Timesheet.employee</code>); (5) milestone Tasks lose their RAG colour on the Gantt bar due to a core Frappe rendering collision, not a bug in this app&#8217;s own code. Each is called out again against the specific persona section it touches below — none are silently folded into this plan&#8217;s scope without saying so.</div>
+
+<h2 id="personas">4. Persona-by-Persona Plan</h2>
+
+<div class="persona-card">
+<h3><span class="persona-badge">1 / 5</span> System Admin</h3>
+<p><b>Today:</b> full raw Desk access; opens the standard ERPNext/Frappe Project form.</p>
+<p><b>Proposal:</b> keep the Project form exactly as it is today, per explicit instruction. On the existing Home/Console landing, add a small number of high-value tiles: <i>Projects at Risk</i> (Red RAG count), <i>Pending Approvals</i> across all active workflows (budget / change request / timesheet), <i>Projects Missing a Project Manager</i>. This mirrors §2.2&#8217;s "dashboard of dashboards" pattern — a handful of outcome tiles, not a rebuilt page.</p>
+<p><b>Mechanism:</b> extend the existing <code>product_shell.ensure_product_home_workspace</code> content or the Projects console tab&#8217;s <code>pos</code>/<code>ops</code> sections — additive only, no new redirect logic.</p>
+</div>
+
+<div class="persona-card">
+<h3><span class="persona-badge">2 / 5</span> Project Manager</h3>
+<p><b>Today:</b> same raw Desk as everyone else. The existing PMO Cockpit Dashboard (§3.2) is portfolio-wide utilization/billing metrics — useful, but not "my projects, at a glance."</p>
+<p><b>Proposed landing:</b> a portfolio card grid — one card per project where this user is <code>project_manager</code> (populated bench-wide since ET-01/ET-05) — name, start/end date, RAG colour, % progress, open/overdue task count. Click-through to the project.</p>
+<p><b>Proposed project-open view (PM-specific, not Admin&#8217;s):</b> the dense Kickoff &amp; Governance section collapses below the fold or into its own tab; Tasks come forward with the view-switcher (List/Kanban/Gantt) prominent, plus a quick-add row above the list (§2.3 — title, optional assignee/date, one keystroke to create) sitting alongside the existing full "New Task" form for when real detail is needed.</p>
+<div class="callout my-call"><b>My call:</b> build this as a genuinely distinct, role-conditional client-script layout on the <i>same</i> Project/Task DocTypes (à la <code>demo_ui.js</code>&#8217;s existing per-field conditionals) — not a second Project form or a duplicate Page. Validated against §2.1–§2.3; the underlying schema doesn&#8217;t change.</div>
+<div class="callout gap"><b>Bundled fix, flagged not hidden:</b> the milestone RAG-on-Gantt bug (§3.5, item 5) will be directly visible in exactly this revamped view — recommend fixing it as part of Phase 3 rather than shipping a "clean" Gantt that still has this known defect. See <a href="#openq">Open Question 5</a>.</div>
+</div>
+
+<div class="persona-card">
+<h3><span class="persona-badge">3 / 5</span> Employee (project team member)</h3>
+<p><b>Today:</b> full raw Desk, every doctype&#8217;s generic list view, nothing filtered to "my work."</p>
+<p><b>Research validation:</b> §2.1 and §2.6 converge tightly on the owner&#8217;s original framing — assigned work only, no reports, no settings, no visibility into anyone else&#8217;s data. This is the market-standard shape for the lowest-privilege tier, not a cut corner.</p>
+<p><b>Proposed landing — "My Work":</b> assigned Projects as cards (from <code>Project.users</code> where <code>user = session user</code>); a combined "My Tasks" list spanning all assigned projects with due date and a fast per-row status control (§2.4 — explicit control, not drag-only, since this list has no single Kanban board home); a "Log Time" shortcut; a "Request Material" shortcut.</p>
+<p><b>Task status updates:</b> a fast dropdown/segmented control per row in the flat list; Kanban drag-and-drop stays available inside a single project&#8217;s own board, per §2.4.</p>
+<p><b>Material/resource request:</b> a quick-entry that pre-fills the child-row <code>project</code>/<code>task</code> fields (§3.4 finding) and opens the native Material Request form with sensible defaults — no new DocType.</p>
+<p><b>Timesheet:</b> a weekly grid, retrospective entry against assigned tasks (§2.7) — Phase 0 needs to confirm exactly how much of this shape Frappe&#8217;s native Timesheet detail grid already supports before any new UI is built.</p>
+<p><b>Explicitly excluded</b> (validated against research, not just asserted): Budget, Risk Register, Change Requests, Reports, other employees&#8217; timesheets, Settings.</p>
+<div class="callout open-q">One addition worth validating rather than assuming: if an Employee is ever delegated a review/approval (today, approvals are PM/Director-gated only — §3.5 item 2), should a lightweight "My Approvals" tile exist? Recommend cutting unless confirmed needed — see <a href="#openq">Open Question 2</a>.</div>
+</div>
+
+<div class="persona-card">
+<h3><span class="persona-badge">4 / 5</span> Consultant</h3>
+<p><b>Today:</b> a reviewed profile record, nothing more — no login exists (§3.5).</p>
+<p><b>Proposed:</b> a Frappe <code>Website User</code> portal login (not a full Desk/System User seat) — scoped like Asana&#8217;s Guest tier (§2.5): visibility into their own engagement only, never the internal Desk. This is the one persona where the native <code>get_website_user_home_page</code> hook (§2.8) is the right, deterministic mechanism, since Website Users already resolve through that exact path.</p>
+<div class="callout open-q">This is the biggest open question in the whole plan: today there is <i>zero</i> consultant-facing feature beyond the signup form, so "what does a logged-in consultant actually do" is genuinely undefined, not a design detail to fill in unilaterally. See <a href="#openq">Open Question 3</a>.</div>
+</div>
+
+<div class="persona-card">
+<h3><span class="persona-badge">5 / 5</span> Contractor</h3>
+<p><b>Today:</b> same shape as Consultant — a profile record with a near-identical <code>block_if_disabled</code> hook, no portal, no login. Contractor Profile sits alongside the Machine/Tool/Equipment resource-type family in Resource Allocation.</p>
+<p><b>Proposed:</b> mirror the Consultant mechanism once it&#8217;s built, differing mainly in vocabulary/fields rather than architecture.</p>
+<div class="callout open-q">Given Consultant already has more surrounding structure (a review workflow, a signup form) to build on, recommend sequencing Contractor <i>after</i> Consultant rather than building both simultaneously — see <a href="#openq">Open Question 4</a>.</div>
+</div>
+
+<h2 id="permissions">5. Permission / Role Change Matrix</h2>
+<table>
+<tr><th>Persona</th><th>Frappe user_type</th><th>Roles held today</th><th>New Role needed?</th><th>Landing mechanism</th></tr>
+<tr><td>System Admin</td><td>System User</td><td>Administrator / System Manager</td><td><span class="pill pill-exist">No — reuse existing</span></td><td>Content-adaptive Home workspace (§2.8a)</td></tr>
+<tr><td>Project Manager</td><td>System User</td><td>Projects Manager / PMO Director</td><td><span class="pill pill-exist">No — reuse existing</span></td><td>Content-adaptive Console landing (§2.8a)</td></tr>
+<tr><td>Employee</td><td>System User</td><td>native <code>Projects User</code> (currently unverified as actually restrictive — Phase 0 check)</td><td><span class="pill pill-new">Possibly — confirm in Phase 0</span> before inventing a new name</td><td>Content-adaptive "My Work" landing (§2.8a)</td></tr>
+<tr><td>Consultant</td><td>Website User</td><td>none today</td><td><span class="pill pill-new">Yes — "PMO Consultant Portal"</span>, scoping <code>has_permission</code>/<code>permission_query_conditions</code></td><td><code>get_website_user_home_page</code> hook (§2.8b)</td></tr>
+<tr><td>Contractor</td><td>Website User</td><td>none today</td><td><span class="pill pill-new">Yes — "PMO Contractor Portal"</span>, same pattern</td><td><code>get_website_user_home_page</code> hook (§2.8b)</td></tr>
+</table>
+<p>The <code>has_permission</code> + <code>permission_query_conditions</code> pattern proposed for the two new portal roles is not a new idea in this app — it&#8217;s the exact mechanism T17 (Project Library) already uses for File access (<code>library_hooks.py</code>). Reusing a precedent already in the codebase, not introducing a new permission paradigm.</p>
+
+<h2 id="deviation">6. Where This Does / Doesn&#8217;t Deviate from Frappe &amp; ERPNext Core</h2>
+<h4>Stays within core / reuses existing house patterns:</h4>
+<ul>
+  <li>Native Task List/Kanban/Gantt/Calendar view-switcher — unmodified.</li>
+  <li>Native <code>pmo_rag_status</code>/<code>color</code> fields — already in schema, reused as-is.</li>
+  <li>Native Material Request / child-row <code>project</code> field — no new DocType.</li>
+  <li>Native <code>Website User</code> + <code>get_website_user_home_page</code> hook for the external personas.</li>
+  <li><code>has_permission</code> / <code>permission_query_conditions</code> — already precedented in this app (T17/File).</li>
+  <li>Product Shell / Scale Console — already the house-standard chrome layer; this plan extends it, doesn&#8217;t bypass or duplicate it.</li>
+</ul>
+<h4>Deliberate deviation, flagged rather than hidden:</h4>
+<ul>
+  <li>Vanilla ERPNext Projects has no concept of a persona-scoped "my work" landing page at all — building one is genuinely new surface area. This is the same category of deviation the Product Shell itself already represents bench-wide (hiding native chrome, replacing Home) — this plan is <i>extending an existing, already-accepted deviation consistently</i>, not introducing a fresh one.</li>
+</ul>
+<h4>Watch item — a real risk to actively avoid:</h4>
+<ul>
+  <li>The PM&#8217;s revamped project-open view must not fork into a second, divergent Project form definition. Implement as role-conditional client-script rendering on the one existing form (the same technique <code>demo_ui.js</code> already uses per-field) — never a duplicate DocType or a parallel Page — so there is exactly one source of truth for what a Project record looks like.</li>
+</ul>
+
+<h2 id="phases">7. Phase-Wise Implementation Plan</h2>
+<div class="phase-box">
+<h4>Phase 0 — Audit &amp; Confirm (no code)</h4>
+<p>Confirm exactly what native <code>Projects User</code> currently restricts (or doesn&#8217;t); confirm the native Timesheet detail grid&#8217;s weekly-entry capability against §2.7&#8217;s target shape; produce a short findings note appended to this doc. <b>Owner confirms persona scope against Open Questions (§8) before Phase 1 code starts.</b></p>
+</div>
+<div class="phase-box">
+<h4>Phase 1 — Admin tiles</h4>
+<p>Lowest risk, purely additive: 3–4 top-of-Home tiles (§4, Admin). No permission changes.</p>
+</div>
+<div class="phase-box">
+<h4>Phase 2 — PM portfolio landing</h4>
+<p>Card grid reusing existing RAG/progress fields; additive Page/Console content only.</p>
+</div>
+<div class="phase-box">
+<h4>Phase 3 — PM project-open revamp</h4>
+<p>Role-conditional client-script layout on the existing Project form; no schema change. Bundle the milestone RAG-on-Gantt fix here (pending Open Question 5).</p>
+</div>
+<div class="phase-box">
+<h4>Phase 4 — Employee "My Work"</h4>
+<p>Landing view, quick task-status control, quick material-request entry, weekly timesheet grid.</p>
+</div>
+<div class="phase-box">
+<h4>Phase 5 — Consultant / Contractor portal login</h4>
+<p>The largest open question in this plan (§4, personas 4–5) — scope gets defined from the owner&#8217;s answers to Open Questions 3–4 before this phase gets its own detailed sub-plan.</p>
+</div>
+<p>Every phase follows the standing ET-track discipline: build → test live in the browser → commit locally → <b>hold every push, code and docs, until explicitly told to push.</b></p>
+
+<h2 id="openq">8. Open Questions for the Owner</h2>
+<div class="oq-row"><span class="oq-num">1</span><div>The PMO Cockpit Dashboard already exists for PM/Director (§3.2) — should Phase 2&#8217;s portfolio card grid extend/link from it, or stand alone as a separate landing view?</div></div>
+<div class="oq-row"><span class="oq-num">2</span><div>Should the Employee landing include a "My Approvals" tile for delegated reviews, or is that explicitly out of scope (today, approvals are PM/Director-only)?</div></div>
+<div class="oq-row"><span class="oq-num">3</span><div>For Consultant: what should a logged-in session actually let them do — status-only visibility into their own engagement, or something transactional (submit a deliverable, respond to a review)? Nothing like this exists today, so this needs a real answer, not an assumption.</div></div>
+<div class="oq-row"><span class="oq-num">4</span><div>Should Contractor login be built alongside Consultant in Phase 5, or deferred to a later phase entirely?</div></div>
+<div class="oq-row"><span class="oq-num">5</span><div>OK to bundle the pre-existing milestone RAG-on-Gantt bug fix into Phase 3, since the revamped PM view makes it directly visible?</div></div>
+
+</body>
+</html>
