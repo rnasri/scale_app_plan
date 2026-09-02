@@ -27,6 +27,9 @@
   .pill-new    { background:#fef3c7; color:#92400e; }
   .pill-gap    { background:#fee2e2; color:#991b1b; }
   .pill-defer  { background:#f3f4f6; color:#6b7280; }
+  .pill-parked { background:#e5e7eb; color:#374151; }
+  .parked-card { opacity:.72; }
+  .parked-card h3 { color:#6b7280; }
   details.rsrch { border:1px solid #e5e7eb; border-radius:8px; margin-bottom:10px; }
   details.rsrch summary { cursor:pointer; padding:12px 16px; font-weight:600; font-size:.9rem; list-style:none; display:flex; align-items:center; gap:8px; }
   details.rsrch summary::-webkit-details-marker { display:none; }
@@ -84,13 +87,13 @@
 
 <h2 id="summary">1. Executive Summary &amp; Guardrails</h2>
 <p>Today, every logged-in user of Scale PMO — Administrator, Project Manager, or a regular Employee added to a project — sees the exact same dense, uniform Frappe/ERPNext Desk. There is no role-shaped landing page, no "my work" view, and no distinction between a person who owns the whole portfolio and a person who just needs to update one task and log four hours.</p>
-<p>This plan is <b>not</b> a feature push. It is a presentation-layer revamp: showing the PMO module's existing capability differently to five distinct audiences, validated against how the market's most successful project tools (Asana, Monday.com, ClickUp, Linear, Basecamp, Procore) actually differentiate their own Admin / Manager / Contributor / Guest experiences. The underlying data model changes required are intentionally minimal.</p>
+<p>This plan is <b>not</b> a feature push. It is a presentation-layer revamp: showing the PMO module's existing capability differently to distinct audiences (three active this round, two parked — see below), validated against how the market's most successful project tools (Asana, Monday.com, ClickUp, Linear, Basecamp, Procore) actually differentiate their own Admin / Manager / Contributor / Guest experiences. The underlying data model changes required are intentionally minimal.</p>
 <p><b>Guardrails set for this track, carried through every section below:</b></p>
 <ul>
   <li>Minimise DocType and structural changes — extend the existing Console/Product-Shell architecture, don&#8217;t invent a parallel one.</li>
   <li>Admin keeps the current default Project form exactly as-is. The Project Manager view is where the real redesign happens.</li>
   <li>Explicitly flag anywhere the plan deviates from vanilla Frappe/ERPNext conventions — see <a href="#deviation">§6</a>.</li>
-  <li>Five personas in scope: <b>System Admin, Project Manager, Employee</b> (project team member), <b>Consultant, Contractor</b>.</li>
+  <li>Five personas researched; <b>three in active scope for this implementation round — System Admin, Project Manager, Employee</b> (project team member). <b>Consultant and Contractor are parked</b> (owner decision, 2 Sep 2026) — kept in this doc for the research/analysis they already carry, revisited as a future implementation phase, not part of Phases 0–4 below.</li>
   <li>Standing ET-track rule continues: build → test live → commit locally → hold every push (code and docs) until the owner explicitly says so.</li>
 </ul>
 
@@ -226,18 +229,20 @@
 <div class="callout open-q">One addition worth validating rather than assuming: if an Employee is ever delegated a review/approval (today, approvals are PM/Director-gated only — §3.5 item 2), should a lightweight "My Approvals" tile exist? Recommend cutting unless confirmed needed — see <a href="#openq">Open Question 2</a>.</div>
 </div>
 
-<div class="persona-card">
-<h3><span class="persona-badge">4 / 5</span> Consultant</h3>
+<div class="persona-card parked-card">
+<h3><span class="persona-badge">4 / 5</span> Consultant <span class="pill pill-parked">PARKED — future implementation phase</span></h3>
+<p><b>Status (2 Sep 2026):</b> owner decision — leave Consultant login out of this implementation round. Kept here as-researched so the analysis isn&#8217;t lost; not part of Phases 0–4 in §7.</p>
 <p><b>Today:</b> a reviewed profile record, nothing more — no login exists (§3.5).</p>
-<p><b>Proposed:</b> a Frappe <code>Website User</code> portal login (not a full Desk/System User seat) — scoped like Asana&#8217;s Guest tier (§2.5): visibility into their own engagement only, never the internal Desk. This is the one persona where the native <code>get_website_user_home_page</code> hook (§2.8) is the right, deterministic mechanism, since Website Users already resolve through that exact path.</p>
-<div class="callout open-q">This is the biggest open question in the whole plan: today there is <i>zero</i> consultant-facing feature beyond the signup form, so "what does a logged-in consultant actually do" is genuinely undefined, not a design detail to fill in unilaterally. See <a href="#openq">Open Question 3</a>.</div>
+<p><b>Proposed (when picked up):</b> a Frappe <code>Website User</code> portal login (not a full Desk/System User seat) — scoped like Asana&#8217;s Guest tier (§2.5): visibility into their own engagement only, never the internal Desk. This is the one persona where the native <code>get_website_user_home_page</code> hook (§2.8) is the right, deterministic mechanism, since Website Users already resolve through that exact path.</p>
+<div class="callout open-q">Still the biggest open question in the whole plan whenever it's revisited: today there is <i>zero</i> consultant-facing feature beyond the signup form, so "what does a logged-in consultant actually do" is genuinely undefined, not a design detail to fill in unilaterally. See <a href="#openq">Open Question 3</a>.</div>
 </div>
 
-<div class="persona-card">
-<h3><span class="persona-badge">5 / 5</span> Contractor</h3>
+<div class="persona-card parked-card">
+<h3><span class="persona-badge">5 / 5</span> Contractor <span class="pill pill-parked">PARKED — future implementation phase</span></h3>
+<p><b>Status (2 Sep 2026):</b> parked alongside Consultant, same owner decision.</p>
 <p><b>Today:</b> same shape as Consultant — a profile record with a near-identical <code>block_if_disabled</code> hook, no portal, no login. Contractor Profile sits alongside the Machine/Tool/Equipment resource-type family in Resource Allocation.</p>
-<p><b>Proposed:</b> mirror the Consultant mechanism once it&#8217;s built, differing mainly in vocabulary/fields rather than architecture.</p>
-<div class="callout open-q">Given Consultant already has more surrounding structure (a review workflow, a signup form) to build on, recommend sequencing Contractor <i>after</i> Consultant rather than building both simultaneously — see <a href="#openq">Open Question 4</a>.</div>
+<p><b>Proposed (when picked up):</b> mirror the Consultant mechanism once it&#8217;s built, differing mainly in vocabulary/fields rather than architecture.</p>
+<div class="callout open-q">Given Consultant already has more surrounding structure (a review workflow, a signup form) to build on, recommend sequencing Contractor <i>after</i> Consultant whenever this phase is picked up — see <a href="#openq">Open Question 4</a>.</div>
 </div>
 
 <h2 id="permissions">5. Permission / Role Change Matrix</h2>
@@ -246,9 +251,10 @@
 <tr><td>System Admin</td><td>System User</td><td>Administrator / System Manager</td><td><span class="pill pill-exist">No — reuse existing</span></td><td>Content-adaptive Home workspace (§2.8a)</td></tr>
 <tr><td>Project Manager</td><td>System User</td><td>Projects Manager / PMO Director</td><td><span class="pill pill-exist">No — reuse existing</span></td><td>Content-adaptive Console landing (§2.8a)</td></tr>
 <tr><td>Employee</td><td>System User</td><td>native <code>Projects User</code> (currently unverified as actually restrictive — Phase 0 check)</td><td><span class="pill pill-new">Possibly — confirm in Phase 0</span> before inventing a new name</td><td>Content-adaptive "My Work" landing (§2.8a)</td></tr>
-<tr><td>Consultant</td><td>Website User</td><td>none today</td><td><span class="pill pill-new">Yes — "PMO Consultant Portal"</span>, scoping <code>has_permission</code>/<code>permission_query_conditions</code></td><td><code>get_website_user_home_page</code> hook (§2.8b)</td></tr>
-<tr><td>Contractor</td><td>Website User</td><td>none today</td><td><span class="pill pill-new">Yes — "PMO Contractor Portal"</span>, same pattern</td><td><code>get_website_user_home_page</code> hook (§2.8b)</td></tr>
+<tr><td>Consultant <span class="pill pill-parked">Parked</span></td><td>Website User</td><td>none today</td><td><span class="pill pill-new">Yes — "PMO Consultant Portal"</span>, scoping <code>has_permission</code>/<code>permission_query_conditions</code></td><td><code>get_website_user_home_page</code> hook (§2.8b)</td></tr>
+<tr><td>Contractor <span class="pill pill-parked">Parked</span></td><td>Website User</td><td>none today</td><td><span class="pill pill-new">Yes — "PMO Contractor Portal"</span>, same pattern</td><td><code>get_website_user_home_page</code> hook (§2.8b)</td></tr>
 </table>
+<p class="muted" style="font-size:.8rem;color:#6b7280;">Consultant/Contractor rows are analysis-only for now — parked out of the current implementation round (see §4).</p>
 <p>The <code>has_permission</code> + <code>permission_query_conditions</code> pattern proposed for the two new portal roles is not a new idea in this app — it&#8217;s the exact mechanism T17 (Project Library) already uses for File access (<code>library_hooks.py</code>). Reusing a precedent already in the codebase, not introducing a new permission paradigm.</p>
 
 <h2 id="deviation">6. Where This Does / Doesn&#8217;t Deviate from Frappe &amp; ERPNext Core</h2>
@@ -291,17 +297,17 @@
 <h4>Phase 4 — Employee "My Work"</h4>
 <p>Landing view, quick task-status control, quick material-request entry, weekly timesheet grid.</p>
 </div>
-<div class="phase-box">
-<h4>Phase 5 — Consultant / Contractor portal login</h4>
-<p>The largest open question in this plan (§4, personas 4–5) — scope gets defined from the owner&#8217;s answers to Open Questions 3–4 before this phase gets its own detailed sub-plan.</p>
+<div class="phase-box" style="background:#f3f4f6;border-color:#d1d5db;">
+<h4 style="color:#4b5563;">Parked — Future Implementation Phase: Consultant / Contractor portal login</h4>
+<p><b>Deferred out of this round</b> (owner decision, 2 Sep 2026). Not scheduled as "Phase 5" in sequence with 0–4 above — picked up as its own implementation phase later, once Open Questions 3–4 (§8) are answered and it gets its own detailed sub-plan. The largest open question in this plan (§4, personas 4–5) stays unresolved until then.</p>
 </div>
-<p>Every phase follows the standing ET-track discipline: build → test live in the browser → commit locally → <b>hold every push, code and docs, until explicitly told to push.</b></p>
+<p>Phases 0–4 are the active sequence for this implementation round. Every phase follows the standing ET-track discipline: build → test live in the browser → commit locally → <b>hold every push, code and docs, until explicitly told to push.</b></p>
 
 <h2 id="openq">8. Open Questions for the Owner</h2>
 <div class="oq-row"><span class="oq-num">1</span><div>The PMO Cockpit Dashboard already exists for PM/Director (§3.2) — should Phase 2&#8217;s portfolio card grid extend/link from it, or stand alone as a separate landing view?</div></div>
 <div class="oq-row"><span class="oq-num">2</span><div>Should the Employee landing include a "My Approvals" tile for delegated reviews, or is that explicitly out of scope (today, approvals are PM/Director-only)?</div></div>
-<div class="oq-row"><span class="oq-num">3</span><div>For Consultant: what should a logged-in session actually let them do — status-only visibility into their own engagement, or something transactional (submit a deliverable, respond to a review)? Nothing like this exists today, so this needs a real answer, not an assumption.</div></div>
-<div class="oq-row"><span class="oq-num">4</span><div>Should Contractor login be built alongside Consultant in Phase 5, or deferred to a later phase entirely?</div></div>
+<div class="oq-row"><span class="oq-num">3</span><div><span class="pill pill-parked">Parked</span> For Consultant: what should a logged-in session actually let them do — status-only visibility into their own engagement, or something transactional (submit a deliverable, respond to a review)? Nothing like this exists today. Not blocking Phases 0–4 — revisit when this phase is picked up.</div></div>
+<div class="oq-row"><span class="oq-num">4</span><div><span class="pill pill-parked">Parked</span> Should Contractor login be built alongside Consultant, or deferred further still? Not blocking Phases 0–4 — revisit when this phase is picked up.</div></div>
 <div class="oq-row"><span class="oq-num">5</span><div>OK to bundle the pre-existing milestone RAG-on-Gantt bug fix into Phase 3, since the revamped PM view makes it directly visible?</div></div>
 
 </body>
