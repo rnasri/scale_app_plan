@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PMO Phase 3 — Role-Based Views: Handover | AIWS ERP</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  body { display: block; max-width: 980px; margin: 0 auto; padding: 32px 28px 80px; }
+  .draft-banner { background:#ecfdf5; border:2px solid #059669; border-radius:10px; padding:14px 18px; margin-bottom:26px; font-size:.88rem; color:#065f46; }
+  .draft-banner b { color:#065f46; }
+  h1 { font-size:1.65rem; margin-bottom:4px; }
+  .subtitle { color:#6b7280; font-size:.95rem; margin-bottom:22px; }
+  .meta-row { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:28px; }
+  .meta-chip { background:#eef2ff; color:#3730a3; border-radius:6px; padding:4px 10px; font-size:.78rem; font-weight:600; }
+  h2 { font-size:1.25rem; margin:40px 0 12px; padding-bottom:8px; border-bottom:2px solid #e5e7eb; color:#1e3a5f; }
+  h3 { font-size:1.02rem; margin:24px 0 10px; color:#1e3a5f; }
+  h4 { font-size:.92rem; margin:16px 0 6px; }
+  p { line-height:1.65; font-size:.92rem; }
+  ul, ol { line-height:1.65; font-size:.92rem; }
+  table { width:100%; border-collapse:collapse; margin:14px 0; font-size:.85rem; }
+  th, td { border:1px solid #e5e7eb; padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#f8fafc; font-weight:700; color:#374151; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .pill { display:inline-block; padding:2px 9px; border-radius:5px; font-size:.72rem; font-weight:700; }
+  .pill-exist  { background:#d1fae5; color:#065f46; }
+  .pill-new    { background:#fef3c7; color:#92400e; }
+  .pill-gap    { background:#fee2e2; color:#991b1b; }
+  .pill-parked { background:#e5e7eb; color:#374151; }
+  .persona-card { border:1px solid #e5e7eb; border-radius:10px; padding:18px 22px; margin-bottom:20px; }
+  .persona-card h3 { margin-top:0; display:flex; align-items:center; gap:10px; }
+  .persona-badge { font-size:.7rem; background:#1e3a5f; color:#fff; padding:2px 9px; border-radius:4px; font-weight:700; }
+  .callout { border-left:4px solid #6366f1; background:#f5f6ff; padding:10px 14px; margin:12px 0; font-size:.86rem; border-radius:0 6px 6px 0; }
+  .callout.my-call { border-left-color:#059669; background:#ecfdf5; }
+  .callout.gap { border-left-color:#f59e0b; background:#fffbeb; }
+  .phase-box { border:1px solid #dbeafe; background:#f0f9ff; border-radius:8px; padding:14px 18px; margin-bottom:14px; }
+  .phase-box h4 { margin:0 0 6px; color:#0369a1; }
+  code { background:#f3f4f6; padding:1px 6px; border-radius:4px; font-size:.85em; }
+  .toc { background:#f8fafc; border:1px solid #e5e7eb; border-radius:10px; padding:16px 22px; margin-bottom:30px; font-size:.86rem; }
+  .toc a { color:#1e3a5f; text-decoration:none; }
+  .toc a:hover { text-decoration:underline; }
+  .toc ol { margin:6px 0 0; }
+  .filemap td code { white-space:nowrap; }
+</style>
+</head>
+<body>
+
+<div class="draft-banner">
+  <b>Handover doc — implementation complete, code held from push.</b> Everything below is built, live-tested, and committed to branch <code>PMO_ET_phase3_role_dashboards</code> on <code>scale-bench</code> — nothing here is speculative or planned-but-not-built. The branch has <b>not been pushed to <code>origin</code> yet</b> (standing ET-track rule: hold every push until the owner explicitly says so) — check with Raghib before assuming this is live on a shared environment. For the full research, design reasoning, and every bug found/fixed along the way, see the companion doc <code>pmo-phase3-role-dashboards-plan.html</code> — this page is the condensed "what shipped and how to use it" version for a team picking this up fresh.
+</div>
+
+<h1>PMO Phase 3 — Role-Based Views &amp; Dashboards</h1>
+<div class="subtitle">Handover Summary · Expert&#8217;s Advice (ET) Track, Phase 3 — all phases complete</div>
+<div class="meta-row">
+  <span class="meta-chip">Branch: PMO_ET_phase3_role_dashboards</span>
+  <span class="meta-chip">Status: Complete, held from push</span>
+  <span class="meta-chip">3 Sep 2026</span>
+  <span class="meta-chip">Full detail: pmo-phase3-role-dashboards-plan.html</span>
+</div>
+
+<div class="toc">
+  <b>Contents</b>
+  <ol>
+    <li><a href="#summary">What This Delivers</a></li>
+    <li><a href="#personas">What Each Role Sees Now</a></li>
+    <li><a href="#features">Feature List — All Complete</a></li>
+    <li><a href="#filemap">File Map (for engineers picking this up)</a></li>
+    <li><a href="#verify">How This Was Verified</a></li>
+    <li><a href="#notdone">Not Done — Parked</a></li>
+  </ol>
+</div>
+
+<h2 id="summary">1. What This Delivers</h2>
+<p>Before this work, every logged-in user of Scale PMO — Administrator, Project Manager, or a regular Employee — saw the exact same dense, uniform Desk: the same Overview tiles, the same full Shortcuts/Cards list, the same tab bar, the same Project form. There was no role-shaped landing, no "my work" view, and no distinction between someone who owns the whole portfolio and someone who just needs to update one Task and log a few hours.</p>
+<p>This track replaced that with three distinct, role-appropriate experiences — <b>System Admin</b>, <b>Project Manager</b>, and <b>Employee / team member</b> — built entirely on top of the existing Console/Workspace architecture (no parallel UI system, no new frontend framework). Two further personas, <b>Consultant</b> and <b>Contractor</b>, were explicitly parked by the owner and are not part of this delivery — see <a href="#notdone">§6</a>.</p>
+
+<h2 id="personas">2. What Each Role Sees Now</h2>
+
+<div class="persona-card">
+  <h3>System Admin / PMO Director <span class="persona-badge">Elevated</span></h3>
+  <p>Unchanged from before, by design — the full Console tab bar (Overview, My Projects, My Work, Cockpit, Executive, Intelligence), the full Overview landing (Attention strip, 5 Position/Admin tiles, full Shortcuts list, all Cards), and the dense native Project form. Nothing was removed or hidden for this audience at any point in this track.</p>
+</div>
+
+<div class="persona-card">
+  <h3>Project Manager <span class="persona-badge">Elevated</span></h3>
+  <p>Same full navigation as Admin. Two things are new for this role specifically:</p>
+  <ul>
+    <li><b>"My Projects" tab</b> — a card grid of every Project they manage or are a team member on, RAG-coloured, with open/overdue Task counts. Clicking a Project they <i>manage</i> opens the existing Project form, now revamped for this role: the dense "PMO Kickoff &amp; Governance" section defaults collapsed, one-click List/Kanban/Gantt Task-view shortcuts, and a "Quick-Add a Task" input.</li>
+    <li>If they're also a plain team member on a Project they don't manage, clicking that card instead opens the same lighter "Project Tasks" view an Employee gets (see below) — the PM/Team distinction is per-Project, not per-person.</li>
+  </ul>
+</div>
+
+<div class="persona-card">
+  <h3>Employee / Project team member <span class="persona-badge">Non-elevated</span></h3>
+  <p>The most changed experience. On login, the Console tab bar shows only <b>My Projects</b> and <b>My Work</b> — Overview, Cockpit, Executive, and Intelligence are hidden. If they land on the Overview page anyway (e.g. via the sidebar), it's stripped down to just 4 relevant shortcuts (Project, Timesheet Entry (Mobile), Task Calendar, Project Library) — no Attention strip, no Admin tiles, no Cards.</p>
+  <ul>
+    <li><b>My Projects</b> — every Project they're a team member of (or manage), each tagged with a small PM/Team badge. Clicking a Project they're just a team member on opens <b>Project Tasks</b>: their own genuinely-assigned Tasks in green (status-editable), everyone else's Tasks on that Project in amber underneath, for context only.</li>
+    <li><b>My Work</b> — every open Task actually assigned to them (native "Assign To" mechanism), across every Project, with inline status editing; a real weekly timesheet grid (Mon–Sun hours, submits one Timesheet); and a Quick Material Request form scoped to their own team's Projects.</li>
+  </ul>
+</div>
+
+<h2 id="features">3. Feature List — All Complete</h2>
+
+<div class="phase-box">
+<h4>Admin attention tiles <span class="pill pill-exist">DONE</span></h4>
+<p>5 KPI tiles on the Overview landing (High-Risk / At-Risk / On-Track Projects, Pending Approvals, Projects Missing a PM), styled to match <code>scale_finance</code>'s native tile system exactly — same pastel-tint, icon-badge visual language used everywhere else in Scale Console.</p>
+</div>
+
+<div class="phase-box">
+<h4>"My Projects" — PM &amp; team-member landing <span class="pill pill-exist">DONE</span></h4>
+<p>Card grid, RAG-coloured, PM-scoped stats strip with click-to-filter. Broadened mid-track to include plain team members, not just PMs — each card routes to either the full Project form or the new lighter "Project Tasks" view depending on the viewer's relationship to that specific Project.</p>
+</div>
+
+<div class="phase-box">
+<h4>"Project Tasks" — per-Project two-tier task view <span class="pill pill-exist">DONE</span></h4>
+<p>New page. Tasks genuinely assigned to the viewer (green, editable) versus everyone else's Tasks on that Project (amber, view-only) — split on real native Task assignment, not team membership or guesswork.</p>
+</div>
+
+<div class="phase-box">
+<h4>PM project-open revamp <span class="pill pill-exist">DONE</span></h4>
+<p>Role-conditional additions to the existing Project form for PMs only — Admin's form is byte-for-byte unchanged. Collapsed governance section, one-click Task-view shortcuts, Quick-Add a Task. Also fixed the pre-existing milestone RAG-on-Gantt colour bug while in this area.</p>
+</div>
+
+<div class="phase-box">
+<h4>Project/Task access scoped to team membership <span class="pill pill-exist">DONE</span></h4>
+<p>Backend permission work, not UI — team-member Employees are auto-granted scoped access to only the Projects/Tasks they're actually on (previously they had none at all). Prerequisite for everything else in this list actually being safe to ship.</p>
+</div>
+
+<div class="phase-box">
+<h4>"My Work" — Employee landing <span class="pill pill-exist">DONE</span></h4>
+<p>Assigned-Task list with inline status control, a genuinely new weekly timesheet grid (nothing like it exists natively in ERPNext/HRMS), and a scoped Quick Material Request form.</p>
+</div>
+
+<div class="phase-box">
+<h4>Console tab bar trimmed for non-elevated sessions <span class="pill pill-exist">DONE</span></h4>
+<p>Only My Projects and My Work show in the top nav for a plain Employee — Overview, Cockpit, Executive, Intelligence are hidden. Elevated roles see the full bar, unchanged.</p>
+</div>
+
+<div class="phase-box">
+<h4>Overview landing trimmed for non-elevated sessions <span class="pill pill-exist">DONE</span></h4>
+<p>Same audience, same reasoning — the Overview page itself (reachable via the sidebar regardless of the tab bar) is stripped to 4 relevant shortcuts, no Admin tiles, no Cards.</p>
+</div>
+
+<h2 id="filemap">4. File Map</h2>
+<p>All paths relative to <code>apps/scale_project_management/scale_project_management/</code> unless noted. Everything here is new or newly extended by this track.</p>
+<table class="filemap">
+<tr><th>File</th><th>Purpose</th></tr>
+<tr><td><code>console.py</code></td><td>Console tab list, Attention/Position tile config for the Overview workspace.</td></tr>
+<tr><td><code>console_hooks.py</code></td><td>Whitelisted count functions backing the 5 Admin tiles.</td></tr>
+<tr><td><code>my_projects_hooks.py</code></td><td>Backend for "My Projects" — PM + team-member Project list, RAG rollup.</td></tr>
+<tr><td><code>my_work_hooks.py</code></td><td>Backend for "My Work" — assigned Tasks, weekly timesheet submission, Quick Material Request.</td></tr>
+<tr><td><code>project_work_hooks.py</code></td><td>Backend for "Project Tasks" — the per-Project two-tier assigned/other split.</td></tr>
+<tr><td><code>team_scope_hooks.py</code></td><td>Project/Task <code>has_permission</code> + <code>permission_query_conditions</code> — the team-membership scoping engine everything else relies on.</td></tr>
+<tr><td><code>project_hooks.py</code> (extended)</td><td>Auto-grants the Projects User role to Employees added to a Project's team; the milestone RAG-on-Gantt fix; the User Permission collision fix.</td></tr>
+<tr><td><code>public/js/admin_attention_tiles.js</code></td><td>Renders the 5 Admin tiles into the Overview workspace.</td></tr>
+<tr><td><code>public/js/tab_visibility.js</code></td><td>Trims the Console tab bar for non-elevated sessions.</td></tr>
+<tr><td><code>public/js/overview_trim.js</code></td><td>Trims the Overview landing page's content for the same audience.</td></tr>
+<tr><td><code>public/js/demo_ui.js</code> (extended)</td><td>PM-only Project form additions (collapsed section, Task shortcuts, Quick-Add).</td></tr>
+<tr><td><code>public/js/task_list.js</code> (extended)</td><td>Milestone RAG-on-Gantt colour fix.</td></tr>
+<tr><td><code>page/pmo_my_projects/</code></td><td>"My Projects" Page (JSON + JS).</td></tr>
+<tr><td><code>page/pmo_my_work/</code></td><td>"My Work" Page (JSON + JS).</td></tr>
+<tr><td><code>page/pmo_project_work/</code></td><td>"Project Tasks" Page (JSON + JS), route-parameterized by Project name.</td></tr>
+<tr><td><code>fixtures/custom_docperm.json</code></td><td>Task permission for Projects Manager/PMO Director; Item Select-only permission for Employee.</td></tr>
+<tr><td><code>fixtures/property_setter.json</code></td><td>Includes the <code>ignore_user_permissions</code> fix on <code>Project.project_manager</code>.</td></tr>
+<tr><td><code>hooks.py</code> (extended)</td><td><code>app_include_js</code> entries for the three new client scripts; <code>after_migrate</code> entries for the two idempotent Property Setter fixes; <code>fixtures</code> and <code>doc_events</code> entries for everything above.</td></tr>
+</table>
+
+<h2 id="verify">5. How This Was Verified</h2>
+<p>Every feature above was tested live against real seed data and, wherever possible, a genuinely authenticated non-admin session (Claude-in-Chrome sharing the same browser profile the owner had already logged in with — no credentials were ever typed by the assistant building this). Specific checks worth knowing about if you're picking this up:</p>
+<ul>
+  <li>Permission scoping was tested from both directions — a real team member correctly sees only their own Projects/Tasks, and a genuinely non-team-member Employee sees zero.</li>
+  <li>Elevated roles (System Manager, PMO Director, Projects Manager) were confirmed to see everything unrestricted, on both the tab bar and the Overview content, including after the trimming scripts run.</li>
+  <li>The weekly timesheet grid and Quick Material Request were confirmed to produce real, correctly-populated Timesheet and Material Request documents, not just a success toast.</li>
+  <li>Cross-page navigation within one browser session (not just fresh URL loads) was explicitly tested — this caught a real script-collision bug that only appeared that way (see the full plan doc for detail).</li>
+</ul>
+<p>A clean <code>bench migrate</code> was run after every change; the branch diff against <code>main</code> is reviewed and audit-clean (no unrelated drift) as of this handover.</p>
+
+<h2 id="notdone">6. Not Done — Parked</h2>
+<div class="phase-box" style="background:#f3f4f6;border-color:#d1d5db;">
+<h4 style="color:#4b5563;">Consultant / Contractor portal login <span class="pill pill-parked">Parked</span></h4>
+<p>Explicitly deferred by the owner (2 Sep 2026 decision) — not started, not scheduled as part of this round. Both personas exist today only as records with zero login/portal access. Picking this up is a separate future implementation phase with its own open questions (what should a logged-in Consultant/Contractor session actually let them do) — see the full research doc's persona analysis for what's already been thought through.</p>
+</div>
+
+</body>
+</html>
