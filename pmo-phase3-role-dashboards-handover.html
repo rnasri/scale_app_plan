@@ -87,6 +87,7 @@
   <ul>
     <li><b>"My Projects" tab</b> — a card grid of every Project they manage or are a team member on, RAG-coloured, with open/overdue Task counts. Clicking a Project they <i>manage</i> opens the existing Project form, now revamped for this role: the dense "PMO Kickoff &amp; Governance" section defaults collapsed, one-click List/Kanban/Gantt Task-view shortcuts, and a "Quick-Add a Task" input.</li>
     <li>If they're also a plain team member on a Project they don't manage, clicking that card instead opens the same lighter "Project Tasks" view an Employee gets (see below) — the PM/Team distinction is per-Project, not per-person.</li>
+    <li>A 5th stats tile, <b>"Pending Approvals,"</b> scoped to only the Projects they manage (Budget/Change Request/Timesheet items awaiting their review) — only shown if they manage at least one Project.</li>
   </ul>
 </div>
 
@@ -141,13 +142,19 @@
 <p>Same audience, same reasoning — the Overview page itself (reachable via the sidebar regardless of the tab bar) is stripped to 4 relevant shortcuts, no Admin tiles, no Cards.</p>
 </div>
 
+<div class="phase-box">
+<h4>PM-scoped Pending Approvals tile <span class="pill pill-exist">DONE</span></h4>
+<p>Same breakdown-dialog pattern as the Admin tile, but scoped to only the Projects the viewer manages — see <code>my_projects_hooks.get_my_pending_approvals()</code>. Building this surfaced a real, significant pre-existing gap worth reading carefully if you touch Timesheet review anywhere in this codebase: <b>no Project Manager could actually see a team member's submitted Timesheet at all</b>, regardless of role permissions, because of a standard self-scoping User Permission (Employee = their own record) combined with <code>Timesheet.employee</code> being a Link field — confirmed systemic across 14 real users, not one account's misconfiguration. Fixed with <code>ignore_user_permissions=1</code> on <code>Timesheet.employee</code> (same mechanism as the earlier <code>Project.project_manager</code> fix). Also fixed: <code>Timesheet.parent_project</code> is a plain optional field erpnext never derives from <code>time_logs</code> — a new <code>timesheet_hooks.ensure_parent_project</code> validate hook backfills it going forward so it stays a reliable filter.</p>
+</div>
+
 <h2 id="filemap">4. File Map</h2>
 <p>All paths relative to <code>apps/scale_project_management/scale_project_management/</code> unless noted. Everything here is new or newly extended by this track.</p>
 <table class="filemap">
 <tr><th>File</th><th>Purpose</th></tr>
 <tr><td><code>console.py</code></td><td>Console tab list, Attention/Position tile config for the Overview workspace.</td></tr>
 <tr><td><code>console_hooks.py</code></td><td>Whitelisted count functions backing the 5 Admin tiles.</td></tr>
-<tr><td><code>my_projects_hooks.py</code></td><td>Backend for "My Projects" — PM + team-member Project list, RAG rollup.</td></tr>
+<tr><td><code>my_projects_hooks.py</code></td><td>Backend for "My Projects" — PM + team-member Project list, RAG rollup, and the PM-scoped Pending Approvals breakdown.</td></tr>
+<tr><td><code>timesheet_hooks.py</code> (extended)</td><td><code>ensure_parent_project</code> (backfills the header field from <code>time_logs</code>) and <code>ensure_employee_field_ignores_user_permissions</code> (the User Permission fix — <b>read this one before touching Timesheet review anywhere</b>).</td></tr>
 <tr><td><code>my_work_hooks.py</code></td><td>Backend for "My Work" — assigned Tasks, weekly timesheet submission, Quick Material Request.</td></tr>
 <tr><td><code>project_work_hooks.py</code></td><td>Backend for "Project Tasks" — the per-Project two-tier assigned/other split.</td></tr>
 <tr><td><code>team_scope_hooks.py</code></td><td>Project/Task <code>has_permission</code> + <code>permission_query_conditions</code> — the team-membership scoping engine everything else relies on.</td></tr>
