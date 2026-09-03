@@ -103,7 +103,7 @@
 
 <div class="phase-box">
 <h4>Admin attention tiles <span class="pill pill-exist">DONE</span></h4>
-<p>5 KPI tiles on the Overview landing (High-Risk / At-Risk / On-Track Projects, Pending Approvals, Projects Missing a PM), styled to match <code>scale_finance</code>'s native tile system exactly — same pastel-tint, icon-badge visual language used everywhere else in Scale Console.</p>
+<p>5 KPI tiles on the Overview landing (High-Risk / At-Risk / On-Track Projects, Pending Approvals, Projects Missing a PM), styled to match <code>scale_finance</code>'s native tile system exactly — same pastel-tint, icon-badge visual language used everywhere else in Scale Console. Each tile's click-through filters to exactly the Projects/Tasks that produced its own count — worth double-checking this stays true for any new tile added later, since it's easy for a tile's route filter to quietly drift from its count query (a real example: On-Track's click-through originally showed all active Projects instead of just the on-track ones, since "on-track" isn't a stored field on Project and needs its own explicit Project-name list rather than a simple status filter — see the full plan doc for detail).</p>
 </div>
 
 <div class="phase-box">
