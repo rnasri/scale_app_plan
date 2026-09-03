@@ -175,6 +175,8 @@
 </ul>
 <p>A clean <code>bench migrate</code> was run after every change; the branch diff against <code>main</code> is reviewed and audit-clean (no unrelated drift) as of this handover.</p>
 
+<div class="callout" style="border-left-color:#dc2626;background:#fef2f2;"><b>Gotcha worth knowing if you extend <code>team_scope_hooks.py</code> or write a similar <code>permission_query_conditions</code> hook:</b> Frappe rewrites the table reference in your condition string when the doctype is reached via a dot-notation JOIN from another doctype (e.g. Task Calendar joining Project through Task's own <code>project</code> field) — but that rewrite only recognizes the <i>fully</i> backtick-quoted form, <code>`tabDoctype`.`field`</code>. Writing <code>`tabDoctype`.field</code> (column left bare) looks correct and works fine for a direct query on that doctype, but silently breaks the JOIN case with an "Unknown column" SQL error the moment some other view joins through it. Always backtick-quote both sides.</div>
+
 <h2 id="notdone">6. Not Done — Parked</h2>
 <div class="phase-box" style="background:#f3f4f6;border-color:#d1d5db;">
 <h4 style="color:#4b5563;">Consultant / Contractor portal login <span class="pill pill-parked">Parked</span></h4>
