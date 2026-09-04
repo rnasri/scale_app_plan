@@ -121,8 +121,8 @@
 </div>
 
 <div class="update-strip">
-  <div><div class="u-label">Last Updated</div><div class="u-date">27 August 2026</div></div>
-  <div class="u-note">Covers today (Thu 27 Aug) and the next working day (Fri 28 Aug) · Next update expected ~28 Aug</div>
+  <div><div class="u-label">Last Updated</div><div class="u-date">4 September 2026</div></div>
+  <div class="u-note">Covers today (Fri 4 Sep) and the next working day (Mon 7 Sep) · Next update expected ~7 Sep</div>
 </div>
 
 <a class="manual-hero" href="project-demo.html" style="background:linear-gradient(135deg,#1e3a5f,#7c3aed);margin-top:18px;">
@@ -134,28 +134,49 @@
 
 <div class="landed-card">
   <div class="landed-head">
-    <h3>✅ Recently Landed — main sync, 25 Aug 2026</h3>
+    <h3>✅ Recently Landed — week of 1–4 Sep 2026</h3>
   </div>
   <div class="landed-body">
     <div class="landed-item">
-      <span class="li-tag">UI</span>
+      <span class="li-tag">PMO</span>
       <div class="li-body">
-        <b>Product Shell + UI Revamp merged to main.</b> The desk now hides raw Frappe/ERPNext chrome (Apps menu, Help menu, "View Website," session-default clutter) behind a proper Scale-branded shell — login screen, sidebar, forms, and navbar all restyled consistently across every module.
-        <div class="li-ref">ui-revamp → main, PR #40</div>
+        <b>Predictive &amp; Anomaly Alerts, Phase 1 complete — all 10 alerts live.</b> The PMO assistant now proactively surfaces problems instead of waiting to be asked: a task slipping behind schedule or blocking others, spend on a trajectory to overrun budget, an outlier expense claim, a resource sitting idle or over-committed, the same risk wording recurring across projects, and more. Every alert is a deterministic check against real data, never a model guess — the assistant picks at most one to surface per turn, based on what was actually asked. Phase 2 (pushing these proactively, not just on request) is intentionally on hold pending a decision on where they should land.
+        <div class="li-ref">integration/pmo-predictive-alerts-phase1 → main, PR #56</div>
       </div>
     </div>
     <div class="landed-item">
-      <span class="li-tag">AI</span>
+      <span class="li-tag">HR</span>
       <div class="li-body">
-        <b>Scale Intelligence framework now live across HR, Finance, Sales, and PMO.</b> A shared sidebar AI assistant ("Scale Intelligence") each module plugs into with its own scoped config — HR's assistant answers document-compliance/skill-matrix questions and drafts reminder notes; PMO's assistant additionally supports confirmed actions (approve a milestone, generate draft invoices, save a project baseline) and portfolio-level charts, gated behind an explicit confirmation step before anything is written.
-        <div class="li-ref">apps/scale/scale/intelligence_boot.py + per-app intelligence.py (scale_hr, scale_finance, scale_sales, scale_project_management)</div>
+        <b>Geo-fenced + face-verified attendance check-in.</b> A mobile-friendly check-in page validates the employee's GPS location against their assigned site(s) and, where enabled, matches a live selfie against their enrolled photo before logging attendance — both checks are configurable per-company (off by default, warn/fail-closed/pending-review modes). A new Attendance Compliance report gives HR one place to see who checked in where, and how confidently.
+        <div class="li-ref">feature/hrm → main, PR #55</div>
       </div>
     </div>
     <div class="landed-item">
-      <span class="li-tag">PMO · AI Track</span>
+      <span class="li-tag">PMO</span>
       <div class="li-body">
-        <b>AI-assisted project setup (experimental).</b> When creating a new Project, an inline suggestion (starting milestones, deliverables, estimated duration) is generated from similar past projects — read-only, never auto-writes; the PM reviews/edits/discards before saving. This is the item the AI track flagged as "in progress" on the 22 Aug update — now landed, still marked experimental pending real-world use.
-        <div class="li-ref">project_ai_assist.py, branch experiment/pmo-project-creation-ai-assist → main, PR #39</div>
+        <b>Two real budget bugs fixed, plus the Kickoff section polish from ET-05.</b> Project Budget actuals were going stale — a Timesheet or Expense Claim submitting against a project didn't refresh the budget unless someone happened to re-save it (6 of 19 real budgets were understated, by up to ₹36,000 in one case). Over-allocation warnings were also firing on stagings that never actually overlapped on the same day. Both fixed and verified against real records, not just unit tests. Riding along: Project Manager now displays by name everywhere, not employee ID; the Kickoff &amp; Governance section is reorganized into paired rows; Project Code now auto-generates.
+        <div class="li-ref">PR #54 (closes GitHub issues #52, #53)</div>
+      </div>
+    </div>
+    <div class="landed-item">
+      <span class="li-tag">AI · Cross-Module</span>
+      <div class="li-body">
+        <b>PMO's Scale Intelligence assistant, next phase.</b> Document-based project creation (draft a project from an uploaded brief), comparable-project scoring for the AI-assisted setup suggestion, role-scoped chat access, and the assistant can now show multiple suggestions/actions/follow-ups in one turn instead of just one.
+        <div class="li-ref">PR #47</div>
+      </div>
+    </div>
+    <div class="landed-item">
+      <span class="li-tag">HR</span>
+      <div class="li-body">
+        <b>Employee engagement — pulse surveys and communities.</b> Recurring pulse surveys go out via a guest magic-link portal (no login needed to respond), employee communities get their own activity report, and there's a new Engagement workspace card plus extended CHRO KPI reporting.
+        <div class="li-ref">PR #48</div>
+      </div>
+    </div>
+    <div class="landed-item">
+      <span class="li-tag">Sales &amp; Marketing</span>
+      <div class="li-body">
+        <b>Instagram Reels, Stories, and Video now post through Scale Social Post</b>, with real-time upload progress feedback and better error handling when a media upload fails.
+        <div class="li-ref">PR #51</div>
       </div>
     </div>
   </div>
@@ -171,15 +192,14 @@
     <div class="day-col today">
       <div class="day-label">🟢 Today</div>
       <ul>
+        <li><b>Instagram Reels/Stories/Video posting landed</b> in Scale Social Post, with live upload-progress feedback (see Recently Landed above).</li>
         <li>Testing Sales &amp; Marketing features end-to-end.</li>
-        <li>Fixing bugs found in the multiple WhatsApp number integration.</li>
       </ul>
     </div>
     <div class="day-col tomorrow">
       <div class="day-label">🔵 Tomorrow</div>
       <ul>
         <li>Feature testing continues.</li>
-        <li>Multiple WhatsApp number bug fixes continue.</li>
       </ul>
     </div>
   </div>
@@ -194,15 +214,15 @@
     <div class="day-col today">
       <div class="day-label">🟢 Today</div>
       <ul>
-        <li>Implementing advice/feedback from domain experts consulted on HR requirements.</li>
-        <li><b>Naukri job posting integration</b> — working through blockers on linked API access.</li>
+        <li><b>Geo-fenced + face-verified attendance check-in landed</b> (see Recently Landed above) — both checks off by default, configurable per company.</li>
+        <li><b>Employee engagement — pulse surveys and communities landed</b>, plus a LinkedIn job-posting go-live spec now being worked through.</li>
       </ul>
     </div>
     <div class="day-col tomorrow">
       <div class="day-label">🔵 Tomorrow</div>
       <ul>
-        <li>Domain-expert advice implementation continues.</li>
-        <li>Naukri API access blockers continue to be worked.</li>
+        <li>Attendance feature real-world testing/rollout continues.</li>
+        <li>LinkedIn job-posting go-live spec continues.</li>
       </ul>
     </div>
   </div>
@@ -217,15 +237,15 @@
     <div class="day-col today">
       <div class="day-label">🟢 Today</div>
       <ul>
-        <li><b>AI chatbot integration</b> (Scale Intelligence).</li>
-        <li>Project Manager linked to Project, and Employee Skill Set surfaced on the Project page.</li>
+        <li><b>Predictive/Anomaly Alerts Phase 1 landed — all 10 alerts live</b> (see Recently Landed above). Phase 2 (proactively pushing an alert rather than surfacing it on request) is paused on a landing-decision: dashboard tile, desk Notification, or Notification Log.</li>
+        <li><b>Role-based dashboards built and pushed for review</b> — Admin attention tiles, a PM's own "My Projects" (RAG stats, per-project task view, pending approvals), and an Employee "My Work" landing. Real access-control gaps found and fixed along the way, including a case where no PM in the org could see a team member's own Timesheet. Not yet merged — pushed to <code>PMO_ET_phase3_role_dashboards</code>, awaiting review.</li>
       </ul>
     </div>
     <div class="day-col tomorrow">
       <div class="day-label">🔵 Tomorrow</div>
       <ul>
-        <li>AI chatbot integration continues.</li>
-        <li>Project Manager / Employee Skill Set linkage continues.</li>
+        <li>Role-dashboards branch review/merge.</li>
+        <li>Phase 2 alert-landing decision, once made.</li>
       </ul>
     </div>
   </div>
@@ -330,14 +350,14 @@
     <div class="day-col today">
       <div class="day-label">🟢 Today</div>
       <ul>
-        <li><b>Further refining PMO's AI layer</b> — tightening Scale Intelligence's PMO-side question/action prompts and the action-confirmation flow (approve milestone, generate draft invoices, save baseline).</li>
+        <li><b>PMO's Scale Intelligence assistant, next phase landed</b> — document-based project creation, comparable-project scoring, role-scoped chat access, multi-suggestion turns (see Recently Landed above).</li>
+        <li><b>Predictive/Anomaly Alerts Phase 1 landed</b> — 10/10 deterministic alerts feeding into the assistant's suggestions.</li>
       </ul>
     </div>
     <div class="day-col tomorrow">
       <div class="day-label">🔵 Tomorrow</div>
       <ul>
-        <li>PMO AI layer refinement continues.</li>
-        <li>Other AI flags wiring continues.</li>
+        <li>Alerts Phase 2 (proactive push) landing-decision.</li>
       </ul>
     </div>
   </div>
