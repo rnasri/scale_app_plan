@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scale Org-Tier Framework — Login, Roles &amp; Multi-Client Hierarchy Mapping (PMO first) | AIWS ERP</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  body { display: block; max-width: 1000px; margin: 0 auto; padding: 32px 28px 80px; }
+  .draft-banner { background:#fef3c7; border:2px solid #f59e0b; border-radius:10px; padding:14px 18px; margin-bottom:26px; font-size:.88rem; color:#78350f; }
+  .draft-banner b { color:#92400e; }
+  h1 { font-size:1.6rem; margin-bottom:4px; }
+  .subtitle { color:#6b7280; font-size:.95rem; margin-bottom:22px; }
+  .meta-row { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:28px; }
+  .meta-chip { background:#eef2ff; color:#3730a3; border-radius:6px; padding:4px 10px; font-size:.78rem; font-weight:600; }
+  h2 { font-size:1.22rem; margin:42px 0 12px; padding-bottom:8px; border-bottom:2px solid #e5e7eb; color:#1e3a5f; }
+  h3 { font-size:1.02rem; margin:26px 0 10px; color:#1e3a5f; }
+  h4 { font-size:.92rem; margin:16px 0 6px; }
+  p { line-height:1.65; font-size:.92rem; }
+  ul, ol { line-height:1.65; font-size:.92rem; }
+  table { width:100%; border-collapse:collapse; margin:14px 0; font-size:.84rem; }
+  th, td { border:1px solid #e5e7eb; padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#f8fafc; font-weight:700; color:#374151; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .pill { display:inline-block; padding:2px 9px; border-radius:5px; font-size:.72rem; font-weight:700; }
+  .pill-exist  { background:#d1fae5; color:#065f46; }
+  .pill-new    { background:#fef3c7; color:#92400e; }
+  .pill-gap    { background:#fee2e2; color:#991b1b; }
+  .pill-native { background:#dbeafe; color:#1e40af; }
+  details.rsrch { border:1px solid #e5e7eb; border-radius:8px; margin-bottom:10px; }
+  details.rsrch summary { cursor:pointer; padding:12px 16px; font-weight:600; font-size:.9rem; list-style:none; display:flex; align-items:center; gap:8px; }
+  details.rsrch summary::-webkit-details-marker { display:none; }
+  details.rsrch summary .arrow { margin-left:auto; font-size:.8rem; color:#6b7280; transition:transform .2s; }
+  details.rsrch[open] summary .arrow { transform:rotate(90deg); }
+  details.rsrch .body { padding:0 16px 16px; border-top:1px solid #f3f4f6; font-size:.87rem; line-height:1.6; }
+  .src { font-size:.76rem; color:#6b7280; margin-top:6px; }
+  .src a { color:#3b82f6; }
+  .tier-card { border:1px solid #e5e7eb; border-radius:10px; padding:16px 20px; margin-bottom:14px; }
+  .tier-card h4 { margin:0 0 6px; display:flex; align-items:center; gap:10px; }
+  .tier-num { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; background:#1e3a5f; color:#fff; font-size:.78rem; font-weight:700; flex-shrink:0; }
+  .callout { border-left:4px solid #6366f1; background:#f5f6ff; padding:10px 14px; margin:12px 0; font-size:.86rem; border-radius:0 6px 6px 0; }
+  .callout.finding { border-left-color:#059669; background:#ecfdf5; }
+  .callout.open-q { border-left-color:#dc2626; background:#fef2f2; }
+  .callout.gap { border-left-color:#f59e0b; background:#fffbeb; }
+  .phase-box { border:1px solid #dbeafe; background:#f0f9ff; border-radius:8px; padding:14px 18px; margin-bottom:14px; }
+  .phase-box h4 { margin:0 0 6px; color:#0369a1; }
+  .oq-num { display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; background:#dc2626; color:#fff; font-size:.75rem; font-weight:700; margin-right:8px; flex-shrink:0; }
+  .oq-row { display:flex; align-items:flex-start; margin-bottom:12px; }
+  code { background:#f3f4f6; padding:1px 6px; border-radius:4px; font-size:.85em; }
+  .toc { background:#f8fafc; border:1px solid #e5e7eb; border-radius:10px; padding:16px 22px; margin-bottom:30px; font-size:.86rem; }
+  .toc a { color:#1e3a5f; text-decoration:none; }
+  .toc a:hover { text-decoration:underline; }
+  .toc ol { margin:6px 0 0; }
+  .axis-box { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:16px 0; }
+  .axis-box > div { border-radius:10px; padding:16px 18px; }
+  .axis-fn { background:#eff6ff; border:1px solid #bfdbfe; }
+  .axis-tier { background:#f0fdf4; border:1px solid #bbf7d0; }
+  .axis-box h4 { margin-top:0; }
+</style>
+</head>
+<body>
+
+<div class="draft-banner">
+  <b>Draft — foundation document, not yet linked from site navigation.</b> This is the first document in what will grow into a full login/role framework covering PMO first, then HR and the rest of Scale. It audits what Frappe/ERPNext already gives us natively, audits what this codebase has already built (ET Phase 3's Project Manager and Project User dashboards), does external research on how comparable multi-tenant platforms solve the same "many client org charts, one fixed permission model" problem, then proposes a generic framework. No code has shipped from this document yet — it is meant to be reviewed and refined before Phase 1 begins.
+</div>
+
+<h1>Scale Org-Tier Framework</h1>
+<div class="subtitle">Foundation document: Login, Roles &amp; Responsibilities, and Multi-Client Hierarchy Mapping — PMO first, HR next</div>
+<div class="meta-row">
+  <span class="meta-chip">Scope: scale_project_management (this doc), scale_hr (next)</span>
+  <span class="meta-chip">Status: Research complete, foundation proposal — awaiting review</span>
+  <span class="meta-chip">6 Sep 2026</span>
+  <span class="meta-chip">Builds on: pmo-phase3-role-dashboards-plan.html, ET_task_track</span>
+</div>
+
+<div class="toc">
+  <b>Contents</b>
+  <ol>
+    <li><a href="#purpose">Purpose &amp; the Problem Being Solved</a></li>
+    <li><a href="#axes">The Core Idea: Two Orthogonal Axes — Functional Role vs. Organizational Tier</a></li>
+    <li><a href="#native">Frappe/ERPNext's Native Role &amp; User Mechanism — What Actually Exists</a></li>
+    <li><a href="#audit">Current-State Audit (grounded in this bench's live data and code)</a></li>
+    <li><a href="#research">External Research — How Comparable Platforms Solve This</a></li>
+    <li><a href="#gap">Why Today's Model Won't Scale Across Clients</a></li>
+    <li><a href="#framework">Proposed Framework: the Scale Org Tier System</a></li>
+    <li><a href="#matrix">Feature &amp; Dashboard Matrix by Tier (PMO first)</a></li>
+    <li><a href="#continuity">How This Maps onto What's Already Built</a></li>
+    <li><a href="#phases">Phased Implementation Plan</a></li>
+    <li><a href="#openq">Open Questions for the Owner</a></li>
+  </ol>
+</div>
+
+<h2 id="purpose">1. Purpose &amp; the Problem Being Solved</h2>
+<p>Scale is being built by extending Frappe/ERPNext, not replacing it — every module (PMO, HR, Sales, Purchase, Stock, Manufacturing, Accounts, Finance) sits on top of native DocTypes, Roles, and Permissions rather than a parallel system. ET Phase 3 (see <code>pmo-phase3-role-dashboards-plan.html</code>) took the first real step toward role-shaped logins in PMO: a Project Manager gets a "My Projects" portfolio landing, a plain team member gets a personal "My Work" hub, and both are gated by a hardcoded two-way split in the code (elevated roles vs. everyone else).</p>
+<p>The next problem is different in kind, not just degree: <b>Scale will be sold to multiple client organizations, and each one has its own org chart, its own job titles, and its own number of management layers.</b> One client's "Site Engineer" and another's "Software Developer" are the same access tier — an individual contributor doing assigned work — but nothing in the system today expresses that. Today, "who sees what" is decided by literal Frappe Role names (<code>Projects Manager</code>, <code>PMO Director</code>, <code>Department Head</code> — see §4) written directly into Python and JavaScript. Onboarding a new client today would mean either forcing their org onto our exact role names, or editing code per client — neither scales.</p>
+<p>This document's job is to lay a <b>solid, research-grounded foundation</b> before any of that gets built: understand exactly what Frappe/ERPNext already gives us for free, audit exactly what this codebase has already built, research how other systems solve the same class of problem, and only then propose a framework — generic enough to onboard any client's hierarchy, concrete enough to actually implement.</p>
+
+<h2 id="axes">2. The Core Idea: Two Orthogonal Axes</h2>
+<p>The single most important design decision in this document is recognizing that "role" in the owner's brief is really <b>two separate questions</b> that Frappe already answers very differently:</p>
+<div class="axis-box">
+  <div class="axis-fn">
+    <h4>Axis 1 — Functional Role<br><span style="font-weight:400;font-size:.82rem;color:#1e40af;">"What can you DO?"</span></h4>
+    <p style="font-size:.85rem;">Can you create a Task? Approve a Purchase Order? See a Salary Slip? This is <b>native Frappe Role / DocType Permission / Workflow territory</b> — <code>Projects Manager</code>, <code>Purchase Manager</code>, <code>HR Manager</code>, <code>Accounts Manager</code> are all functional roles. This machinery already works well in this codebase (team_scope_hooks.py, the PUR-01 workflow, custom_docperm.json) and does <b>not</b> need to be reinvented.</p>
+  </div>
+  <div class="axis-tier">
+    <h4>Axis 2 — Organizational Tier<br><span style="font-weight:400;font-size:.82rem;color:#065f46;">"Whose data can you SEE, and what dashboard do you land on?"</span></h4>
+    <p style="font-size:.85rem;">Are you an individual contributor, a first-line supervisor, a department manager, or a board member? This is a <b>presentation and visibility-scoping layer</b> — it decides which dashboard you land on and how far down the org chart your view reaches. <b>This axis barely exists in the system today</b> — it's currently a single hardcoded boolean (elevated vs. not) baked into JS/Python. This is the actual gap this document addresses.</p>
+  </div>
+</div>
+<p>Salesforce's own documentation for its (much more mature) equivalent system states the same split in one line worth borrowing directly: <b>"Roles see, profiles do."</b> Applied here: <b>functional Role decides what you can do; Org Tier decides what you can see and where you land.</b> The framework below only touches the second axis — it is additive on top of the first, not a replacement for it.</p>
+<div class="src">Source: <a href="https://deselect.com/blog/salesforce-role-hierarchy-explained-structuring-access-and-visibility/" target="_blank">DESelect — Salesforce Role Hierarchy Explained</a></div>
+
+<h2 id="native">3. Frappe/ERPNext's Native Role &amp; User Mechanism — What Actually Exists</h2>
+<p>Before proposing anything new, here is exactly what Frappe/ERPNext already ships, confirmed against this bench's own installed <code>frappe</code>/<code>erpnext</code>/<code>hrms</code> source and live data, not just documentation:</p>
+
+<h3>3.1 Role, Has Role, and DocType Permissions</h3>
+<p>A <b>Role</b> is a named permission bucket (<code>Projects Manager</code>, <code>HR User</code>, etc.). A <b>DocPerm</b> row (native, or a <b>Custom DocPerm</b> for standard doctypes we don't own — the distinction ET Phase 3 hit a real bug over, see §4.3) grants a Role read/write/create/delete/submit rights on a DocType, optionally at a <b>permission level</b> (<code>permlevel</code>) for field-by-field gating (used for the anonymous-360-feedback fix on PR #43). A User gets Roles via the <b>Has Role</b> child table on the User doctype — <code>frappe.get_roles(user)</code> is the runtime check used everywhere in this codebase (<code>team_scope_hooks.py</code>, <code>library_hooks.py</code>, <code>tab_visibility.js</code>'s <code>frappe.user_roles</code>).</p>
+
+<h3>3.2 Role Profile — a static bundle, not a hierarchy</h3>
+<p>A <b>Role Profile</b> bundles several Roles into one named template, assignable to a User in one field — meant for fast onboarding ("assign the Sales Role Profile" instead of 4 separate Roles). Confirmed live on this bench: 6 Role Profiles exist (<code>HR</code>, <code>Purchase</code>, <code>Sales</code>, <code>Accounts</code>, <code>Manufacturing</code>, <code>Inventory</code>) — none for PMO, and none express any notion of seniority or tier. Official docs confirm this is by design: Role Profiles are <b>static, fixed lists</b> with no conditional or tiered logic — they cannot themselves express "this bundle means Tier 3, that one means Tier 5." Useful as an assignment convenience, not as the hierarchy mechanism itself.</p>
+<div class="src">Source: <a href="https://docs.frappe.io/erpnext/user/manual/en/role-and-role-profile" target="_blank">Frappe Docs — Role and Role Profile</a></div>
+
+<h3>3.3 Designation and Department — the org-chart vocabulary, mostly unused as one</h3>
+<p><b>Designation</b> is a free-text-ish master list (job titles) linked from Employee — not company-scoped natively (confirmed: no company field on the Designation doctype), so it's a single global vocabulary per bench/deployment. <b>Department</b> is a genuine Frappe <b>NestedSet tree</b> doctype (parent/child departments, same tree mechanism as Item Group or Territory) — capable of real multi-level org structure, but see §4.2 for how it's actually being used on this bench today (not much).</p>
+
+<h3>3.4 Employee.reports_to — a real NestedSet tree, not just a display field</h3>
+<div class="callout finding">
+<b>Key finding, verified directly against the installed <code>erpnext</code> source</b> (<code>erpnext/setup/doctype/employee/employee.py</code>): the <code>Employee</code> doctype's own controller declares <code>nsm_parent_field = "reports_to"</code> — meaning <b>Employee is already a bona fide Frappe NestedSet tree, keyed on <code>reports_to</code>, the exact same mechanism Department/Item Group/Territory use.</b> Confirmed live on this bench too (<code>frappe.get_meta("Employee").is_tree == True</code>). This means Frappe's own tree utilities — <code>frappe.utils.nestedset.get_descendants_of("Employee", X)</code>, <code>get_ancestors_of()</code> — already return "everyone under this person in the reporting chain" today, for free, using the exact <code>lft</code>/<code>rgt</code> machinery Frappe maintains automatically whenever <code>reports_to</code> is set or changed. <b>Nothing needs to be built to get this query capability — it already exists.</b>
+</div>
+<p>What's <i>not</i> automatic: wiring that tree into actual permission enforcement (deciding who can <i>see</i> a subordinate's Task/Timesheet/Leave Application). Frappe HR's own documentation describes a "restrict by hierarchy" pattern for Leave Application/Expense Claim/Appraisal built on top of exactly this field — but reading the actual controllers (<code>leave_application.py</code>, <code>expense_claim.py</code>) shows they gate through <code>frappe.has_permission("Employee", "read", employee)</code> rather than a fully automatic out-of-the-box hierarchy grant. In other words: <b>the tree is native and free; the permission-enforcement hook on top of it is the same category of work this codebase has already done three times</b> — <code>library_hooks.py</code> (File, scoped to Project Library tagging), <code>team_scope_hooks.py</code> (Project/Task, scoped to Project team membership). A fourth hook, scoped to the <code>reports_to</code> tree instead of flat team membership, is the same pattern applied to a new axis — not new technique.</p>
+<div class="src">Sources: <a href="https://docs.frappe.io/hr/user-permission-based-on-hierarchy" target="_blank">Frappe HR Docs — User Permission Based on Hierarchy</a>, <a href="https://github.com/frappe/frappe/blob/develop/frappe/utils/nestedset.py" target="_blank">frappe/utils/nestedset.py (GitHub)</a>, and this bench's own <code>apps/erpnext/erpnext/setup/doctype/employee/employee.py</code></div>
+
+<h3>3.5 has_permission / permission_query_conditions — the actual enforcement mechanism this codebase already uses</h3>
+<p>Every real access-scoping feature in Scale so far — File visibility (T17), Project/Task team-scoping (ET Phase 3 Phase 4a) — uses the same native Frappe hook pair: a controller-level <code>has_permission(doc, user)</code> function (checked on direct document access) plus a matching <code>get_permission_query_conditions(user)</code> function (a raw SQL fragment injected into every list/report query for that doctype). Both are registered per-doctype in <code>hooks.py</code>. This is the mechanism the proposed framework's own tier-scoping will reuse — not a new concept for this codebase, the fourth application of one already proven three times.</p>
+
+<h3>3.6 Workflow — functional approval chains, a separate concern</h3>
+<p>Multi-stage approval (e.g. the live <code>Purchase Requisition Approval</code> Workflow on Material Request — Draft → Department Head → Purchase Manager → Accounts Manager → [Purchase Master Manager if high-value] → Approved) is native Frappe <b>Workflow</b>, gated per-state by functional Role names. This is squarely <b>Axis 1</b> (functional role, "who is allowed to approve a purchase") — the framework below deliberately does not touch it; see §7's explicit statement on why Tier and approval-authority Role must stay decoupled.</p>
+
+<h2 id="audit">4. Current-State Audit — Grounded in Live Data</h2>
+<p>All figures below were queried directly against <code>scale.localhost</code> during this session, not estimated.</p>
+
+<h3>4.1 Designations already contain almost exactly the ladder the owner described</h3>
+<p>48 Designations exist on this bench today, including: <code>Trainee</code>, <code>Executive Trainee</code>, <code>Management Trainee</code>, <code>Executive</code>, <code>Sr. Executive</code>, <code>Asst Manager</code>, <code>Deputy Manager</code>, <code>Manager</code>, <code>Sr. Manager</code>, <code>General Manager</code>, <code>Director</code>, <code>Vice President</code>, <code>Managing Director</code>, <code>President</code>, plus C-suite (<code>CEO</code>/<code>CFO</code>/<code>COO</code>/<code>CTO</code>) — alongside sector-specific individual-contributor titles like <code>Software Developer</code>, <code>QA Engineer</code>, <code>DevOps Engineer</code>, <code>Business Analyst</code>, <code>Engineer</code>, <code>Designer</code>. <b>This confirms the exact shape of the problem the owner described</b>: Designation is already the "client/sector-specific title" vocabulary (a "Site Engineer" and a "Software Developer" are both real, different Designations) — what's missing is a layer above it that says both of those map to the same generic tier.</p>
+
+<h3>4.2 Department and reports_to are present but functionally unused as a hierarchy</h3>
+<p>Every real Department on this bench (Accounts, Sales, Purchase, Operations, Production, HR, Management, etc.) is a direct child of "All Departments" — <b>zero actual nesting</b>, despite Department being a genuine tree doctype capable of it. More significantly: <b>only 3 of 23 real Employees have <code>reports_to</code> set at all.</b> The single native field that would make the NestedSet tree in §3.4 actually meaningful is almost entirely unpopulated. This is not a missing feature — it's missing data entry, which is itself a finding: any tier/hierarchy framework must include a real backfill step (reusing the exact "auto-backfill via <code>demo_setup.run_et_phase3_role_scope_backfill</code>"-style idempotent script pattern already used twice in this codebase), not assume the data is already clean.</p>
+
+<h3>4.3 PMO's current access model is a hardcoded binary, not a tier ladder</h3>
+<p>Read directly from <code>team_scope_hooks.py</code> (live on this bench):</p>
+<pre style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:6px;padding:10px 14px;font-size:.8rem;overflow-x:auto;">ELEVATED_ROLES = {"System Manager", "PMO Director", "Projects Manager"}
+
+def has_permission_project(doc, user=None, permission_type=None):
+    if _is_elevated(user):
+        return True
+    return bool(frappe.db.exists("Project User", {"parent": doc.name, ...}))</pre>
+<p>The exact same <code>ELEVATED_ROLES</code> set, independently hardcoded a second time, drives which Console tabs render at all (<code>tab_visibility.js</code>). There is no middle ground: a user is either fully elevated (sees every Project/Task bench-wide, gets the full tab bar) or scoped to <i>only</i> Projects where they personally have a <code>Project User</code> row (sees just their own assigned work). <b>There is no "supervisor of a team" state today</b> — exactly the gap the owner named directly ("a supervisor and manager can approve things for their team below, and can see only that what is relevant").</p>
+<div class="callout gap"><b>Real, currently-live gap:</b> the code review of <code>refactor/project-module</code> (this session, see prior conversation) found this same hardcoded pattern independently reimplemented with <i>slightly different role lists</i> in at least 4 separate files (<code>pmo_home.js</code>, <code>pmo_my_projects.js</code>, <code>task_list.js</code>, <code>scale_app_sidebar.js</code>). This is exactly the kind of drift a single, data-driven Tier resolution (§7) eliminates by construction — one source of truth instead of four hand-copied lists.</div>
+
+<h3>4.4 What ET Phase 3 already shipped (the two dashboards referenced in the brief)</h3>
+<table>
+<tr><th>Built</th><th>What it actually is, in Axis-2 terms</th></tr>
+<tr><td><b>"My Work"</b> (<code>/app/pmo-my-work</code>)</td><td>The Tier-1 "Executive / individual contributor" experience — own assigned Tasks, weekly Timesheet grid, Quick Material Request. Gate: session user has a <code>Project User</code> row somewhere, nothing more.</td></tr>
+<tr><td><b>"My Projects"</b> (<code>/app/pmo-my-projects</code>)</td><td>The elevated-role experience today — but really a <b>Tier-3/4 "Manager who owns whole Projects" view</b> (RAG-scored project cards, PM-scoped Pending Approvals), gated on the same flat <code>ELEVATED_ROLES</code> set as full Admin access, with no distinction between a PM who runs 2 Projects and a PMO Director who should see the whole portfolio.</td></tr>
+<tr><td><b>Console tab bar trim</b> (<code>tab_visibility.js</code>)</td><td>The only piece of "different people see a different UI" logic that exists today — and it's the exact hardcoded 2-value switch described in §4.3.</td></tr>
+</table>
+<p>This means two of the tiers proposed in §7 (Executive and Manager) are <b>already substantially built</b> — the framework's job for those two is to generalize their gating logic, not build new UI from scratch. The genuinely new personas are the ones in between (Supervisor) and above (AVP/VP/President/Board) — see §9.</p>
+
+<h3>4.5 HR's current state (brief — full HR-specific pass is the next document)</h3>
+<p>HR does not have an equivalent custom dashboard at all — it deliberately reuses HRMS's own native <code>/hrms</code> employee-facing PWA rather than building a parallel one (a decision already recorded from an earlier session). Roles in play: <code>HR Manager</code>, <code>HR User</code>, plus the same native <code>Employee</code>/<code>reports_to</code> primitives audited in §3.4/§4.2. Because both PMO and HR ultimately key off the same <code>Employee</code> record and the same (currently unpopulated) <code>reports_to</code> chain, an Org Tier resolved once per Employee (§7) is naturally shareable across both apps — this is the concrete mechanism behind the owner's "combined login for employees" ask, addressed directly in §9.4.</p>
+
+<h2 id="research">5. External Research — How Comparable Platforms Solve This</h2>
+<details class="rsrch" open>
+<summary>5.1 — "Roles see, profiles do": the dual-axis pattern is a proven enterprise model <span class="arrow">▸</span></summary>
+<div class="body">
+<p>Salesforce — the most mature real-world analog to what's being proposed — separates its access model into exactly the two axes in §2. <b>Role Hierarchy</b> is a vertical structure controlling record-level visibility only (a VP can see records owned by a Sales Manager beneath them in the hierarchy) — roles never grant edit rights, they only "open your eyes." <b>Profiles</b> (plus Permission Sets layered on top) control what actions are actually possible — object/field permissions, create/edit/delete. The two are deliberately orthogonal and independently assignable per user. This validates §2's framing directly: it is not a novel idea to keep "who can see how far up/down the org chart" separate from "what actions can this person perform" — it is how the industry's most-copied enterprise permission model already works.</p>
+<div class="src">Sources: <a href="https://deselect.com/blog/salesforce-role-hierarchy-explained-structuring-access-and-visibility/" target="_blank">DESelect: Salesforce Role Hierarchy Explained</a>, <a href="https://deselect.com/blog/salesforce-roles-vs-profiles-and-permission-sets-the-complete-2026-guide/" target="_blank">DESelect: Roles vs Profiles vs Permission Sets (2026)</a></div>
+</div>
+</details>
+<details class="rsrch">
+<summary>5.2 — Job Level vs. Job Title: the exact abstraction the owner is asking for, already solved in HR theory <span class="arrow">▸</span></summary>
+<div class="body">
+<p>Modern job-architecture practice draws a hard line between <b>Job Title</b> (what's on the business card — company- and even team-specific) and <b>Job Level</b> (the generic rung on a shared ladder that defines expectations and access, independent of title). The standard failure mode named directly in this research is <b>"title inflation"</b> across companies of different sizes — a "Director" at a 50-person company and a "Senior Manager" at a large enterprise can sit at the same real level despite very different titles. The recommended fix (three tests: interchangeability, market comparability, organizational equivalence) is exactly the exercise the owner described doing manually per client ("map it for the client from executive to their lowest level"). This is strong external validation that a fixed, generic Level/Tier ladder with a per-client title-to-level mapping is the correct, well-established shape for this problem — not something being invented from scratch.</p>
+<div class="src">Sources: <a href="https://www.deel.com/blog/job-level-classification/" target="_blank">Deel: Job Level Classification</a>, <a href="https://nativeteams.com/blog/job-level-classification" target="_blank">Native Teams: Job Level Classification Frameworks</a></div>
+</div>
+</details>
+<details class="rsrch">
+<summary>5.3 — Frappe/ERPNext's own community pattern for per-branch/per-unit role variants <span class="arrow">▸</span></summary>
+<div class="body">
+<p>Community guidance for multi-unit ERPNext deployments (e.g. "HR Manager – Mumbai Branch") shows the common workaround today is <i>duplicating Roles per branch/company</i> — a real Role explosion problem, and precisely the failure mode a generic Tier + per-client mapping table is meant to avoid (one small mapping table per client instead of N duplicated Roles). This is useful negative evidence: it shows the naive native-only approach (just make more Roles) is a known anti-pattern in this exact ecosystem, reinforcing that a mapping layer above Role/Role Profile is the right additional piece, not redundant with what already exists.</p>
+<div class="src">Source: <a href="https://gotranscript.com/public/mastering-user-roles-and-permissions-in-erpnext-at-frappe-academy" target="_blank">Frappe Academy — Mastering User Roles and Permissions in ERPNext</a></div>
+</div>
+</details>
+
+<h2 id="gap">6. Why Today's Model Won't Scale Across Clients</h2>
+<ul>
+  <li><b>Role names are destiny, and they're hardcoded in ≥5 places.</b> <code>ELEVATED_ROLES</code> appears independently in <code>team_scope_hooks.py</code>, <code>library_hooks.py</code>, <code>tab_visibility.js</code>, plus (per the recent code review) 3 more re-implementations on <code>refactor/project-module</code> alone. Onboarding a client whose hierarchy doesn't map cleanly onto exactly "Projects Manager vs. everyone else" means editing code, not configuration.</li>
+  <li><b>There is no middle tier</b> — Phase 0's own audit (§4.4, and the original ET Phase 3 research) already found this: a real Supervisor/Team-Lead persona ("sees and monitors everything for their owned team, approves for them, nothing portfolio-wide") does not exist in the code at all today.</li>
+  <li><b>No mechanism ties a client's own vocabulary to our access model.</b> Designation is rich (§4.1) but purely descriptive — nothing reads it to decide dashboard/visibility.</li>
+  <li><b>The one native mechanism built for exactly this (<code>reports_to</code>'s NestedSet tree, §3.4) is unpopulated</b> (§4.2) — the foundation exists, the data doesn't.</li>
+</ul>
+
+<h2 id="framework">7. Proposed Framework: the Scale Org Tier System</h2>
+<p>A small, additive layer on top of everything in §3 — no existing Role, Workflow, or DocPerm is replaced.</p>
+
+<h3>7.1 The generic tier ladder (default reference set, refinable per client)</h3>
+<p>Nine tiers, directly following the ladder the owner named, treated as a <i>reference default</i> — a client with a flatter org (say, no AVP layer) simply doesn't populate that tier's mapping; the mechanism doesn't require exactly nine.</p>
+<div class="tier-card"><h4><span class="tier-num">1</span> Executive — Individual Contributor / Doer</h4><p style="font-size:.85rem;">Does assigned work, no one reports to them. Client-specific titles map here: Developer, Software Engineer, Site Engineer, QA Engineer, Executive, Trainee, etc. <b>Already built</b> — today's "My Work" persona.</p></div>
+<div class="tier-card"><h4><span class="tier-num">2</span> Senior Executive / Supervisor</h4><p style="font-size:.85rem;">Still does own work, but a small number of Tier-1 people report to them directly. Sees/monitors their direct reports' work, can approve for them. <b>Genuinely new persona</b> — see §9.1.</p></div>
+<div class="tier-card"><h4><span class="tier-num">3</span> Assistant Manager</h4><p style="font-size:.85rem;">Manages one or more Supervisors' teams; approval authority widens; still largely operational, not strategic.</p></div>
+<div class="tier-card"><h4><span class="tier-num">4</span> Manager</h4><p style="font-size:.85rem;">Owns whole Projects/Departments end to end. <b>Closest existing match: today's "My Projects" persona</b> — generalizing its gate from a flat role-list to Tier 4+reports_to-scope is most of the work here.</p></div>
+<div class="tier-card"><h4><span class="tier-num">5</span> Senior Manager</h4><p style="font-size:.85rem;">Cross-project/cross-team oversight within a function; first tier where reporting/analytics start to outweigh task-level detail.</p></div>
+<div class="tier-card"><h4><span class="tier-num">6</span> AVP</h4><p style="font-size:.85rem;">Multi-department/business-unit view; approval authority for higher-value items (mirrors the existing value-threshold pattern already in the PUR-01 workflow, applied as a concept, not shared code).</p></div>
+<div class="tier-card"><h4><span class="tier-num">7</span> VP</h4><p style="font-size:.85rem;">Org-wide operational dashboards; still a real decision-maker on escalations, but drill-down into individual task minutiae is no longer the point.</p></div>
+<div class="tier-card"><h4><span class="tier-num">8</span> President / C-Suite</h4><p style="font-size:.85rem;">Per the owner's own framing: <b>administrative, reporting, and decision-facing dashboards only — explicitly not project/task-level detail.</b> Reuses/extends the existing PMO Executive Dashboard, with drill-down links removed rather than added.</p></div>
+<div class="tier-card"><h4><span class="tier-num">9</span> Board of Directors</h4><p style="font-size:.85rem;">Least operational detail of all — quarterly/portfolio-level strategic summaries. Candidate for a lighter <b>Portal-type</b> login rather than full Desk access (see Open Question 3, §11).</p></div>
+
+<h3>7.2 The mapping mechanism (this is the actual new piece)</h3>
+<ol>
+  <li><b>New doctype: <code>Scale Org Tier</code></b> — a small master list (our 9 generic tiers above, seeded once), global to the deployment.</li>
+  <li><b>New doctype: <code>Scale Designation Tier Map</code></b> — one row per Designation → Scale Org Tier (e.g. <code>Software Developer → Tier 1</code>, <code>Site Engineer → Tier 1</code>, <code>Project Manager → Tier 4</code>). This is the literal admin screen the owner described: at client onboarding, someone walks the client's real Designation list once and assigns each a Tier. A single grid-style list view is enough — no custom UI needed beyond what Frappe's own List View already provides.</li>
+  <li><b><code>Employee</code> gets one new fetched field, <code>scale_org_tier</code></b> (Link → Scale Org Tier), auto-computed from the Employee's <code>designation</code> via the mapping above. Same "computed field, set via an <code>on_update</code>/<code>validate</code> hook plus a one-time idempotent backfill script" pattern already used three times in this codebase (ET-01's Manager Name, ET-02's <code>top_skill</code>, ET Phase 3's own role/scope backfill) — no new technique.</li>
+  <li><b>New hook module, <code>org_tier_hooks.py</code></b> — exposes <code>get_my_tier(user)</code> and <code>get_my_team_employees(user)</code> (the latter a thin wrapper over <code>frappe.utils.nestedset.get_descendants_of("Employee", employee_id)</code>, §3.4 — restricted to Active employees, elevated-role bypass using the exact same pattern as <code>team_scope_hooks.py</code>'s <code>_is_elevated()</code>). This is the one new <code>has_permission</code>/<code>permission_query_conditions</code> pair proposed — the fourth application of a pattern this codebase has already built three times (§3.5).</li>
+  <li><b>Dashboard/tab routing reads Tier from boot info</b> (exposed once via <code>frappe.boot.scale_org_tier</code>, computed server-side at login), replacing every hardcoded <code>ELEVATED_ROLES</code> array (§4.3, §6) with one <code>if (tier >= X)</code> check sourced from one place.</li>
+</ol>
+<div class="callout"><b>Deliberately not touched:</b> Workflow-driven functional approval chains (PUR-01's Material Request states, etc.) keep using named functional Roles exactly as today. Tier is a visibility/presentation concept; "who is allowed to approve a Purchase Order" stays a Role/Workflow concept, per §2's axis split. Conflating the two — e.g. auto-granting "Purchase Manager" just because someone is Tier 4 — would silently grant real transactional authority to anyone who happens to be a Tier-4 manager in an unrelated function, which is exactly the kind of scope-creep this framework should prevent, not cause.</div>
+
+<h2 id="matrix">8. Feature &amp; Dashboard Matrix by Tier (PMO)</h2>
+<table>
+<tr><th>Tier</th><th>Landing / Dashboard</th><th>Sees</th><th>Can approve</th></tr>
+<tr><td>1 · Executive</td><td>My Work (exists)</td><td>Own assigned Tasks, own Timesheet, own Leave, own Material Requests, own Appraisal</td><td>Nothing — requester only</td></tr>
+<tr><td>2 · Sr. Executive / Supervisor</td><td><b>New</b> — "My Team" hub</td><td>Everything Tier 1 sees, plus their direct reports' equivalent (via <code>reports_to</code> descendants, one level or the full subtree depending on org depth)</td><td>Team's Timesheets, Leave, Material Requests</td></tr>
+<tr><td>3 · Assistant Manager</td><td><b>New</b> — widened "My Team" scope</td><td>Multiple Supervisors' full subtrees</td><td>Same categories, wider scope</td></tr>
+<tr><td>4 · Manager</td><td>My Projects (exists, generalized)</td><td>Whole Projects they're PM of; RAG portfolio card grid (already built)</td><td>Project-level approvals (Budget, Change Request — already built)</td></tr>
+<tr><td>5 · Sr. Manager</td><td><b>New/extended</b> Cockpit view</td><td>Cross-project, single function</td><td>Higher-value approvals</td></tr>
+<tr><td>6 · AVP</td><td>Extended Executive Dashboard</td><td>Multi-department</td><td>Value-threshold approvals (mirrors PUR-01's own pattern)</td></tr>
+<tr><td>7 · VP</td><td>Executive Dashboard (exists, tier-gated)</td><td>Org-wide operational KPIs</td><td>Escalations</td></tr>
+<tr><td>8 · President/C-Suite</td><td>Executive Dashboard, drill-down removed</td><td>Administrative/reporting/decision dashboards only — explicitly no task-level detail</td><td>Strategic sign-off only</td></tr>
+<tr><td>9 · Board</td><td><b>New</b>, likely Portal-type</td><td>Quarterly/portfolio strategic summary</td><td>None operational</td></tr>
+</table>
+
+<h2 id="continuity">9. How This Maps onto What's Already Built</h2>
+<h3>9.1 The genuinely new persona: Supervisor (Tier 2/3)</h3>
+<p>This does not exist in any form today. It reuses the "My Projects" card-grid/RAG UI pattern (already built, already proven) but scopes the underlying query to "my <code>reports_to</code> subtree's assigned Tasks/Timesheets" instead of "Projects where I'm the named PM" — a query-shape change, not a new UI paradigm.</p>
+<h3>9.2 Manager (Tier 4) — generalize, don't rebuild</h3>
+<p>"My Projects" already does almost everything Tier 4 needs. The work here is replacing its <code>ELEVATED_ROLES</code> gate with a Tier check, so a client who calls this role "Delivery Head" instead of "Project Manager" still lands here correctly once their Designation is mapped.</p>
+<h3>9.3 Top tiers (7–9) — subtract, don't add</h3>
+<p>The existing PMO Executive Dashboard is already close to the President/VP shape described by the owner (administrative, decision-facing, no task-level noise). The work for these tiers is largely about <i>removing</i> drill-down links a Tier 4 Manager should have and a Tier 8 President should not, not building new widgets.</p>
+<h3>9.4 The "combined employee login" ask — PMO + HR + internal Scale, one Tier-1 hub</h3>
+<p>Because <code>scale_org_tier</code> would live on the shared native <code>Employee</code> record (not inside any one app), it is naturally visible to every app that reads that Employee — PMO, HR, and the separate internal "Scale" app alike. A single aggregator "My Work" hub (a new thin page, likely in the mother <code>scale</code> app rather than duplicated per-module) can call each already-installed app's own existing whitelisted "get my stuff" method — <code>scale_project_management.my_work_hooks</code>'s pattern already exists; HR/Scale would need an equivalent, small, per-app method — and merge results into one combined view. This is additive aggregation, not a merger of the underlying apps, and is flagged as its own later phase (§10, Phase 6) rather than something to force into the PMO-only Phase 1–5 work.</p>
+
+<h2 id="phases">10. Phased Implementation Plan</h2>
+<div class="phase-box"><h4>Phase 1 — Foundation doctypes &amp; data</h4><p style="font-size:.86rem;">Build <code>Scale Org Tier</code> + <code>Scale Designation Tier Map</code>, add <code>Employee.scale_org_tier</code>, write the backfill script, populate <code>reports_to</code> for this bench's own 23 real Employees (§4.2) as the reference dataset. No UI changes yet.</p></div>
+<div class="phase-box"><h4>Phase 2 — org_tier_hooks.py, the fourth scoping hook</h4><p style="font-size:.86rem;">Build <code>get_my_tier()</code>/<code>get_my_team_employees()</code>, wire into <code>frappe.boot</code>. No visible UI change yet — purely plumbing, testable via console.</p></div>
+<div class="phase-box"><h4>Phase 3 — Collapse the hardcoded role lists</h4><p style="font-size:.86rem;">Replace every <code>ELEVATED_ROLES</code>/tab-visibility hardcode (§4.3, including the 3 extra copies found on <code>refactor/project-module</code>) with a single Tier-driven check sourced from boot info. Zero visible behavior change if done correctly — a pure refactor, verified by confirming today's users land on exactly the same pages as before.</p></div>
+<div class="phase-box"><h4>Phase 4 — New Supervisor (Tier 2/3) persona</h4><p style="font-size:.86rem;">The one genuinely new dashboard — "My Team" hub, reusing the My Projects card-grid pattern scoped to <code>reports_to</code> descendants instead of PM'd Projects.</p></div>
+<div class="phase-box"><h4>Phase 5 — Top-tier dashboards (7–9)</h4><p style="font-size:.86rem;">Extend/gate the existing Executive Dashboard per tier; design the Board of Directors' lighter-weight (possibly Portal) login.</p></div>
+<div class="phase-box"><h4>Phase 6 — HR parity + combined "My Work" (separate document)</h4><p style="font-size:.86rem;">A dedicated HR-focused follow-up to this document, applying the same Tier framework to <code>scale_hr</code>, plus the cross-app aggregator hub from §9.4.</p></div>
+
+<h2 id="openq">11. Open Questions for the Owner</h2>
+<div class="oq-row"><span class="oq-num">1</span><div><b>Tier count.</b> Is the 9-tier reference ladder in §7.1 right as the generic default, or should it be trimmed/renamed before any client mapping happens against it?</div></div>
+<div class="oq-row"><span class="oq-num">2</span><div><b>Supervisor scope depth.</b> Should Tier 2 see only direct reports, or their full <code>reports_to</code> subtree (matters once a Supervisor has other Supervisors under them)?</div></div>
+<div class="oq-row"><span class="oq-num">3</span><div><b>Board of Directors login type.</b> Full Desk account (simpler, more access than likely needed) vs. a Portal/report-only login (matches the tier's actual need, more build work)?</div></div>
+<div class="oq-row"><span class="oq-num">4</span><div><b>Deployment model.</b> This document assumes one client per bench/deployment (consistent with SVE/IndiTech/Exenity being separate real engagements) — so the Designation-to-Tier map does not need Company-scoping. If a future single-bench-multi-company SaaS model is actually intended, the mapping doctype needs a Company field added now rather than retrofitted later.</div></div>
+<div class="oq-row"><span class="oq-num">5</span><div><b>Sequencing vs. Muhammad's <code>refactor/project-module</code> fork.</b> That branch reimplements the elevated-role check independently in 4 places (§4.3) — should Phase 3's collapse happen before or after that branch is reviewed/merged, to avoid collapsing a version of the logic that's about to be replaced anyway?</div></div>
+
+</body>
+</html>
