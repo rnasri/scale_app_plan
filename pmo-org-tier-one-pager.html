@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Scale — One Login Framework, Every Client's Org Chart</title>
+<style>
+  @page { size: A4 landscape; margin: 10mm 12mm; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Segoe UI", Arial, sans-serif;
+    margin: 0; padding: 0;
+    color: #1e293b;
+    background: #fff;
+  }
+  .sheet { width: 100%; }
+  .head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    border-bottom: 3px solid #1e3a5f; padding-bottom: 6px; margin-bottom: 7px;
+  }
+  .head h1 { font-size: 18px; margin: 0; color: #1e3a5f; letter-spacing: .2px; }
+  .head .tag { font-size: 10px; color: #64748b; font-weight: 600; }
+  .strategy {
+    font-size: 10.4px; line-height: 1.42; color: #334155;
+    background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;
+    padding: 7px 14px; margin-bottom: 8px;
+  }
+  .strategy b { color: #1e3a5f; }
+  table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  th {
+    background: #1e3a5f; color: #fff; font-size: 9.1px; text-transform: uppercase;
+    letter-spacing: .3px; text-align: left; padding: 5px 8px; font-weight: 700;
+  }
+  td {
+    font-size: 9.3px; line-height: 1.3; padding: 4.5px 8px; vertical-align: top;
+    border-bottom: 1px solid #e2e8f0; border-right: 1px solid #eef1f4;
+  }
+  td:last-child, th:last-child { border-right: none; }
+  tr:nth-child(even) td { background: #fafbfc; }
+  .tier-cell { white-space: nowrap; }
+  .tier-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 15px; height: 15px; border-radius: 50%; background: #1e3a5f; color: #fff;
+    font-size: 8px; font-weight: 700; margin-right: 5px;
+  }
+  .tier-name { font-weight: 700; color: #1e3a5f; font-size: 9.8px; }
+  .titles { color: #475569; font-style: italic; }
+  .status-built {
+    display: inline-block; font-size: 7.6px; font-weight: 800; letter-spacing: .3px;
+    color: #065f46; background: #d1fae5; border-radius: 3px; padding: 1px 5px; margin-left: 4px;
+  }
+  .status-planned {
+    display: inline-block; font-size: 7.6px; font-weight: 800; letter-spacing: .3px;
+    color: #92400e; background: #fef3c7; border-radius: 3px; padding: 1px 5px; margin-left: 4px;
+  }
+  .note-row td { background: #eef2ff !important; font-size: 8.6px; color: #3730a3; font-style: italic; }
+  .foot { margin-top: 6px; font-size: 8.2px; color: #94a3b8; display: flex; justify-content: space-between; }
+  col.c1 { width: 12.5%; }
+  col.c2 { width: 15.5%; }
+  col.c3 { width: 13%; }
+  col.c4 { width: 42%; }
+  col.c5 { width: 17%; }
+  @media print {
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <div class="head">
+    <h1>Scale — One Login Framework, Every Client's Org Chart</h1>
+    <span class="tag">Project Management Module &middot; Foundation Overview</span>
+  </div>
+
+  <div class="strategy">
+    <b>Our strategy:</b> Scale is built by extending Frappe/ERPNext — the world's most widely deployed open-source ERP — with our own purpose-built apps, rather than building an ERP from the ground up. Every client organization has a different org chart and different job titles, so instead of customizing the software per client, we are standardizing on <b>nine generic seniority tiers</b>, each with its own purpose-built dashboard. Onboarding a new client becomes a one-time mapping exercise — matching that client's own job titles onto these nine tiers — not new software. The table below shows this worked out in full for Project Management, our first module; the same approach extends next to HR and every other Scale module.
+  </div>
+
+  <table>
+    <colgroup><col class="c1"><col class="c2"><col class="c3"><col class="c4"><col class="c5"></colgroup>
+    <thead>
+      <tr>
+        <th>Tier</th>
+        <th>Typical Client Job Titles</th>
+        <th>Dashboard</th>
+        <th>What They See</th>
+        <th>What They Can Approve</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="tier-cell"><span class="tier-num">1</span><span class="tier-name">Executive</span></td>
+        <td class="titles">Developer, Site Engineer, QA Engineer, Design Engineer, Technician, Associate</td>
+        <td>"My Work" hub <span class="status-built">LIVE</span></td>
+        <td>Their own assigned Tasks across every Project (status, priority, due date — updated inline); a weekly Timesheet grid to log hours; a quick way to raise a Material Request for their Project. Nothing beyond their own work.</td>
+        <td>Nothing — requester only</td>
+      </tr>
+      <tr>
+        <td class="tier-cell"><span class="tier-num">2</span><span class="tier-name">Senior Executive</span></td>
+        <td class="titles">Senior Developer, Site Supervisor, Team Lead, Senior Engineer, Shift Supervisor</td>
+        <td>"My Team" hub <span class="status-planned">PLANNED</span></td>
+        <td>Everything Tier 1 sees for themselves, plus a live view of their direct reports' Tasks and Timesheets — who's overloaded, whose hours are missing, what's overdue — using each employee's own manager already recorded in their HR profile. Nothing outside their own small team.</td>
+        <td>Team's Timesheets &amp; Material Requests</td>
+      </tr>
+      <tr>
+        <td class="tier-cell"><span class="tier-num">3</span><span class="tier-name">Assistant Manager</span></td>
+        <td class="titles">Assistant Manager, Deputy Manager, Project Coordinator</td>
+        <td>"My Team" hub, widened <span class="status-planned">PLANNED</span></td>
+        <td>Same view as Tier 2, but rolled up across every Supervisor's team that reports up to them — several teams side-by-side, not just one.</td>
+        <td>Same categories, wider scope</td>
+      </tr>
+      <tr>
+        <td class="tier-cell"><span class="tier-num">4</span><span class="tier-name">Manager</span></td>
+        <td class="titles">Project Manager, Site Manager, Delivery Manager, Engineering Manager</td>
+        <td>"My Projects" portfolio <span class="status-built">LIVE</span></td>
+        <td>A live, colour-coded (red/amber/green) health status for every Project they run — calculated automatically from real task delays, not self-reported — alongside start/end dates, % complete, and open/overdue task counts per Project. A dedicated Approvals tile surfaces Budget sign-offs, Change Requests, and Timesheet reviews waiting on them, scoped to only the Projects they personally manage. <i>This view already works well today — no gap found; nothing further needed at this tier.</i></td>
+        <td>Project Budget, Change Requests, Timesheet review</td>
+      </tr>
+      <tr>
+        <td class="tier-cell"><span class="tier-num">5</span><span class="tier-name">Senior Manager</span></td>
+        <td class="titles">Senior Manager, Program Manager, Regional Manager</td>
+        <td>Portfolio, rolled up <span class="status-planned">PLANNED</span></td>
+        <td>The same portfolio view as Tier 4, consolidated across every Manager and Project within one function — a "manager of managers" summary rather than one more single-project list.</td>
+        <td>Higher-value approvals</td>
+      </tr>
+      <tr>
+        <td class="tier-cell"><span class="tier-num">6</span><span class="tier-name">AVP</span></td>
+        <td class="titles">AVP, Associate Director, Deputy GM, Head of Delivery</td>
+        <td>Cross-department view <span class="status-planned">PLANNED</span></td>
+        <td>Health, budget, and delivery trend compared side-by-side across every department under them — spotting which department needs attention without opening each one.</td>
+        <td>Value-threshold approvals</td>
+      </tr>
+      <tr>
+        <td class="tier-cell"><span class="tier-num">7</span><span class="tier-name">VP</span></td>
+        <td class="titles">VP, Director, General Manager, Head of Operations</td>
+        <td>Executive Dashboard <span class="status-built">LIVE (broadened)</span></td>
+        <td>Company-wide operational numbers for every department at a glance, plus an escalation queue for issues that couldn't be resolved lower down. A working, decision-making view — not just a report.</td>
+        <td>Escalations</td>
+      </tr>
+      <tr>
+        <td class="tier-cell"><span class="tier-num">8</span><span class="tier-name">President / C-Suite</span></td>
+        <td class="titles">President, CEO, COO, CFO, CTO, Managing Director</td>
+        <td>Executive Dashboard, trimmed <span class="status-planned">PLANNED</span></td>
+        <td>Company-wide strategic summary only — revenue, delivery health, and risk at a glance. Deliberately no task-level or project-level detail to click into — built by simplifying the Manager/VP views down, not adding anything new.</td>
+        <td>Strategic sign-off only</td>
+      </tr>
+      <tr>
+        <td class="tier-cell"><span class="tier-num">9</span><span class="tier-name">Board of Directors</span></td>
+        <td class="titles">Board Members, Promoters, Chairman</td>
+        <td>Governance scorecard <span class="status-planned">PLANNED</span></td>
+        <td>The lightest view in the system — a quarterly, portfolio-level scorecard for board meetings. No day-to-day operational access at all; likely a simpler, read-only login rather than the full system.</td>
+        <td>None operational</td>
+      </tr>
+      <tr class="note-row">
+        <td colspan="5">Job titles above are illustrative examples, not a fixed list — at client onboarding, we map that client's <i>actual</i> job titles onto these nine tiers once. Tiers 1 and 4 are already built and live today; the rest are the next phase of this same framework. Full technical detail: <i>Scale Org-Tier Framework — Foundation Document</i>.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="foot">
+    <span>AIWS ERP &middot; Scale Project Management Module</span>
+    <span>6 September 2026</span>
+  </div>
+
+</div>
+</body>
+</html>
