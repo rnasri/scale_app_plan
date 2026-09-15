@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HVAC Demo — Meridian Grand Chiller Plant | AIWS ERP</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.story-hero { background:linear-gradient(135deg,#0e7490,#1e3a5f); color:#fff; border-radius:14px; padding:32px 36px; margin-bottom:26px; }
+.story-hero .eyebrow { font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:.6px; opacity:.85; margin-bottom:8px; }
+.story-hero h1 { color:#fff; margin:0 0 12px; font-size:1.7rem; }
+.story-hero p { color:rgba(255,255,255,.9); max-width:820px; font-size:.98rem; line-height:1.6; margin:0; }
+
+.chapter { border:1px solid #e5e7eb; border-radius:12px; padding:22px 26px; margin-bottom:20px; }
+.chapter h2 { margin-top:0; font-size:1.15rem; display:flex; align-items:center; gap:10px; }
+.chapter .ch-badge { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; color:#fff; font-size:.85rem; font-weight:700; flex-shrink:0; }
+.chapter p { line-height:1.65; }
+.chapter .real-record { display:inline-block; background:#f3f4f6; border:1px solid #e5e7eb; border-radius:5px; padding:1px 8px; font-family:monospace; font-size:.82rem; color:#1e3a5f; }
+
+.mindmap-wrap { border:1px solid #e5e7eb; border-radius:14px; padding:20px; background:#fafafa; overflow-x:auto; margin-bottom:26px; }
+.mindmap-wrap svg { display:block; margin:0 auto; min-width:900px; }
+
+.click-path { counter-reset: step; }
+.click-path li { list-style:none; counter-increment: step; position:relative; padding:10px 0 10px 42px; border-bottom:1px solid #f3f4f6; }
+.click-path li:last-child { border-bottom:none; }
+.click-path li::before { content: counter(step); position:absolute; left:0; top:8px; width:26px; height:26px; border-radius:50%; background:var(--navy); color:#fff; font-size:.78rem; font-weight:700; display:flex; align-items:center; justify-content:center; }
+.click-path b { color:var(--navy); }
+.click-path code { background:#f3f4f6; padding:1px 6px; border-radius:4px; font-size:.85rem; }
+
+.cmd-block { background:var(--navy-dark); color:#e2e8f0; border-radius:10px; padding:16px 20px; font-family:monospace; font-size:.85rem; line-height:1.9; overflow-x:auto; margin:14px 0; white-space:pre-wrap; }
+.cmd-block .cmt { color:#94a3b8; }
+.cmd-block .num { color:#fbbf24; font-weight:700; }
+
+.record-link { text-decoration:none; }
+.record-link:hover .real-record { background:#e0e7ff; border-color:#a5b4fc; }
+.inline-open { display:inline-flex; align-items:center; gap:3px; background:#eef2ff; border:1px solid #c7d2fe; border-radius:5px; padding:1px 8px; font-size:.78rem; font-family:monospace; color:#3730a3; text-decoration:none; white-space:nowrap; }
+.inline-open:hover { background:#e0e7ff; border-color:#a5b4fc; }
+.mindmap-wrap a { cursor:pointer; }
+.mindmap-wrap a:hover rect, .mindmap-wrap a:hover circle { stroke-width:2.5; }
+
+.workflow-steps { display:flex; align-items:center; gap:2px; margin:16px 0; flex-wrap:wrap; }
+.wf-step { flex:1; min-width:95px; text-align:center; padding:10px 6px; border-radius:8px; font-size:.75rem; font-weight:700; }
+.wf-arrow { color:#9ca3af; font-size:1.1rem; padding:0 2px; }
+
+.bar-compare { margin:14px 0; }
+.bar-row { display:flex; align-items:center; gap:10px; margin-bottom:7px; }
+.bar-row .bar-label { width:150px; font-size:.78rem; font-weight:600; color:#374151; flex-shrink:0; text-align:right; }
+.bar-track { flex:1; height:20px; background:#f3f4f6; border-radius:5px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:5px; display:flex; align-items:center; justify-content:flex-end; padding-right:8px; font-size:.7rem; font-weight:700; color:#fff; white-space:nowrap; }
+
+.gap-note { border:2px dashed #f59e0b; background:#fffbeb; border-radius:10px; padding:16px 20px; margin:14px 0; }
+.gap-note h4 { margin:0 0 8px; color:#92400e; font-size:.95rem; }
+.gap-note p { margin:0 0 8px; font-size:.88rem; color:#78350f; }
+.gap-note p:last-child { margin-bottom:0; }
+
+.ok-note { border:2px solid #6ee7b7; background:#ecfdf5; border-radius:10px; padding:16px 20px; margin:14px 0; }
+.ok-note h4 { margin:0 0 8px; color:#065f46; font-size:.95rem; }
+.ok-note p { margin:0; font-size:.88rem; color:#065f46; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="s-title">AIWS ERP</div>
+    <div class="s-sub">Implementation Master Plan</div>
+    <span class="s-tag">Claude / implementation</span>
+  </div>
+  <nav>
+    <div class="nav-group">📋 Daily Update</div>
+    <a class="nav-link" href="index.html">Development Dashboard 🔴</a>
+
+    <div class="nav-group">🎬 Client Demo</div>
+    <a class="nav-link showcase" href="project-demo.html">Project Demo — Connected Story ✨</a>
+    <a class="nav-link showcase active" href="demo2.html">HVAC Demo — Chiller Plant 🆕✨</a>
+
+    <div class="nav-group">Start Here</div>
+    <a class="nav-link" href="program-overview.html">Program Overview</a>
+    <div class="nav-group">✨ Live Showcases</div>
+    <a class="nav-link showcase" href="sales-demo-showcase.html">Sales Showcase ✨</a>
+    <a class="nav-link showcase" href="pmo-demo-showcase.html">PMO Showcase ✨</a>
+    <a class="nav-link showcase" href="hr-demo-showcase.html">HR Showcase ✨</a>
+    <a class="nav-link showcase" href="stores-demo-showcase.html">Stock Showcase ✨</a>
+    <a class="nav-link showcase" href="purchase-demo-showcase.html">Purchase Showcase ✨</a>
+    <a class="nav-link showcase" href="manufacturing-demo-showcase.html">Manufacturing Showcase ✨</a>
+
+    <div class="nav-group">User Manual</div>
+    <a class="nav-link" href="erp-flow-manual.html">ERP Flow &amp; Operations Manual</a>
+    <a class="nav-link" href="pmo-user-manual.html">PMO Working Manual ✨</a>
+
+    <div class="nav-group">Module Plans</div>
+    <a class="nav-link" href="sales-module.html">Sales Module Plan</a>
+    <a class="nav-link" href="hr-module.html">HR Module Plan</a>
+    <a class="nav-link" href="accounts-module.html">Accounts Module Plan</a>
+    <a class="nav-link" href="finance-module.html">Finance Module Plan</a>
+    <a class="nav-link" href="pmo-module.html">PMO Module Plan</a>
+    <a class="nav-link" href="scale-marketing-module.html">Scale Marketing Module Plan</a>
+    <a class="nav-link" href="stores-module.html">Stores Module Plan</a>
+    <a class="nav-link" href="purchase-module.html">Purchase &amp; Procurement Module Plan</a>
+    <a class="nav-link" href="manufacturing-module.html">Manufacturing Module Plan</a>
+
+    <div class="nav-group">Foundation</div>
+    <a class="nav-link" href="frappe-verdict.html">Frappe Capability</a>
+    <a class="nav-link" href="architecture.html">System Architecture</a>
+
+    <div class="nav-group">Development Framework</div>
+    <a class="nav-link" href="customization-guide.html">Customization Guide</a>
+    <a class="nav-link" href="developer-guide.html">Developer Workflow</a>
+
+    <div class="nav-group">Implementation</div>
+    <a class="nav-link" href="module-plan.html">All 13 Modules</a>
+    <a class="nav-link" href="sprint-plan.html">Parallel Sprint Plan</a>
+    <a class="nav-link" href="wave-1.html">Sales &amp; Marketing Detail</a>
+
+    <div class="nav-group">AI Strategy</div>
+    <a class="nav-link" href="ai-plan-strategy.html">AI Plan Strategy</a>
+
+    <div class="nav-group">Tracking</div>
+    <a class="nav-link" href="sales-tracker.html">Sales Tracker</a>
+  </nav>
+  <div class="sidebar-foot">Pixaflip × SIL · AIWS ERP<br><a href="../../index.html">← AIWS Setup portal</a></div>
+</aside>
+
+<main>
+<div class="breadcrumb">AIWS ERP <span>›</span> HVAC Demo</div>
+
+<div class="story-hero">
+  <div class="eyebrow">🎬 Client Demo Story · starts from a real Sales Lead</div>
+  <h1>Meridian Hospitality Group — Central Chiller Plant, Meridian Grand Pune</h1>
+  <p>A second connected-project story, deliberately different from the existing <a href="project-demo.html" style="color:#fff;text-decoration:underline;">Apex Manufacturing demo</a> in one important way: this one starts from a cold <b>Sales Lead</b>, not an existing customer, and walks the entire real chain — Lead → Quotation → the Lead genuinely converting into a Customer → Sales Order → a Project created <i>from</i> that Sales Order → a genuine stock shortage → Material Request → Purchase Order approvals → Manufacturing. Every record below is real and live on this bench.</p>
+</div>
+
+<div class="chapter">
+  <h2><span class="ch-badge" style="background:#0e7490;">1</span> The Story</h2>
+  <p><b>Meridian Hospitality Group</b> is opening a new hotel, <b>Meridian Grand, Pune</b>, and needs a central chiller plant for the building. Their VP Facilities &amp; Engineering, <b>Ritika Shah</b>, met AIWS Technologies at an HVAC/MEP trade exhibition and asked for a quote. That's a cold Lead — not yet a customer, not yet in the system as anything more than a name and a need.</p>
+  <p>Fulfilling the order that follows touches the same modules as any real project: Sales books and wins the deal, PMO runs it with a real team and a real kickoff, Manufacturing builds the chiller against a Bill of Materials and discovers a genuine shortfall, Purchase closes that shortfall through a proper multi-step approval, and Stock's own baseline receipt is what makes the shortfall real rather than staged.</p>
+  <p>Everything is tagged to one Project — <a class="record-link" href="http://scale.localhost:8000/app/project/PROJ-0076" target="_blank"><span class="real-record">PROJ-0076 · Meridian Grand Hotel — Central Chiller Plant</span></a> — reachable end-to-end from its own Connections tab, the same native mechanism the Apex Manufacturing demo already relies on.</p>
+</div>
+
+<div class="chapter">
+  <h2><span class="ch-badge" style="background:#2563eb;">2</span> The Flow, Module by Module</h2>
+  <p><b>Sales.</b> A real Lead is created for Meridian Hospitality Group, converted to an Opportunity, and quoted — the Quotation is raised directly <i>against the Lead</i> (not a Customer, because none exists yet), with 3 real line items: 2× Air Cooled Screw Chiller (the item that gets a BOM and drives everything downstream), 6× a smaller Ductable Split AC unit (kept fully in stock on purpose — the contrast case that needs no purchasing at all), and a lump-sum HVAC Installation &amp; Commissioning Services line. The Quotation is walked through Sales' own discount-approval workflow to Approved, and converting it into a Sales Order is the exact moment Scale's own native code turns the Lead into a real Customer record — nothing scripted around it, that's the actual mechanism.</p>
+  <p><b>PMO.</b> The Project isn't created first this time — it's created <i>from</i> the Sales Order, using a native Scale mapper that the earlier Apex demo never exercised (that one built its Project before its Sales Order). It's then given a real Project Manager (Rohan Kapoor), a 5-person team cast into HVAC-appropriate roles for this one project, a Kickoff Checklist walked to <b>PMO Approved</b>, 6 real Tasks (Site Survey through Client Handover) each assigned to a specific team member, a Project Risk about the compressor vendor's lead time — linked directly to the real Supplier record, not just typed as a label — and 3 Budget Forecast Snapshots (Best/Expected/Worst case).</p>
+  <p><b>Stock.</b> A deliberately partial raw-material receipt exists before Manufacturing ever runs — enough Compressor/Coil/Casing/Control Panel/Fan Motor/Refrigerant stock for exactly <b>1 of the 2</b> chillers ordered, so the shortfall Manufacturing's MRP engine finds for the second unit is real, not staged. The Split AC units, by contrast, are received in full — no shortage, nothing for Purchase to do there.</p>
+  <p><b>Manufacturing.</b> A real Bill of Materials is built for the chiller (7 raw materials, 1 assembly operation). A Production Plan pulls the Sales Order's 2-chiller requirement through Scale's own native MRP engine, nets it against the genuinely partial Stock baseline, and computes an exact 1-unit shortfall — not a round number picked in advance. A Work Order for both chillers is raised and submitted, which automatically creates its own Job Card, logged with a real Time Log.</p>
+  <p><b>Purchase.</b> The MRP-generated Material Request — tagged to the Project via the schema field PR #63 added just this week (its very first real use anywhere) — is converted into a Purchase Order against Precision Components India, an existing real supplier. Its value (₹5,77,600) deliberately clears the ₹5,00,000 approval threshold, so it walks the <i>fuller</i> branch of Purchase's own approval workflow — Submit → Approve → Forward to Management → Approve — rather than the shorter direct-approve path the Apex demo's own Purchase Order used. A full Goods Receipt then closes the shortage.</p>
+</div>
+
+<div class="mindmap-wrap">
+<svg viewBox="0 0 1000 620" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mind map of the Meridian Grand chiller plant project across modules">
+  <defs>
+    <marker id="arrow2" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#94a3b8"/></marker>
+  </defs>
+
+  <line x1="500" y1="300" x2="500" y2="115" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="500" y1="300" x2="200" y2="160" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="500" y1="300" x2="800" y2="160" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="500" y1="300" x2="200" y2="470" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="500" y1="300" x2="800" y2="470" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="500" y1="300" x2="500" y2="560" stroke="#f9a8d4" stroke-width="2" stroke-dasharray="6,4"/>
+
+  <a href="http://scale.localhost:8000/app/project/PROJ-0076" target="_blank">
+  <circle cx="500" cy="300" r="78" fill="#0e7490"/>
+  <text x="500" y="288" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">PROJ-0076</text>
+  <text x="500" y="306" text-anchor="middle" fill="#fff" font-size="10.5">Meridian Grand —</text>
+  <text x="500" y="320" text-anchor="middle" fill="#fff" font-size="10.5">Chiller Plant</text>
+  </a>
+
+  <a href="http://scale.localhost:8000/app/lead/CRM-LEAD-2026-00037" target="_blank">
+  <rect x="400" y="35" width="200" height="80" rx="12" fill="#eef2ff" stroke="#4338ca" stroke-width="1.5"/>
+  <text x="500" y="57" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4338ca">Sales — starts here</text>
+  <text x="500" y="75" text-anchor="middle" font-size="10.5" fill="#3730a3">Lead → Opportunity → Quotation</text>
+  <text x="500" y="89" text-anchor="middle" font-size="10.5" fill="#3730a3">→ Sales Order (Lead becomes Customer)</text>
+  <text x="500" y="103" text-anchor="middle" font-size="10.5" fill="#3730a3">₹41,67,760 · 3 line items</text>
+  </a>
+
+  <a href="http://scale.localhost:8000/app/project/PROJ-0076" target="_blank">
+  <rect x="90" y="120" width="215" height="80" rx="12" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="197" y="142" text-anchor="middle" font-size="12.5" font-weight="700" fill="#6d28d9">PMO</text>
+  <text x="197" y="160" text-anchor="middle" font-size="10.5" fill="#5b21b6">Project created FROM the SO</text>
+  <text x="197" y="174" text-anchor="middle" font-size="10.5" fill="#5b21b6">6 Tasks · Kickoff Approved</text>
+  <text x="197" y="188" text-anchor="middle" font-size="10.5" fill="#5b21b6">PM: Rohan Kapoor · 5-person team</text>
+  </a>
+
+  <a href="http://scale.localhost:8000/app/stock-entry" target="_blank">
+  <rect x="695" y="120" width="215" height="80" rx="12" fill="#ecfeff" stroke="#0891b2" stroke-width="1.5"/>
+  <text x="802" y="142" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0e7490">Stock</text>
+  <text x="802" y="160" text-anchor="middle" font-size="10.5" fill="#155e75">Baseline covers 1 of 2 chillers</text>
+  <text x="802" y="174" text-anchor="middle" font-size="10.5" fill="#155e75">Split AC: fully stocked, no gap</text>
+  <text x="802" y="188" text-anchor="middle" font-size="10.5" fill="#155e75">— the deliberate contrast case</text>
+  </a>
+
+  <a href="http://scale.localhost:8000/app/work-order/MFG-WO-2026-00002" target="_blank">
+  <rect x="90" y="430" width="220" height="80" rx="12" fill="#fdf2f8" stroke="#db2777" stroke-width="1.5"/>
+  <text x="200" y="452" text-anchor="middle" font-size="12.5" font-weight="700" fill="#be185d">Manufacturing</text>
+  <text x="200" y="470" text-anchor="middle" font-size="10.5" fill="#9d174d">BOM → Production Plan (MRP)</text>
+  <text x="200" y="484" text-anchor="middle" font-size="10.5" fill="#9d174d">Genuine 1-unit shortfall computed</text>
+  <text x="200" y="498" text-anchor="middle" font-size="10.5" fill="#9d174d">Work Order → Job Card</text>
+  </a>
+
+  <a href="http://scale.localhost:8000/app/purchase-order/PUR-ORD-2026-00070" target="_blank">
+  <rect x="690" y="425" width="235" height="90" rx="12" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+  <text x="807" y="447" text-anchor="middle" font-size="12.5" font-weight="700" fill="#b45309">Purchase</text>
+  <text x="807" y="465" text-anchor="middle" font-size="10.5" fill="#92400e">Material Request → PO → GRN</text>
+  <text x="807" y="479" text-anchor="middle" font-size="10.5" fill="#92400e">₹5,77,600 · full Management-review path</text>
+  <text x="807" y="493" text-anchor="middle" font-size="10.5" fill="#92400e">Supplier: Precision Components India</text>
+  <text x="807" y="507" text-anchor="middle" font-size="10.5" fill="#92400e">pmo_project field — first real use</text>
+  </a>
+
+  <a href="http://scale.localhost:8000/app/project/PROJ-0076" target="_blank">
+  <rect x="395" y="560" width="210" height="50" rx="12" fill="#f0fdfa" stroke="#0d9488" stroke-width="1.5"/>
+  <text x="500" y="580" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0f766e">HR — the team</text>
+  <text x="500" y="598" text-anchor="middle" font-size="10.5" fill="#134e4a">Rohan · Arjun · Karan · Ananya · Vikram</text>
+  </a>
+</svg>
+</div>
+
+<div class="chapter">
+  <h2><span class="ch-badge" style="background:#059669;">3</span> Project Walkthrough</h2>
+  <p>Everything below is real, clickable, and already seeded on this bench. Follow it in order — it's the same order the data was actually built in:</p>
+  <ol class="click-path">
+    <li>Open the <a class="inline-open" href="http://scale.localhost:8000/app/lead/CRM-LEAD-2026-00037" target="_blank">Lead →</a> — Meridian Hospitality Group, contact Ritika Shah, source Exhibition. Status now shows <b>Converted</b>.</li>
+    <li>Open the <a class="inline-open" href="http://scale.localhost:8000/app/opportunity/CRM-OPP-2026-00006" target="_blank">Opportunity →</a> — the qualifying step between the raw Lead and the priced Quotation.</li>
+    <li>Open the <a class="inline-open" href="http://scale.localhost:8000/app/quotation/SAL-QTN-2026-00006" target="_blank">Quotation →</a> — note <code>Quotation To</code> is set to <b>Lead</b>, not Customer (none existed yet), and the workflow state reads <b>Approved</b>.</li>
+    <li>Open the <a class="inline-open" href="http://scale.localhost:8000/app/sales-order/SAL-ORD-2026-00004" target="_blank">Sales Order →</a> — customer is <a class="inline-open" href="http://scale.localhost:8000/app/customer/Meridian Hospitality Group" target="_blank">Meridian Hospitality Group</a>, a real Customer record that didn't exist until this Sales Order was created — that's the Lead-to-Customer conversion, not a separate manual step.</li>
+    <li>Open the <a class="inline-open" href="http://scale.localhost:8000/app/project/PROJ-0076" target="_blank">Project →</a> — <code>Sales Order</code> field points straight back to step 4; this Project didn't exist before that Sales Order was submitted. Note the <b>PMO Approved</b> workflow state, <b>Project Manager</b> (Rohan Kapoor), <b>Client Tier</b> (Key), and the <b>Contract/SLA Terms Summary</b> — all fields Issue #62 added this week, filled with real text here for the first time.</li>
+    <li>On the Project, scroll to <b>Users</b> (5-person team) and <b>Tasks</b> — 6 real Tasks, each already assigned to a specific person via the standard "Assigned To" mechanism, not just listed.</li>
+    <li>Open the <a class="inline-open" href="http://scale.localhost:8000/app/project-risk/RISK-00270" target="_blank">Project Risk →</a> — category Vendor, with the <b>Vendor</b> field linked directly to <a class="inline-open" href="http://scale.localhost:8000/app/supplier/Precision Components India" target="_blank">Precision Components India</a> — the Issue #62 field that used to be just a text label, now a real link.</li>
+    <li>Open one of the <a class="inline-open" href="http://scale.localhost:8000/app/pmo-budget-forecast-snapshot" target="_blank">Budget Forecast Snapshots →</a> — 3 rows (Best/Expected/Worst Case), the first real data this new Issue #62 doctype has ever held.</li>
+    <li>Open the <a class="inline-open" href="http://scale.localhost:8000/app/bom/BOM-HVAC-CHIL-50TR-001" target="_blank">BOM →</a> — 7 raw materials for 1 chiller: Compressor, Condenser Coil, Evaporator Coil, Refrigerant, Casing, Control Panel, 2× Fan Motor.</li>
+    <li>Open the <a class="inline-open" href="http://scale.localhost:8000/app/material-request/MAT-MR-2026-00063" target="_blank">Material Request →</a> — computed by Scale's own native MRP engine against the Sales Order's 2-chiller requirement, netted against Stock's genuinely partial baseline. The quantities here are exactly 1 unit's worth of each raw material — not the full 2, because 1 unit's worth was already in stock. Note the <b>Project</b> field near the top of the form — the Issue #62 <code>pmo_project</code> field, its first real use anywhere in this codebase.</li>
+    <li>Open the <a class="inline-open" href="http://scale.localhost:8000/app/purchase-order/PUR-ORD-2026-00070" target="_blank">Purchase Order →</a> — supplier Precision Components India, workflow state <b>Approved</b>, grand total <b>₹5,77,600</b> — deliberately over the ₹5,00,000 threshold, so this PO walked the full Submit → Approve → <b>Forward to Management</b> → Approve chain, not the shorter path.</li>
+    <li>From the Purchase Order's own Connections tab, open the <a class="inline-open" href="http://scale.localhost:8000/app/purchase-receipt/PR-26-00003" target="_blank">Goods Receipt →</a> — fully received, closing the shortage this walkthrough started with.</li>
+    <li>Open the <a class="inline-open" href="http://scale.localhost:8000/app/work-order/MFG-WO-2026-00002" target="_blank">Work Order →</a> — 2 chillers, tagged to both the Project and the Sales Order — then its own Connections tab to reach the <a class="inline-open" href="http://scale.localhost:8000/app/job-card/PO-JOB00005" target="_blank">Job Card →</a>, with a real Time Log against the site engineer.</li>
+    <li>Close the loop back at the <a class="inline-open" href="http://scale.localhost:8000/app/project/PROJ-0076" target="_blank">Project →</a> Connections tab — every record above is reachable from that one screen.</li>
+  </ol>
+</div>
+
+<div class="chapter">
+  <h2><span class="ch-badge" style="background:#7c3aed;">4</span> The Approvals, In One View</h2>
+  <p>Every workflow-gated document in this story was walked to a genuine <b>Approved</b> state through its real workflow transitions (never a manual field edit) — the Purchase Order's chain is longer than the Apex demo's own PO on purpose, to show the fuller branch:</p>
+  <div class="workflow-steps">
+    <div class="wf-step" style="background:#f3f4f6;color:#374151;">📝 Draft</div>
+    <span class="wf-arrow">→</span>
+    <div class="wf-step" style="background:#fef3c7;color:#92400e;">⏳ Pending Purchase Review</div>
+    <span class="wf-arrow">→</span>
+    <div class="wf-step" style="background:#fef3c7;color:#92400e;">⏳ Pending Finance Review</div>
+    <span class="wf-arrow">→</span>
+    <div class="wf-step" style="background:#fde68a;color:#92400e;">📤 Forward to Management</div>
+    <span class="wf-arrow">→</span>
+    <div class="wf-step" style="background:#d1fae5;color:#065f46;">✅ Approved</div>
+  </div>
+  <p style="font-size:.85rem;color:#6b7280;margin-top:-6px;">Purchase Order PUR-ORD-2026-00070 — ₹5,77,600, above the ₹5,00,000 threshold that decides whether Finance can approve directly or must forward to Management.</p>
+  <div class="bar-compare">
+    <div class="bar-row"><span class="bar-label">Quotation</span><div class="bar-track"><div class="bar-fill" style="width:100%;background:#2563eb;">Approved (discount-approval workflow)</div></div></div>
+    <div class="bar-row"><span class="bar-label">Project — Kickoff</span><div class="bar-track"><div class="bar-fill" style="width:100%;background:#7c3aed;">PMO Approved</div></div></div>
+    <div class="bar-row"><span class="bar-label">Material Request</span><div class="bar-track"><div class="bar-fill" style="width:100%;background:#0891b2;">Approved · submitted</div></div></div>
+    <div class="bar-row"><span class="bar-label">Purchase Order</span><div class="bar-track"><div class="bar-fill" style="width:100%;background:#d97706;">Approved · Management-review branch</div></div></div>
+  </div>
+</div>
+
+<div class="chapter">
+  <h2><span class="ch-badge" style="background:#374151;">5</span> How This Was Built</h2>
+  <p>Five small, idempotent seed scripts — one per app, run in this exact order (each depends on data the previous one creates), the same pattern the Apex Manufacturing demo established:</p>
+  <div class="cmd-block">
+<span class="cmt"># Run once, in this exact order</span>
+<span class="num">1.</span> bench --site &lt;site&gt; execute scale_stock.demo_project_seed_hvac.run
+<span class="num">2.</span> bench --site &lt;site&gt; execute scale_sales.demo_project_seed_hvac.run
+<span class="num">3.</span> bench --site &lt;site&gt; execute scale_project_management.demo_project_seed_hvac.run
+<span class="num">4.</span> bench --site &lt;site&gt; execute scale_manufacturing.demo_project_seed_hvac.run
+<span class="num">5.</span> bench --site &lt;site&gt; execute scale_purchase.demo_project_seed_hvac.run
+  </div>
+  <p>Every script checks its own prerequisites and throws a named, actionable error rather than a raw link-validation failure if run out of order; every one is safe to re-run (checked live, several times, during this build). Nothing here changes the schema, adds a doctype, or touches a hook — it's pure data, exercising code that already exists.</p>
+
+  <div class="ok-note">
+    <h4>✅ No blocking code gap found — the connectivity this story relies on already works</h4>
+    <p>Sales Order → Project (native <code>make_project()</code> mapper), Lead → Customer conversion on Sales Order creation, and BOM → Production Plan → native MRP → Material Request → Purchase Order were all confirmed working by actually exercising them, not by reading the code and assuming. Two of Issue #62's brand-new fields (<code>Material Request.pmo_project</code>, <code>Project Risk.vendor</code>) got their first real data anywhere in this codebase as part of this build.</p>
+  </div>
+
+  <div class="gap-note">
+    <h4>⚠️ One real gap found — worth fixing in the existing Apex demo script too</h4>
+    <p>Building the Manufacturing leg surfaced a genuine gap in how <code>Production Plan</code>'s native raw-material calculation actually works, not assumed from documentation: calling <code>get_items()</code> on a Sales-Order-sourced Production Plan only populates the "items to manufacture" table — it does <b>not</b> populate the raw-material requirement table that <code>make_material_request()</code> reads from. That needs a separate, explicit call to <code>get_items_for_material_requests()</code>, plus a <code>for_warehouse</code> field set on the plan so the netting calculation knows which warehouse's stock to check against. Skipping either step doesn't error — it silently either creates nothing, or requests the full gross quantity instead of the genuine shortfall.</p>
+    <p>The existing Apex Manufacturing story's own <code>scale_manufacturing/demo_project_seed.py</code> does not perform this step either. Its Material Request most likely survives today only because it was created once through a real Desk UI session, and that script's own idempotent "does it already exist" check has never re-exercised the creation path since — re-running it from a genuinely empty state would very likely produce <i>zero</i> Material Requests, not the one it currently points at. Worth a small follow-up fix there, mirroring the two-line fix applied in this story's own <code>scale_manufacturing/demo_project_seed_hvac.py</code>.</p>
+  </div>
+</div>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR — LinkedIn Job Posting: Spec, Code Review &amp; Go-Live Guide</title>
+<style>
+  :root{
+    --navy:#1e3a5f; --navy-dark:#152941; --ink:#1f2937; --sub:#6b7280;
+    --line:#e5e7eb; --bg:#f8fafc; --green:#065f46; --green-bg:#d1fae5;
+    --amber:#92400e; --amber-bg:#fef3c7; --blue:#1e40af; --blue-bg:#dbeafe;
+    --red:#991b1b; --red-bg:#fee2e2; --purple:#5b21b6; --purple-bg:#ede9fe;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink); background:#fff; line-height:1.6;
+  }
+  .wrap{max-width:960px; margin:0 auto; padding:0 28px 80px;}
+  header.top{
+    background:linear-gradient(135deg,var(--navy),var(--navy-dark)); color:#fff;
+    padding:36px 28px 30px; margin-bottom:0;
+  }
+  header.top .badge{
+    display:inline-block; font-size:.72rem; font-weight:700; letter-spacing:.04em;
+    text-transform:uppercase; background:rgba(255,255,255,.15); padding:4px 10px;
+    border-radius:4px; margin-bottom:14px;
+  }
+  header.top h1{margin:0 0 8px; font-size:1.6rem;}
+  header.top p{margin:0; opacity:.85; font-size:.92rem; max-width:640px;}
+  .meta-row{display:flex; gap:18px; flex-wrap:wrap; margin-top:16px; font-size:.8rem; opacity:.9;}
+  .meta-row span b{opacity:.7; font-weight:600; margin-right:4px;}
+
+  .standalone-note{
+    background:#fffbeb; border:1px solid #fde68a; color:#78350f; font-size:.82rem;
+    padding:10px 16px; margin:0; text-align:center;
+  }
+
+  h2{font-size:1.15rem; color:var(--navy); margin:40px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--line);}
+  h3{font-size:.98rem; color:var(--navy-dark); margin:26px 0 10px;}
+  p{font-size:.92rem;}
+  code{background:#f1f5f9; padding:1px 6px; border-radius:4px; font-size:.85em; color:#334155;}
+  pre{background:#0f172a; color:#e2e8f0; padding:14px 16px; border-radius:8px; font-size:.8rem; overflow-x:auto; line-height:1.55;}
+  a{color:#1d4ed8;}
+
+  .verdict{
+    display:flex; gap:16px; align-items:flex-start; background:var(--green-bg); border:1px solid #a7f3d0;
+    border-radius:10px; padding:18px 20px; margin:10px 0 24px;
+  }
+  .verdict .icon{font-size:1.6rem; line-height:1;}
+  .verdict h3{margin:0 0 6px; color:var(--green); font-size:1rem;}
+  .verdict p{margin:0; font-size:.88rem; color:#064e3b;}
+
+  table{width:100%; border-collapse:collapse; font-size:.85rem; margin:10px 0 20px;}
+  th,td{border:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top;}
+  th{background:var(--bg); font-weight:700; color:var(--navy);}
+  tr:nth-child(even) td{background:#fafafa;}
+
+  .pill{display:inline-block; font-size:.72rem; font-weight:700; padding:2px 9px; border-radius:999px;}
+  .p-done{background:var(--green-bg); color:var(--green);}
+  .p-stub{background:var(--amber-bg); color:var(--amber);}
+  .p-gap{background:var(--red-bg); color:var(--red);}
+  .p-ext{background:var(--purple-bg); color:var(--purple);}
+
+  .card{border:1px solid var(--line); border-radius:10px; padding:16px 20px; margin-bottom:14px;}
+  .card h4{margin:0 0 8px; font-size:.93rem; color:var(--navy-dark);}
+  .card.opt-a{border-left:4px solid var(--green);}
+  .card.opt-b{border-left:4px solid var(--blue);}
+  .card.opt-c{border-left:4px solid var(--amber);}
+
+  .flow{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:14px 0 20px; font-size:.82rem;}
+  .flow .step{background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:8px 12px; font-weight:600; color:var(--navy-dark);}
+  .flow .arrow{color:var(--sub); font-weight:700;}
+
+  .callout{border-radius:8px; padding:12px 16px; font-size:.85rem; margin:14px 0;}
+  .callout.info{background:#f0f9ff; border:1px solid #bae6fd; color:#075985;}
+  .callout.warn{background:var(--amber-bg); border:1px solid #fcd34d; color:var(--amber);}
+  .callout.crit{background:var(--red-bg); border:1px solid #fca5a5; color:var(--red);}
+  .callout strong{display:block; margin-bottom:4px;}
+
+  .filepath{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.8rem; color:#334155; background:#f1f5f9; padding:1px 6px; border-radius:4px;}
+
+  ol.steps li, ul.steps li{font-size:.88rem; margin-bottom:8px;}
+  .checklist{list-style:none; padding:0; margin:10px 0;}
+  .checklist li{font-size:.87rem; padding:6px 0 6px 26px; position:relative; border-bottom:1px dashed var(--line);}
+  .checklist li:last-child{border-bottom:none;}
+  .checklist li::before{content:"☐"; position:absolute; left:0; color:var(--sub);}
+
+  footer{margin-top:50px; padding-top:16px; border-top:1px solid var(--line); font-size:.78rem; color:var(--sub);}
+</style>
+</head>
+<body>
+
+<div class="standalone-note">Standalone reference file — not linked from the implementation site index, not tracked in git. Safe to move/delete freely.</div>
+
+<header class="top">
+  <div class="wrap" style="padding:0;">
+    <span class="badge">Scale HR · Recruitment · Phase H3</span>
+    <h1>LinkedIn Job Posting — Specification, Code Review &amp; Go-Live Guide</h1>
+    <p>What Vandana built, whether it's correct, and exactly what's needed from LinkedIn's side to take "Publish to LinkedIn" from mock to real — including a test path that needs no API access at all.</p>
+    <div class="meta-row">
+      <span><b>App</b> scale_hr</span>
+      <span><b>Branch</b> main (merged, PR #43)</span>
+      <span><b>Author</b> VandanaD</span>
+      <span><b>Commits</b> 368bf2e, 1ffc477</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<div class="verdict">
+  <div class="icon">✅</div>
+  <div>
+    <h3>Short answer: yes, Vandana's work is correct — for what it was scoped to do.</h3>
+    <p>It is a complete, well-structured <b>mock-first connector</b> for LinkedIn job posting, already merged to <code>main</code>. The mock path (Settings → Test Connection → Publish → Close) is fully functional and has passing smoke tests. The <b>live HTTP path to LinkedIn is intentionally stubbed</b> — by design, not by omission — because real LinkedIn API access requires a business step (below) that has nothing to do with code quality.</p>
+  </div>
+</div>
+
+<h2>1 · What exists today</h2>
+
+<table>
+<tr><th style="width:30%">Piece</th><th>File</th><th style="width:14%">Status</th></tr>
+<tr>
+  <td>Settings DocType (single) — enable/disable, mock toggle, Client ID/Secret, Company URN, apply-URL mode</td>
+  <td class="filepath">scale_hr/doctype/scale_hr_linkedin_settings/*</td>
+  <td><span class="pill p-done">Done</span></td>
+</tr>
+<tr>
+  <td>Connector abstraction (shared protocol: health_check / publish / close) so LinkedIn, Naukri, Indeed can share one shape</td>
+  <td class="filepath">scale_hr/connectors/base.py</td>
+  <td><span class="pill p-done">Done</span></td>
+</tr>
+<tr>
+  <td>LinkedIn connector — payload builder, apply-URL resolution, secret-sanitizing error handling, mock publish/close</td>
+  <td class="filepath">scale_hr/connectors/linkedin_jobs.py</td>
+  <td><span class="pill p-done">Done (mock)</span></td>
+</tr>
+<tr>
+  <td>Live LinkedIn HTTP (OAuth token exchange, real Talent API publish/close)</td>
+  <td class="filepath">linkedin_jobs.py → _live_token_stub / _live_publish_stub / _live_close_stub</td>
+  <td><span class="pill p-stub">Stub — no outbound HTTP</span></td>
+</tr>
+<tr>
+  <td>Whitelisted Desk APIs — <code>test_linkedin_connection</code>, <code>publish_to_linkedin</code>, <code>close_linkedin_posting</code>, plus the channel-agnostic manual flow</td>
+  <td class="filepath">scale_hr/job_posting.py</td>
+  <td><span class="pill p-done">Done</span></td>
+</tr>
+<tr>
+  <td>Job Opening UI — per-channel cards (LinkedIn / Naukri / Indeed) with Publish / View / Close, status table</td>
+  <td class="filepath">public/js/job_opening_posting.js</td>
+  <td><span class="pill p-done">Done</span></td>
+</tr>
+<tr>
+  <td>Smoke tests (Phase H3 Steps 0–5) + TESTING.md Part R manual walkthrough</td>
+  <td class="filepath">scale_hr/smoke/recruitment_h3_step0..5.py</td>
+  <td><span class="pill p-done">Done, passing</span></td>
+</tr>
+<tr>
+  <td>Real LinkedIn Talent Job Posting HTTP call</td>
+  <td>—</td>
+  <td><span class="pill p-gap">Not started — needs partner access first</span></td>
+</tr>
+</table>
+
+<h3>Correctness details worth calling out (the good design decisions)</h3>
+<ul class="steps">
+  <li><b>Never fakes success.</b> <code>publish_to_linkedin()</code> only sets status <code>Posted</code> if the connector actually returns <code>ok=True</code>; on failure it writes to <code>error_log</code> and sets <code>Failed</code>. This is verified by smoke test R5 (failure path).</li>
+  <li><b>Secrets never reach the Desk or logs.</b> <code>sanitize_connector_error()</code> regex-strips <code>client_secret</code>/<code>access_token</code>/<code>Bearer …</code> patterns before any message is shown or saved, and <code>client_secret</code> is stored via Frappe's <code>Password</code> fieldtype (encrypted at rest).</li>
+  <li><b>Validation happens at both layers.</b> The Settings doctype's <code>validate()</code> and the connector's <code>_require_live_credentials()</code> both check for Client ID / Company URN / Client Secret before allowing live mode — belt-and-braces against a half-configured Settings record slipping through.</li>
+  <li><b>Mock is the safe default.</b> <code>use_mock</code> defaults to <code>1</code> and mock publish doesn't require <code>enabled</code> — so a developer can demo the whole flow without ever touching real credentials.</li>
+  <li><b>Manual fallback already exists for every channel</b> (<code>mark_posted_manual</code>), independent of any API — this becomes the key to the real-account test in §3.</li>
+</ul>
+
+<h2>2 · Why "live" is a stub — this is a partnership problem, not a code problem</h2>
+
+<div class="callout crit">
+<strong>The core fact to internalize before planning next steps:</strong>
+LinkedIn's Job Posting / Talent Solutions API is <b>not self-service</b>. Creating a LinkedIn Developer App (which gives you the Client ID/Secret the Settings doctype already has fields for) only gets you Sign-In/basic-profile-scope access. The <b>Job Posting product itself has to be explicitly granted to your app by LinkedIn's Talent Solutions partner team</b> — there is no "enable this API" toggle a developer can flip on their own, and no public sandbox/trial tier for it.
+</div>
+
+<h3>What LinkedIn actually requires to post jobs via API</h3>
+<ol class="steps">
+  <li><b>A LinkedIn Company Page</b> for Pixaflip / SIL / the JV entity — required before anything else; the Company URN field in Settings (<code>urn:li:organization:123456</code>) is this page's ID.</li>
+  <li><b>A LinkedIn Developer App</b> at <code>developer.linkedin.com</code> — free, self-serve, gives Client ID + Client Secret. Anyone can create one today; this alone unlocks nothing job-posting-related.</li>
+  <li><b>Apply for the relevant Talent Solutions program.</b> In practice this is one of:
+    <ul>
+      <li><b>Limited Listings / Job Posting API</b> — LinkedIn's program for ATS/job-board software vendors to push job postings programmatically. Requires a formal partnership application, business verification (you're a real HR-tech vendor, not an individual), and LinkedIn's technical + business review.</li>
+      <li><b>Recruiter System Connect (RSC)</b> — the deeper integration tier (also surfaces applicant data back into the ATS), for vendors integrating at real scale with LinkedIn Recruiter/Jobs.</li>
+    </ul>
+    Either path is a business-development conversation with LinkedIn, not a config change — expect weeks-to-months, NDAs/agreements, and LinkedIn deciding whether Pixaflip/SIL's product qualifies as a partner-worthy ATS.
+  </li>
+  <li><b>Volume/commercial terms</b> — LinkedIn's job-posting partnerships are typically volume- or fee-based (job-slot credits, sponsored budget passthrough, or a revenue-share model depending on program), not a flat "$X/month for API access" price you can just look up.</li>
+</ol>
+
+<div class="callout warn">
+<strong>What this means for "can we create a test account to demonstrate":</strong>
+Not in the sense of an API sandbox — LinkedIn doesn't offer one for this product. There's no equivalent of Stripe/PayPal test-mode keys here. Any "test" of the <i>real API path</i> requires the same partner approval as production. That approval is the actual blocker, not credentials, not code.
+</div>
+
+<h2>3 · What you can demonstrate for real, today, with zero LinkedIn partnership</h2>
+
+<p>The good news: the app already has a fully-working answer for this, because Vandana (correctly) built a channel-agnostic manual path alongside the API path. You can produce a genuine, live LinkedIn job posting linked into Scale HR's tracker today:</p>
+
+<div class="flow">
+  <div class="step">1. Real LinkedIn account/page</div><div class="arrow">→</div>
+  <div class="step">2. Post job manually (linkedin.com/post-job)</div><div class="arrow">→</div>
+  <div class="step">3. Copy the live job URL</div><div class="arrow">→</div>
+  <div class="step">4. Job Opening → LinkedIn card → Publish → paste URL</div><div class="arrow">→</div>
+  <div class="step">5. Status = Posted, Mode = Manual</div>
+</div>
+
+<div class="card opt-a">
+<h4>Option A — Manual-tracked real posting (recommended for the demo you're describing)</h4>
+<p>Use any real LinkedIn account (personal, or the Pixaflip/SIL company page if it exists) and LinkedIn's own free "Post a job" flow — no developer access needed, anyone can do this today. Take the resulting live LinkedIn job URL and feed it into Scale HR's existing manual flow (already built, this is exactly Part Q in <code>TESTING.md</code>, which the LinkedIn card's Publish dialog already supports for non-API confirmation). Result: a <b>real, live, publicly visible LinkedIn job posting</b>, tracked end-to-end in Scale HR, with zero code changes and zero partnership wait.</p>
+</div>
+
+<div class="card opt-b">
+<h4>Option B — Mock path only (what's already tested)</h4>
+<p>Keep <code>Use Mock</code> checked in Scale HR LinkedIn Settings and run through Part R (R1–R4) of <code>TESTING.md</code>. This proves the <i>Scale HR side</i> of the flow end-to-end — Settings → Test Connection → Publish → Posted with a mock URL → Close → Removed — but the URL is a placeholder (<code>linkedin.com/jobs/view/mock-…</code>), nothing actually appears on LinkedIn. Good for a Scale HR feature demo; not a "real LinkedIn" demo.</p>
+</div>
+
+<div class="card opt-c">
+<h4>Option C — Third-party job-distribution aggregator (skip LinkedIn's own partnership entirely)</h4>
+<p>Vendors like Broadbean, Appcast, SmartRecruiters, or similar already hold LinkedIn (and Naukri/Indeed) distribution API access and resell it as a single integration to ATS products that don't want to go through LinkedIn's own partner approval. This is how most small/mid ATS vendors actually get "post to LinkedIn" working without becoming LinkedIn's direct partner — worth evaluating if going live matters more than owning the direct LinkedIn relationship. Would replace <code>linkedin_jobs.py</code>'s live stub with a call to the aggregator's API instead of LinkedIn's.</p>
+</div>
+
+<h2>4 · Recommended next steps to "complete the LinkedIn flow end-to-end"</h2>
+
+<ul class="checklist">
+  <li>Run Part R (R1–R4) of <code>TESTING.md</code> once yourself to confirm the mock path on your own machine — 10 minutes, no LinkedIn account needed.</li>
+  <li>Decide the demo goal: is "end-to-end" meant to show <i>Scale HR's own workflow</i> (→ Option B is already done) or a <i>real LinkedIn listing</i> (→ Option A, doable this week)?</li>
+  <li>If a real listing is wanted: confirm there's a Pixaflip/SIL/JV LinkedIn Company Page to post from (or use a personal account for a throwaway demo posting).</li>
+  <li>If going live via API is the actual goal (not just a demo): open the LinkedIn Talent Solutions partnership conversation separately — this is a business/BD track, independent of and in parallel to any further coding, and should be scoped with a real timeline expectation (weeks-to-months, not a sprint task).</li>
+  <li>If the partnership route stalls or isn't worth pursuing, evaluate Option C (aggregator) as the pragmatic "actually live" path — this would be the next real coding task or scale_hr, replacing the stub functions in <code>linkedin_jobs.py</code>.</li>
+  <li>Nothing in Vandana's code needs to change to support any of the above — the connector abstraction (<code>base.py</code>) already means swapping in a real HTTP client later (LinkedIn direct, or an aggregator) is additive, not a rewrite.</li>
+</ul>
+
+<h2>5 · Quick reference — running the existing tests yourself</h2>
+<pre>bench --site scale.localhost migrate
+bench --site scale.localhost execute scale_hr.install.ensure_workspace
+bench --site scale.localhost execute scale_hr.seed.phase2.setup
+bench --site scale.localhost clear-cache
+
+# One-shot smoke (Phase H3, mock path, Steps 0-5):
+bench --site scale.localhost execute scale_hr.smoke.recruitment_h3_step5.run</pre>
+<p style="font-size:.82rem; color:var(--sub);">Then in the Desk: <b>Scale HR → Recruitment → Scale HR LinkedIn Settings</b> (confirm Use Mock ✓, click Test Connection) → open any Job Opening → LinkedIn card → Publish → Close. Full manual script is <code>TESTING.md</code> Part R (search for <code>## Part R</code>).</p>
+
+<footer>
+  Generated for internal reference — reviewed against <code>Claude/code/scale-bench/apps/scale_hr</code> on <code>main</code> (commits 368bf2e, 1ffc477, merged via PR #43). Not part of the tracked <code>scale_app_plan</code> site; safe to regenerate or discard.
+</footer>
+
+</div>
+</body>
+</html>

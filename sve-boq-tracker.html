@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SVE BOQ &amp; Item Master — Branch Tracker | AIWS ERP</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.gstat { display:inline-flex; align-items:center; gap:6px; padding:4px 12px; border-radius:20px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.4px; white-space:nowrap; }
+.gstat-merged  { background:var(--green-bg);  color:var(--green);  border:1px solid var(--green-bdr); }
+.gstat-pending { background:var(--blue-bg);   color:#1d4ed8;       border:1px solid #bfdbfe; }
+.gstat-review  { background:var(--amber-bg);  color:var(--amber);  border:1px solid var(--amber-bdr); }
+.gstat-ns      { background:#f9fafb;          color:#6b7280;       border:1px solid #e5e7eb; }
+.git-card { border:1px solid var(--border); border-radius:var(--r-lg); padding:22px 26px; margin-bottom:22px; box-shadow:var(--sh); background:var(--surface); }
+.git-card-head { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px; }
+.git-card-head h3 { font-size:16px; margin:0; }
+.branch-chip { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; background:var(--navy-dark); color:#e2e8f0; padding:4px 10px; border-radius:6px; font-size:12.5px; }
+.commit-chip { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; background:var(--surface-2); color:var(--text-2); padding:2px 8px; border-radius:5px; font-size:12px; border:1px solid var(--border); }
+.git-meta { font-size:12.5px; color:var(--text-3); margin-bottom:16px; }
+.git-meta b { color:var(--text-2); }
+.git-section-label { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; color:var(--text-4); margin:16px 0 8px; }
+.commit-list { list-style:none; margin:0 0 4px; padding:0; display:grid; gap:5px; }
+.commit-list li { font-size:13px; display:flex; gap:8px; align-items:baseline; }
+.commit-list .noise { opacity:.55; }
+.fx-table { width:100%; border-collapse:collapse; font-size:13.5px; margin-top:6px; }
+.fx-table th, .fx-table td { text-align:left; padding:7px 10px; border-bottom:1px solid var(--border); vertical-align:top; }
+.fx-table th { font-size:11px; text-transform:uppercase; letter-spacing:.4px; color:var(--text-4); font-weight:800; }
+.fx-table code { font-size:12px; }
+.status-pill { display:inline-block; padding:2px 9px; border-radius:12px; font-size:11px; font-weight:700; }
+.pill-yes { background:var(--green-bg); color:var(--green); }
+.pill-not { background:#f9fafb; color:#6b7280; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="s-title">AIWS ERP</div>
+    <div class="s-sub">Implementation Master Plan</div>
+    <span class="s-tag">Claude / implementation</span>
+  </div>
+  <nav>
+    <div class="nav-group">📋 Daily Update</div>
+    <a class="nav-link" href="index.html">Development Dashboard</a>
+
+    <div class="nav-group">🎬 Client Demo</div>
+    <a class="nav-link showcase" href="project-demo.html">Project Demo — Connected Story</a>
+    <a class="nav-link showcase" href="demo2.html">HVAC Demo — Chiller Plant</a>
+
+    <div class="nav-group">🌿 Client Engagement Branches</div>
+    <a class="nav-link active" href="sve-boq-tracker.html">SVE BOQ Tracker 🆕</a>
+
+    <div class="nav-group">Start Here</div>
+    <a class="nav-link" href="program-overview.html">Program Overview</a>
+
+    <div class="nav-group">Module Plans</div>
+    <a class="nav-link" href="sales-module.html">Sales Module Plan</a>
+    <a class="nav-link" href="stores-module.html">Stores Module Plan</a>
+    <a class="nav-link" href="purchase-module.html">Purchase &amp; Procurement Module Plan</a>
+    <a class="nav-link" href="manufacturing-module.html">Manufacturing Module Plan</a>
+    <a class="nav-link" href="pmo-module.html">PMO Module Plan</a>
+
+    <div class="nav-group">Tracking</div>
+    <a class="nav-link" href="sales-tracker.html">Sales Tracker</a>
+  </nav>
+  <div class="sidebar-foot">
+    Pixaflip × SIL · AIWS ERP<br>
+    <a href="../../index.html">← AIWS Setup portal</a>
+  </div>
+</aside>
+
+<main>
+<div class="breadcrumb">AIWS ERP <span>›</span> <a href="sales-module.html" style="color:inherit;">Sales Module</a> <span>›</span> SVE BOQ Branch Tracker</div>
+
+<div class="page-header">
+  <h1>SVE (Siddhivinayak Engineering) — BOQ &amp; Item Master</h1>
+  <p class="subtitle">Independent branch tracker for a parallel client-development effort on <code>ehiddenbrain/scale</code> — not reviewed, not merged, not pulled into this local bench. Repo state only.</p>
+</div>
+
+<div class="summary-strip">
+  <div class="s-stat"><div class="sv">1</div><div class="sl">Branch (<code style="color:inherit;">siddhi</code>)</div></div>
+  <div class="s-stat"><div class="sv">2</div><div class="sl">New DocTypes</div></div>
+  <div class="s-stat"><div class="sv">2,516</div><div class="sl">Items Imported</div></div>
+  <div class="s-stat"><div class="sv">30</div><div class="sl">Item Groups Imported</div></div>
+  <div class="s-stat"><div class="sv">8</div><div class="sl">Automated Tests Written</div></div>
+</div>
+
+<div class="callout cw">
+  <p><strong>How this page was built:</strong> found by fetching <code>origin</code> on <code>ehiddenbrain/scale</code> and scanning all remote branches for commits by <b>Ahemad</b> or <b>Uday</b>. One match — branch <code><a href="#" onclick="return false;">siddhi</a></code>, pushed by <b>Ahemad</b> (<code>ahemadshaikh8308@gmail.com</code>), last commit <b>12 Sep 2026</b>. No commits by Uday were found on any remote branch. Per instruction, the branch was <b>not checked out and not migrated</b> on this local bench — everything below comes from reading the branch's git history and file contents directly (<code>git show</code>), plus the developer's own in-branch documentation file (<code>BOQ_AND_ITEM_MASTER.md</code>), cross-checked against the actual code (function names, field counts, test names) rather than taken on the doc's word alone.</p>
+</div>
+
+<div class="callout ci">
+  <p><strong>Client:</strong> Siddhivinayak Engineering Solutions (SVE) — HVAC/MEP contractor, the same client this project's own <code>SVE_Process</code> fit/gap assessment and the <code>demo2.html</code> HVAC connected-demo story were built for. This branch is a genuinely separate, parallel effort by another developer against the same client, working from the client's real Item Master and a real BOQ (Bill of Quantities) Excel file ("vConstruct HVAVC BOQ R2-2").</p>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     BRANCH CARD
+═══════════════════════════════════════════ -->
+<h2>Branch: <code style="font-size:.85em;">siddhi</code></h2>
+
+<div class="git-card" style="border-color:var(--blue);">
+  <div class="git-card-head">
+    <span class="branch-chip">siddhi</span>
+    <span class="gstat gstat-pending">⏳ Pushed — not reviewed, not merged</span>
+  </div>
+  <div class="git-meta">Author: <b>Ahemad</b> (<code>ahemadshaikh8308@gmail.com</code>) &nbsp;·&nbsp; Last commit: <span class="commit-chip">1e7ddd5</span> 12 Sep 2026 &nbsp;·&nbsp; Repo: <code>ehiddenbrain/scale</code> &nbsp;·&nbsp; 20 commits ahead of <code>main</code>, merge-base <span class="commit-chip">c4a462a</span> (PR #58, 7 Sep 2026)</div>
+
+  <div class="git-section-label">Reading the branch history — most of it isn't SVE work</div>
+  <p style="font-size:13.5px;">Of the 20 commits unique to this branch, 19 are Ahemad merging <code>main</code>/<code>production</code> into his own long-running personal branch (this branch's own lineage goes back to 11 Aug 2026, predating this project's current <code>main</code>) — general-ledger fixes, Docker/production deploy config, finance/account docs restructuring, none of it SVE-specific. <b>Exactly one commit is the actual SVE feature work:</b></p>
+  <ul class="commit-list">
+    <li><span class="commit-chip">1e7ddd5</span> <b>"SVE BOQ import implemented with item master"</b> — 12 Sep 2026, 27 files, +3,532/&minus;9 lines. This is the real deliverable, isolated and diffed on its own below.</li>
+    <li class="noise"><span class="commit-chip">4870548</span>, <span class="commit-chip">c7ad1f6</span>, <span class="commit-chip">13349dc</span>, <span class="commit-chip">a05f9d4</span>, <span class="commit-chip">6549f0c</span>, <span class="commit-chip">03b0a8a</span>, +13 more — routine merges of <code>main</code>/<code>production</code> into this personal branch, not new work</li>
+  </ul>
+
+  <div class="git-section-label">What it implements (verified against the code, not just the branch's own README)</div>
+  <ul style="font-size:13.5px;padding-left:20px;margin-top:6px;line-height:1.85;">
+    <li><b>Item Master import pipeline</b> — converts SVE's raw client Item Master Excel into Frappe-ready sheets (<code>scripts/convert_item_master.py</code>), then imports them idempotently (<code>scale_stock.item_master_import.run</code>): <b>30 Item Groups</b> and <b>2,516 Items</b> created (site totals 44 groups / 2,794 items including pre-existing GrowSmart/demo data). Sales items get a placeholder HSN (<code>999900</code>) so India Compliance validation passes; <code>/</code> in item codes is rewritten to <code>-</code>; UOM is guessed from context since the source file carries none.</li>
+    <li><b>Project BOQ — a new two-doctype system</b> (<code>Project BOQ</code> header, 19 fields; <code>Project BOQ Line</code> child table, 21 fields) that captures a client's BOQ Excel as quantities + descriptions only. <b>Client Supply Rate / Amount are deliberately never imported</b> — cost is derived from the Item's own buying rate or a linked BOM instead, not trusted from the client file.</li>
+    <li><b>Client Excel parser</b> (<code>scale_sales.boq_import.import_vconstruct</code>) — reads the "High Side" / "Low Side" sheet structure the client's actual BOQ file uses, handles Excel's floating-point Sr. No. artifacts (<code>1.2000000002</code> → text <code>"1.2"</code>), and turns description-only spec rows with no line number into standalone Note lines.</li>
+    <li><b>Item mapping</b> (<code>scale_sales.boq.auto_map_items</code>) — exact code/name match, falling back to a unique substring match; every line is classified Mapped / Unmapped / Skipped, surfaced on the form via a live filter and a dedicated Mapped Items list.</li>
+    <li><b>Cost estimation</b> (<code>scale_sales.boq.refresh_estimates</code>) — <code>estimated_rate</code> pulled from the Item's last purchase / buying price / valuation / standard rate, or from a linked BOM's total cost when one exists; <code>estimated_amount</code> = qty × rate, computed by Scale, never read from the client's own Rate/Amount columns.</li>
+    <li><b>Finalize / Approve workflow</b> (<code>scale_sales.boq.approve_boq</code>) — for every mapped Supply/Buy line without a BOM, either links the Item's existing default submitted BOM or auto-creates and submits one from that line's mapped child components (a real "explode the kit" step, covered by its own test); locks quantities/descriptions and moves status to <b>Approved</b>. A Supply line with no component lines is deliberately left on plain Item rate rather than given an empty BOM.</li>
+    <li><b>Moved from PMO into Sales</b> — the doctypes were originally being built inside <code>scale_project_management</code> and were relocated to <code>scale_sales</code> mid-build (so BOQ/quoting sits with the Sales team, not PMO) <i>without renaming the doctypes</i>, specifically to keep already-created records (e.g. <code>BOQ-00265</code>) intact across the move.</li>
+    <li><b>Permissions</b> — Project BOQ access granted to Sales Manager, Sales User, and Projects Manager (full read/write), nobody else.</li>
+  </ul>
+
+  <div class="git-section-label">Numbers — code &amp; data, verified directly</div>
+  <table class="fx-table">
+    <tr><th>Item</th><th>Count / detail</th></tr>
+    <tr><td>New files in the SVE commit</td><td>27 files, +3,532 / &minus;9 lines (commit <span class="commit-chip">1e7ddd5</span> alone)</td></tr>
+    <tr><td><code>boq.py</code></td><td>16 functions — rate lookup, estimates, auto-map, BOM creation/explosion, finalize/approve</td></tr>
+    <tr><td><code>boq_import.py</code></td><td>11 functions — the vConstruct Excel parser</td></tr>
+    <tr><td><code>item_master_import.py</code></td><td>6 functions — idempotent Item Group + Item importer</td></tr>
+    <tr><td><code>Project BOQ</code> doctype</td><td>19 fields (Project, revision — unique per project, quote ref, status, client Excel attachment, mapping counts, estimated cost)</td></tr>
+    <tr><td><code>Project BOQ Line</code> doctype</td><td>21 fields (Sr No tree, annex High/Low Side, section vs. item, line type Supply/Install/Buy/Labour/Note, floor quantities, mapping status)</td></tr>
+    <tr><td>Automated tests</td><td>8, in <code>tests/test_boq_import.py</code> — float Sr. No. handling, parse-ignores-rate, import replaces lines on a Draft BOQ, blank-row drop, spec notes without Sr. No., mapped-kit-line → BOM + exploded cost, mapping counts, finalize → BOM creation</td></tr>
+    <tr><td>Client source files carried on branch</td><td><code>vConstruct HVAVC BOQ R2-2 (20.05.26).xlsx</code> (the actual client BOQ), plus 3 Item Master workbooks</td></tr>
+  </table>
+
+  <div class="git-section-label">Deliberately <em>not</em> imported — a real design decision worth knowing</div>
+  <table class="fx-table">
+    <tr><th>Not seeded</th><th>Why</th></tr>
+    <tr><td>Client's own Supply Rate / Amount columns</td><td>Cost of record is Scale's own Item buying rate or linked BOM — not the client file — so pricing stays governed by Scale's own master data</td></tr>
+    <tr><td>Original Item Master xlsx, run as a raw Data Import</td><td>Headers/UOM/HSN in the source file aren't Scale-ready; must go through the converter script first</td></tr>
+    <tr><td>A BOM for every mapped leaf Item</td><td>Only created on Finalize, and only where there's real kit structure (child lines, or a lone Supply line with Buy siblings) or an existing default BOM to link — avoids junk empty BOMs</td></tr>
+  </table>
+
+  <div class="git-section-label">Review status</div>
+  <p style="font-size:13.5px;">Not yet reviewed by this session, not merged into <code>main</code>, and not pulled/migrated onto this local bench. This page is a visibility snapshot of what exists on the remote branch as of <b>14 Sep 2026</b> — re-run the branch scan before treating any number here as still current if significant time has passed.</p>
+</div>
+
+<div class="page-nav">
+  <a class="prev" href="sales-module.html">← Sales Module Plan</a>
+</div>
+
+</main>
+</body>
+</html>

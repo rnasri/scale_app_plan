@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PR #64 Code Review — PMO AI Governance &amp; Gap Closure Phase 1</title>
+<style>
+  @page { size: A4 portrait; margin: 15mm 13mm; }
+  * { box-sizing: border-box; }
+  html, body {
+    font-family: -apple-system, "Segoe UI", Arial, sans-serif;
+    margin: 0; padding: 0;
+    color: #1e293b;
+    background: #fff;
+    font-size: 12.5px;
+    line-height: 1.55;
+  }
+  .sheet { width: 100%; }
+  .head {
+    border-bottom: 4px solid #1e3a5f; padding-bottom: 12px; margin-bottom: 16px;
+  }
+  .head .eyebrow { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: #7c3aed; margin-bottom: 4px; }
+  .head h1 { font-size: 22px; margin: 0 0 6px; color: #1e3a5f; letter-spacing: .1px; }
+  .head .meta { font-size: 11px; color: #64748b; }
+  .head .meta a { color: #1e40af; text-decoration: none; }
+
+  .summary-bar { display: flex; gap: 10px; margin: 14px 0 18px; flex-wrap: wrap; }
+  .summary-tile { flex: 1; min-width: 100px; border-radius: 8px; padding: 10px 12px; text-align: center; }
+  .summary-tile .n { font-size: 20px; font-weight: 800; display: block; }
+  .summary-tile .l { font-size: 9.5px; text-transform: uppercase; letter-spacing: .3px; font-weight: 700; }
+  .tile-crit { background: #fee2e2; color: #991b1b; }
+  .tile-high { background: #ffedd5; color: #9a3412; }
+  .tile-med { background: #fef3c7; color: #92400e; }
+  .tile-low { background: #e0e7ff; color: #3730a3; }
+  .tile-total { background: #1e3a5f; color: #fff; }
+
+  .intro {
+    font-size: 11.5px; line-height: 1.6; color: #334155;
+    background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;
+    padding: 12px 15px; margin-bottom: 18px;
+  }
+  .intro b { color: #1e3a5f; }
+
+  h2.sect {
+    font-size: 15px; color: #1e3a5f; margin: 24px 0 10px;
+    padding-bottom: 6px; border-bottom: 2px solid #e2e8f0;
+  }
+
+  .finding { border: 1px solid #e2e8f0; border-left-width: 5px; border-radius: 8px; padding: 14px 16px; margin-bottom: 14px; page-break-inside: avoid; }
+  .finding.crit { border-left-color: #dc2626; }
+  .finding.high { border-left-color: #ea580c; }
+  .finding.med { border-left-color: #d97706; }
+  .finding.low { border-left-color: #4f46e5; }
+
+  .finding-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+  .finding-num { font-size: 10px; font-weight: 800; color: #94a3b8; }
+  .finding-title { font-size: 13.5px; font-weight: 800; color: #1e293b; flex: 1; }
+  .sev-badge { font-size: 8.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .3px; border-radius: 12px; padding: 2px 9px; white-space: nowrap; }
+  .sev-crit { background: #fee2e2; color: #991b1b; }
+  .sev-high { background: #ffedd5; color: #9a3412; }
+  .sev-med { background: #fef3c7; color: #92400e; }
+  .status-badge { font-size: 8.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .3px; border-radius: 12px; padding: 2px 9px; white-space: nowrap; margin-left: 6px; }
+  .status-fixed { background: #d1fae5; color: #065f46; }
+  .status-deferred { background: #e0e7ff; color: #3730a3; }
+  .update-banner { background: #ecfdf5; border: 1.5px solid #6ee7b7; border-radius: 8px; padding: 12px 15px; margin-bottom: 16px; font-size: 11.5px; line-height: 1.6; color: #065f46; }
+  .update-banner b { color: #065f46; }
+  .status-box { border-radius: 6px; padding: 8px 11px; margin: 8px 0 4px; font-size: 11.3px; }
+  .status-box.fixed { background: #f0fdf4; border: 1px solid #bbf7d0; color: #14532d; }
+  .status-box.deferred { background: #eef2ff; border: 1px solid #c7d2fe; color: #312e81; }
+  .status-box p { margin: 0; }
+  .status-fill { display: flex; gap: 10px; margin: 14px 0 18px; flex-wrap: wrap; }
+  .status-tile { flex: 1; min-width: 140px; border-radius: 8px; padding: 10px 12px; text-align: center; }
+  .sev-low { background: #e0e7ff; color: #3730a3; }
+
+  .loc { font-family: "SFMono-Regular", Menlo, Consolas, monospace; font-size: 9.5px; color: #64748b; background: #f1f5f9; border-radius: 4px; padding: 2px 7px; display: inline-block; margin-bottom: 8px; }
+
+  .finding h4 { font-size: 10.5px; text-transform: uppercase; letter-spacing: .3px; color: #7c3aed; margin: 10px 0 4px; }
+  .finding p { margin: 0 0 6px; font-size: 11.3px; color: #334155; }
+  .finding ul { margin: 4px 0 6px; padding-left: 18px; }
+  .finding li { font-size: 11.3px; color: #334155; margin-bottom: 3px; }
+
+  code { font-family: "SFMono-Regular", Menlo, Consolas, monospace; font-size: 10.3px; background: #f1f5f9; border-radius: 3px; padding: 1px 5px; color: #be185d; }
+  pre { background: #0f172a; color: #e2e8f0; border-radius: 6px; padding: 9px 12px; font-size: 9.8px; line-height: 1.6; overflow-x: auto; margin: 6px 0 8px; white-space: pre-wrap; }
+  pre .c { color: #64748b; }
+  pre .minus { color: #f87171; }
+  pre .plus { color: #86efac; }
+
+  .impact-box { background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 8px 11px; margin: 4px 0 8px; }
+  .impact-box p { color: #991b1b; margin: 0; }
+  .fix-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 8px 11px; margin: 4px 0 2px; }
+  .fix-box p, .fix-box li { color: #14532d; }
+
+  .footnote {
+    font-size: 9.5px; color: #64748b; line-height: 1.5; margin-top: 16px;
+    border-top: 1px solid #e2e8f0; padding-top: 10px;
+  }
+
+  @media print {
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+  @media screen {
+    body { background: #94a3b8; padding: 24px 0; }
+    .sheet {
+      max-width: 850px; margin: 0 auto; background: #fff;
+      padding: 15mm 13mm; box-shadow: 0 6px 24px rgba(0,0,0,.25); border-radius: 2px;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <div class="head">
+    <div class="eyebrow">Code Review · Prepared for Veeren (Virendrasingh Pawar)</div>
+    <h1>PR #64 — PMO PRD Gap Closure Phase 1 + AI Governance + Alert Role-Scoping</h1>
+    <div class="meta">
+      <b>Repo:</b> ehiddenbrain/scale &nbsp;·&nbsp; <b>Branch:</b> integration/pmo-alerts-phase2 → main &nbsp;·&nbsp;
+      <b>Status:</b> Open
+    </div>
+  </div>
+
+  <div class="intro">
+    This is a plain-language write-up of a code review done on PR #64 — every finding below was verified directly
+    against the real PR code (not the PR description), tracing the exact execution path a real user or a real chat
+    question would hit. Each item below explains <b>what's happening</b>, in plain terms; <b>why it matters</b> (a
+    concrete scenario, not just "this could be a bug"); and a <b>suggested fix</b> — sized to be a small, targeted
+    change, not a rewrite.
+  </div>
+
+  <div class="update-banner">
+    <b>Update — 2026-09-13:</b> Veeren pushed a fix commit (<code>630bee5</code>) addressing 8 of the 10 findings
+    below, plus two PR comments explaining why the remaining 2 are deliberately deferred rather than missed. Every
+    fix was re-verified directly against the new diff, not taken on the strength of the commit message — status is
+    marked on each finding below. Net result: <b>8 fixed and confirmed correct, 2 deferred with sound reasoning</b>
+    (verified independently, not just accepted).
+  </div>
+
+  <div class="summary-bar">
+    <div class="summary-tile tile-total"><span class="n">10</span><span class="l">Total Findings</span></div>
+    <div class="summary-tile tile-crit"><span class="n">2</span><span class="l">Critical</span></div>
+    <div class="summary-tile tile-high"><span class="n">3</span><span class="l">High</span></div>
+    <div class="summary-tile tile-med"><span class="n">3</span><span class="l">Medium</span></div>
+    <div class="summary-tile tile-low"><span class="n">2</span><span class="l">Low / Cleanup</span></div>
+  </div>
+
+  <div class="status-fill">
+    <div class="status-tile status-fixed"><span class="n" style="font-size:20px;font-weight:800;display:block;">8</span><span class="l" style="font-size:9.5px;text-transform:uppercase;letter-spacing:.3px;font-weight:700;">✅ Fixed &amp; Verified Correct</span></div>
+    <div class="status-tile status-deferred"><span class="n" style="font-size:20px;font-weight:800;display:block;">2</span><span class="l" style="font-size:9.5px;text-transform:uppercase;letter-spacing:.3px;font-weight:700;">⏸ Deliberately Deferred</span></div>
+  </div>
+
+  <h2 class="sect">🔴 Critical — silently wrong behavior, no error shown to anyone</h2>
+
+  <div class="finding crit">
+    <div class="finding-head">
+      <div><span class="finding-num">FINDING 1</span><br><span class="finding-title">A failed AI call disappears completely — no log, no quota deduction</span></div>
+      <span class="sev-badge sev-crit">Critical</span>
+    </div>
+    <span class="loc">scale_project_management/chat.py — around line 991</span>
+    <div class="status-box fixed"><p><b>Fix status: ✅ Fixed and verified correct.</b> <code>frappe.db.commit()</code> added immediately after <code>record_turn()</code>, and after every failure-path <code>record_call()</code> — including <code>ai_utils.call_llm()</code>'s single-shot site, which had the identical gap but wasn't explicitly named in the original review. Confirmed by reading the diff directly.<br><b>One residual worth a follow-up, not a re-open:</b> the new shared helper's <i>success</i> path still has no explicit commit. In a multi-round chat turn where round 1 succeeds and round 2 later fails, round 1's own log row can still be erased by the same rollback mechanism — narrower than the original bug, but the same root cause survives in that one corner.</p></div>
+
+    <h4>What's happening</h4>
+    <p>This PR adds two things this exact scenario depends on: an <b>AI Call Log</b> that's supposed to record
+    every single provider call (including failed ones, so nothing is invisible), and a <b>daily message quota</b>
+    per user that's supposed to still count against a question even if it crashes partway (otherwise a broken
+    retry loop could burn unlimited provider spend for free — this is explicitly called out as the reasoning in
+    the code's own comments).</p>
+    <p>Both of these are written to the database with a plain <code>.insert()</code> and no explicit
+    <code>frappe.db.commit()</code>. That's normally fine — Frappe automatically commits everything at the end of
+    a successful request. But when the AI provider call itself fails (timeout, 5xx, network error), the code logs
+    the failure and then re-raises the exception, on purpose, so the error still bubbles up. The problem: nothing
+    in <code>ask()</code> catches that exception anywhere above this point. Frappe's own request handler sees an
+    unhandled exception and — this is standard, checked directly in Frappe's own code
+    (<code>frappe/app.py</code>) — <b>rolls back the entire database transaction for that request</b>. That
+    rollback erases both the "quota consumed" row and the "call failed" log row that were just written, because
+    they were never committed independently.</p>
+
+    <div class="impact-box">
+      <h4 style="color:#991b1b;margin-top:0;">Why it matters</h4>
+      <p>Picture a provider timeout (these happen — proxies, rate limits, network blips). Right now: the AI Call
+      Log shows nothing happened, and the user's daily quota is untouched — as if the question was never asked.
+      A user (or a script) that automatically retries on failure can keep asking the same question forever with
+      zero quota cost and zero record of it ever failing. This directly undermines the two features this exact PR
+      is adding (cost visibility and quota enforcement) in the one scenario — a real provider failure — where
+      they matter most.</p>
+    </div>
+    <div class="fix-box">
+      <h4 style="color:#14532d;margin-top:0;">Suggested fix</h4>
+      <p>Add an explicit <code>frappe.db.commit()</code> right after each of these two writes, so they survive
+      even if something later in the same request fails:</p>
+      <pre>_log_name = ai_limits.record_turn(...)
+<span class="plus">+ frappe.db.commit()</span>
+
+...
+
+except Exception as _exc:
+    record_call(..., error=str(_exc))
+    <span class="plus">+ frappe.db.commit()</span>
+    raise</pre>
+      <p>This is a small, localized change — two extra lines — and it doesn't change any other behavior. It
+      just makes sure these two specific "audit trail" writes are durable the moment they happen, independent of
+      whatever happens next in the request.</p>
+    </div>
+  </div>
+
+  <div class="finding crit">
+    <div class="finding-head">
+      <div><span class="finding-num">FINDING 2</span><br><span class="finding-title">The new "who has this skill?" chatbot tool confidently says "nobody" for roles who are actually allowed to ask it</span></div>
+      <span class="sev-badge sev-crit">Critical</span>
+    </div>
+    <span class="loc">scale_project_management/resource_skill_matching.py — line 53 (Employee lookup)</span>
+    <div class="status-box deferred"><p><b>Fix status: ⏸ Deliberately deferred, not fixed in this commit.</b> Veeren's PR comment: this is a known, pre-existing HR/PMO data-ownership boundary, not an oversight — <code>Employee Skill Map</code>/<code>Skill</code> are HR-owned and deliberately not opened to PMO roles pending a real access decision, which needs a product call rather than a quiet DocPerm change bundled into this PR. That's a legitimate way to handle an ownership question. It doesn't change the underlying fact, though: the tool still gives a confidently wrong "nobody qualified" answer today, regardless of whose call it is to fix. Worth tracking as an explicit follow-up rather than letting it go quiet.</p></div>
+
+    <h4>What's happening</h4>
+    <p>This PR adds a chat tool, <code>get_task_skill_matches</code>, so a PMO user can ask "who has the skill
+    needed for this task?" It's wired to be usable by <b>Department Head, Accounts Manager, Projects Manager,
+    and PMO Director</b> — that's the access level the tool is registered at in <code>chat.py</code>.</p>
+    <p>But the actual lookup for Employee skills reads from two doctypes — <code>Employee Skill Map</code> and
+    <code>Skill</code> — and neither one grants read access to any of those four roles. Checked directly against
+    the real permission definitions:</p>
+    <ul>
+      <li><b>Employee Skill Map</b>: only <code>System Manager</code> can read it.</li>
+      <li><b>Skill</b>: only <code>System Manager</code> and <code>HR Manager</code> can read it.</li>
+    </ul>
+    <p>The lookup function (<code>readable_list()</code>) is written to catch that permission error and quietly
+    return an empty list instead of showing an error — which is a deliberate, reasonable design for a chat
+    surface (nobody wants a chatbot to spit out a stack trace). But it means the "no permission" case and the
+    "genuinely nobody has this skill" case look <i>exactly the same</i> to the person asking.</p>
+
+    <div class="impact-box">
+      <h4 style="color:#991b1b;margin-top:0;">Why it matters</h4>
+      <p>A PMO Director — one of the roles this feature is explicitly built for — asks the chatbot "who can do
+      this task?" The tool call technically succeeds. Every real Employee candidate silently gets filtered out by
+      the permission check, and the assistant confidently answers "nobody has this skill" — even when three
+      qualified employees are sitting right there in the system. There's no error, no warning, nothing to suggest
+      the answer is wrong. This is the worst kind of bug for an AI feature: a wrong answer delivered with full
+      confidence. It's also untested — the test file for this feature (<code>test_skill_matching.py</code>) only
+      ever runs as an admin-level user, so this exact gap wouldn't show up in the test suite.</p>
+    </div>
+    <div class="fix-box">
+      <h4 style="color:#14532d;margin-top:0;">Suggested fix</h4>
+      <p>Grant read access on <code>Employee Skill Map</code> (and confirm <code>Skill</code> too, since HR
+      Manager already has it but the other three roles don't) to whichever role actually represents "can use PMO
+      chat features" in this app — likely the same role or role-set already used for other PMO-only data, or a
+      new Custom DocPerm row for Department Head / Accounts Manager / Projects Manager / PMO Director directly.
+      Then add one test to <code>test_skill_matching.py</code> that runs the tool <i>as one of these roles</i>
+      (not as Administrator) with real seeded skill data, and asserts the result is non-empty — that's the test
+      that would have caught this before merge, and it'll catch the next version of this same class of bug too.</p>
+    </div>
+  </div>
+
+  <h2 class="sect">🟠 High — real, demonstrable defects</h2>
+
+  <div class="finding high">
+    <div class="finding-head">
+      <div><span class="finding-num">FINDING 3</span><br><span class="finding-title">The budget forecast dashboard now sorts by the wrong column</span></div>
+      <span class="sev-badge sev-high">High</span>
+    </div>
+    <span class="loc">scale_project_management/fixtures/report.json — "PMO Forecast Cost Dashboard" query</span>
+    <div class="status-box fixed"><p><b>Fix status: ✅ Fixed and verified correct.</b> <code>order by 5 desc</code> → <code>order by 8 desc</code>, confirmed directly in the diff — exactly the one-character fix suggested below.</p></div>
+
+    <h4>What's happening</h4>
+    <p>This report used to have 6 columns, with the last one — "Forecast vs Planned" (the overrun percentage) —
+    at position 6, and the query correctly said <code>order by 6 desc</code> so the worst overruns sort to the
+    top. This PR adds two new columns ("Best Case" and "Worst Case" burn estimates) <i>before</i> that percent
+    column, which pushes it from position 6 to position 8. The <code>order by</code> was changed too — but to
+    <code>5</code>, not <code>8</code>. Confirmed by comparing this PR's query against the version currently on
+    <code>main</code> line by line — this is a real, checked-in regression, not a guess.</p>
+
+    <h4>Before (on main) vs. after (this PR)</h4>
+    <pre><span class="c"># main — 6 columns, percent column at position 6</span>
+... "Forecast Final Cost:Currency:150",
+    case when ... end as "Forecast vs Planned:Percent:150"
+from ...
+<span class="minus">order by 6 desc</span>   <span class="c">✓ correct — sorts by the percent column</span>
+
+<span class="c"># PR #64 — 8 columns, percent column now at position 8</span>
+... "Forecast Final Cost (Expected):Currency:180",
+    ... "Best Case (-15%% Burn):Currency:180",
+    ... "Worst Case (+15%% Burn):Currency:180",
+    case when ... end as "Forecast vs Planned:Percent:150"
+from ...
+<span class="plus">order by 5 desc</span>   <span class="c">✗ now sorts by "Forecast Final Cost (Expected)" — an absolute ₹ amount</span></pre>
+
+    <div class="impact-box">
+      <h4 style="color:#991b1b;margin-top:0;">Why it matters</h4>
+      <p>Column 5 is "Forecast Final Cost (Expected)" — a raw currency amount, not a percentage. So the dashboard
+      now sorts by <i>how big the project's forecast cost is</i>, not <i>how badly it's overrunning</i>. A large,
+      perfectly healthy ₹2 crore project sits at the top just because it's expensive, while a small ₹5 lakh
+      project that's forecasting a genuine 300% budget blowout sinks to the bottom of the list — exactly the
+      project a PMO Director most needs to see first.</p>
+    </div>
+    <div class="fix-box">
+      <h4 style="color:#14532d;margin-top:0;">Suggested fix</h4>
+      <p>One-character fix — change <code>order by 5 desc</code> to <code>order by 8 desc</code> in that query,
+      so it sorts by the actual "Forecast vs Planned" percent column at its new position.</p>
+    </div>
+  </div>
+
+  <div class="finding high">
+    <div class="finding-head">
+      <div><span class="finding-num">FINDING 4</span><br><span class="finding-title">A malformed (but "successful") AI response crashes the chat with zero log entry</span></div>
+      <span class="sev-badge sev-high">High</span>
+    </div>
+    <span class="loc">chat.py line ~1001 (tool round), ~1091 (forced final answer), ai_utils.py call_llm() line ~110</span>
+    <div class="status-box fixed"><p><b>Fix status: ✅ Fixed and verified correct.</b> Folded into the same commit as Finding 9's fix, as suggested — <code>resp.json()</code> and the message-extraction indexing now sit inside the try/except in the new shared <code>post_and_log()</code> helper, at all three call sites. Confirmed by reading the helper's source directly.</p></div>
+
+    <h4>What's happening</h4>
+    <p>The AI Call Log guarantee this PR adds is "every failed call gets a row." The code correctly wraps the
+    network call itself (<code>requests.post</code> + <code>raise_for_status()</code>) in a try/except that logs
+    on failure. But right after that try/except block ends, the very next lines —
+    <code>resp.json()</code>, then reading <code>["choices"][0]["message"]</code> out of it — sit
+    <i>outside</i> that protection. This exact pattern is repeated at three separate places in the codebase.</p>
+    <h4>The gap, visually</h4>
+    <pre>try:
+    resp = requests.post(...)
+    resp.raise_for_status()
+except Exception as _exc:
+    record_call(..., error=str(_exc))   <span class="c"># ✓ logged if the HTTP call itself fails</span>
+    raise
+
+<span class="minus">resp_json = resp.json()                 # ✗ NOT protected</span>
+<span class="minus">reply = resp_json["choices"][0]...      # ✗ NOT protected</span></pre>
+    <div class="impact-box">
+      <h4 style="color:#991b1b;margin-top:0;">Why it matters</h4>
+      <p>An HTTP 200 with a truncated, empty, or unexpectedly-shaped body (a flaky proxy, a provider having a bad
+      day, a rate-limit response that still returns 200) doesn't fail the way the code expects — it fails one
+      line later, as an unhandled crash with, ironically, <i>no log entry at all</i> — the one failure mode the
+      logging is supposed to catch, slipping through the exact gap next to the code that catches everything else.</p>
+    </div>
+    <div class="fix-box">
+      <h4 style="color:#14532d;margin-top:0;">Suggested fix</h4>
+      <p>Move <code>resp.json()</code> and the indexing that pulls the message out of it <i>inside</i> the same
+      try block, at all three locations. The except block already knows how to log and re-raise — it just needs
+      to also see this failure mode. (This pairs naturally with Finding 9 below, since fixing it in one shared
+      helper fixes it at all three sites at once.)</p>
+    </div>
+  </div>
+
+  <div class="finding high">
+    <div class="finding-head">
+      <div><span class="finding-num">FINDING 7</span><br><span class="finding-title">"AI governance across all provider call sites" is only true for PMO</span></div>
+      <span class="sev-badge sev-high">High</span>
+    </div>
+    <span class="loc">ai_call_log_hooks.py, ai_limits.py — vs. scale_finance / scale_hr / scale_sales chat.py</span>
+    <div class="status-box deferred"><p><b>Fix status: ⏸ Deliberately deferred, not fixed in this commit — and the reasoning checks out.</b> Veeren's PR comment: the real fix means relocating <code>ai_call_log_hooks</code>/<code>ai_limits</code> into the shared <code>scale</code> app, since Finance/HR/Sales don't declare <code>scale_project_management</code> as a dependency. <b>Verified independently</b>: checked <code>required_apps</code> in all four apps' <code>hooks.py</code> directly — Finance/HR/Sales each declare <code>scale</code> (not <code>scale_project_management</code>), so importing PMO's own logging/quota code as-is would be an undeclared cross-app dependency that only happens to work because everything is installed together on this bench. This is the architecturally correct call, not an excuse.</p></div>
+
+    <h4>What's happening</h4>
+    <p>This PR's own description says the AI Call Log tracks calls "across all provider call sites" and adds
+    daily quota governance. Checked directly: <code>scale_finance/chat.py</code>, <code>scale_hr/chat.py</code>,
+    and <code>scale_sales/chat.py</code> — all three touched in this same PR (for the Sonnet→Haiku model
+    switch) — have <b>zero</b> references to <code>record_call</code>, <code>ai_limits</code>,
+    <code>record_turn</code>, or anything from the new AI Call Log doctype. Only PMO's own <code>chat.py</code>
+    and <code>ai_utils.py</code> actually call into this new logging/quota system.</p>
+    <div class="impact-box">
+      <h4 style="color:#991b1b;margin-top:0;">Why it matters</h4>
+      <p>Two consequences: (1) the new <b>AI Spend</b> page — the whole point of which is org-wide AI cost
+      visibility for the PMO Director — is structurally undercounting. Three of the four chatbot surfaces
+      (Finance, HR, Sales) are completely invisible to it. (2) The daily message quota, presented as a real
+      cost-control mechanism, only actually applies to PMO users. A Finance or HR or Sales chatbot user has no
+      cap at all.</p>
+    </div>
+    <div class="fix-box">
+      <h4 style="color:#14532d;margin-top:0;">Suggested fix</h4>
+      <p>Two options, either is reasonable depending on scope for this PR: (a) narrow the PR description to say
+      this phase covers PMO only, with Finance/HR/Sales as a named, tracked follow-up — cheapest, and honest
+      about what's actually shipped; or (b) wire the same <code>record_call</code>/quota calls into the other
+      three apps' <code>chat.py</code>/<code>ai_utils.py</code> the same way PMO's already are — more work, but
+      closes the gap for real. Given all three already got touched in this PR for the model flip, this might be
+      a small, well-scoped fast-follow rather than a big lift.</p>
+    </div>
+  </div>
+
+  <h2 class="sect">🟡 Medium — real edge cases and reliability risks</h2>
+
+  <div class="finding med">
+    <div class="finding-head">
+      <div><span class="finding-num">FINDING 5</span><br><span class="finding-title">Asking about a project that doesn't exist reports it as perfectly healthy</span></div>
+      <span class="sev-badge sev-med">Medium</span>
+    </div>
+    <span class="loc">scale_project_management/project_health_score.py — compute_project_health_score(), line 116</span>
+    <div class="status-box fixed"><p><b>Fix status: ✅ Fixed and verified correct.</b> <code>if not frappe.db.exists("Project", project): frappe.throw(...)</code> added at the top of the function — exactly the code suggested below, confirmed in the diff.</p></div>
+
+    <h4>What's happening</h4>
+    <p>The new AI Project Health Score never checks whether the project name it's given actually exists. Each of
+    its four scoring dimensions (schedule, budget, risk, milestones) queries other doctypes filtered by that
+    project name — and for a name that doesn't exist, every one of those queries correctly returns "nothing
+    found," which this scoring logic treats as "no problems in this dimension" and scores as a clean 100.</p>
+    <div class="impact-box">
+      <h4 style="color:#991b1b;margin-top:0;">Why it matters</h4>
+      <p>Ask the chatbot for the health score of a misspelled or deleted project name (e.g. a typo like
+      "PROJ-0100" instead of "PROJ-0010", or a project since deleted) and instead of "I couldn't find that
+      project," it reports a perfect or near-perfect 100/100 health score — a confidently wrong answer about a
+      project that isn't even real. No test in the PR covers this input.</p>
+    </div>
+    <div class="fix-box">
+      <h4 style="color:#14532d;margin-top:0;">Suggested fix</h4>
+      <p>Add one check at the top of <code>compute_project_health_score()</code>:</p>
+      <pre>if not frappe.db.exists("Project", project):
+    frappe.throw(_("Project {0} not found").format(project))</pre>
+    </div>
+  </div>
+
+  <div class="finding med">
+    <div class="finding-head">
+      <div><span class="finding-num">FINDING 6</span><br><span class="finding-title">Two chat questions sent at almost the same moment can both slip past the daily quota</span></div>
+      <span class="sev-badge sev-med">Medium</span>
+    </div>
+    <span class="loc">scale_project_management/ai_limits.py — check_limit() / record_turn(), line 97</span>
+    <div class="status-box fixed"><p><b>Fix status: ✅ Fixed and verified correct.</b> <code>check_limit()</code> now runs <code>SELECT COUNT(*) ... FOR UPDATE</code> instead of a plain <code>frappe.db.count()</code>, taking a row/gap lock a concurrent request for the same user has to wait behind — the standard, correct pattern for this race, and it pairs correctly with Finding 1's fix (the request now commits immediately after <code>record_turn()</code>, so the lock's protection isn't undone by a delayed commit).</p></div>
+
+    <h4>What's happening</h4>
+    <p><code>check_limit()</code> counts how many messages a user has already sent today with a plain database
+    count — no row locking. <code>record_turn()</code> is a separate insert that happens afterward. Between
+    those two steps, there's a small window where a second, near-simultaneous request can run the exact same
+    count-check before either request's insert has landed — this is the classic "check-then-act" race condition.</p>
+    <div class="impact-box">
+      <h4 style="color:#991b1b;margin-top:0;">Why it matters</h4>
+      <p>A user with exactly 1 message left opens two browser tabs (or has a flaky connection that silently
+      double-sends) and asks a question from both at nearly the same instant. Both requests check the count
+      before either has recorded its own usage, so both pass the check — the daily cap is quietly exceeded by
+      one. Low real-world stakes on its own (worst case, one extra message for one user on one day), but worth
+      fixing given this is explicitly positioned as a cost-control mechanism, not just a UX nudge.</p>
+    </div>
+    <div class="fix-box">
+      <h4 style="color:#14532d;margin-top:0;">Suggested fix</h4>
+      <p>Make the count-then-insert sequence atomic — e.g. run the counting query with
+      <code>frappe.db.sql(..., for_update=True)</code> so it takes a row lock other concurrent requests for the
+      same user have to wait behind, before the insert happens. Given the volumes involved (one user's daily
+      message count), this has no meaningful performance cost.</p>
+    </div>
+  </div>
+
+  <div class="finding med">
+    <div class="finding-head">
+      <div><span class="finding-num">FINDING 8</span><br><span class="finding-title">The just-fixed alert cap will silently break again the next time a trigger type is added</span></div>
+      <span class="sev-badge sev-med">Medium</span>
+    </div>
+    <span class="loc">assistant_tools/get_portfolio_alerts.py — MAX_PORTFOLIO_ALERTS, line 57</span>
+    <div class="status-box fixed"><p><b>Fix status: ✅ Fixed and verified correct.</b> <code>MAX_PORTFOLIO_ALERTS = max(20, len(TRIGGERS) + 3)</code>, with <code>TRIGGERS</code> now imported directly from <code>get_project_alerts</code> — exactly the fix suggested below, confirmed in the diff.</p></div>
+
+    <h4>What's happening</h4>
+    <p>This PR itself fixes a real, well-documented bug: <code>MAX_PORTFOLIO_ALERTS</code> was 10, but the app
+    now has 17 different alert trigger types, so the last several trigger types could never appear in a
+    portfolio-wide alert answer no matter how many real alerts of those types existed — confirmed live by the PR
+    author before this fix. The fix raises the cap to 20. Good fix — but the number 20 is just typed in by hand.
+    Nothing in the code ties it to the actual count of trigger types (17 right now), so the exact same silent
+    failure will happen again the moment an 18th trigger type is added, with no warning that it's happened.</p>
+    <div class="impact-box">
+      <h4 style="color:#991b1b;margin-top:0;">Why it matters</h4>
+      <p>This bug already happened once (that's why this PR fixes it) and the fix doesn't stop it from happening
+      again — it just buys headroom for the current trigger count. The next engineer who adds trigger type #18
+      has no reason to know this number needs updating too, and won't get an error telling them.</p>
+    </div>
+    <div class="fix-box">
+      <h4 style="color:#14532d;margin-top:0;">Suggested fix</h4>
+      <p>Tie the two together instead of maintaining them separately, e.g.:</p>
+      <pre>from scale_project_management.assistant_tools.get_project_alerts import TRIGGERS
+MAX_PORTFOLIO_ALERTS = max(20, len(TRIGGERS) + 3)</pre>
+      <p>or, if that import creates an awkward dependency, at minimum add an assertion that fails loudly at
+      import time if the cap ever falls behind the trigger count again:</p>
+      <pre>assert MAX_PORTFOLIO_ALERTS >= len(TRIGGERS), "raise MAX_PORTFOLIO_ALERTS — see get_portfolio_alerts.py"</pre>
+    </div>
+  </div>
+
+  <h2 class="sect">🔵 Low — cleanup / maintainability, not urgent</h2>
+
+  <div class="finding low">
+    <div class="finding-head">
+      <div><span class="finding-num">FINDING 9</span><br><span class="finding-title">The same ~15-line "call the provider and log it" block is copy-pasted three times</span></div>
+      <span class="sev-badge sev-low">Low</span>
+    </div>
+    <span class="loc">chat.py (tool round + forced final round), ai_utils.py call_llm()</span>
+    <div class="status-box fixed"><p><b>Fix status: ✅ Fixed and verified correct.</b> Extracted into a new shared <code>ai_call_log_hooks.post_and_log()</code> helper, called from all three sites — exactly the fix suggested below, and it correctly folds in Finding 4's fix at the same time.</p></div>
+    <h4>What's happening</h4>
+    <p>The pattern "start a timer, call the provider, log success or failure, re-raise on failure" is hand-typed
+    identically at three separate call sites instead of living in one shared function.</p>
+    <div class="impact-box">
+      <h4 style="color:#991b1b;margin-top:0;">Why it matters</h4>
+      <p>Not a bug today, but a maintenance risk: a future 4th call site (or the Finance/HR/Sales wiring from
+      Finding 7) means hand-copying this scaffold correctly a fourth time, and a small slip — logging in the
+      wrong order, forgetting the re-raise — produces inconsistent log data at just that one spot, which is
+      exactly the kind of bug that's hard to notice until someone's trying to reconcile AI spend numbers.</p>
+    </div>
+    <div class="fix-box">
+      <h4 style="color:#14532d;margin-top:0;">Suggested fix</h4>
+      <p>Extract one small helper — something like <code>_post_and_log(endpoint, headers, payload, *, feature,
+      call_type, turn_id, model)</code> — that does the try/post/raise_for_status/log/parse/return sequence once
+      (including the <code>resp.json()</code> fix from Finding 4), and call it from all three sites.</p>
+    </div>
+  </div>
+
+  <div class="finding low">
+    <div class="finding-head">
+      <div><span class="finding-num">FINDING 10</span><br><span class="finding-title">The skill-matching tool does far more database queries than it needs to</span></div>
+      <span class="sev-badge sev-low">Low</span>
+    </div>
+    <span class="loc">resource_skill_matching.py — _employee_skill_candidates() / _contractor_skill_candidates(), line 49</span>
+    <div class="status-box fixed"><p><b>Fix status: ✅ Fixed and verified correct.</b> Both functions now do one bulk <code>frappe.get_all()</code> against the child doctype (<code>Employee Skill</code> / <code>PMO Resource Skill</code>), joined back via a dict — exactly the pattern suggested below, confirmed in the diff. N+1 eliminated.</p></div>
+    <h4>What's happening</h4>
+    <p>Both candidate-gathering functions first fetch a list of names (all Employee Skill Maps, or all active
+    Contractor Profiles), then loop over that list calling <code>frappe.get_cached_doc()</code> once per name
+    just to read that one document's own skill child-table. That's one query to get the list, plus one more
+    query per row — a classic "N+1" pattern — instead of one bulk query against the child table directly.</p>
+    <div class="impact-box">
+      <h4 style="color:#991b1b;margin-top:0;">Why it matters</h4>
+      <p>This tool is chat-reachable, meaning every time someone asks a skill-matching question, this runs
+      synchronously inside that one request. On an organization with a few hundred employees and contractors,
+      that's a few hundred extra individual queries for a question that only needed a handful of matching rows —
+      adding real, avoidable latency to a chat answer.</p>
+    </div>
+    <div class="fix-box">
+      <h4 style="color:#14532d;margin-top:0;">Suggested fix</h4>
+      <p>Replace the per-document loop with one bulk fetch against the child doctype, filtered by the parent
+      names already collected, e.g.:</p>
+      <pre>skill_rows = frappe.get_all(
+    "Employee Skill",
+    filters={"parent": ["in", [m["name"] for m in maps]]},
+    fields=["parent", "skill", "proficiency"],
+)</pre>
+      <p>then join back to each Employee Skill Map's <code>employee</code>/<code>employee_name</code> using the
+      list already fetched — same result, one query instead of N+1. The same change applies to the Contractor
+      Profile side.</p>
+    </div>
+  </div>
+
+  <div class="footnote">
+    <b>How this review was done:</b> a multi-angle automated code review against the real PR #64 diff (fetched
+    directly from GitHub, not the PR description), followed by manual line-by-line re-verification of every
+    finding against the actual code before writing this report — including diffing the dashboard query against
+    its current version on <code>main</code> to confirm Finding 3 precisely, and checking the real DocType
+    permission definitions (not assumptions) for Finding 2. Every code snippet above is either an exact quote or
+    a minimal, deliberately-simplified illustration of the real fix shape — not a copy-paste-ready patch, since
+    the exact wording is yours to decide.
+    <br><br>
+    <b>How the fix status above was verified:</b> each fix was re-checked against the actual diff between the
+    originally-reviewed commit (<code>8709fb7</code>) and the new head (<code>630bee5</code>) — not accepted on
+    the strength of Veeren's own summary table or comments. The two deferrals' stated reasoning was independently
+    spot-checked rather than taken at face value: Finding 7's cross-app dependency claim was confirmed directly
+    against all four apps' <code>hooks.py</code> <code>required_apps</code> declarations. One small inconsistency
+    noted for accuracy: Veeren's own PR comment says "7 of 10 findings fixed" but the table beneath it lists 8
+    rows — almost certainly a wording slip (10 − 2 deferred = 8, matching the table), not a technical
+    discrepancy. Nothing in this document has been posted to GitHub or applied to any branch.
+  </div>
+
+</div>
+</body>
+</html>
