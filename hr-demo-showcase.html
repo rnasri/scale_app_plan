@@ -250,7 +250,7 @@
     <div class="task-chip added" style="border-left-color:var(--amber);"><span class="tid">T16</span><span class="ttitle">Induction (built differently)</span><span class="tmark">🟡</span></div>
     <div class="task-chip added"><span class="tid">T17</span><span class="ttitle">End-to-end testing</span><span class="tmark">✅</span></div>
     <div class="task-chip pending"><span class="tid">T18</span><span class="ttitle">Asset Management</span><span class="tmark">⏳</span></div>
-    <div class="task-chip pending"><span class="tid">T19</span><span class="ttitle">Employee Self-Service</span><span class="tmark">⏳</span></div>
+    <div class="task-chip added"><span class="tid">T19</span><span class="ttitle">Employee Self-Service</span><span class="tmark">✅</span></div>
     <div class="task-chip pending"><span class="tid">T20</span><span class="ttitle">Manager Self-Service</span><span class="tmark">⏳</span></div>
     <div class="task-chip pending"><span class="tid">V01</span><span class="ttitle">AI foundation (call_llm)</span><span class="tmark">⏳</span></div>
     <div class="task-chip pending"><span class="tid">V02</span><span class="ttitle">AI candidate scoring</span><span class="tmark">⏳</span></div>
@@ -322,8 +322,8 @@
   <div class="sec-head"><span class="sec-num">HR-04</span><h2 style="margin:0;">Performance Management</h2><span class="status-pill initiated">🟡 Initiated</span></div>
   <div class="ask-line">KRA-based appraisals, OKRs, development plans.</div>
   <div class="two-col">
-    <div class="added-box"><div class="box-label">Added</div><ul><li>Appraisal Template, Appraisal Cycle, Goals, and KRA-based scoring — live and tested for the team</li><li>Managers automatically get flagged when an employee's score needs attention</li></ul></div>
-    <div class="pending-box"><div class="box-label">Pending</div><ul><li>OKRs, multiple review cycles (monthly/quarterly/annual), and individual development plans aren't part of this yet — one KRA-based cycle today</li></ul></div>
+    <div class="added-box"><div class="box-label">Added</div><ul><li>Appraisal Template, Appraisal Cycle, Goals, and KRA-based scoring — live and tested for the team</li><li>Managers automatically get flagged when an employee's score needs attention</li><li><strong>New (22 Sep):</strong> Employee KRA Plan workflow — manager drafts KRAs from the Designation's KRA pack (weights enforced to 100%), routes through approval, then Assign Goals creates one Goal per KRA linked to this same Appraisal</li><li><strong>New (22 Sep):</strong> Organization Chart (live Reports-To hierarchy) and Comp-Off (holiday/weekly-off credit)</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>OKRs, multiple review cycles (monthly/quarterly/annual), and individual development plans still aren't part of this — the new Employee KRA Plan (above) is a separate mechanism and doesn't cover these</li></ul></div>
   </div>
   <div><span class="task-tag">Task List: T12 — Partially Done</span></div>
   <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale HR</span><span class="fp-arrow">→</span><span class="fp-step">Performance / Learning</span><span class="fp-arrow">→</span><span class="fp-step">Appraisal Cycle</span></div>
@@ -506,17 +506,16 @@
 </section>
 
 <section class="slide"><span class="slide-idx">22 / 29</span>
-  <div class="sec-head"><span class="sec-num">HR-18</span><h2 style="margin:0;">Employee Self-Service (ESS)</h2><span class="status-pill planned">⚪ Planned</span></div>
+  <div class="sec-head"><span class="sec-num">HR-18</span><h2 style="margin:0;">Employee Self-Service (ESS)</h2><span class="status-pill progressed">🟢 Progressed</span></div>
   <div class="ask-line">Payslips, leave, expenses, grievances — self-serve.</div>
   <div class="two-col">
-    <div class="added-box"><div class="box-label">Available Natively</div><ul><li>The standard HR mobile self-service app is already available — employees can reach it today</li></ul></div>
-    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Employee-only permissions, the payslip view, and a simplified mobile layout haven't been configured for AIWS yet</li></ul></div>
+    <div class="added-box"><div class="box-label">Added (PR #66, 15 Sep)</div><ul><li>12 custom "My X" pages: My Attendance, My Leave, My Expenses, My Shifts, My Advances, My Grievances, My ToDos, My Comp-Leave, My Payslips, My Tax, My Performance, My Training</li><li>A shared permission layer centralizes the employee-only-record check across all 14 ESS DocTypes</li></ul></div>
+    <div class="pending-box"><div class="box-label">Pending</div><ul><li>Nothing outstanding from the original ask — this went further (custom pages) than the original "configure the native portal" plan</li></ul></div>
   </div>
-  <div><span class="task-tag">Task List: T19 — Not Started</span></div>
-  <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">/hrms</span><span class="fp-arrow">→</span><span class="fp-step">native self-service PWA</span></div>
+  <div><span class="task-tag">Task List: T19 — Done (superseded by PR #66)</span></div>
+  <div class="flow-path"><span class="fp-step">Home</span><span class="fp-arrow">→</span><span class="fp-step">Scale HR</span><span class="fp-arrow">→</span><span class="fp-step">My HR</span><span class="fp-arrow">→</span><span class="fp-step">My Payslips / My Leave / etc.</span></div>
   <div class="prd-tag">Client HRM PRD addition — HR-18 Employee Self-Service</div>
-  <div class="slide-links"><a class="btn btn-navy" href="http://scale.localhost:8000/hrms" target="_blank">Open native self-service →</a></div>
-  <div class="usecase future"><div class="uc-label">Use Case — Once Configured</div><div class="uc-persona">👤 Employee</div><div class="uc-flow">Opens the mobile HR app → views their payslip, applies leave, submits an expense — no desk-user login needed.</div></div>
+  <div class="usecase"><div class="uc-label">Use Case</div><div class="uc-persona">👤 Employee</div><div class="uc-flow">Opens My HR → views their payslip, applies leave, submits an expense — through Scale's own ESS pages, own-record permissions enforced server-side.</div></div>
 </section>
 
 <section class="slide"><span class="slide-idx">23 / 29</span>
