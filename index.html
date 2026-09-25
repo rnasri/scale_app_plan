@@ -206,8 +206,8 @@
       <div class="day-label">✅ This Week (17–25 Sep)</div>
       <ul>
         <li><b>Employee KRA Plan, Organization Chart, and Comp-Off landed</b> (see Recently Landed above), plus 10 ESS polish fixes from last week's review.</li>
-        <li><b>Punch Time Policy + Birthday/Holiday reminders pushed for review</b> — configurable check-in Off/Warn/Block windows with Shift Type overrides, T-7/T-1 holiday reminders, and personal birthday-wish emails. 3 items flagged in review: the punch-time, birthday, and holiday logic each run as a second system alongside an existing native HRMS mechanism rather than extending it — revision expected. <code>feature/hrm</code>, PR #73, open.</li>
-        <li><b>HR AI Parity — HRMS ported to the full PMO AI assistant pattern.</b> L1 employees query their own records, L2 managers query their team's records and get team alerts, L3 HR gets company-wide access plus resume/document extraction, AI CHRO dashboard summaries, forward-looking alerts, workforce risk scoring, and data-intelligence suggestions. A 22-group gap-closure pass ran this week. On <code>feature/hr-gap-closure</code>, not yet merged.</li>
+        <li><b>Punch Time Policy + Birthday/Holiday reminders pushed for review</b> — configurable check-in Off/Warn/Block windows with Shift Type overrides, T-7/T-1 holiday reminders, and personal birthday-wish emails. 3 items flagged in review: the punch-time, birthday, and holiday logic each run as a second system alongside an existing native platform mechanism rather than extending it — revision expected. <code>feature/hrm</code>, PR #73, open.</li>
+        <li><b>HR AI Parity — Scale HR ported to the full PMO AI assistant pattern.</b> L1 employees query their own records, L2 managers query their team's records and get team alerts, L3 HR gets company-wide access plus resume/document extraction, AI CHRO dashboard summaries, forward-looking alerts, workforce risk scoring, and data-intelligence suggestions. A 22-group gap-closure pass ran this week. On <code>feature/hr-gap-closure</code>, not yet merged.</li>
         <li><b>~250 UAT test cases designed for <code>scale_hr</code></b>, being executed by Rochelle and Anjali — ~150 complete so far.</li>
       </ul>
     </div>
@@ -345,7 +345,7 @@
     <div class="day-col today">
       <div class="day-label">✅ This Week (17–25 Sep)</div>
       <ul>
-        <li><b>The biggest AI push of the week — PMO's AI assistant pattern ported to both HRMS and Sales, fully.</b> Both now get the same L1/L2/L3 role-scoped chatbot access (employee → own records, manager → team records + team alerts, executive → company-wide access), alerts, and data-intelligence suggestions that PMO already had. HR adds resume/document extraction and CHRO AI summaries; Sales adds AI health scores and explicit fields (<code>lead_score</code>, <code>lead_priority</code>, <code>win_probability</code>, <code>lost_cause_analysis</code>).</li>
+        <li><b>The biggest AI push of the week — PMO's AI assistant pattern ported to both HR and Sales, fully.</b> Both now get the same L1/L2/L3 role-scoped chatbot access (employee → own records, manager → team records + team alerts, executive → company-wide access), alerts, and data-intelligence suggestions that PMO already had. HR adds resume/document extraction and CHRO AI summaries; Sales adds AI health scores and explicit fields (<code>lead_score</code>, <code>lead_priority</code>, <code>win_probability</code>, <code>lost_cause_analysis</code>).</li>
         <li><b>Shared AI infrastructure consolidated and ported into the SVE app</b> — <code>ai_utils</code>, <code>chat_blocks</code>, and governance/call-logging now shared cleanly across PMO, HR, and Sales instead of duplicated per-app.</li>
         <li><b>Concurrency (serving multiple users simultaneously) built and tested</b> from a deployment standpoint, plus routine code-review/sanity passes.</li>
         <li>All of the above on <code>feature/hr-gap-closure</code> / <code>feature/sales-ai-parity</code> — not yet merged to main.</li>
@@ -391,7 +391,7 @@
     <div class="day-col today">
       <div class="day-label">✅ This Week (17–25 Sep)</div>
       <ul>
-        <li><b>Viney has started a new <code>scale_logistics</code> app.</b> Currently a workspace/process-guide layer — an "Interactive Data Flow" page organizing native ERPNext logistics doctypes (Shipment, Delivery Trip, Vehicle, Driver, Delivery Note, Pick List, Packing Slip, Landed Cost Voucher, Incoterm) rather than new custom doctypes.</li>
+        <li><b>Viney has started a new <code>scale_logistics</code> app.</b> Currently a workspace/process-guide layer — an "Interactive Data Flow" page organizing existing native logistics record types already in the platform (Shipment, Delivery Trip, Vehicle, Driver, Delivery Note, Pick List, Packing Slip, Landed Cost Voucher, Incoterm) rather than new custom ones.</li>
         <li>On branch <code>viney</code>, early stage, no PR yet.</li>
       </ul>
     </div>
@@ -418,13 +418,14 @@
         <li><b>A second, parallel client implementation (Archit &amp; Aryan)</b>, running alongside the Service/SVE work above — same three apps (<code>scale_stock</code>, <code>scale_purchase</code>, <code>scale_manufacturing</code>), different client build.</li>
         <li><b>Phase 1 — Store Inward.</b> Purchase User creates the PO, Purchase Manager approves it (no self-approve — the approval queue is the POs Pending Approval report). The GRN (Purchase Receipt) is made from the PO, searchable by PO name. Partial receipt splits good qty into Stores and defective qty into Rejected Stock with a defect note; Quality Inspection pulls the PR's qty/rate/warehouse/PO. Over-receipt is blocked, stock can never go negative, a Putaway rule routes stock to the rack, Purchase Return works, and the Stock Ledger shows Out Qty as a positive number.</li>
         <li><b>Phase 2 — Store to Shopfloor.</b> A Material Request (Material Transfer) moves stock from Stores to WIP, routed through the approval workflow with a stock-availability check before transfer. Stock Entry executes the move and the Stock Ledger proves it (Out from Stores, In to WIP). If stock is short, a Purchase Material Request is raised instead.</li>
+        <li><b>Manufacturing &amp; subcontracting work (Aryan):</b> zero valuation rates now supported for service-only items (e.g. Powder Coating) without blocking workflows, with subcontracting service items auto-linked to the correct cost accounts. The Purchase Order warehouse dropdown is filtered to valid "Virtual" warehouses only. A dedicated Gate Pass print format standardizes documentation for raw materials sent to external vendors. A new "Scale Manufacturing Automations" settings section replaces hardcoded scripts with a toggle-based configuration, starting with two toggles: automatic Quality Inspection drafting on raw-material receipt (respecting item-level Inspection Required flags), and a 1-click Repack workflow directly from an approved Purchase Receipt.</li>
         <li>On branch <code>bramhanee</code> (Phase 1 committed 18 Sep), no PR yet.</li>
       </ul>
     </div>
     <div class="day-col tomorrow">
       <div class="day-label">🔜 Next Up</div>
       <ul>
-        <li>Aryan's update — pending, to be added once received.</li>
+        <li>Bramhanee branch review/PR planning, once both Archit's and Aryan's work is consolidated.</li>
       </ul>
     </div>
   </div>
