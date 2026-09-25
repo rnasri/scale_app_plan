@@ -209,6 +209,7 @@
         <li><b>Punch Time Policy + Birthday/Holiday reminders pushed for review</b> — configurable check-in Off/Warn/Block windows with Shift Type overrides, T-7/T-1 holiday reminders, and personal birthday-wish emails. 3 items flagged in review: the punch-time, birthday, and holiday logic each run as a second system alongside an existing native platform mechanism rather than extending it — revision expected. <code>feature/hrm</code>, PR #73, open.</li>
         <li><b>HR AI Parity — Scale HR ported to the full PMO AI assistant pattern.</b> L1 employees query their own records, L2 managers query their team's records and get team alerts, L3 HR gets company-wide access plus resume/document extraction, AI CHRO dashboard summaries, forward-looking alerts, workforce risk scoring, and data-intelligence suggestions. A 22-group gap-closure pass ran this week. On <code>feature/hr-gap-closure</code>, not yet merged.</li>
         <li><b>~250 UAT test cases designed for <code>scale_hr</code></b>, being executed by Rochelle and Anjali — ~150 complete so far.</li>
+        <li><b>Client Balanced Scorecard capability check on KRA — gap identified, build planned.</b> A prospective client asked whether our KRA supports a Balanced Scorecard structure (KPIs grouped into Financial/Customer/Internal Process/Learning &amp; Growth, each with a weight %, a Target, a Measurement Tool, and a ₹ amount of variable pay). Checked against the real implementation: the 4 perspectives and 100%-enforced weighting are already there. Missing: a structured Target field (today it's folded into one free-text KPI description), a Measurement Tool/Methodology field, a ₹ amount tied to weight % against a Total Variable Pay figure, and a perspective-subtotal scorecard report/view.</li>
       </ul>
     </div>
     <div class="day-col tomorrow">
@@ -217,6 +218,7 @@
         <li>PR #73 revision + re-review.</li>
         <li>HR AI Parity branch merge readiness.</li>
         <li>UAT execution continues toward 250/250.</li>
+        <li><b>Balanced Scorecard KRA gap — build planned</b>: add a structured Target field and a Measurement Tool field to the KRA Plan item, a ₹ Amount computed from weight % against a plan-level Total Variable Pay figure, and a perspective-subtotal scorecard report matching the client's requested layout.</li>
       </ul>
     </div>
   </div>
