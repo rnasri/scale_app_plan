@@ -243,7 +243,7 @@
     <div class="day-col today">
       <div class="day-label">✅ This Week (17–25 Sep)</div>
       <ul>
-        <li>Sales/Purchase Invoice ledger and KPI mapping implemented this week as part of the cross-module SVE process flow — see 🔧 Service — SVE Use Case track below.</li>
+        <li>Sales/Purchase Invoice ledger and KPI mapping implemented this week as part of the cross-module SVE process flow — see 📦 Stores, Purchase &amp; Manufacturing track below.</li>
         <li>Testing with seed data.</li>
       </ul>
     </div>
@@ -291,7 +291,15 @@
     <div class="day-col today">
       <div class="day-label">✅ This Week (17–25 Sep)</div>
       <ul>
-        <li><b>BOQ-driven store and purchase fulfillment added for the SVE use case</b> — <code>scale_stock</code>/<code>scale_purchase</code> now support Bill-of-Quantities-driven fulfillment flows. Part of this week's cross-module Service/SVE build — see 🔧 Service — SVE Use Case track below for detail.</li>
+        <li><b>SVE process flow (Uday)</b> <span style="display:inline-block;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;background:var(--amber-bg);color:#92400e;border:1px solid var(--amber-bdr);border-radius:5px;padding:2px 8px;margin-left:6px;vertical-align:1px;">SVE</span> — cross-module BOQ-driven flow spanning Sales, Stock, Purchase, Manufacturing (BOM), Accounts, and Finance:
+          <ul style="margin:8px 0 0; padding-left:20px;">
+            <li style="margin-bottom:6px;">Inclusion of Work Orders in the process flow.</li>
+            <li style="margin-bottom:6px;">Customisation of Work Order against the rental requirements given by SVE.</li>
+            <li style="margin-bottom:6px;">Inclusion of accounts flow in the process flow for Sales and Purchase Invoice, posting against different ledgers and KPIs.</li>
+            <li>Revamped Stock module to function per SVE's stock management requirements, which will support the Service module.</li>
+          </ul>
+          Merged into the Service branch this week (<code>scale_stock</code>/<code>scale_purchase</code> now also support BOQ-driven fulfillment).
+        </li>
         <li>No other updates to the core Stores/Purchase/Manufacturing feature plan this week — all three apps remain at their prior completed state from the 1–4 Sep cycle (<code>scale_stock</code> 11/12, <code>scale_purchase</code> 13/16, <code>scale_manufacturing</code> 13/15).</li>
       </ul>
     </div>
@@ -358,7 +366,6 @@
       <div class="day-label">✅ This Week (17–25 Sep)</div>
       <ul>
         <li><b>Scale Service core build continues (Muhammad)</b> — Installed Base (a project's machines mapped as outdoor/indoor units), Contracts (AMC/warranty term auto-calculates expiry, equipment copies to an item request, Daikin C4C reference fields), Buying (item request → purchase order → goods receipt → delivery challan, all tagged to the service call), Petty Cash (technician cash request with line-item validation against the requested amount, supervisor approval → Accounts payout), and 4 scoped roles (Technician/Supervisor/Coordinator/Revenue Officer).</li>
-        <li><b>Supporting SVE process flow (Uday)</b> — Work Order inclusion and rental-requirement customization, Sales/Purchase Invoice ledger and KPI mapping (accounts flow), and a revamped Stock module to support the Service module's fulfillment needs. Merged into the Service branch this week.</li>
         <li>On <code>feature/scale_services</code> — PR #69 still open.</li>
       </ul>
     </div>
