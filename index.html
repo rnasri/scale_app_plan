@@ -404,6 +404,32 @@
   </div>
 </div>
 
+<div class="track-card">
+  <div class="track-head">
+    <h3>🏭 Bramhanee — Parallel Implementation</h3>
+    <a class="track-link" href="stores-module.html">Stores plan →</a>
+    <a class="track-link" href="purchase-module.html">Purchase plan →</a>
+    <a class="track-link" href="manufacturing-module.html">Manufacturing plan →</a>
+  </div>
+  <div class="track-body">
+    <div class="day-col today">
+      <div class="day-label">✅ This Week (17–25 Sep)</div>
+      <ul>
+        <li><b>A second, parallel client implementation (Archit &amp; Aryan)</b>, running alongside the Service/SVE work above — same three apps (<code>scale_stock</code>, <code>scale_purchase</code>, <code>scale_manufacturing</code>), different client build.</li>
+        <li><b>Phase 1 — Store Inward.</b> Purchase User creates the PO, Purchase Manager approves it (no self-approve — the approval queue is the POs Pending Approval report). The GRN (Purchase Receipt) is made from the PO, searchable by PO name. Partial receipt splits good qty into Stores and defective qty into Rejected Stock with a defect note; Quality Inspection pulls the PR's qty/rate/warehouse/PO. Over-receipt is blocked, stock can never go negative, a Putaway rule routes stock to the rack, Purchase Return works, and the Stock Ledger shows Out Qty as a positive number.</li>
+        <li><b>Phase 2 — Store to Shopfloor.</b> A Material Request (Material Transfer) moves stock from Stores to WIP, routed through the approval workflow with a stock-availability check before transfer. Stock Entry executes the move and the Stock Ledger proves it (Out from Stores, In to WIP). If stock is short, a Purchase Material Request is raised instead.</li>
+        <li>On branch <code>bramhanee</code> (Phase 1 committed 18 Sep), no PR yet.</li>
+      </ul>
+    </div>
+    <div class="day-col tomorrow">
+      <div class="day-label">🔜 Next Up</div>
+      <ul>
+        <li>Aryan's update — pending, to be added once received.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
 <div class="page-nav">
   <a class="prev" href="program-overview.html">← Program Overview</a>
 </div>
